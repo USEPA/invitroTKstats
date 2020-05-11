@@ -228,8 +228,8 @@ calc_uc_fup <- function(PPB.data,
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
         results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
     
-        new.results <- data.frame(CompoundName=this.compound,
-                                  stringsAsFactors=F)
+        new.results <- data.frame(this.compound,stringsAsFactors=F)
+        colnames(new.results) <- compound.col
         new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- results[c(2,1,3),"Fup"]
     
         print(new.results)

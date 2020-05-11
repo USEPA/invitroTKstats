@@ -1,2 +1,2 @@
-"CompoundName" "Fup.Med" "Fup.Low" "Fup.High"
-"PFOA" 0.0071735 8.90271850000001e-06 0.0269525775
+"Compound.Name" "Fup.Med" "Fup.Low" "Fup.High"
+"PFOA" 0.00716241 0.002117817 0.027930845
