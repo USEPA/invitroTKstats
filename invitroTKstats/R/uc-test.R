@@ -14,15 +14,19 @@ dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Sample.Type"] <- "CC"
 dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Std..Conc"] <- 0
 dat[regexpr("UC-CR",dat$Sample.Text)!=-1,"Sample.Type"] <- "AF"
 dat[regexpr("UC-T1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
-dat[regexpr("UC-T5",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
+  dat[regexpr("UC-T5",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 dat[regexpr("-S1",dat$Sample.Text)!=-1,"Series"] <- 1
 dat[regexpr("-S2",dat$Sample.Text)!=-1,"Series"] <- 2
 dat[regexpr("-S3",dat$Sample.Text)!=-1,"Series"] <- 3
+dat$Dilution.Factor <- 4*4
+dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- 4*4*2
+dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- 4*4*5
+dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- 4*4*5
 
                                                      
 dat <- subset(dat,Sample.Type!="")
-dat <- dat[,c("Name","Sample.Type","Series","Std..Conc","Response")]
-colnames(dat) <- c("Sample.Name","Sample.Type","Series","Nominal.Conc","Response")
+dat <- dat[,c("Name","Sample.Type","Series","Std..Conc","Dilution.Factor","Response")]
+colnames(dat) <- c("Sample.Name","Sample.Type","Series","Nominal.Conc","Dilution.Factor","Response")
 dat$Compound.Name <- "PFOA"
 dat$Cal <- 1
 

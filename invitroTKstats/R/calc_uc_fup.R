@@ -23,8 +23,8 @@ model {
   # Mass-spec observations:  
   for (i in 1:Num.obs) 
   {
-    Response.pred[i] <- calibration[obs.cal[i]]*(Conc[obs.conc[i]] - C.thresh[obs.cal[i]])*step(Conc[obs.conc[i]] - C.thresh[obs.cal[i]]) + background[obs.cal[i]]
-    Response.prec[i] <- (const.analytic.sd[obs.cal[i]]+hetero.analytic.slope[obs.cal[i]]*Conc[obs.conc[i]])^(-2)
+    Response.pred[i] <- calibration[obs.cal[i]]*(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]])*step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) + background[obs.cal[i]]
+    Response.prec[i] <- (const.analytic.sd[obs.cal[i]]+hetero.analytic.slope[obs.cal[i]]*Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]])^(-2)
     Response.obs[i] ~dnorm(Response.pred[i],Response.prec[i])
   }
   
@@ -88,7 +88,8 @@ calc_uc_fup <- function(PPB.data,
   response.col="Response",
   type.col="Sample.Type",
   compound.conc.col="Nominal.Conc",
-  cal.col="Cal"
+  cal.col="Cal",
+  dilution.col="Dilution.Factor"
   )
 {
   if (!is.null(TEMP.DIR)) 
@@ -143,6 +144,7 @@ calc_uc_fup <- function(PPB.data,
         Num.cc.obs <- dim(CC.data)[1]
         CC.data$Obs.Conc <- seq(1,Num.cc.obs)
         Conc <- CC.data[,compound.conc.col]
+        Dilution.Factor <- CC.data[,dilution.col]
   #
   #
   #  Each series (currently) contains T5 and AF data
@@ -156,6 +158,9 @@ calc_uc_fup <- function(PPB.data,
           AF.data[AF.data$Series==all.series[i],"Obs.Conc"] <- Num.cc.obs + Num.series + i
         }
         Conc <- c(Conc,rep(NA,2*Num.series))
+        Dilution.Factor <- c(Dilution.Factor,
+          T5.data[,dilution.col],
+          AF.data[,dilution.col])
   #
   #
   #
@@ -176,7 +181,8 @@ calc_uc_fup <- function(PPB.data,
           "obs.cal" = UC.obs[,"Obs.Cal"],
           "Conc" = Conc,
           "Num.cc.obs" = Num.cc.obs,
-          "Num.series" = Num.series
+          "Num.series" = Num.series,
+          "Dilution.Factor" = Dilution.Factor
         )
 
         initfunction <- function(chain)
@@ -222,7 +228,8 @@ calc_uc_fup <- function(PPB.data,
             'Fup',
             'C.thresh',
             'background',
-            'calibration'))
+            'calibration',
+            "Conc"))
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
@@ -232,7 +239,7 @@ calc_uc_fup <- function(PPB.data,
         colnames(new.results) <- compound.col
         new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- results[c(2,1,3),"Fup"]
     
-        print(new.results)
+        print(results)
     
         Results <- rbind(Results,new.results)
     
