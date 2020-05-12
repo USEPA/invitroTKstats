@@ -6,39 +6,45 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dnorm(-2,0.1)
-    log.hetero.analytic.slope.factor[i] ~ dnorm(1,.1)
-    background[i] ~ dunif(0,1000)   
-    log.calibration[i] ~ dnorm(0,.1)
+    log.const.analytic.sd[i] ~ dunif(-5, 0)
+    log.hetero.analytic.slope.factor[i] ~ dunif(-5, 3)
+    background[i] ~ dunif(0, 10000)   
+    log.calibration[i] ~ dunif(-2, 2)
     # Concentrations below this value are not detectable:
-    log.C.thresh[i] ~ dunif(0,10) 
+    log.C.thresh[i] ~ dunif(-10, 1) 
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope.factor[i] <- 10^log.hetero.analytic.slope.factor[i]
     hetero.analytic.slope[i] <- hetero.analytic.slope.factor[i]*const.analytic.sd[i]
     calibration <- 10^log.calibration[i]
-    C.thresh <- exp(log.C.thresh[i])
+    C.thresh <- 10^log.C.thresh[i]
   }
   
   # Mass-spec observations:  
   for (i in 1:Num.obs) 
   {
-    Response.pred[i] <- calibration[obs.cal[i]]*(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]])*step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) + background[obs.cal[i]]
-    Response.prec[i] <- (const.analytic.sd[obs.cal[i]]+hetero.analytic.slope[obs.cal[i]]*Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]])^(-2)
-    Response.obs[i] ~dnorm(Response.pred[i],Response.prec[i])
+    Response.pred[i] <- 
+      calibration[obs.cal[i]]*
+      (Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]])*
+      step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) + 
+      background[obs.cal[i]]
+    Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
+      hetero.analytic.slope[obs.cal[i]]*
+      Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]])^(-2)
+    Response.obs[i] ~ dnorm(Response.pred[i],Response.prec[i])
   }
   
   
 # Binding Model:
   # Prior on Fup: 
-  log.Fup ~ dunif(-10,0)
+  log.Fup ~ dunif(-10, 0)
   # Scale conversion:
   Fup <- 10^log.Fup
 
   for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
   {
   # Priors for whole samples for ultra centrigugation UC):
-    Conc[i] ~ dunif(0,1000)
+    Conc[i] ~ dunif(0.01,1000)
   # Aqueous fraction concentrations for UC samples:
     Conc[i+Num.series] <- Fup * Conc[i]
   }   
@@ -195,10 +201,10 @@ calc_uc_fup <- function(PPB.data,
             .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
             log.const.analytic.sd =runif(Num.cal,-2.2,-1.8),
-            log.hetero.analytic.slope.factor = runif(Num.cal,0.8,1.2),
+            log.hetero.analytic.slope.factor = runif(Num.cal,-0.2,0.2),
             background = rlnorm(Num.cal,log(10^-3),1),
             log.calibration = runif(Num.cal,-0.1,0.1),
-            log.C.thresh = runif(Num.cal,0,1),
+            log.C.thresh = runif(Num.cal,-3,-2),
 # There is only one Fup per chemical:
             log.Fup = log10(runif(1,0,1))
           ))
@@ -223,7 +229,7 @@ calc_uc_fup <- function(PPB.data,
           data = mydata,
           jags = findjags(),
           monitor = c(
-            'log.const.analytic.sd',
+            'const.analytic.sd',
             'hetero.analytic.slope.factor',
             'Fup',
             'C.thresh',

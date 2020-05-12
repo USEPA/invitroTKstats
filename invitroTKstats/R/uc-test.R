@@ -25,6 +25,7 @@ dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- 4*4*5
 
                                                      
 dat <- subset(dat,Sample.Type!="")
+dat <- subset(dat,Series %in% c(NA,"2"))
 dat <- dat[,c("Name","Sample.Type","Series","Std..Conc","Dilution.Factor","Response")]
 colnames(dat) <- c("Sample.Name","Sample.Type","Series","Nominal.Conc","Dilution.Factor","Response")
 dat$Compound.Name <- "PFOA"
