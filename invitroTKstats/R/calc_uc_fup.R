@@ -230,12 +230,13 @@ calc_uc_fup <- function(PPB.data,
           jags = findjags(),
           monitor = c(
             'const.analytic.sd',
-            'hetero.analytic.slope.factor',
+            'hetero.analytic.slope',
             'Fup',
             'C.thresh',
             'background',
             'calibration',
-            "Conc"))
+            "Conc",
+            "Response.prec"))
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
