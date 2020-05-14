@@ -16,8 +16,8 @@ model {
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope.factor[i] <- 10^log.hetero.analytic.slope.factor[i]
     hetero.analytic.slope[i] <- hetero.analytic.slope.factor[i]*const.analytic.sd[i]
-    calibration <- 10^log.calibration[i]
-    C.thresh <- 10^log.C.thresh[i]
+    calibration[i] <- 10^log.calibration[i]
+    C.thresh[i] <- 10^log.C.thresh[i]
   }
   
   # Mass-spec observations:  
@@ -235,8 +235,7 @@ calc_uc_fup <- function(PPB.data,
             'C.thresh',
             'background',
             'calibration',
-            "Conc",
-            "Response.prec"))
+            "Conc"))
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
@@ -244,7 +243,10 @@ calc_uc_fup <- function(PPB.data,
     
         new.results <- data.frame(this.compound,stringsAsFactors=F)
         colnames(new.results) <- compound.col
-        new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- results[c(2,1,3),"Fup"]
+        new.results[,c(
+          "Fup.Med",
+          "Fup.Low",
+          "Fup.High")] <- results[c(2,1,3),"Fup"]
     
         print(results)
     
