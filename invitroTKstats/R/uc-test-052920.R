@@ -21,9 +21,7 @@ dat[regexpr("UC-CR",dat$Sample.Text)!=-1,"Sample.Type"] <- "AF"
 dat[regexpr("UC-T1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
 dat[regexpr("UC-T5",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
-dat[regexpr("-S1",dat$Sample.Text)!=-1,"Series"] <- 1
 dat[regexpr("-S2",dat$Sample.Text)!=-1,"Series"] <- 2
-dat[regexpr("-S3",dat$Sample.Text)!=-1,"Series"] <- 3
 # Everything is diluted at least 16 times:
 dat$Dilution.Factor <- 4*4
 # Additional dilutions for AF and T1/T4 samples:

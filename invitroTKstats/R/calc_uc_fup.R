@@ -10,14 +10,13 @@ model {
     log.hetero.analytic.slope.factor[i] ~ dunif(-5, 3)
     background[i] ~ dunif(0, 10000)   
     log.calibration[i] ~ dunif(-2, 2)
-    # Concentrations below this value are not detectable:
-    log.C.thresh[i] ~ dunif(-10, 1) 
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope.factor[i] <- 10^log.hetero.analytic.slope.factor[i]
     hetero.analytic.slope[i] <- hetero.analytic.slope.factor[i]*const.analytic.sd[i]
     calibration[i] <- 10^log.calibration[i]
-    C.thresh[i] <- 10^log.C.thresh[i]
+    # Concentrations below this value are not detectable:
+    C.thresh[i] <- background[i]/calibration[i]
   }
   
   # Mass-spec observations:  
@@ -157,8 +156,30 @@ calc_uc_fup <- function(PPB.data,
   #  Each series (currently) contains T5 and AF data
         T5.data <- MSdata[MSdata[,type.col]=="T5",]
         AF.data <- MSdata[MSdata[,type.col]=="AF",]
-        all.series <- unique(T5.data$Series) 
-        Num.series <- length(all.series)
+        Num.series <- 0
+        all.series <- NULL
+        for (i in 1:Num.cal)
+        {
+          these.series <- unique(T5.data[
+            T5.data[,cal.col]==all.cal[i],
+            "Series"])
+          Num.series <- Num.series + length(these.series) 
+          T5.data[
+            T5.data[,cal.col]==all.cal[i],
+            "Series"] <- paste(all.cal[i],
+             T5.data[
+               T5.data[,cal.col]==all.cal[i],
+               "Series"],
+             sep="-")
+          AF.data[
+            AF.data[,cal.col]==all.cal[i],
+            "Series"] <- paste(all.cal[i],
+             AF.data[
+               AF.data[,cal.col]==all.cal[i],
+               "Series"],
+             sep="-")
+          all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
+        }
         for (i in 1:Num.series)
         {
           T5.data[T5.data$Series==all.series[i],"Obs.Conc"] <- Num.cc.obs + i
@@ -205,7 +226,7 @@ calc_uc_fup <- function(PPB.data,
             log.hetero.analytic.slope.factor = runif(Num.cal,-0.2,0.2),
             background = rlnorm(Num.cal,log(10^-3),1),
             log.calibration = runif(Num.cal,-0.1,0.1),
-            log.C.thresh = runif(Num.cal,-3,-2),
+#            log.C.thresh = runif(Num.cal,-3,-2),
 # There is only one Fup per chemical:
             log.Fup = log10(runif(1,0,1))
           ))
