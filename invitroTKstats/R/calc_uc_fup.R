@@ -30,6 +30,7 @@ model {
       background[obs.cal[i]]
     Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
       hetero.analytic.slope[obs.cal[i]]*
+      calibration[obs.cal[i]]*
       Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]])^(-2)
     Response.obs[i] ~ dnorm(Response.pred[i],Response.prec[i])
   }
