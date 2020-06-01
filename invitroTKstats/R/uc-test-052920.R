@@ -118,12 +118,12 @@ dat[dat$Type=="Standard","Sample.Type"] <- "CC"
 dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Sample.Type"] <- "CC"
 dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Std..Conc"] <- 0
 # Identify the aqueous fraction samples:
-dat[regexpr("UC_UF_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "AF"
+dat[regexpr("UC_UF_Mix2",dat$Sample.Text)!=-1,"Sample.Type"] <- "AF"
 # Identify the T1h and T5h whole samples:
-dat[regexpr("UC_T1hr_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
-dat[regexpr("UC_T5hr_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
+dat[regexpr("UC_T1hr_Mix2",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
+dat[regexpr("UC_T5hr_Mix2",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
-dat[regexpr("Mix1",dat$Sample.Text)!=-1,"Series"] <- 1
+dat[regexpr("Mix2",dat$Sample.Text)!=-1,"Series"] <- 1
 # Everything is diluted at least 16 times:
 dat$Dilution.Factor <- 4*4
 # Need to adjust the study conc column to reflect target concentration, not diluted:
@@ -166,17 +166,14 @@ dat[dat$Type=="Standard","Sample.Type"] <- "CC"
 # All mixed matrix blanks are treated as standards with concentration zero:
 dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Sample.Type"] <- "CC"
 dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Std..Conc"] <- 0
-
-
-
-dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Std..Conc"] <- dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Std..Conc"] 
+  dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Std..Conc"] <- dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Std..Conc"] 
 # Identify the aqueous fraction samples:
-dat[regexpr("UC_UF_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "AF"
+dat[regexpr("UC_UF_Mix3",dat$Sample.Text)!=-1,"Sample.Type"] <- "AF"
 # Identify the T1h and T5h whole samples:
-dat[regexpr("UC_T1hr_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
-dat[regexpr("UC_T5hr_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
+dat[regexpr("UC_T1hr_Mix3",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
+dat[regexpr("UC_T5hr_Mix3",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
-dat[regexpr("Mix1",dat$Sample.Text)!=-1,"Series"] <- 1
+dat[regexpr("Mix3",dat$Sample.Text)!=-1,"Series"] <- 1
 # Everything is diluted at least 16 times:
 dat$Dilution.Factor <- 4*4
 # Need to adjust the study conc column to reflect target concentration, not diluted:
