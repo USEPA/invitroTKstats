@@ -22,6 +22,7 @@ dat[regexpr("UC-T1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
 dat[regexpr("UC-T5",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("-S2",dat$Sample.Text)!=-1,"Series"] <- 2
+dat <- subset(dat,Sample.Type=="CC"|Series==2)
 # Everything is diluted at least 16 times:
 dat$Dilution.Factor <- 4*4
 # Additional dilutions for AF and T1/T4 samples:
@@ -46,6 +47,11 @@ colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal
 dat$Cal <- "041219"
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
+# concentration units (pg/uL -> ug/L -> uM):
+dat$Nominal.Conc <- dat$Nominal.Conc / 414.07
+
+
+
 # Save the data:
 write.csv(dat,file="PFOA041219.csv",row.names=F)
 
@@ -95,6 +101,8 @@ colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal
 dat$Cal <- "100119"
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
+# adjust to actual molecular weight:
+dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 414.07
 # Save the data:
 write.csv(dat,file="PFOA100119.csv",row.names=F)
 # add these data to data object:
@@ -142,6 +150,8 @@ colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal
 dat$Cal <- "072319"
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
+# adjust to actual molecular weight:
+dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 500.13 
 # Save the data:
 write.csv(dat,file="PFOS072319.csv",row.names=F)
 # add these data to data object:
@@ -193,6 +203,8 @@ colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal
 dat$Cal <- "010720"
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
+# adjust to actual molecular weight and uM:
+dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 500.13
 # Save the data:
 write.csv(dat,file="PFOS010720.csv",row.names=F)
 # add these data to data object:

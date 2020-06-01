@@ -6,7 +6,7 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dunif(-5, 0)
+    log.const.analytic.sd[i] ~ dunif(-6, 0)
     log.hetero.analytic.slope.factor[i] ~ dunif(-5, 3)
     background[i] ~ dunif(0, 10000)   
     log.calibration[i] ~ dunif(-2, 2)
@@ -37,14 +37,14 @@ model {
   
 # Binding Model:
   # Prior on Fup: 
-  log.Fup ~ dunif(-10, 0)
+  log.Fup ~ dunif(-15, 0)
   # Scale conversion:
   Fup <- 10^log.Fup
 
   for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
   {
   # Priors for whole samples for ultra centrigugation UC):
-    Conc[i] ~ dunif(0.01,1000)
+    Conc[i] ~ dunif(0.0001,1000)
   # Aqueous fraction concentrations for UC samples:
     Conc[i+Num.series] <- Fup * Conc[i]
   }   
@@ -288,7 +288,7 @@ calc_uc_fup <- function(PPB.data,
   save(Results,
     file=paste("UC-Fup-Analysis-",Sys.Date(),".RData",sep=""))
 
-  return(Results)  
+  return(list(Results=Results,coda=coda.out))  
 }
 
 
