@@ -4,7 +4,7 @@ library(gdata)
 library(parallel)
 library(runjags)
 source("calc_uc_fup.R")
-
+source("plot_uc_results.R")
 
 # read from the Excel file using library(gdata)
 dat <- read.xls("20200402_PFAS_UC_PFOA_PFOS.xlsx",stringsAsFactors=F,sheet=3,skip=12)
@@ -218,23 +218,8 @@ all.data <- rbind(all.data,dat)
    
 out <- calc_uc_fup(all.data)
   
-library(ggplot2))
-library(scales)
 
-scientific_10 <- function(x) {                                  
-  out <- gsub("1e", "10^", scientific_format()(x))              
-  out <- gsub("\\+","",out)                                     
-  out <- gsub("10\\^01","10",out)                               
-  out <- parse(text=gsub("10\\^00","1",out))                    
-}  
-
-cal.curves <- data.frame(Conc=10^seq(-4,1,by=0.1))
-cal.curves$Bayesian <- 4.267595*cal.curves$Conc + 0.00295
-
-a <- 0.105423
-b <- 6.38662
-cvar <- 0.00275206
-cal.curves$Quadratic <- a*(cal.curves$Conc*305/500)^2 + b*(cal.curves$Conc*305/500)+ cvar
+plots <- plot_uc_results(all.data,out$coda,"PFOS","010720",500,quad.cal=c(avar=0.105423,bvar=6.38662,cvar=0.002752060))
 
 
 

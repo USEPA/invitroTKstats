@@ -7,7 +7,7 @@ model {
   {
     # Priors:
     log.const.analytic.sd[i] ~ dunif(-6, 0)
-    log.hetero.analytic.slope.factor[i] ~ dunif(-5, 3)
+    log.hetero.analytic.slope.factor[i] ~ dunif(-5, 1)
     background[i] ~ dunif(0, 10000)   
     log.calibration[i] ~ dunif(-2, 2)
     # Scale conversions:
@@ -223,7 +223,7 @@ calc_uc_fup <- function(PPB.data,
             .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
             log.const.analytic.sd =runif(Num.cal,-2.2,-1.8),
-            log.hetero.analytic.slope.factor = runif(Num.cal,-0.2,0.2),
+            log.hetero.analytic.slope.factor = runif(Num.cal,-4,-2),
             background = rlnorm(Num.cal,log(10^-3),1),
             log.calibration = runif(Num.cal,-0.1,0.1),
 #            log.C.thresh = runif(Num.cal,-3,-2),
