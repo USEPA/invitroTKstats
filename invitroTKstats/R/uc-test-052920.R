@@ -23,8 +23,10 @@ dat[regexpr("UC-T5",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("-S2",dat$Sample.Text)!=-1,"Series"] <- 2
 dat <- subset(dat,Sample.Type=="CC"|Series==2)
-# Everything is diluted at least 16 times:
-dat$Dilution.Factor <- 4*4
+# CC is already diluted, everything else is diluted at least 16 times:
+dat$Dilution.Factor <- 1
+# Blanks are treated as part of the CC but need to be diluted:
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
 # Additional dilutions for AF and T1/T4 samples:
 dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- 4*4*2
 dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- 4*4*5
@@ -75,8 +77,10 @@ dat[regexpr("UC_T1hr_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
 dat[regexpr("UC_T5hr_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("Mix1",dat$Sample.Text)!=-1,"Series"] <- 1
-# Everything is diluted at least 16 times:
-dat$Dilution.Factor <- 4*4
+# CC is already diluted, everything else is diluted at least 16 times:
+dat$Dilution.Factor <- 1
+# Blanks are treated as part of the CC but need to be diluted:
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
 # Need to adjust the study conc column to reflect target concentration, not diluted:
 dat[dat[,"Sample.Type"]=="CC","Std..Conc"] <- dat[dat[,"Sample.Type"]=="CC","Std..Conc"]
 # Additional dilutions for AF and T1/T4 samples:
@@ -124,8 +128,10 @@ dat[regexpr("UC_T1hr_Mix2",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
 dat[regexpr("UC_T5hr_Mix2",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("Mix2",dat$Sample.Text)!=-1,"Series"] <- 1
-# Everything is diluted at least 16 times:
-dat$Dilution.Factor <- 4*4
+# CC is already diluted, everything else is diluted at least 16 times:
+dat$Dilution.Factor <- 1
+# Blanks are treated as part of the CC but need to be diluted:
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
 # Need to adjust the study conc column to reflect target concentration, not diluted:
 dat[dat[,"Sample.Type"]=="CC","Std..Conc"] <- dat[dat[,"Sample.Type"]=="CC","Std..Conc"]
 # Additional dilutions for AF and T1/T4 samples:
@@ -174,8 +180,10 @@ dat[regexpr("UC_T1hr_Mix3",dat$Sample.Text)!=-1,"Sample.Type"] <- "T1"
 dat[regexpr("UC_T5hr_Mix3",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("Mix3",dat$Sample.Text)!=-1,"Series"] <- 1
-# Everything is diluted at least 16 times:
-dat$Dilution.Factor <- 4*4
+# CC is already diluted, everything else is diluted at least 16 times:
+dat$Dilution.Factor <- 1
+# Blanks are treated as part of the CC but need to be diluted:
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
 # Need to adjust the study conc column to reflect target concentration, not diluted:
 dat[dat[,"Sample.Type"]=="CC","Std..Conc"] <- dat[dat[,"Sample.Type"]=="CC","Std..Conc"]
 # Additional dilutions for AF and T1/T4 samples:
@@ -210,5 +218,61 @@ all.data <- rbind(all.data,dat)
    
 out <- calc_uc_fup(all.data)
   
+library(ggplot2))
+library(scales)
+
+scientific_10 <- function(x) {                                  
+  out <- gsub("1e", "10^", scientific_format()(x))              
+  out <- gsub("\\+","",out)                                     
+  out <- gsub("10\\^01","10",out)                               
+  out <- parse(text=gsub("10\\^00","1",out))                    
+}  
+
+cal.curves <- data.frame(Conc=10^seq(-4,1,by=0.1))
+cal.curves$Bayesian <- 4.267595*cal.curves$Conc + 0.00295
+
+a <- 0.105423
+b <- 6.38662
+cvar <- 0.00275206
+cal.curves$Quadratic <- a*(cal.curves$Conc*305/500)^2 + b*(cal.curves$Conc*305/500)+ cvar
+
+
+
+  
+plinear <- ggplot(subset(all.data,Cal=="010720"), aes(Response, Nominal.Conc)) +
+  geom_point(size=3) +
+  scale_y_continuous(limits=c(0,max(subset(all.data,Cal=="010720")$Nominal.Conc,na.rm=T))) +
+  scale_x_continuous(limits=c(0,max(subset(all.data,Cal=="010720")$Response,na.rm=T))) +
+  ylab("Nominal Concentration (uM)") +
+  xlab("Normalized Response") +
+  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="AF")$Response,color="Red") +
+  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="T5")$Response,color="Blue") +
+#  geom_abline(slope=1/4.267595, intercept=0.00295*(1-1/4.267595),linetype="dashed") +
+  geom_line(data=cal.curves,aes(x=Bayesian,y=Conc),linetype="dashed")+
+  geom_line(data=cal.curves,aes(x=Quadratic,y=Conc),linetype="dotted")+
+  ggtitle("PFOS 010720") +
+  theme(text = element_text(size=20))
+print(plinear)
+
+  
+plog <- ggplot(subset(all.data,Cal=="010720"), aes(Response, Nominal.Conc)) +
+  geom_point(size=3) +
+  scale_y_log10(label=scientific_10) +
+  scale_x_log10(label=scientific_10) +
+  ylab("Nominal Concentration (uM)") +
+  xlab("Normalized Response") +
+  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="AF")$Response,color="Red") +
+  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="T5")$Response,color="Blue") +
+  geom_line(data=cal.curves,aes(x=Bayesian,y=Conc),linetype="dashed")+
+  geom_line(data=cal.curves,aes(x=Quadratic,y=Conc),linetype="dotted")+
+  ggtitle("PFOS 010720") +
+  theme(text = element_text(size=20))
+ 
+print(plog)
+
+
+
+
+
 
 
