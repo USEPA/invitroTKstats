@@ -220,40 +220,8 @@ out <- calc_uc_fup(all.data)
   
 
 plots <- plot_uc_results(all.data,out$coda,"PFOS","010720",500,quad.cal=c(avar=0.105423,bvar=6.38662,cvar=0.002752060))
-
-
-
-  
-plinear <- ggplot(subset(all.data,Cal=="010720"), aes(Response, Nominal.Conc)) +
-  geom_point(size=3) +
-  scale_y_continuous(limits=c(0,max(subset(all.data,Cal=="010720")$Nominal.Conc,na.rm=T))) +
-  scale_x_continuous(limits=c(0,max(subset(all.data,Cal=="010720")$Response,na.rm=T))) +
-  ylab("Nominal Concentration (uM)") +
-  xlab("Normalized Response") +
-  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="AF")$Response,color="Red") +
-  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="T5")$Response,color="Blue") +
-#  geom_abline(slope=1/4.267595, intercept=0.00295*(1-1/4.267595),linetype="dashed") +
-  geom_line(data=cal.curves,aes(x=Bayesian,y=Conc),linetype="dashed")+
-  geom_line(data=cal.curves,aes(x=Quadratic,y=Conc),linetype="dotted")+
-  ggtitle("PFOS 010720") +
-  theme(text = element_text(size=20))
-print(plinear)
-
-  
-plog <- ggplot(subset(all.data,Cal=="010720"), aes(Response, Nominal.Conc)) +
-  geom_point(size=3) +
-  scale_y_log10(label=scientific_10) +
-  scale_x_log10(label=scientific_10) +
-  ylab("Nominal Concentration (uM)") +
-  xlab("Normalized Response") +
-  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="AF")$Response,color="Red") +
-  geom_vline(xintercept = subset(all.data,Cal=="010720"&Sample.Type=="T5")$Response,color="Blue") +
-  geom_line(data=cal.curves,aes(x=Bayesian,y=Conc),linetype="dashed")+
-  geom_line(data=cal.curves,aes(x=Quadratic,y=Conc),linetype="dotted")+
-  ggtitle("PFOS 010720") +
-  theme(text = element_text(size=20))
- 
-print(plog)
+print(plots$plinear)
+print(plots$plog)
 
 
 
