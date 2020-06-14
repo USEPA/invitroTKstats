@@ -9,27 +9,35 @@ model {
     log.const.analytic.sd[i] ~ dunif(-6, 0)
     log.hetero.analytic.slope.factor[i] ~ dunif(-5, 1)
     background[i] ~ dunif(0, 10000)   
-    log.calibration[i] ~ dunif(-2, 2)
+    log.calibration.low[i] ~ dunif(-2, 3)
+    calibration.high[i] ~ dunif(-1000,1000)
+    log.C.cal.thresh[i] ~ dunif(-3, 2)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope.factor[i] <- 10^log.hetero.analytic.slope.factor[i]
     hetero.analytic.slope[i] <- hetero.analytic.slope.factor[i]*const.analytic.sd[i]
-    calibration[i] <- 10^log.calibration[i]
+    calibration.low[i] <- 10^log.calibration.low[i]
+    C.cal.thresh[i] <- 10^log.C.cal.thresh[i]
     # Concentrations below this value are not detectable:
-    C.thresh[i] <- background[i]/calibration[i]
+    C.thresh[i] <- background[i]/calibration.low[i]
   }
   
   # Mass-spec observations:  
   for (i in 1:Num.obs) 
   {
     Response.pred[i] <- 
-      calibration[obs.cal[i]]*
+      (calibration.low[obs.cal[i]] + calibration.high[obs.cal[i]]*
+        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]))*
       (Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]])*
       step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) + 
-      background[obs.cal[i]]
+      background[obs.cal[i]] -
+      (calibration.high[obs.cal[i]] * 
+        (C.cal.thresh[obs.cal[i]] - C.thresh[obs.cal[i]])*
+        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]))
     Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
       hetero.analytic.slope[obs.cal[i]]*
-      calibration[obs.cal[i]]*
+      (calibration.low[obs.cal[i]] + calibration.high[obs.cal[i]]*
+        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]))*
       Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]])^(-2)
     Response.obs[i] ~ dnorm(Response.pred[i],Response.prec[i])
   }
@@ -44,7 +52,7 @@ model {
   for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
   {
   # Priors for whole samples for ultra centrigugation UC):
-    Conc[i] ~ dunif(0.0001,1000)
+    Conc[i] ~ dnorm(10,1)
   # Aqueous fraction concentrations for UC samples:
     Conc[i+Num.series] <- Fup * Conc[i]
   }   
@@ -225,7 +233,9 @@ calc_uc_fup <- function(PPB.data,
             log.const.analytic.sd =runif(Num.cal,-2.2,-1.8),
             log.hetero.analytic.slope.factor = runif(Num.cal,-4,-2),
             background = rlnorm(Num.cal,log(10^-3),1),
-            log.calibration = runif(Num.cal,-0.1,0.1),
+            log.calibration.low = runif(Num.cal,-0.1,0.1),
+            calibration.high = runif(Num.cal,-0.1,0.1),
+            log.C.cal.thresh = runif(Num.cal,-0.1,0.1),
 #            log.C.thresh = runif(Num.cal,-3,-2),
 # There is only one Fup per chemical:
             log.Fup = log10(runif(1,0,1))
@@ -256,7 +266,9 @@ calc_uc_fup <- function(PPB.data,
             'Fup',
             'C.thresh',
             'background',
-            'calibration',
+            'calibration.low',
+            'calibration.high',
+            'C.cal.thresh',
             "Conc"))
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
