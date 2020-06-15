@@ -46,9 +46,8 @@ plot_uc_results <- function(dat,bayes,compound,cal,MW,quad.cal=NULL,cal.col="Cal
       cal.slope.high *
       Heaviside(cal.curves$Conc,threshold=C.cal.thresh)) * 
       cal.curves$Conc + 
-    cal.int +
-    cal.slope.high * 
-      (C.cal.thresh - cal.int) *
+    cal.int -
+    C.cal.thresh * cal.slope.high *
       Heaviside(cal.curves$Conc,threshold=C.cal.thresh)
 
   if (!is.null(quad.cal))

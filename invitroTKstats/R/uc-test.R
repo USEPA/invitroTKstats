@@ -224,7 +224,10 @@ print(plots$plinear)
 print(plots$plog)
 
 
-
+plots <- plot_uc_results(all.data,out$coda,"PFOS","072319",500)
+plots <- plot_uc_results(all.data,out$coda,"PFOA","100119",500)
+plots <- plot_uc_results(all.data,out$coda,"PFOA","041219",500)
+plots <- plot_uc_results(all.data,out$coda,"PFOS","010720",500,quad.cal=c(avar=0.105423,bvar=6.38662,cvar=0.002752060))
 
 
 

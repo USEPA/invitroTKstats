@@ -11,7 +11,7 @@ model {
     background[i] ~ dunif(0, 10000)   
     log.calibration.low[i] ~ dunif(-2, 3)
     calibration.high[i] ~ dunif(-1000,1000)
-    log.C.cal.thresh[i] ~ dunif(-3, 2)
+    log.C.cal.thresh[i] ~ dunif(-3, 1)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope.factor[i] <- 10^log.hetero.analytic.slope.factor[i]
@@ -31,9 +31,8 @@ model {
       (Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]])*
       step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) + 
       background[obs.cal[i]] -
-      (calibration.high[obs.cal[i]] * 
-        (C.cal.thresh[obs.cal[i]] - C.thresh[obs.cal[i]])*
-        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]))
+      C.cal.thresh[obs.cal[i]] * calibration.high[obs.cal[i]] * 
+        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]])
     Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
       hetero.analytic.slope[obs.cal[i]]*
       (calibration.low[obs.cal[i]] + calibration.high[obs.cal[i]]*
@@ -41,8 +40,7 @@ model {
       Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]])^(-2)
     Response.obs[i] ~ dnorm(Response.pred[i],Response.prec[i])
   }
-  
-  
+
 # Binding Model:
   # Prior on Fup: 
   log.Fup ~ dunif(-15, 0)
@@ -235,7 +233,7 @@ calc_uc_fup <- function(PPB.data,
             background = rlnorm(Num.cal,log(10^-3),1),
             log.calibration.low = runif(Num.cal,-0.1,0.1),
             calibration.high = runif(Num.cal,-0.1,0.1),
-            log.C.cal.thresh = runif(Num.cal,-0.1,0.1),
+            log.C.cal.thresh = runif(Num.cal,-2,-1),
 #            log.C.thresh = runif(Num.cal,-3,-2),
 # There is only one Fup per chemical:
             log.Fup = log10(runif(1,0,1))
