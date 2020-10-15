@@ -6,17 +6,18 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dunif(-6, 0)
-    log.hetero.analytic.slope.factor[i] ~ dunif(-5, 1)
-    background[i] ~ dunif(0, 10000)   
-    log.calibration.low[i] ~ dunif(-2, 3)
-    calibration.high[i] ~ dunif(-1000,1000)
-    log.C.cal.thresh[i] ~ dunif(-3, 1)
+    log.const.analytic.sd[i] ~ dunif(-6, 1)
+    log.hetero.analytic.slope.factor[i] ~ dunif(-5, 2)
+    background[i] ~ dunif(0, .1)   
+    log.calibration.low[i] ~ dunif(-2, 2)
+    calibration.high.multiple[i] ~ dunif(0,10)
+    log.C.cal.thresh[i] ~ dunif(-3, -1)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope.factor[i] <- 10^log.hetero.analytic.slope.factor[i]
     hetero.analytic.slope[i] <- hetero.analytic.slope.factor[i]*const.analytic.sd[i]
     calibration.low[i] <- 10^log.calibration.low[i]
+    calibration.high[i] <- (calibration.high.multiple[i] - 1) * calibration.low[i]
     C.cal.thresh[i] <- 10^log.C.cal.thresh[i]
     # Concentrations below this value are not detectable:
     C.thresh[i] <- background[i]/calibration.low[i]
@@ -25,19 +26,22 @@ model {
   # Mass-spec observations:  
   for (i in 1:Num.obs) 
   {
-    Response.pred[i] <- 
-      (calibration.low[obs.cal[i]] + calibration.high[obs.cal[i]]*
-        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]))*
-      (Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]])*
-      step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) + 
-      background[obs.cal[i]] -
+# The parameters for calibration curve
+    slope[i] <- calibration.low[obs.cal[i]] + calibration.high[obs.cal[i]] *
+        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]) 
+    intercept[i] <- background[obs.cal[i]] -
       C.cal.thresh[obs.cal[i]] * calibration.high[obs.cal[i]] * 
         step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]])
+# Mass spec response as a function of diluted concentration:        
+    Response.pred[i] <- 
+      slope[i] * 
+      (Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) *
+      step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) +
+      intercept[i] 
+# Heteroskedastic precision:
     Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
-      hetero.analytic.slope[obs.cal[i]]*
-      (calibration.low[obs.cal[i]] + calibration.high[obs.cal[i]]*
-        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]))*
-      Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]])^(-2)
+      hetero.analytic.slope[obs.cal[i]] * Response.pred[i])^(-2)
+# Model for the observation:
     Response.obs[i] ~ dnorm(Response.pred[i],Response.prec[i])
   }
 
@@ -67,6 +71,7 @@ model {
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
+#' We don't currently use the T1 data, but you must have CC, AF, and T5 data.
 #'
 #' @param PPB.data A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identiy, and measurment type.
@@ -96,12 +101,17 @@ calc_uc_fup <- function(PPB.data,
   NUM.CHAINS=5, 
   NUM.CORES=2,
   RANDOM.SEED=1111,
+  sample.col="Sample.Name",
   compound.col="Compound.Name",
-  response.col="Response",
+  area.col="Area",
+  series.col="Series",
   type.col="Sample.Type",
   compound.conc.col="Nominal.Conc",
   cal.col="Cal",
-  dilution.col="Dilution.Factor"
+  dilution.col="Dilution.Factor",
+  istd.col="ISTD.Area",
+  istd.name.col="ISTD.Name",
+  istd.conc.col="ISTD.Conc" 
   )
 {
   if (!is.null(TEMP.DIR)) 
@@ -110,7 +120,36 @@ calc_uc_fup <- function(PPB.data,
     setwd(TEMP.DIR)
   }
   
-  all.blanks <- subset(PPB.data,!is.na(eval(response.col)))
+  PPB.data <- as.data.frame(PPB.data)
+  all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
+
+  # Only include the data types used:
+  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c("CC","T1","T5","AF"))
+  
+  # Organize the columns:
+  PPB.data <- PPB.data[,c(
+    sample.col,
+    compound.col,
+    type.col,
+    dilution.col,
+    cal.col,
+    compound.conc.col,
+    istd.name.col,
+    istd.conc.col,
+    istd.col,
+    series.col,
+    area.col)]
+  
+  # calculate the reponse:
+  PPB.data[,"Response"] <- PPB.data[,area.col] /
+     PPB.data[,istd.col] *  PPB.data[,istd.conc.col]
+  
+# Write out a "level 1" file (data organized into a standard format):  
+  write.table(PPB.data, 
+    file=paste(FILENAME,"-Level1Data.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
 
   OUTPUT.FILE <- paste(FILENAME,".txt",sep="")
 
@@ -168,21 +207,21 @@ calc_uc_fup <- function(PPB.data,
         {
           these.series <- unique(T5.data[
             T5.data[,cal.col]==all.cal[i],
-            "Series"])
+            series.col])
           Num.series <- Num.series + length(these.series) 
           T5.data[
             T5.data[,cal.col]==all.cal[i],
             "Series"] <- paste(all.cal[i],
              T5.data[
                T5.data[,cal.col]==all.cal[i],
-               "Series"],
+               series.col],
              sep="-")
           AF.data[
             AF.data[,cal.col]==all.cal[i],
-            "Series"] <- paste(all.cal[i],
+            series.col] <- paste(all.cal[i],
              AF.data[
                AF.data[,cal.col]==all.cal[i],
-               "Series"],
+               series.col],
              sep="-")
           all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
         }
@@ -210,7 +249,7 @@ calc_uc_fup <- function(PPB.data,
         mydata <- list(   
           'Num.cal' = Num.cal,            
           'Num.obs' = Num.obs,
-          "Response.obs" = UC.obs[,response.col],
+          "Response.obs" = UC.obs[,"Response"],
           "obs.conc" = UC.obs[,"Obs.Conc"],
           "obs.cal" = UC.obs[,"Obs.Cal"],
           "Conc" = Conc,
@@ -232,7 +271,7 @@ calc_uc_fup <- function(PPB.data,
             log.hetero.analytic.slope.factor = runif(Num.cal,-4,-2),
             background = rlnorm(Num.cal,log(10^-3),1),
             log.calibration.low = runif(Num.cal,-0.1,0.1),
-            calibration.high = runif(Num.cal,-0.1,0.1),
+            calibration.high.multiple = runif(Num.cal,0.9,1.1),
             log.C.cal.thresh = runif(Num.cal,-2,-1),
 #            log.C.thresh = runif(Num.cal,-3,-2),
 # There is only one Fup per chemical:
@@ -267,6 +306,9 @@ calc_uc_fup <- function(PPB.data,
             'calibration.low',
             'calibration.high',
             'C.cal.thresh',
+            "intercept",
+            "slope",
+            "Response.pred",
             "Conc"))
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]

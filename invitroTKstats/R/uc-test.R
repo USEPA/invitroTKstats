@@ -6,6 +6,12 @@ library(runjags)
 source("calc_uc_fup.R")
 source("plot_uc_results.R")
 
+CC.DILUTE <- 1
+BLANK.DILUTE <- 1
+AF.DILUTE <- 2*16
+T5.DILUTE <- 5*16
+T1.DILUTE <- 5*16
+
 # read from the Excel file using library(gdata)
 dat <- read.xls("20200402_PFAS_UC_PFOA_PFOS.xlsx",stringsAsFactors=F,sheet=3,skip=12)
 #Create a column to hold sample type variable:
@@ -24,20 +30,20 @@ dat[regexpr("UC-T5",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 dat[regexpr("-S2",dat$Sample.Text)!=-1,"Series"] <- 2
 dat <- subset(dat,Sample.Type=="CC"|Series==2)
 # CC is already diluted, everything else is diluted at least 16 times:
-dat$Dilution.Factor <- 1
+dat$Dilution.Factor <- CC.DILUTE
 # Blanks are treated as part of the CC but need to be diluted:
-dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- BLANK.DILUTE
 # Additional dilutions for AF and T1/T4 samples:
-dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- 4*4*2
-dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- 4*4*5
-dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- 4*4*5
+dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- AF.DILUTE
+dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- T5.DILUTE
+dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- T1.DILUTE
 # Get rid of data that does not have a sample type:
 dat <- subset(dat,Sample.Type!="")
 # Get rid of non PFOA data
 dat <- subset(dat,Series %in% c(NA,"2"))
 dat$Compound.Name <- "PFOA"
 # Recalculate the response column:
-IS.conc <- 3
+IS.conc <- 3 / 414.07
 dat$Response2 <- dat$Area/dat$IS.Area*IS.conc
 # Compare the two response columns:
 dat[,c("Response","Response2")]
@@ -78,15 +84,15 @@ dat[regexpr("UC_T5hr_Mix1",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("Mix1",dat$Sample.Text)!=-1,"Series"] <- 1
 # CC is already diluted, everything else is diluted at least 16 times:
-dat$Dilution.Factor <- 1
+dat$Dilution.Factor <- CC.DILUTE
 # Blanks are treated as part of the CC but need to be diluted:
-dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- BLANK.DILUTE
 # Need to adjust the study conc column to reflect target concentration, not diluted:
 dat[dat[,"Sample.Type"]=="CC","Std..Conc"] <- dat[dat[,"Sample.Type"]=="CC","Std..Conc"]
 # Additional dilutions for AF and T1/T4 samples:
-dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- 4*4*2
-dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- 4*4*5
-dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- 4*4*5
+dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- AF.DILUTE
+dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- T5.DILUTE
+dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- T1.DILUTE
 # Get rid of data that does not have a sample type:
 dat <- subset(dat,Sample.Type!="")
 # Get rid of non-PFOA data:
@@ -129,15 +135,15 @@ dat[regexpr("UC_T5hr_Mix2",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("Mix2",dat$Sample.Text)!=-1,"Series"] <- 1
 # CC is already diluted, everything else is diluted at least 16 times:
-dat$Dilution.Factor <- 1
+dat$Dilution.Factor <- CC.DILUTE
 # Blanks are treated as part of the CC but need to be diluted:
-dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- BLANK.DILUTE
 # Need to adjust the study conc column to reflect target concentration, not diluted:
 dat[dat[,"Sample.Type"]=="CC","Std..Conc"] <- dat[dat[,"Sample.Type"]=="CC","Std..Conc"]
 # Additional dilutions for AF and T1/T4 samples:
-dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- 4*4*2
-dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- 4*4*5
-dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- 4*4*5
+dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- AF.DILUTE
+dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- T5.DILUTE
+dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- T1.DILUTE
 # Get rid of data that does not have a sample type:
 dat <- subset(dat,Sample.Type!="")
 # Get rid of non-PFOA data:
@@ -181,15 +187,15 @@ dat[regexpr("UC_T5hr_Mix3",dat$Sample.Text)!=-1,"Sample.Type"] <- "T5"
 # Identify the series (note, these are different chemicals)
 dat[regexpr("Mix3",dat$Sample.Text)!=-1,"Series"] <- 1
 # CC is already diluted, everything else is diluted at least 16 times:
-dat$Dilution.Factor <- 1
+dat$Dilution.Factor <- CC.DILUTE
 # Blanks are treated as part of the CC but need to be diluted:
-dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- 4*4
+dat[regexpr("Mixed Matrix Blank",dat$Sample.Text)!=-1,"Dilution.Factor"] <- BLANK.DILUTE
 # Need to adjust the study conc column to reflect target concentration, not diluted:
 dat[dat[,"Sample.Type"]=="CC","Std..Conc"] <- dat[dat[,"Sample.Type"]=="CC","Std..Conc"]
 # Additional dilutions for AF and T1/T4 samples:
-dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- 4*4*2
-dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- 4*4*5
-dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- 4*4*5
+dat[dat[,"Sample.Type"]=="AF","Dilution.Factor"] <- AF.DILUTE
+dat[dat[,"Sample.Type"]=="T5","Dilution.Factor"] <- T5.DILUTE
+dat[dat[,"Sample.Type"]=="T1","Dilution.Factor"] <- T1.DILUTE
 # Get rid of data that does not have a sample type:
 dat <- subset(dat,Sample.Type!="")
 # Get rid of non-PFOA data:
@@ -218,17 +224,12 @@ all.data <- rbind(all.data,dat)
    
 out <- calc_uc_fup(all.data)
   
+p1 <- plot_uc_results(all.data,out$coda,"PFOA","041219",500)
+p2 <- plot_uc_results(all.data,out$coda,"PFOA","100119",500)
+p3 <- plot_uc_results(all.data,out$coda,"PFOS","072319",500)
+p4 <- plot_uc_results(all.data,out$coda,"PFOS","010720",500,quad.cal=c(avar=0.105423,bvar=6.38662,cvar=0.002752060))
 
-plots <- plot_uc_results(all.data,out$coda,"PFOS","010720",500,quad.cal=c(avar=0.105423,bvar=6.38662,cvar=0.002752060))
-print(plots$plinear)
-print(plots$plog)
-
-
-plots <- plot_uc_results(all.data,out$coda,"PFOS","072319",500)
-plots <- plot_uc_results(all.data,out$coda,"PFOA","100119",500)
-plots <- plot_uc_results(all.data,out$coda,"PFOA","041219",500)
-plots <- plot_uc_results(all.data,out$coda,"PFOS","010720",500,quad.cal=c(avar=0.105423,bvar=6.38662,cvar=0.002752060))
-
+print(p4$plog)
 
 
 

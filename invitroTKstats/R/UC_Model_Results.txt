@@ -1,0 +1,3 @@
+"Name" "Fup.Med" "Fup.Low" "Fup.High"
+"Heptafluorobutyramide" 0.8532645 0.649509975 0.99232495
+"Nonafluoropentanamide" 0.762721 0.444032325 0.987107425
