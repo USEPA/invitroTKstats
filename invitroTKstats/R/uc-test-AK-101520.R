@@ -25,22 +25,37 @@ sampleinfo <- subset(sampleinfo,!duplicated(Name))
 
 
 dat1 <- read_excel("120619_PFAS_PPB_Amides_UC_AK_072020.xlsx",sheet=12,skip=1)
+dat2 <- read_excel("120619_PFAS_PPB_Amides_UC_AK_072020.xlsx",sheet=14,skip=1)
+
+# Set the date:
+dat1$Date <- "102919"
+dat2$Date <- "110119"
+
 
 #Label the samples:
-dat1$Sample.Name <- dat1$Name
+dat1$Lab.Sample.Name <- dat1$Name
+dat2$Lab.Sample.Name <- dat2$Name
 
 #Create a column to hold sample type variable:
 dat1$Sample.Type <- ""
+dat2$Sample.Type <- ""
+
+
 #Create a column to hold the concentration for standards:
 dat1$Standard.Conc <- NaN
+dat2$Standard.Conc <- NaN
  
 # All standards are sample type "Cal" for calibration curve:
 dat1[dat1$Type=="Cal","Sample.Type"] <- "CC"
+dat2[dat2$Type=="Cal","Sample.Type"] <- "CC"
+
 # Set the dilution factor:
 dat1[dat1$Type=="Cal","Dilution.Factor"] <- CC.DILUTE
+dat2[dat2$Type=="Cal","Dilution.Factor"] <- CC.DILUTE
 
-# Everything in this data set using the same calibration:
+# Everything in each data set uses the same calibration:
 dat1$Cal <- 1
+dat2$Cal <- 2
 
 # Add concentrations of standards
 for (this.sample in unlist(dat1[dat1$Sample.Type=="CC",3]))
@@ -48,88 +63,174 @@ for (this.sample in unlist(dat1[dat1$Sample.Type=="CC",3]))
   dat1[dat1[,3]==this.sample,"Standard.Conc"] <- 
     as.numeric(sampleinfo[sampleinfo[,1]==this.sample,2])
 }
+for (this.sample in unlist(dat2[dat2$Sample.Type=="CC",3]))
+{
+  dat2[dat2[,3]==this.sample,"Standard.Conc"] <- 
+    as.numeric(sampleinfo[sampleinfo[,1]==this.sample,2])
+}
 
 # All blanks are treated as standards with concentration zero:
+# Set type:
 dat1[dat1$Type=="Blank","Sample.Type"] <- "CC"
+dat2[dat2$Type=="Blank","Sample.Type"] <- "CC"
+# Set conc:
 dat1[dat1$Type=="Blank","Standard.Conc"] <- 0
+dat2[dat2$Type=="Blank","Standard.Conc"] <- 0
+# Set dilution factor:
 dat1[dat1$Type=="Blank","Dilution.Factor"] <- BLANK.DILUTE
+dat2[dat2$Type=="Blank","Dilution.Factor"] <- BLANK.DILUTE
 
 # Identify the aqueous fraction samples:
-dat1[regexpr("UCG1AF",unlist(dat1[,3]))!=-1,"Sample.Type"] <- "AF"
-dat1[regexpr("UCG1AF",unlist(dat1[,3]))!=-1,"Dilution.Factor"] <- AF.DILUTE
+# Set type:
+dat1[regexpr("UCG1AF",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Sample.Type"] <- "AF"
+dat2[regexpr("UCG1 AF",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Sample.Type"] <- "AF"
+# Set dilution factor:
+dat1[regexpr("UCG1AF",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Dilution.Factor"] <- AF.DILUTE
+dat2[regexpr("UCG1 AF",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Dilution.Factor"] <- AF.DILUTE
+
 # Identify the T1h and T5h whole samples:
-dat1[regexpr("UCG1T1h",unlist(dat1[,3]))!=-1,"Sample.Type"] <- "T1"
-dat1[regexpr("UCG1T1h",unlist(dat1[,3]))!=-1,"Dilution.Factor"] <- T1.DILUTE
-dat1[regexpr("UCG1T5h",unlist(dat1[,3]))!=-1,"Sample.Type"] <- "T5"
-dat1[regexpr("UCG1T5h",unlist(dat1[,3]))!=-1,"Dilution.Factor"] <- T5.DILUTE
+# Set type:
+dat1[regexpr("UCG1T1h",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Sample.Type"] <- "T1"
+dat2[regexpr("UCG1 T1h",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Sample.Type"] <- "T1"
+# Set dilution factor:
+dat1[regexpr("UCG1T1h",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Dilution.Factor"] <- T1.DILUTE
+dat2[regexpr("UCG1 T1h",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Dilution.Factor"] <- T1.DILUTE
+# Set type:
+dat1[regexpr("UCG1T5h",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Sample.Type"] <- "T5"
+dat2[regexpr("UCG1 T5h",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Sample.Type"] <- "T5"
+# Set dilution factor:
+dat1[regexpr("UCG1T5h",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Dilution.Factor"] <- T5.DILUTE
+dat2[regexpr("UCG1 T5h",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Dilution.Factor"] <- T5.DILUTE
 
 # Set the target concentration:
-dat1[data1$Sample.Type=="T1","Test.Target.Conc"] <- T1.TARGET
+dat1[dat1$Sample.Type=="T1","Test.Target.Conc"] <- T1.TARGET
+dat2[dat2$Sample.Type=="T1","Test.Target.Conc"] <- T1.TARGET
 
-# Identify the set:
+# Identify the sets:
 dat1$Set <- 0
-dat1[regexpr("S1",unlist(dat1[,3]))!=-1,"Set"] <- 1
-dat1[regexpr("S2",unlist(dat1[,3]))!=-1,"Set"] <- 2
-dat1[regexpr("S3",unlist(dat1[,3]))!=-1,"Set"] <- 3
+dat1[regexpr("S1",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Set"] <- 1
+dat1[regexpr("S2",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Set"] <- 2
+dat1[regexpr("S3",unlist(dat1[,"Lab.Sample.Name"]))!=-1,"Set"] <- 3
+dat2$Set <- 0
+dat2[regexpr("S1",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Set"] <- 1
+dat2[regexpr("S2",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Set"] <- 2
+dat2[regexpr("S3",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Set"] <- 3
 
 # Identify the internal standard used:
 dat1$ISTD.Name <- "M8FOSA" 
 dat1$ISTD.Conc <- 12000
+# Be sure to check this!!
 dat1$ISTD.Area <- unlist(dat1[,"Area...16"])
 dat1 <- subset(dat1,!is.na(ISTD.Area))
 dat1 <- subset(dat1,ISTD.Area>0)
+dat2$ISTD.Name <- "M8FOSA" 
+dat2$ISTD.Conc <- 12000
+# BE SURE TO CHECK THIS:
+dat2$ISTD.Area <- unlist(dat2[,"Area...16"])
+dat2 <- subset(dat2,!is.na(ISTD.Area))
+dat2 <- subset(dat2,ISTD.Area>0)
 
 # Now annotate data by chemical:
+# 102919 has data on all five
+# 110119 has data only on 916 and 923
+
+
+# Chemical 908:
+WHICH.CHEM <- 1
 dat1.chem1 <- dat1
-dat1.chem1$DTXSID<- unlist(chems[1,"DTXSID"])
-dat1.chem1$Name<- unlist(chems[1,"Name"])
+dat1.chem1$DTXSID<- unlist(chems[WHICH.CHEM,"DTXSID"])
+dat1.chem1$Name<- unlist(chems[WHICH.CHEM,"Name"])
+dat1.chem1$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
+# BE SURE TO CHECK THIS:
 dat1.chem1$Chem.Area <- unlist(dat1[,"Area...14"])
-rownames(dat1.chem1) <- paste(chems[1,"DTXSID"],rownames(dat1.chem1),sep=".")
+#rownames(dat1.chem1) <- paste(chems[1,"DTXSID"],rownames(dat1.chem1),sep=".")
 
+
+# Chemical 909:
+WHICH.CHEM <- 2
 dat1.chem2 <- dat1
-dat1.chem2$DTXSID<- unlist(chems[2,"DTXSID"])
-dat1.chem2$Name<- unlist(chems[2,"Name"])
+dat1.chem2$DTXSID<- unlist(chems[WHICH.CHEM,"DTXSID"])
+dat1.chem2$Name<- unlist(chems[WHICH.CHEM,"Name"])
+dat1.chem2$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
+# BE SURE TO CHECK THIS:
 dat1.chem2$Chem.Area <- unlist(dat1[,"Area...22"])
-rownames(dat1.chem2) <- paste(chems[2,"DTXSID"],rownames(dat1.chem2),sep=".")
+#rownames(dat1.chem2) <- paste(chems[2,"DTXSID"],rownames(dat1.chem2),sep=".")
 
+
+# Chemical 916
+WHICH.CHEM <- 3
 dat1.chem3 <- dat1
-dat1.chem3$DTXSID<- unlist(chems[3,"DTXSID"])
-dat1.chem3$Name<- unlist(chems[3,"Name"])
+dat1.chem3$DTXSID<- unlist(chems[WHICH.CHEM,"DTXSID"])
+dat1.chem3$Name<- unlist(chems[WHICH.CHEM,"Name"])
+dat1.chem3$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
+# BE SURE TO CHECK THIS:
 dat1.chem3$Chem.Area <- unlist(dat1[,"Area...38"])
-rownames(dat1.chem3) <- paste(chems[3,"DTXSID"],rownames(dat1.chem3),sep=".")
+#rownames(dat1.chem3) <- paste(chems[3,"DTXSID"],rownames(dat1.chem3),sep=".")
 
+dat2.chem3 <- dat2
+dat2.chem3$DTXSID<- unlist(chems[WHICH.CHEM,"DTXSID"])
+dat2.chem3$Name<- unlist(chems[WHICH.CHEM,"Name"])
+dat2.chem3$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
+# BE SURE TO CHECK THIS:
+dat2.chem3$Chem.Area <- unlist(dat2[,"Area...46"])
+#rownames(dat2.chem3) <- paste(chems[3,"DTXSID"],rownames(dat2.chem3),sep=".")
+
+
+# Chemical 923:
+WHICH.CHEM <- 4
 dat1.chem4 <- dat1
 dat1.chem4$DTXSID<- unlist(chems[4,"DTXSID"])
 dat1.chem4$Name<- unlist(chems[4,"Name"])
+dat1.chem4$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
+# BE SURE TO CHECK THIS:
 dat1.chem4$Chem.Area <- unlist(dat1[,"Area...46"])
-rownames(dat1.chem4) <- paste(chems[4,"DTXSID"],rownames(dat1.chem4),sep=".")
+#rownames(dat1.chem4) <- paste(chems[4,"DTXSID"],rownames(dat1.chem4),sep=".")
 
+dat2.chem4 <- dat2
+dat2.chem4$DTXSID<- unlist(chems[WHICH.CHEM,"DTXSID"])
+dat2.chem4$Name<- unlist(chems[WHICH.CHEM,"Name"])
+dat2.chem4$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
+# BE SURE TO CHECK THIS:
+dat2.chem4$Chem.Area <- unlist(dat2[,"Area...54"])
+#rownames(dat2.chem3) <- paste(chems[3,"DTXSID"],rownames(dat2.chem3),sep=".")
+
+# Chemical 3117:
+WHICH.CHEM <- 5
 dat1.chem5 <- dat1
-dat1.chem5$DTXSID<- unlist(chems[5,"DTXSID"])
-dat1.chem5$Name<- unlist(chems[5,"Name"])
+dat1.chem5$DTXSID<- unlist(chems[WHICH.CHEM,"DTXSID"])
+dat1.chem5$Name<- unlist(chems[WHICH.CHEM,"Name"])
+dat1.chem5$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
+# BE SURE TO CHECK THIS:
 dat1.chem5$Chem.Area <- unlist(dat1[,"Area...30"])
-rownames(dat1.chem5) <- paste(chems[5,"DTXSID"],rownames(dat1.chem5),sep=".")
+#rownames(dat1.chem5) <- paste(chems[5,"DTXSID"],rownames(dat1.chem5),sep=".")
+
+all.data <- bind_rows(
+  dat1.chem1,
+  dat1.chem2,
+  dat1.chem3,
+  dat2.chem3,
+  dat1.chem4,
+  dat2.chem4,
+  dat1.chem5)
 
 
-dat1 <- bind_rows(dat1.chem1,dat1.chem2,dat1.chem3,dat1.chem4,dat1.chem5)
+
 
 # Only some chemicals are in each set:
-dat1 <- subset(dat1, Sample.Type=="CC" |
+all.data <- subset(all.data, Sample.Type=="CC" |
   (Set==1 & DTXSID %in% unlist(chems[1:2,"DTXSID"])) |
   (Set==3 & DTXSID %in% unlist(chems[5,"DTXSID"])) |
   (Set==2 & DTXSID %in% unlist(chems[3:4,"DTXSID"])))
   
 
 # No replicate series in this data set:
-dat1$Series <- 1
-dat1[dat1$Sample.Type=="CC","Series"] <- NA
+all.data$Series <- 1
+all.data[all.data$Sample.Type=="CC","Series"] <- NA
 
-# Set the date:
-dat1$Date <- "102919"
-dat1$Lab.Sample.ID <- dat1$Name
+
 
    
-out <- calc_uc_fup(dat1,
+out <- calc_uc_fup(all.data,
   compound.col="Name",
   area.col="Chem.Area",
   compound.conc.col="Standard.Conc")

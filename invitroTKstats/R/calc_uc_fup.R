@@ -96,7 +96,9 @@ calc_uc_fup <- function(PPB.data,
   NUM.CHAINS=5, 
   NUM.CORES=2,
   RANDOM.SEED=1111,
-  sample.col="Sample.Name",
+  sample.col="Lab.Sample.Name",
+  lab.compound.col="Lab.Compound.Name",
+  dtxsid.col="DTXSID",
   date.col="Date",
   compound.col="Compound.Name",
   area.col="Area",
@@ -128,6 +130,8 @@ calc_uc_fup <- function(PPB.data,
     sample.col,
     date.col,
     compound.col,
+    dtxsid.col,
+    lab.compound.col,
     type.col,
     dilution.col,
     cal.col,
@@ -267,14 +271,14 @@ calc_uc_fup <- function(PPB.data,
           cal.coeff <- lm(
             mydata$Response.obs[1:mydata$Num.cc.obs]~
             mydata$Conc[1:mydata$Num.cc.obs])[["coefficients"]]
-          slope <- cal.coeff[2]
-          intercept <- cal.coeff[1]
+          slope <- as.numeric(cal.coeff[2])
+          intercept <- as.numeric(cal.coeff[1])
           
 # We need a vector with NA's for all the values that are not sampled, but 
 # initial values for the concentrations that are inferred (the T5's):
           init.Conc <- rep(NA,Num.cc.obs+Num.series*2)
           init.Conc[(Num.cc.obs+1):(Num.cc.obs+Num.series)] <- 
-            mean(T5.data[,nominal.test.conc.col],na.rm=T)
+            mydata$TEST.NOMINAL.CONC
             
           return(list(
             .RNG.seed=seed,
