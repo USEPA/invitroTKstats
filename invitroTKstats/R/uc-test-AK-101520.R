@@ -9,9 +9,10 @@ source("plot_uc_results.R")
 
 CC.DILUTE <- 1
 BLANK.DILUTE <- 1
-AF.DILUTE <- 2*16
-T5.DILUTE <- 5*16
-T1.DILUTE <- 5*16
+AF.DILUTE <- 2
+T5.DILUTE <- 10
+T1.DILUTE <- 10
+T1.TARGET <- 10000
 
 # read from the Excel file using library(readxl)
 chems <- read_excel("120619_PFAS_PPB_Amides_UC_AK_072020.xlsx",sheet=2,skip=3)[1:6,1:3]
@@ -62,8 +63,11 @@ dat1[regexpr("UCG1T1h",unlist(dat1[,3]))!=-1,"Dilution.Factor"] <- T1.DILUTE
 dat1[regexpr("UCG1T5h",unlist(dat1[,3]))!=-1,"Sample.Type"] <- "T5"
 dat1[regexpr("UCG1T5h",unlist(dat1[,3]))!=-1,"Dilution.Factor"] <- T5.DILUTE
 
+# Set the target concentration:
+dat1[data1$Sample.Type=="T1","Test.Target.Conc"] <- T1.TARGET
+
 # Identify the set:
-data1$Set <- NA
+dat1$Set <- 0
 dat1[regexpr("S1",unlist(dat1[,3]))!=-1,"Set"] <- 1
 dat1[regexpr("S2",unlist(dat1[,3]))!=-1,"Set"] <- 2
 dat1[regexpr("S3",unlist(dat1[,3]))!=-1,"Set"] <- 3
@@ -112,16 +116,18 @@ dat1 <- bind_rows(dat1.chem1,dat1.chem2,dat1.chem3,dat1.chem4,dat1.chem5)
 # Only some chemicals are in each set:
 dat1 <- subset(dat1, Sample.Type=="CC" |
   (Set==1 & DTXSID %in% unlist(chems[1:2,"DTXSID"])) |
-  (Set==3 & DTXSID %in% unlist(chems[3,"DTXSID"])) |
-  (Set==2 & DTXSID %in% unlist(chems[4:5,"DTXSID"])))
+  (Set==3 & DTXSID %in% unlist(chems[5,"DTXSID"])) |
+  (Set==2 & DTXSID %in% unlist(chems[3:4,"DTXSID"])))
   
-  
-
-
 
 # No replicate series in this data set:
 dat1$Series <- 1
 dat1[dat1$Sample.Type=="CC","Series"] <- NA
+
+# Set the date:
+dat1$Date <- "102919"
+dat1$Lab.Sample.ID <- dat1$Name
+
    
 out <- calc_uc_fup(dat1,
   compound.col="Name",

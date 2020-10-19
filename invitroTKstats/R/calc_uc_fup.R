@@ -6,37 +6,30 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dunif(-6, 1)
-    log.hetero.analytic.slope.factor[i] ~ dunif(-5, 2)
-    background[i] ~ dunif(0, .1)   
-    log.calibration.low[i] ~ dunif(-2, 2)
-    calibration.high.multiple[i] ~ dunif(0,10)
-    log.C.cal.thresh[i] ~ dunif(-3, -1)
+    log.const.analytic.sd[i] ~ dunif(-10,-0.5)
+    log.hetero.analytic.slope[i] ~ dunif(-5,0)
+    C.thresh[i] ~ dunif(0,TEST.NOMINAL.CONC/10)
+    log.calibration[i] ~ dunif(-2, 2)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
-    hetero.analytic.slope.factor[i] <- 10^log.hetero.analytic.slope.factor[i]
-    hetero.analytic.slope[i] <- hetero.analytic.slope.factor[i]*const.analytic.sd[i]
-    calibration.low[i] <- 10^log.calibration.low[i]
-    calibration.high[i] <- (calibration.high.multiple[i] - 1) * calibration.low[i]
-    C.cal.thresh[i] <- 10^log.C.cal.thresh[i]
+    hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
+    calibration[i] <- 10^log.calibration[i]
     # Concentrations below this value are not detectable:
-    C.thresh[i] <- background[i]/calibration.low[i]
+    background[i] <- C.thresh[i]/calibration[i]
   }
   
   # Mass-spec observations:  
   for (i in 1:Num.obs) 
   {
 # The parameters for calibration curve
-    slope[i] <- calibration.low[obs.cal[i]] + calibration.high[obs.cal[i]] *
-        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]]) 
-    intercept[i] <- background[obs.cal[i]] -
-      C.cal.thresh[obs.cal[i]] * calibration.high[obs.cal[i]] * 
-        step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.cal.thresh[obs.cal[i]])
+    slope[i] <- calibration[obs.cal[i]]
+    intercept[i] <- background[obs.cal[i]]
 # Mass spec response as a function of diluted concentration:        
     Response.pred[i] <- 
       slope[i] * 
-      (Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) *
-      step(Conc[obs.conc[i]]/Dilution.Factor[obs.conc[i]] - C.thresh[obs.cal[i]]) +
+#      (Conc[obs.conc[i]]/Dilution.Factor[i] +
+      (Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) *
+      step(Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) +
       intercept[i] 
 # Heteroskedastic precision:
     Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
@@ -51,12 +44,14 @@ model {
   # Scale conversion:
   Fup <- 10^log.Fup
 
+
   for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
   {
   # Priors for whole samples for ultra centrigugation UC):
-    Conc[i] ~ dnorm(10,1)
+    Conc[i] ~ dnorm(TEST.NOMINAL.CONC,TEST.NOMINAL.CONC^-2)
   # Aqueous fraction concentrations for UC samples:
     Conc[i+Num.series] <- Fup * Conc[i]
+#    Conc[i+Num.series] ~ dnorm(TEST.NOMINAL.CONC,TEST.NOMINAL.CONC^-2)
   }   
 }
 "
@@ -102,6 +97,7 @@ calc_uc_fup <- function(PPB.data,
   NUM.CORES=2,
   RANDOM.SEED=1111,
   sample.col="Sample.Name",
+  date.col="Date",
   compound.col="Compound.Name",
   area.col="Area",
   series.col="Series",
@@ -111,7 +107,8 @@ calc_uc_fup <- function(PPB.data,
   dilution.col="Dilution.Factor",
   istd.col="ISTD.Area",
   istd.name.col="ISTD.Name",
-  istd.conc.col="ISTD.Conc" 
+  istd.conc.col="ISTD.Conc",
+  nominal.test.conc.col="Test.Target.Conc" 
   )
 {
   if (!is.null(TEMP.DIR)) 
@@ -129,11 +126,13 @@ calc_uc_fup <- function(PPB.data,
   # Organize the columns:
   PPB.data <- PPB.data[,c(
     sample.col,
+    date.col,
     compound.col,
     type.col,
     dilution.col,
     cal.col,
     compound.conc.col,
+    nominal.test.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
@@ -183,6 +182,7 @@ calc_uc_fup <- function(PPB.data,
       MSdata <- PPB.data[PPB.data[,compound.col]==this.compound,]
     
       if (any(MSdata[,type.col]=="CC") &
+          any(MSdata[,type.col]=="T1") &
           any(MSdata[,type.col]=="T5") &
           any(MSdata[,type.col]=="AF"))
       {
@@ -199,6 +199,7 @@ calc_uc_fup <- function(PPB.data,
   #
   #
   #  Each series (currently) contains T5 and AF data
+        T1.data <- MSdata[MSdata[,type.col]=="T1",]
         T5.data <- MSdata[MSdata[,type.col]=="T5",]
         AF.data <- MSdata[MSdata[,type.col]=="AF",]
         Num.series <- 0
@@ -255,27 +256,39 @@ calc_uc_fup <- function(PPB.data,
           "Conc" = Conc,
           "Num.cc.obs" = Num.cc.obs,
           "Num.series" = Num.series,
-          "Dilution.Factor" = Dilution.Factor
+          "Dilution.Factor" = Dilution.Factor,
+          "TEST.NOMINAL.CONC" = mean(T1.data[,nominal.test.conc.col],na.rm=T)
         )
-
+        
         initfunction <- function(chain)
         {
           seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
           set.seed(seed)
+          cal.coeff <- lm(
+            mydata$Response.obs[1:mydata$Num.cc.obs]~
+            mydata$Conc[1:mydata$Num.cc.obs])[["coefficients"]]
+          slope <- cal.coeff[2]
+          intercept <- cal.coeff[1]
           
+# We need a vector with NA's for all the values that are not sampled, but 
+# initial values for the concentrations that are inferred (the T5's):
+          init.Conc <- rep(NA,Num.cc.obs+Num.series*2)
+          init.Conc[(Num.cc.obs+1):(Num.cc.obs+Num.series)] <- 
+            mean(T5.data[,nominal.test.conc.col],na.rm=T)
+            
           return(list(
             .RNG.seed=seed,
             .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
-            log.const.analytic.sd =runif(Num.cal,-2.2,-1.8),
-            log.hetero.analytic.slope.factor = runif(Num.cal,-4,-2),
-            background = rlnorm(Num.cal,log(10^-3),1),
-            log.calibration.low = runif(Num.cal,-0.1,0.1),
-            calibration.high.multiple = runif(Num.cal,0.9,1.1),
-            log.C.cal.thresh = runif(Num.cal,-2,-1),
-#            log.C.thresh = runif(Num.cal,-3,-2),
+            log.const.analytic.sd =runif(Num.cal,-5,-0.5),
+            log.hetero.analytic.slope = runif(Num.cal,-5,-0.5),
+# Average across all the calibrations (the sampler will vary these):
+            C.thresh = rep(max(0,intercept/slope),Num.cal),
+            log.calibration = rep(log10(slope),Num.cal),
 # There is only one Fup per chemical:
-            log.Fup = log10(runif(1,0,1))
+            log.Fup = log10(runif(1,0,1)),
+# Set the initial concentrations:
+            Conc = init.Conc
           ))
         }
         
@@ -303,13 +316,10 @@ calc_uc_fup <- function(PPB.data,
             'Fup',
             'C.thresh',
             'background',
-            'calibration.low',
-            'calibration.high',
-            'C.cal.thresh',
-            "intercept",
-            "slope",
-            "Response.pred",
-            "Conc"))
+            'calibration'))
+            #,
+            #"Response.pred",
+            #"Conc"))
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
@@ -322,6 +332,8 @@ calc_uc_fup <- function(PPB.data,
           "Fup.Low",
           "Fup.High")] <- results[c(2,1,3),"Fup"]
     
+        print(mydata$Num.obs)
+        print(mydata$Response.obs)
         print(results)
     
         Results <- rbind(Results,new.results)
