@@ -217,7 +217,7 @@ calc_uc_fup <- function(PPB.data,
           T5.data[
             T5.data[,cal.col]==all.cal[i],
             "Series"] <- paste(all.cal[i],
-             T5.data[
+             T5.data[                          
                T5.data[,cal.col]==all.cal[i],
                series.col],
              sep="-")
