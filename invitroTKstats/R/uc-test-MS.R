@@ -42,30 +42,40 @@ dat <- subset(dat,Sample.Type!="")
 # Get rid of non PFOA data
 dat <- subset(dat,Series %in% c(NA,"2"))
 dat$Compound.Name <- "PFOA"
-# Recalculate the response column:
-IS.conc <- 3 / 414.07
-dat$Response2 <- dat$Area/dat$IS.Area*IS.conc
-# Compare the two response columns:
-dat[,c("Response","Response2")]
-# Subset to just the columns the Bayesian analysis needs: 
-dat <- dat[,c("Compound.Name","Name","Sample.Type","Series","Std..Conc","Dilution.Factor","Response2")]
-# Rename the columns:
-colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal.Conc","Dilution.Factor","Response")
+
+
+
+
 # Give the calibration a name:
 dat$Cal <- "041219"
+# Set a date for the samples:
+dat$Date <- "041219"
+# Set info for chemical:
+dat$Lab.Compound.Name <- "PFOA"
+dat$DTXSID <- "DTXSID8031865"
+
+
+colnames(dat)[colnames(dat)=="Name"] <- "Lab.Sample.Name"
+colnames(dat)[colnames(dat)=="Std..Conc"] <- "Standard.Conc"
+# concentration units (pg/uL -> ug/L -> uM):
+dat$Standard.Conc <- dat$Standard.Conc / 414.07
+
+# Recalculate the response column:
+dat$ISTD.Name <-""
+dat$ISTD.Conc <- 3 / 414.07
+
+# What concentration were we trying for:
+dat[dat$Sample.Type=="T1","Test.Target.Conc"] <- 10 / 414.07
+
+
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
-# concentration units (pg/uL -> ug/L -> uM):
-dat$Nominal.Conc <- dat$Nominal.Conc / 414.07
 
 
-
-# Save the data:
-write.csv(dat,file="PFOA041219.csv",row.names=F)
-
-#out <- calc_uc_fup(dat)
 
 all.data <- dat
+
+
 
 # read from the Excel file using library(gdata)
 dat <- read.xls("20200402_PFAS_UC_PFOA_PFOS.xlsx",stringsAsFactors=F,sheet=4,skip=11)
@@ -98,25 +108,41 @@ dat <- subset(dat,Sample.Type!="")
 # Get rid of non-PFOA data:
 dat <- subset(dat,Series %in% c(NA,"1"))
 dat$Compound.Name <- "PFOA"
-# Recalculate the response:
-IS.conc <- .01
-dat$Response2 <- dat$Area/dat$IS.Area*IS.conc
-# Compare the two response columns:
-dat[,c("Response","Response2")]
-# Subset to just the columns the Bayesian analysis needs: 
-dat <- dat[,c("Compound.Name","Name","Sample.Type","Series","Std..Conc","Dilution.Factor","Response2")]
-# Rename the columns:
-colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal.Conc","Dilution.Factor","Response")
+
 # Give the calibration a name:
 dat$Cal <- "100119"
+# Set a date for the samples:
+dat$Date <- "100119"
+
+# Set info for chemical:
+dat$Lab.Compound.Name <- "PFOA"
+dat$DTXSID <- "DTXSID8031865"
+
+colnames(dat)[colnames(dat)=="Name"] <- "Lab.Sample.Name"
+colnames(dat)[colnames(dat)=="Std..Conc"] <- "Standard.Conc"
+# adjust to actual molecular weight:
+dat$Standard.Conc <- dat$Standard.Conc * 305 * 414.07
+
+# Information on the internal standard:
+dat$ISTD.Name <-""
+dat$ISTD.Conc <- .01
+
+# What concentration were we trying for:
+dat[dat$Sample.Type=="T1","Test.Target.Conc"] <- 10 / 414.07
+
+
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
-# adjust to actual molecular weight:
-dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 414.07
-# Save the data:
-write.csv(dat,file="PFOA100119.csv",row.names=F)
+
 # add these data to data object:
-all.data <- rbind(all.data,dat)
+all.data <- all.data[,colnames(all.data)[colnames(all.data)%in%colnames(dat)]]
+all.data <- rbind(all.data,dat[,colnames(all.data)])
+
+
+
+
+
+
   
 # read from the Excel file using library(gdata)
 dat <- read.xls("20200402_PFAS_UC_PFOA_PFOS.xlsx",stringsAsFactors=F,sheet=5,skip=11)
@@ -149,25 +175,37 @@ dat <- subset(dat,Sample.Type!="")
 # Get rid of non-PFOA data:
 dat <- subset(dat,Series %in% c(NA,"1"))
 dat$Compound.Name <- "PFOS"
-# Recalculate the response:
-IS.conc <- .01
-dat$Response2 <- dat$Area/dat$IS.Area*IS.conc
-# Compare the two response columns:
-dat[,c("Response","Response2")]
-# Subset to just the columns the Bayesian analysis needs: 
-dat <- dat[,c("Compound.Name","Name","Sample.Type","Series","Std..Conc","Dilution.Factor","Response2")]
-# Rename the columns:
-colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal.Conc","Dilution.Factor","Response")
+
 # Give the calibration a name:
 dat$Cal <- "072319"
+# Set the date for the samples:
+dat$Date <- "072319"
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
 # adjust to actual molecular weight:
 dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 500.13 
-# Save the data:
-write.csv(dat,file="PFOS072319.csv",row.names=F)
+
+# Set info for chemical:
+dat$Lab.Compound.Name <- "PFOS"
+dat$DTXSID <- "DTXSID3031864"
+
+colnames(dat)[colnames(dat)=="Name"] <- "Lab.Sample.Name"
+colnames(dat)[colnames(dat)=="Std..Conc"] <- "Standard.Conc"
+# adjust to actual molecular weight:
+dat$Standard.Conc <- dat$Standard.Conc * 305 * 500.13 
+
+# Information on the internal standard:
+dat$ISTD.Name <-""
+dat$ISTD.Conc <- .01
+
+# What concentration were we trying for:
+dat[dat$Sample.Type=="T1","Test.Target.Conc"] <- 10 / 500.13 
+
 # add these data to data object:
-all.data <- rbind(all.data,dat)
+all.data <- rbind(all.data,dat[,colnames(all.data)])
+
+  
+  
   
 # read from the Excel file using library(gdata)
 dat <- read.xls("20200402_PFAS_UC_PFOA_PFOS.xlsx",stringsAsFactors=F,sheet=6,skip=11)
@@ -206,6 +244,10 @@ IS.conc <- .01
 dat$Response2 <- dat$Area/dat$IS.Area*IS.conc
 # Compare the two response columns:
 dat[,c("Response","Response2")]
+
+
+
+
 # Subset to just the columns the Bayesian analysis needs: 
 dat <- dat[,c("Compound.Name","Name","Sample.Type","Series","Std..Conc","Dilution.Factor","Response2")]
 # Rename the columns:
@@ -216,8 +258,6 @@ dat$Cal <- "010720"
 dat <- subset(dat,!is.na(Response))
 # adjust to actual molecular weight and uM:
 dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 500.13
-# Save the data:
-write.csv(dat,file="PFOS010720.csv",row.names=F)
 # add these data to data object:
 all.data <- rbind(all.data,dat)
 

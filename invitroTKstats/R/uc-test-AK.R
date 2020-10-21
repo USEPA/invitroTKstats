@@ -279,11 +279,20 @@ all.data <- subset(all.data, Sample.Type=="CC" |
   (Set==3 & DTXSID %in% unlist(chems[5,"DTXSID"])) |
   (Set==2 & DTXSID %in% unlist(chems[3:4,"DTXSID"])))
   
-# Some data have been tossed out:
+# Some data did not pass QC:
 all.data <- subset(all.data,
   sapply(all.data$Comment,
     function(x) ifelse(is.na(x),TRUE,regexpr("ropped",x)==-1)))
-    
+all.data <- subset(all.data,
+  sapply(all.data$Lab.Sample.Name,
+    function(x) ifelse(is.na(x),TRUE,regexpr("Cr10/11",x)==-1)))    
+all.data <- subset(all.data,
+  sapply(all.data$Lab.Sample.Name,
+    function(x) ifelse(is.na(x),TRUE,regexpr("UCG1AFS2C_SE 10/11",x)==-1)))    
+all.data <- subset(all.data,
+  sapply(all.data$Lab.Sample.Name,
+    function(x) ifelse(is.na(x),TRUE,regexpr("UCG1 AF S2C1009_SE 11/1",x)==-1)))    
+
 
 # No replicate series in this data set:
 all.data$Series <- 1
@@ -293,6 +302,7 @@ all.data[all.data$Sample.Type=="CC","Series"] <- NA
 
    
 out <- calc_uc_fup(all.data,
+  FILENAME = "AK_UC_Model_Results",
   compound.col="Name",
   area.col="Chem.Area",
   compound.conc.col="Standard.Conc")
