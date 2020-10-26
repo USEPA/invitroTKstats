@@ -138,10 +138,8 @@ dat2$Set <- 0
 dat2[regexpr("S1",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Set"] <- 1
 dat2[regexpr("S2",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Set"] <- 2
 dat2[regexpr("S3",unlist(dat2[,"Lab.Sample.Name"]))!=-1,"Set"] <- 3
-dat3$Set <- 0
-dat3[regexpr("S1",unlist(dat3[,"Lab.Sample.Name"]))!=-1,"Set"] <- 1
-dat3[regexpr("S2",unlist(dat3[,"Lab.Sample.Name"]))!=-1,"Set"] <- 2
-dat3[regexpr("S3",unlist(dat3[,"Lab.Sample.Name"]))!=-1,"Set"] <- 3
+
+
 
 # Identify the internal standard used:
 dat1$ISTD.Name <- "M8FOSA" 
@@ -213,7 +211,8 @@ dat3.chem3$Name<- unlist(chems[WHICH.CHEM,"Name"])
 dat3.chem3$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
 # BE SURE TO CHECK THIS:
 dat3.chem3$Chem.Area <- unlist(dat3[,"Area...30"])
-
+dat3.chem3$Set <- 0
+dat3.chem3[dat3.chem3$Sample.Type %in% c("T1","T5","AF"),"Set"] <- 2
 
 # Chemical 923:
 WHICH.CHEM <- 4
@@ -238,6 +237,8 @@ dat3.chem4$Name<- unlist(chems[WHICH.CHEM,"Name"])
 dat3.chem4$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
 # BE SURE TO CHECK THIS:
 dat3.chem4$Chem.Area <- unlist(dat3[,"Area...38"])
+dat3.chem4$Set <- 0
+dat3.chem4[dat3.chem4$Sample.Type %in% c("T1","T5","AF"),"Set"] <- 2
 
 
 
@@ -256,6 +257,8 @@ dat3.chem5$Name<- unlist(chems[WHICH.CHEM,"Name"])
 dat3.chem5$Lab.Compound.Name <- unlist(chems[WHICH.CHEM,"Sample ID"])
 # BE SURE TO CHECK THIS:
 dat3.chem5$Chem.Area <- unlist(dat3[,"Area...14"])
+dat3.chem5$Set <- 0
+dat3.chem5[dat3.chem5$Sample.Type %in% c("T1","T5","AF"),"Set"] <- 3
 
 
 all.data <- bind_rows(
@@ -300,7 +303,7 @@ all.data[all.data$Sample.Type=="CC","Series"] <- NA
 
 
 
-   
+source("calc_uc_fup.R")
 out <- calc_uc_fup(all.data,
   FILENAME = "AK_UC_Model_Results",
   compound.col="Name",

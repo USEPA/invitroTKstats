@@ -53,8 +53,17 @@ model {
 }
 "
 
-#' This funcion calculates fraction unbound in plasma
+#' Calculate fraction unbound in plasma from rapid equilibruim dialysis data
 #' 
+#' The data frame of observations should be annotated according to
+#' of these types:
+#' \tabular{rrrrr}{
+#'   Sample Blank (no chemical, just plasma) \tab Blank\cr
+#'   Time zero chemical and plasma \tab T0\cr
+#'   Equilibrium chemical in phosphate-buffered well (no plasma) \tab PBS\cr
+#'   Equilibrium chemical in plasma well \tab Plasma\cr
+#' }
+#'
 #' @param PPB.data A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identiy, and measurment type.
 #' @param this.conc The plasma protein concentration relative to physiologic
@@ -82,7 +91,21 @@ calc_fup_base <- function(PPB.data,
 #  JAGS.PATH ="C:/Program Files/JAGS/JAGS-4.3.0/x64/bin/",
   NUM.CHAINS=5, 
   NUM.CORES=2,
-  RANDOM.SEED=1111  
+  sample.col="Lab.Sample.Name",
+  lab.compound.col="Lab.Compound.Name",
+  dtxsid.col="DTXSID",
+  date.col="Date",
+  compound.col="Compound.Name",
+  area.col="Area",
+  series.col="Series",
+  type.col="Sample.Type",
+  compound.conc.col="Nominal.Conc",
+  cal.col="Cal",
+  dilution.col="Dilution.Factor",
+  istd.col="ISTD.Area",
+  istd.name.col="ISTD.Name",
+  istd.conc.col="ISTD.Conc",
+  nominal.test.conc.col="Test.Target.Conc" 
   )
 {
   if (!is.null(TEMP.DIR)) 
@@ -91,16 +114,86 @@ calc_fup_base <- function(PPB.data,
     setwd(TEMP.DIR)
   }
   
-  all.blanks <- subset(PPB.data,!is.na(Area))
+  PPB.data <- as.data.frame(PPB.data)
+  all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
 
-  OUTPUT.FILE <- paste(FILENAME,".txt",sep="")
+  # Only include the data types used:
+  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c(
+    "Blank",
+    "T0",
+    "PBS",
+    "Plasma"))
+  
+  # Organize the columns:
+  PPB.data <- PPB.data[,c(
+    sample.col,
+    date.col,
+    compound.col,
+    dtxsid.col,
+    lab.compound.col,
+    type.col,
+    dilution.col,
+    cal.col,
+    compound.conc.col,
+    nominal.test.conc.col,
+    istd.name.col,
+    istd.conc.col,
+    istd.col,
+    series.col,
+    area.col)]
+    
+  # Rename the columns:
+    sample.col <- "Lab.Sample.Name"
+    date.col <- "Date"
+    compound.col <- "Compound.Name"
+    dtxsid.col <- "DTXSID"
+    lab.compound.col <- "Lab.Compound.Name"
+    type.col <- "Sample.Type"
+    dilution.col <- "Dilution.Factor"
+    cal.col <- "Calibration"
+    compound.conc.col <- "Standard.Conc"
+    nominal.test.conc.col <- "Test.Target.Conc"
+    istd.name.col <- "ISTD.Name"
+    istd.conc.col <- "ISTD.Conc"
+    istd.col <- "ISTD.Area"
+    series.col <- "Series"
+    area.col <- "Area"
+  colnames(PPB.data) <- c(
+    sample.col,
+    date.col,
+    compound.col,
+    dtxsid.col,
+    lab.compound.col,
+    type.col,
+    dilution.col,
+    cal.col,
+    compound.conc.col,
+    nominal.test.conc.col,
+    istd.name.col,
+    istd.conc.col,
+    istd.col,
+    series.col,
+    area.col)
+  
+  # calculate the reponse:
+  PPB.data[,"Response"] <- PPB.data[,area.col] /
+     PPB.data[,istd.col] *  PPB.data[,istd.conc.col]
+  
+# Write out a "level 1" file (data organized into a standard format):  
+  write.table(, 
+    file=paste(FILENAME,"-Level1.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
+
+  OUTPUT.FILE <- paste(FILENAME,"-Level2.tsv",sep="")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
   {
     Results <- NULL
   } else {
-    Results <- read.table(OUTPUT.FILE,sep=" ",stringsAsFactors=F,header=T)
+    Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
   }
 
   if (NUM.CORES>1)
@@ -111,21 +204,23 @@ calc_fup_base <- function(PPB.data,
   for (this.compound in  unique(PPB.data$CompoundName))
     if (!(this.compound %in% Results[,"CompoundName"]))
     {
-      this.name <- PPB.data[PPB.data$CompoundName==this.compound,"Name"][1]
+      this.name <- PPB.data[PPB.data[,compound.col]==this.compound,compound.col][1]
+      this.dtxsid <- PPB.data[PPB.data[,compound.col]==this.compound,dtxsid.col][1]
+      this.lab.name <- PPB.data[PPB.data[,compound.col]==this.compound,lab.compound.col][1]
       
       print(paste(
         this.name,
         " (",
-        which(unique(PPB.data$CompoundName)==this.compound),
+        which(unique(PPB.data[,compound.col])==this.compound),
         " of ",
-        length(unique(PPB.data$CompoundName)),
+        length(unique(PPB.data[,compound.col])),
         ")",
         sep=""))
-      MSdata <- subset(PPB.data,CompoundName==this.compound)
+      MSdata <- PPB.data[PPB.data[,compound.col]==this.compound,]
     # Can't use blanks that are NA:
-      MSdata <- subset(MSdata,!is.na(ISTDResponseRatio) | Type!="Blank")
+      MSdata <- subset(MSdata,!is.na(Response) | MSdata[,type.col] != "Blank")
     # Delete any concentrations that are NA:
-      MSdata <- subset(MSdata,!is.na(Conc) | Type!="Blank")
+      MSdata <- subset(MSdata,!is.na(Conc) | MSdata[,type.col != "Blank")
     
       if (any(MSdata$Type=="T0") &
           any(MSdata$Type=="PBS") &

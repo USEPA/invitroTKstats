@@ -121,7 +121,7 @@ dat$DTXSID <- "DTXSID8031865"
 colnames(dat)[colnames(dat)=="Name"] <- "Lab.Sample.Name"
 colnames(dat)[colnames(dat)=="Std..Conc"] <- "Standard.Conc"
 # adjust to actual molecular weight:
-dat$Standard.Conc <- dat$Standard.Conc * 305 * 414.07
+dat$Standard.Conc <- dat$Standard.Conc / 305 * 414.07
 
 # Information on the internal standard:
 dat$ISTD.Name <-""
@@ -182,8 +182,6 @@ dat$Cal <- "072319"
 dat$Date <- "072319"
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
-# adjust to actual molecular weight:
-dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 500.13 
 
 # Set info for chemical:
 dat$Lab.Compound.Name <- "PFOS"
@@ -192,7 +190,7 @@ dat$DTXSID <- "DTXSID3031864"
 colnames(dat)[colnames(dat)=="Name"] <- "Lab.Sample.Name"
 colnames(dat)[colnames(dat)=="Std..Conc"] <- "Standard.Conc"
 # adjust to actual molecular weight:
-dat$Standard.Conc <- dat$Standard.Conc * 305 * 500.13 
+dat$Standard.Conc <- dat$Standard.Conc / 305 * 500.13 
 
 # Information on the internal standard:
 dat$ISTD.Name <-""
@@ -239,30 +237,48 @@ dat <- subset(dat,Sample.Type!="")
 # Get rid of non-PFOA data:
 dat <- subset(dat,Series %in% c(NA,"1"))
 dat$Compound.Name <- "PFOS"
-# Recalculate the response:
-IS.conc <- .01
-dat$Response2 <- dat$Area/dat$IS.Area*IS.conc
-# Compare the two response columns:
-dat[,c("Response","Response2")]
 
-
-
-
-# Subset to just the columns the Bayesian analysis needs: 
-dat <- dat[,c("Compound.Name","Name","Sample.Type","Series","Std..Conc","Dilution.Factor","Response2")]
-# Rename the columns:
-colnames(dat) <- c("Compound.Name","Sample.Name","Sample.Type","Series","Nominal.Conc","Dilution.Factor","Response")
 # Give the calibration a name:
 dat$Cal <- "010720"
+
+# Set the date for the samples:
+dat$Date <- "010720"
 # Get rid of data that for whatever reason doesn't have a response value:
 dat <- subset(dat,!is.na(Response))
-# adjust to actual molecular weight and uM:
-dat$Nominal.Conc <- dat$Nominal.Conc / 305 * 500.13
+
+# Set info for chemical:
+dat$Lab.Compound.Name <- "PFOS"
+dat$DTXSID <- "DTXSID3031864"
+
+colnames(dat)[colnames(dat)=="Name"] <- "Lab.Sample.Name"
+colnames(dat)[colnames(dat)=="Std..Conc"] <- "Standard.Conc"
+# adjust to actual molecular weight:
+dat$Standard.Conc <- dat$Standard.Conc / 305 * 500.13 
+
+# Information on the internal standard:
+dat$ISTD.Name <-""
+dat$ISTD.Conc <- .01
+
+# What concentration were we trying for:
+dat[dat$Sample.Type=="T1","Test.Target.Conc"] <- 10 / 500.13 
+
 # add these data to data object:
-all.data <- rbind(all.data,dat)
+all.data <- rbind(all.data,dat[,colnames(all.data)])
+
+# add these data to data object:
+all.data <- rbind(all.data,dat[,colnames(all.data)])
 
    
-out <- calc_uc_fup(all.data)
+source("calc_uc_fup.R")
+out <- calc_uc_fup(all.data,
+  FILENAME = "MS_UC_Model_Results",
+  compound.col="Compound.Name",
+  istd.col="IS.Area",
+  area.col="Area",
+  compound.conc.col="Standard.Conc")
+
+
+
   
 p1 <- plot_uc_results(all.data,out$coda,"PFOA","041219",500)
 p2 <- plot_uc_results(all.data,out$coda,"PFOA","100119",500)

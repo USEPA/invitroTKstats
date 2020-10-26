@@ -8,7 +8,7 @@ model {
     # Priors:
     log.const.analytic.sd[i] ~ dunif(-10,-0.5)
     log.hetero.analytic.slope[i] ~ dunif(-5,0)
-    C.thresh[i] ~ dunif(0,TEST.NOMINAL.CONC/10)
+    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
     log.calibration[i] ~ dunif(-2, 2)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
@@ -48,15 +48,15 @@ model {
   for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
   {
   # Priors for whole samples for ultra centrigugation UC):
-    Conc[i] ~ dnorm(TEST.NOMINAL.CONC,TEST.NOMINAL.CONC^-2)
+    Conc[i] ~ dnorm(Test.Nominal.Conc[obs.cal[i]],
+      Test.Nominal.Conc[obs.cal[i]]^-2)
   # Aqueous fraction concentrations for UC samples:
     Conc[i+Num.series] <- Fup * Conc[i]
-#    Conc[i+Num.series] ~ dnorm(TEST.NOMINAL.CONC,TEST.NOMINAL.CONC^-2)
   }   
 }
 "
 
-#' This funcion calculates fraction unbound in plasma
+#' Calculate fraction unbound in plasma from ultracentrifugation data
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
@@ -142,26 +142,59 @@ calc_uc_fup <- function(PPB.data,
     istd.col,
     series.col,
     area.col)]
+    
+  # Rename the columns:
+    sample.col <- "Lab.Sample.Name"
+    date.col <- "Date"
+    compound.col <- "Compound.Name"
+    dtxsid.col <- "DTXSID"
+    lab.compound.col <- "Lab.Compound.Name"
+    type.col <- "Sample.Type"
+    dilution.col <- "Dilution.Factor"
+    cal.col <- "Calibration"
+    compound.conc.col <- "Standard.Conc"
+    nominal.test.conc.col <- "Test.Target.Conc"
+    istd.name.col <- "ISTD.Name"
+    istd.conc.col <- "ISTD.Conc"
+    istd.col <- "ISTD.Area"
+    series.col <- "Series"
+    area.col <- "Area"
+  colnames(PPB.data) <- c(
+    sample.col,
+    date.col,
+    compound.col,
+    dtxsid.col,
+    lab.compound.col,
+    type.col,
+    dilution.col,
+    cal.col,
+    compound.conc.col,
+    nominal.test.conc.col,
+    istd.name.col,
+    istd.conc.col,
+    istd.col,
+    series.col,
+    area.col)
   
   # calculate the reponse:
   PPB.data[,"Response"] <- PPB.data[,area.col] /
      PPB.data[,istd.col] *  PPB.data[,istd.conc.col]
   
 # Write out a "level 1" file (data organized into a standard format):  
-  write.table(PPB.data, 
-    file=paste(FILENAME,"-Level1Data.tsv",sep=""),
+  write.table(, 
+    file=paste(FILENAME,"-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
 
-  OUTPUT.FILE <- paste(FILENAME,".txt",sep="")
+  OUTPUT.FILE <- paste(FILENAME,"-Level2.tsv",sep="")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
   {
     Results <- NULL
   } else {
-    Results <- read.table(OUTPUT.FILE,sep=" ",stringsAsFactors=F,header=T)
+    Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
   }
 
   if (NUM.CORES>1)
@@ -171,10 +204,11 @@ calc_uc_fup <- function(PPB.data,
   
   coda.out <- list()
   for (this.compound in  unique(PPB.data[,compound.col]))
-    if (!(this.compound %in% Results[,compound.col]))
+    if (!(this.compound %in% Results[,"Compound"]))
     {
       this.name <- PPB.data[PPB.data[,compound.col]==this.compound,compound.col][1]
-      
+      this.dtxsid <- PPB.data[PPB.data[,compound.col]==this.compound,dtxsid.col][1]
+      this.lab.name <- PPB.data[PPB.data[,compound.col]==this.compound,lab.compound.col][1]
       print(paste(
         this.name,
         " (",
@@ -191,7 +225,7 @@ calc_uc_fup <- function(PPB.data,
           any(MSdata[,type.col]=="AF"))
       {
         all.cal <- unique(MSdata[,cal.col])
-        Num.cal <- length(all.cal)
+        Num.cal <- length(all.cal)        
   #
   #
   #
@@ -208,6 +242,7 @@ calc_uc_fup <- function(PPB.data,
         AF.data <- MSdata[MSdata[,type.col]=="AF",]
         Num.series <- 0
         all.series <- NULL
+        Test.Nominal.Conc <- NULL
         for (i in 1:Num.cal)
         {
           these.series <- unique(T5.data[
@@ -229,6 +264,9 @@ calc_uc_fup <- function(PPB.data,
                series.col],
              sep="-")
           all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
+          Test.Nominal.Conc[i] <- mean(T1.data[
+            T1.data[,cal.col]==all.cal[i],
+            nominal.test.conc.col],na.rm=T)
         }
         for (i in 1:Num.series)
         {
@@ -261,7 +299,7 @@ calc_uc_fup <- function(PPB.data,
           "Num.cc.obs" = Num.cc.obs,
           "Num.series" = Num.series,
           "Dilution.Factor" = Dilution.Factor,
-          "TEST.NOMINAL.CONC" = mean(T1.data[,nominal.test.conc.col],na.rm=T)
+          "Test.Nominal.Conc" = Test.Nominal.Conc
         )
         
         initfunction <- function(chain)
@@ -278,7 +316,8 @@ calc_uc_fup <- function(PPB.data,
 # initial values for the concentrations that are inferred (the T5's):
           init.Conc <- rep(NA,Num.cc.obs+Num.series*2)
           init.Conc[(Num.cc.obs+1):(Num.cc.obs+Num.series)] <- 
-            mydata$TEST.NOMINAL.CONC
+            mydata$Test.Nominal.Conc[
+              mydata$obs.cal[(Num.cc.obs+1):(Num.cc.obs+Num.series)]]
             
           return(list(
             .RNG.seed=seed,
@@ -327,14 +366,20 @@ calc_uc_fup <- function(PPB.data,
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
-        results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
+        results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
     
-        new.results <- data.frame(this.compound,stringsAsFactors=F)
-        colnames(new.results) <- compound.col
-        new.results[,c(
+        new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
+        colnames(new.results) <- c("Compound","DTXSID","Lab.Compound.Name")
+        new.results <- cbind.data.frame(new.results,
+          t(as.data.frame(as.numeric(results[c(2,1,3),"Fup"]))))
+        colnames(new.results)[4:6] <- c(
           "Fup.Med",
           "Fup.Low",
-          "Fup.High")] <- results[c(2,1,3),"Fup"]
+          "Fup.High")
+        new.results[,"Fup.point"] <- signif(mean(AF.data[,"Response"] *
+          AF.data[,"Dilution.Factor"]) / mean(T5.data[,"Response"] *
+          T5.data[,"Dilution.Factor"]),3)
+        rownames(new.results) <- this.compound
     
         print(mydata$Num.obs)
         print(mydata$Response.obs)
@@ -342,7 +387,11 @@ calc_uc_fup <- function(PPB.data,
     
         Results <- rbind(Results,new.results)
     
-        write.table(Results,file=OUTPUT.FILE,sep=" ",row.names=FALSE)
+        write.table(Results, 
+          file=paste(OUTPUT.FILE,sep=""),
+          sep="\t",
+          row.names=F,
+          quote=F)
       }    
     }
   
