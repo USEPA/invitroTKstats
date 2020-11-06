@@ -17,7 +17,7 @@ Output.File <- paste(FILENAME,"-Results.txt",sep="")
 
 RANDOM.NUMBER.SEED <- 1111
 
-setwd("Z:/Research Projects/CeetoxHumanHTTK/Clint")
+#setwd("Z:/Research Projects/CeetoxHumanHTTK/Clint")
 
 NUM.CHAINS <- 5
 NUM.CORES <- 12

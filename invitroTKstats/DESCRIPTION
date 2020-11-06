@@ -1,23 +1,22 @@
 Package: invitroTKstats
-Version: 0.0.0
-Date: 2020-04-28
+Version: 0.0.1
+Date: 2020-11-06
 Title: Tools for Analyzing In Vitro Toxicokinetic Measurements
 Description: These functions were developed for performing Bayesian
-statistical analysis of in vitro measurements to characterize
-chemical toxicokinetics. Currently they focus on measurement of
-chemical fraction unbound in the presence of plasma (f_up) as 
-measured using Rapid Equilibrium Dialysis () and measurment of
-intrinsic hepatic clearance (Clint, uL/min/million hepatocytes)
-as measured using primary hepatocytes (). The methods provided
-by the package were described in Wambaugh et al. (2019) 
-().
-
+             statistical analysis of in vitro measurements to characterize
+             chemical toxicokinetics. Currently they focus on measurement of
+             chemical fraction unbound in the presence of plasma (f_up) as 
+             measured using Rapid Equilibrium Dialysis () and measurment of
+             intrinsic hepatic clearance (Clint, uL/min/million hepatocytes)
+             as measured using primary hepatocytes (). The methods provided
+             by the package were described in Wambaugh et al. (2019).
 Authors@R: c(
            person("John", "Wambaugh", email = "wambaugh.john@epa.gov", 
              role = c("aut", "cre"),
              comment = c(ORCID = "0000-0002-4024-534X")), 
            person("Chantel", "Nicolas", role = c("ctb"),
-             comment = c(ORCID = "0000-0003-2061-5830"))
+             comment = c(ORCID = "0000-0003-2061-5830")),
+           person("Anna", "Kreutz", role = c("ctb"))
            )
 Depends: R (>= 2.10)
 Imports: runjags, parallel, gdata, coda, ggplot2
@@ -26,11 +25,7 @@ License: GPL-3
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr, R.rsp
-RoxygenNote: 7.0.2
-URL:
-        https://www.epa.gov/chemical-research/rapid-chemical-exposure-and-dose-research
-BugReports: https://github.com/USEPA/CompTox-ExpoCast-httk
+RoxygenNote: 7.1.1
+URL: https://www.epa.gov/chemical-research/rapid-chemical-exposure-and-dose-research
 NeedsCompilation: No
-Author: John Wambaugh [aut, cre] (<https://orcid.org/0000-0002-4024-534X>), 
-  Chantel Nicolas [ctb] (<https://orcid.org/0000-0003-2061-58306>)
 Maintainer: John Wambaugh <wambaugh.john@epa.gov>

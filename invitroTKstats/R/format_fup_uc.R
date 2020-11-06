@@ -87,10 +87,11 @@ model {
 #'
 #' @author John Wambaugh and Chantel Nicolas
 #' 
-#' @import parallel, runjags
+#' @import parallel 
+#' @import runjags
 #' 
-#' @export calc_fup_base
-calc_uc_fup <- function(PPB.data,
+#' @export format_fup_uc
+format_fup_uc <- function(PPB.data,
   FILENAME = "UC_Model_Results",
   TEMP.DIR = NULL,
   NUM.CHAINS=5, 

@@ -83,8 +83,8 @@ model {
 #'
 #' @author John Wambaugh and Chantel Nicolas
 #' 
-#' @export calc_fup_base
-calc_fup_base <- function(PPB.data,
+#' @export calc_red_fup_base
+calc_red_fup_base <- function(PPB.data,
   this.conc = 100,
   FILENAME = "BASE_Model_Results",
   TEMP.DIR = NULL,
@@ -220,7 +220,7 @@ calc_fup_base <- function(PPB.data,
     # Can't use blanks that are NA:
       MSdata <- subset(MSdata,!is.na(Response) | MSdata[,type.col] != "Blank")
     # Delete any concentrations that are NA:
-      MSdata <- subset(MSdata,!is.na(Conc) | MSdata[,type.col != "Blank")
+      MSdata <- subset(MSdata,!is.na(Conc))
     
       if (any(MSdata$Type=="T0") &
           any(MSdata$Type=="PBS") &
