@@ -181,7 +181,7 @@ calc_uc_fup <- function(PPB.data,
      PPB.data[,istd.col] *  PPB.data[,istd.conc.col]
   
 # Write out a "level 1" file (data organized into a standard format):  
-  write.table(, 
+  write.table(PPB.data, 
     file=paste(FILENAME,"-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
