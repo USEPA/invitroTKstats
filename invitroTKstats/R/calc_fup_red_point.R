@@ -1,12 +1,14 @@
-#' Creates a standardized data table reporting RED PPB data
+#' Calculate a point estimate of Fraction Unbound in Plasma (RED)
 #'
-#' This function formats data describing mass spectrometry (MS) peak areas
+#' This function use describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
-#' An input dataframe is organized into a standard set of columns and is written
-#' to a tab-separated text file. 
-#'
-#' The data frame of observations should be annotated according to
+#' Data are read from a "Level2" text file that should have been formatted and created 
+#' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
+#' should have been curated and had a column added with the value "Y" indicating
+#' that each row is verified as usable for analysis (that is, the Level2 file).
+#' 
+#' The should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Blank (ignored) \tab Blank\cr
@@ -14,60 +16,16 @@
 #'   Phosphate-buffered well concentration\tab PBS\cr
 #'   Time zero plasma concentration \tab T0\cr
 #' }
-#' Chemical concentration is calculated qualitatively as a response:
 #'
-#' Response <- AREA / ISTD.AREA * ISTD.CONC
+#' F_up is calculated from MS responses as:
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
+#' f_up = mean(PBS Response * Dilution.Factor) / mean(Plasma Response * Dilution Factor)
+#'
+#' @param FILENAME A string used to identify the input file, whatever the
+#' argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")
 #' 
-#' @param PPB.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
-#' contain columns with names specified by the following arguments:
-#' 
-#' @param sample.col Which column of PPB.data indicates the unique mass 
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
-#' "Lab.Sample.Name")
-#' 
-#' @param lab.compound.col Which column of PPB.data indicates The test compound 
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
-#' 
-#' @param dtxsid.col Which column of PPB.data indicates EPA's DSSTox Structure 
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#' 
-#' @param date.col Which column of PPB.data indicates the laboratory measurment
-#' date (Defaults to "Date")
-#' 
-#' @param compound.col Which column of PPB.data indicates the test compound
-#' (Defaults to "Compound.Name")
-#' 
-#' @param area.col Which column of PPB.data indicates the target analyte (that 
-#' is, the test compound) MS peak area (Defaults to "Area")
-#' 
-#' @param series.col Which column of PPB.data indicates the "series", that is
-#' a simultaneous replicate (Defaults to "Series")
-#' 
-#' @param type.col Which column of PPB.data indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
-#' 
-#' @param cal.col Which column of PPB.data indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
-#' 
-#' @param dilution.col Which column of PPB.data indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#' 
-#' @param istd.col Which column of PPB.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
-#' 
-#' @param istd.name.col Which column of PPB.data indicates identity of the 
-#' internal standard (Defaults to "ISTD.Name")
-#' 
-#' @param istd.conc.col Which column of PPB.data indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
-#' 
-#' @param nominal.test.conc.col Which column of PPB.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc") 
+#' @param good.col Name of a column indicating which rows have been verified for 
+#' analysis, indicated by a "Y" (Defaults to "Verified")
 #'
 #' @return \item{data.frame}{A data.frame in standardized format} 
 #'
@@ -79,11 +37,30 @@
 #' Pharmaceutical Sciences 97.10 (2008): 4586-4595.
 #'
 #' @export calc_fup_red_point
-calc_fup_red_point <- function(PPB.data)
+calc_fup_red_point <- function(FILENAME, good.col="Verified")
 {
-  PPB.data <- as.data.frame(PPB.data)
+  PPB.data <- read.csv(file=paste(FILENAME,"-PPB-RED-Level2.tsv",sep=""), 
+    sep="\t",header=T)  
+  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
+  PPB.data <- subset(PPB.data,!is.na(Response))
 
-# We need all these columns in PPB.data
+# Standardize the column names:
+  sample.col <- "Lab.Sample.Name"
+  date.col <- "Date"
+  compound.col <- "Compound.Name"
+  dtxsid.col <- "DTXSID"
+  lab.compound.col <- "Lab.Compound.Name"
+  type.col <- "Sample.Type"
+  dilution.col <- "Dilution.Factor"
+  cal.col <- "Calibration"
+  nominal.test.conc.col <- "Test.Target.Conc"
+  istd.name.col <- "ISTD.Name"
+  istd.conc.col <- "ISTD.Conc"
+  istd.col <- "ISTD.Area"
+  series.col <- "Series"
+  area.col <- "Area"
+
+# For a properly formatted level 2 file we should have all these columns:
   cols <-c(
     sample.col,
     date.col,
@@ -98,10 +75,12 @@ calc_fup_red_point <- function(PPB.data)
     istd.conc.col,
     istd.col,
     series.col,
-    area.col)
-  
+    area.col,
+    "Response",
+    good.col)
   if (!(all(cols %in% colnames(PPB.data))))
   {
+    warning("Run format_fup_red first (level 1) then curate to (level 2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(PPB.data))],collapse=", ")))
   }
@@ -110,53 +89,65 @@ calc_fup_red_point <- function(PPB.data)
   PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c(
     "Plasma","PBS","T0"))
   
-  # Organize the columns:
-  PPB.data <- PPB.data[,cols]
-    
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    nominal.test.conc.col <- "Test.Target.Conc"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
+  # Only used verfied data:
+  PPB.data <- subset(PPB.data, PPB.data[,good.col] == "Y")
 
-  colnames(PPB.data) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    nominal.test.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col)
-  
-  # calculate the reponse:
-  PPB.data[,"Response"] <- PPB.data[,area.col] /
-     PPB.data[,istd.col] * PPB.data[,istd.conc.col]
-  
+  out.table <-NULL
+  num.chem <- 0
+  num.cal <- 0
+  for (this.chem in unique(PPB.data[,compound.col]))
+  {
+    this.subset <- subset(PPB.data,PPB.data[,compound.col]==this.chem)
+    this.dtxsid <- this.subset$dtxsid[1]
+    this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
+      data.frame(Calibration="All Data",
+        Fup=NaN))
+    this.pbs <- subset(this.subset,Sample.Type=="PBS")
+    this.plasma <- subset(this.subset,Sample.Type=="Plasma")
+ # Check to make sure there are data for PBS and plasma: 
+    if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
+    {
+      num.chem <- num.chem + 1
+      this.row$Fup <- mean(this.pbs$Response*this.pbs$Dilution.Factor) /
+        mean(this.plasma$Response*this.plasma$Dilution.Factor)
+      out.table <- rbind(out.table, this.row)
+      print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
+  # If fup is NA something is wrong, stop and figure it out:
+      if(is.na(this.row$Fup)) browser()
+  # If there are multiple measrument days, do separate calculations:
+      if (length(unique(this.subset[,cal.col]))>1)
+      {
+        for (this.calibration in unique(this.subset[,cal.col]))
+        {
+          this.cal.subset <- subset(this.subset,
+            this.subset[,cal.col]==this.calibration)
+          this.row <- this.cal.subset[1,c(compound.col,dtxsid.col,cal.col)]
+          this.pbs <- subset(this.cal.subset,Sample.Type=="PBS")
+          this.plasma <- subset(this.cal.subset,Sample.Type=="Plasma")
+       # Check to make sure there are data for PBS and plasma: 
+          if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
+          {
+            this.row$Fup <- mean(this.pbs$Response*this.pbs$Dilution.Factor) /
+              mean(this.plasma$Response*this.plasma$Dilution.Factor)
+            out.table <- rbind(out.table, this.row)
+            num.cal <- num.cal + 1
+          }
+        }
+      } else num.cal <- num.cal + 1
+    }
+  }
+
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(PPB.data, 
-    file=paste(FILENAME,"-PPB-RED-Level1.tsv",sep=""),
+    file=paste(FILENAME,"-PPB-RED-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
+ 
+  print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))
+  print(paste("Fraction unbound values calculated for",num.cal,"measurements."))
 
-  return(PPB.data)  
+  return(out.table)  
 }
 
 
