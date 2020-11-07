@@ -98,7 +98,6 @@
 #'  lab.compound.col="CompoundName",
 #'  cal.col="RawDataSet")
 #'
-#' @references
 #' Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
 #' approach for the measurement of plasma protein binding." Journal of 
 #' Pharmaceutical Sciences 97.10 (2008): 4586-4595.

@@ -2,6 +2,7 @@
 
 export(calc_fup_red_point)
 export(calc_fup_uc)
+export(calc_fup_uc_point)
 export(calc_red_fup_base)
 export(format_fup_red)
 export(format_fup_uc)

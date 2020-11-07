@@ -1,62 +1,10 @@
-UC_PPB_model <- "
-model {
-
-# Measurement Model:
-  # Mass-spec calibration:
-  for (i in 1:Num.cal)
-  {
-    # Priors:
-    log.const.analytic.sd[i] ~ dunif(-10,-0.5)
-    log.hetero.analytic.slope[i] ~ dunif(-5,0)
-    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
-    log.calibration[i] ~ dunif(-2, 2)
-    # Scale conversions:
-    const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
-    hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
-    calibration[i] <- 10^log.calibration[i]
-    # Concentrations below this value are not detectable:
-    background[i] <- C.thresh[i]/calibration[i]
-  }
-  
-  # Mass-spec observations:  
-  for (i in 1:Num.obs) 
-  {
-# The parameters for calibration curve
-    slope[i] <- calibration[obs.cal[i]]
-    intercept[i] <- background[obs.cal[i]]
-# Mass spec response as a function of diluted concentration:        
-    Response.pred[i] <- 
-      slope[i] * 
-#      (Conc[obs.conc[i]]/Dilution.Factor[i] +
-      (Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) *
-      step(Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) +
-      intercept[i] 
-# Heteroskedastic precision:
-    Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
-      hetero.analytic.slope[obs.cal[i]] * Response.pred[i])^(-2)
-# Model for the observation:
-    Response.obs[i] ~ dnorm(Response.pred[i],Response.prec[i])
-  }
-
-# Binding Model:
-  # Prior on Fup: 
-  log.Fup ~ dunif(-15, 0)
-  # Scale conversion:
-  Fup <- 10^log.Fup
-
-
-  for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
-  {
-  # Priors for whole samples for ultra centrigugation UC):
-    Conc[i] ~ dnorm(Test.Nominal.Conc[obs.cal[i]],
-      Test.Nominal.Conc[obs.cal[i]]^-2)
-  # Aqueous fraction concentrations for UC samples:
-    Conc[i+Num.series] <- Fup * Conc[i]
-  }   
-}
-"
-
-#' Calculate fraction unbound in plasma from ultracentrifugation data
+#' Creates a standardized data table reporting UC PPB data
+#'
+#' This function formats data describing mass spectrometry (MS) peak areas
+#' from samples collected as part of in vitro measurement of chemical fraction
+#' unbound in plasma using ultracentrifugation (Redgrave 1975?).
+#' An input dataframe is organized into a standard set of columns and is written
+#' to a tab-separated text file. 
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
@@ -66,37 +14,73 @@ model {
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
-#' We don't currently use the T1 data, but you must have CC, AF, and T5 data.
+#' Chemical concentration is calculated qualitatively as a response:
 #'
-#' @param PPB.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type.
-#' @param this.conc The plasma protein concentration relative to physiologic
-#' levels (default 100%)
+#' Response <- AREA / ISTD.AREA * ISTD.CONC
+#'
 #' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "BASE_Model_Results")
-#' @param TEMP.DIR An optional directory where file writing may be faster.
-#' @param JAGS.PATH The file path to JAGS.
-#' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
-#' of convergence according to Gelman and Rubin diagnostic.
-#' @param NUM.CORES The number of processors to use (default 2)
-#' @param RANDOM.SEED The seed used by the random number generator 
-#' (default 1111)
-#'
-#' @return \item{data.frame}{A data.frame containing quunantiles of the 
-#' Bayesian posteriors} 
-#'
-#' @author John Wambaugh and Chantel Nicolas
+#' (defaults to "MYDATA")
 #' 
-#' @import parallel 
-#' @import runjags
+#' @param PPB.data A data frame containing mass-spectrometry peak areas,
+#' indication of chemical identiy, and measurment type. The data frame should
+#' contain columns with names specified by the following arguments:
+#' 
+#' @param sample.col Which column of PPB.data indicates the unique mass 
+#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
+#' "Lab.Sample.Name")
+#' 
+#' @param lab.compound.col Which column of PPB.data indicates The test compound 
+#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' 
+#' @param dtxsid.col Which column of PPB.data indicates EPA's DSSTox Structure 
+#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' 
+#' @param date.col Which column of PPB.data indicates the laboratory measurment
+#' date (Defaults to "Date")
+#' 
+#' @param compound.col Which column of PPB.data indicates the test compound
+#' (Defaults to "Compound.Name")
+#' 
+#' @param area.col Which column of PPB.data indicates the target analyte (that 
+#' is, the test compound) MS peak area (Defaults to "Area")
+#' 
+#' @param series.col Which column of PPB.data indicates the "series", that is
+#' a simultaneous replicate (Defaults to "Series")
+#' 
+#' @param type.col Which column of PPB.data indicates the sample type (see table
+#' above)(Defaults to "Sample.Type")
+#' 
+#' @param cal.col Which column of PPB.data indicates the MS calibration -- for
+#' instance different machines on the same day or different days with the same
+#' MS analyzer (Defaults to "Cal")
+#' 
+#' @param dilution.col Which column of PPB.data indicates how many times the
+#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
+#' 
+#' @param istd.col Which column of PPB.data indicates the MS peak area for the
+#' internal standard (Defaults to "ISTD.Area")
+#' 
+#' @param istd.name.col Which column of PPB.data indicates identity of the 
+#' internal standard (Defaults to "ISTD.Name")
+#' 
+#' @param istd.conc.col Which column of PPB.data indicates the concentration of
+#' the internal standard (Defaults to "ISTD.Conc")
+#' 
+#' @param nominal.test.conc.col Which column of PPB.data indicates the intended
+#' test chemical concentration at time zero (Defaults to "Test.Target.Conc") 
+#'
+#' @return \item{data.frame}{A data.frame in standardized format} 
+#'
+#' @author John Wambaugh
+#' 
+#' @references
+#' Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
+#' lipoproteins by density-gradient ultracentrifugation." Analytical 
+#' Biochemistry 65.1-2 (1975): 42-49.#' 
 #' 
 #' @export format_fup_uc
 format_fup_uc <- function(PPB.data,
-  FILENAME = "UC_Model_Results",
-  TEMP.DIR = NULL,
-  NUM.CHAINS=5, 
-  NUM.CORES=2,
-  RANDOM.SEED=1111,
+  FILENAME = "MYDATA",
   sample.col="Lab.Sample.Name",
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
@@ -113,21 +97,11 @@ format_fup_uc <- function(PPB.data,
   istd.conc.col="ISTD.Conc",
   nominal.test.conc.col="Test.Target.Conc" 
   )
-{
-  if (!is.null(TEMP.DIR)) 
-  {
-    current.dir <- getwd()
-    setwd(TEMP.DIR)
-  }
-  
+{  
   PPB.data <- as.data.frame(PPB.data)
-  all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
 
-  # Only include the data types used:
-  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c("CC","T1","T5","AF"))
-  
-  # Organize the columns:
-  PPB.data <- PPB.data[,c(
+# We need all these columns in PPB.data
+  cols <-c(
     sample.col,
     date.col,
     compound.col,
@@ -135,16 +109,28 @@ format_fup_uc <- function(PPB.data,
     lab.compound.col,
     type.col,
     dilution.col,
-    cal.col,
     compound.conc.col,
+    cal.col,
     nominal.test.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
     series.col,
-    area.col)]
+    area.col)
+  
+  if (!(all(cols %in% colnames(PPB.data))))
+  {
+    stop(paste("Missing columns named:",
+      paste(cols[!(cols%in%colnames(PPB.data))],collapse=", ")))
+  }
+
+  # Only include the data types used:
+  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c("CC","T1","T5","AF"))
+  
+  # Organize the columns:
+  PPB.data <- PPB.data[,cols]
     
-  # Rename the columns:
+  # Standardize the column names:
     sample.col <- "Lab.Sample.Name"
     date.col <- "Date"
     compound.col <- "Compound.Name"
@@ -160,6 +146,7 @@ format_fup_uc <- function(PPB.data,
     istd.col <- "ISTD.Area"
     series.col <- "Series"
     area.col <- "Area"
+    
   colnames(PPB.data) <- c(
     sample.col,
     date.col,
@@ -183,7 +170,7 @@ format_fup_uc <- function(PPB.data,
   
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(PPB.data, 
-    file=paste(FILENAME,"-Level1.tsv",sep=""),
+    file=paste(FILENAME,"-PPB-UC-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)

@@ -2,15 +2,11 @@
 % Please edit documentation in R/format_fup_uc.R
 \name{format_fup_uc}
 \alias{format_fup_uc}
-\title{Calculate fraction unbound in plasma from ultracentrifugation data}
+\title{Creates a standardized data table reporting UC PPB data}
 \usage{
 format_fup_uc(
   PPB.data,
-  FILENAME = "UC_Model_Results",
-  TEMP.DIR = NULL,
-  NUM.CHAINS = 5,
-  NUM.CORES = 2,
-  RANDOM.SEED = 1111,
+  FILENAME = "MYDATA",
   sample.col = "Lab.Sample.Name",
   lab.compound.col = "Lab.Compound.Name",
   dtxsid.col = "DTXSID",
@@ -30,31 +26,67 @@ format_fup_uc(
 }
 \arguments{
 \item{PPB.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type.}
+indication of chemical identiy, and measurment type. The data frame should
+contain columns with names specified by the following arguments:}
 
 \item{FILENAME}{A string used to identify outputs of the function call.
-(defaults to "BASE_Model_Results")}
+(defaults to "MYDATA")}
 
-\item{TEMP.DIR}{An optional directory where file writing may be faster.}
+\item{sample.col}{Which column of PPB.data indicates the unique mass 
+spectrometry (MS) sample name used by the laboratory. (Defaults to 
+"Lab.Sample.Name")}
 
-\item{NUM.CHAINS}{The number of Markov Chains to use. This allows evaluation
-of convergence according to Gelman and Rubin diagnostic.}
+\item{lab.compound.col}{Which column of PPB.data indicates The test compound 
+name used by the laboratory (Defaults to "Lab.Compound.Name")}
 
-\item{NUM.CORES}{The number of processors to use (default 2)}
+\item{dtxsid.col}{Which column of PPB.data indicates EPA's DSSTox Structure 
+ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
-\item{RANDOM.SEED}{The seed used by the random number generator 
-(default 1111)}
+\item{date.col}{Which column of PPB.data indicates the laboratory measurment
+date (Defaults to "Date")}
 
-\item{this.conc}{The plasma protein concentration relative to physiologic
-levels (default 100%)}
+\item{compound.col}{Which column of PPB.data indicates the test compound
+(Defaults to "Compound.Name")}
 
-\item{JAGS.PATH}{The file path to JAGS.}
+\item{area.col}{Which column of PPB.data indicates the target analyte (that 
+is, the test compound) MS peak area (Defaults to "Area")}
+
+\item{series.col}{Which column of PPB.data indicates the "series", that is
+a simultaneous replicate (Defaults to "Series")}
+
+\item{type.col}{Which column of PPB.data indicates the sample type (see table
+above)(Defaults to "Sample.Type")}
+
+\item{cal.col}{Which column of PPB.data indicates the MS calibration -- for
+instance different machines on the same day or different days with the same
+MS analyzer (Defaults to "Cal")}
+
+\item{dilution.col}{Which column of PPB.data indicates how many times the
+sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
+
+\item{istd.col}{Which column of PPB.data indicates the MS peak area for the
+internal standard (Defaults to "ISTD.Area")}
+
+\item{istd.name.col}{Which column of PPB.data indicates identity of the 
+internal standard (Defaults to "ISTD.Name")}
+
+\item{istd.conc.col}{Which column of PPB.data indicates the concentration of
+the internal standard (Defaults to "ISTD.Conc")}
+
+\item{nominal.test.conc.col}{Which column of PPB.data indicates the intended
+test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
 }
 \value{
-\item{data.frame}{A data.frame containing quunantiles of the 
-Bayesian posteriors}
+\item{data.frame}{A data.frame in standardized format}
 }
 \description{
+This function formats data describing mass spectrometry (MS) peak areas
+from samples collected as part of in vitro measurement of chemical fraction
+unbound in plasma using ultracentrifugation (Redgrave 1975?).
+An input dataframe is organized into a standard set of columns and is written
+to a tab-separated text file.
+}
+\details{
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
@@ -63,8 +95,15 @@ of these types:
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }
-We don't currently use the T1 data, but you must have CC, AF, and T5 data.
+Chemical concentration is calculated qualitatively as a response:
+
+Response <- AREA / ISTD.AREA * ISTD.CONC
+}
+\references{
+Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
+lipoproteins by density-gradient ultracentrifugation." Analytical 
+Biochemistry 65.1-2 (1975): 42-49.#'
 }
 \author{
-John Wambaugh and Chantel Nicolas
+John Wambaugh
 }
