@@ -30,14 +30,33 @@
 #' @return \item{data.frame}{A data.frame in standardized format} 
 #'
 #' @author John Wambaugh
+#'
+#' @examples
+#' level0 <- kreutz2020
+#' level1 <- format_fup_uc(level0,
+#'   FILENAME="Kreutz2020",
+#'   compound.col="Name",
+#'   compound.conc.col="Standard.Conc",
+#'   area.col="Chem.Area"
+#'   )
+#' level2 <- level1
+#' level2$Verified <- "Y"
 #' 
+#' write.table(level2,
+#'   file="Kreutz2020-PPB-UC-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F)
+#'
+#' level3 <- calc_fup_uc_point(FILENAME="Kreutz2020") 
+#'
 #' @references
 #' Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
 #' lipoproteins by density-gradient ultracentrifugation." Analytical 
 #' Biochemistry 65.1-2 (1975): 42-49.#' 
 #'
 #' @export calc_fup_uc_point
-calc_fup_red_point <- function(FILENAME, good.col="Verified")
+calc_fup_uc_point <- function(FILENAME, good.col="Verified")
 {
   PPB.data <- read.csv(file=paste(FILENAME,"-PPB-UC-Level2.tsv",sep=""), 
     sep="\t",header=T)  
@@ -52,7 +71,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
   lab.compound.col <- "Lab.Compound.Name"
   type.col <- "Sample.Type"
   dilution.col <- "Dilution.Factor"
-  compound.conc.col <- "Nominal.Conc"
+  compound.conc.col <- "Standard.Conc"
   cal.col <- "Calibration"
   nominal.test.conc.col <- "Test.Target.Conc"
   istd.name.col <- "ISTD.Name"
@@ -82,7 +101,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     good.col)
   if (!(all(cols %in% colnames(PPB.data))))
   {
-    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    warning("Run format_fup_uc first (level 1) then curate to level 2.")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(PPB.data))],collapse=", ")))
   }
@@ -110,11 +129,11 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     this.af <- subset(this.subset,Sample.Type=="AF")
     this.t5 <- subset(this.subset,Sample.Type=="T5")
  # Check to make sure there are data for PBS and plasma: 
-    if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
+    if (dim(this.af)[1]> 0 & dim(this.t5)[1] > 0 )
     {
       num.chem <- num.chem + 1
       this.row$Fup <- mean(this.af$Response*this.af$Dilution.Factor) /
-        mean(this.t5$Response*this.r5$Dilution.Factor)
+        mean(this.t5$Response*this.t5$Dilution.Factor)
       out.table <- rbind(out.table, this.row)
       print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
   # If fup is NA something is wrong, stop and figure it out:
@@ -130,7 +149,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
           this.af<- subset(this.cal.subset,Sample.Type=="AF")
           this.t5 <- subset(this.cal.subset,Sample.Type=="T5")
        # Check to make sure there are data for PBS and plasma: 
-          if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
+          if (dim(this.af)[1]> 0 & dim(this.t5)[1] > 0 )
           {
             this.row$Fup <- mean(this.af$Response*this.af$Dilution.Factor) /
               mean(this.t5$Response*this.t5$Dilution.Factor)
@@ -142,9 +161,15 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     }
   }
 
-# Write out a "level 1" file (data organized into a standard format):  
-  write.table(PPB.data, 
-    file=paste(FILENAME,"-PPB-RED-Level3.tsv",sep=""),
+  rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
+  out.table <- apply(out.table,2,unlist) 
+  out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3) 
+  out.table <- as.data.frame(out.table)
+  out.table$Fup <- as.numeric(out.table$Fup)
+ 
+# Write out a "level 3" file (data organized into a standard format):  
+  write.table(out.table, 
+    file=paste(FILENAME,"-PPB-UC-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)

@@ -99,6 +99,16 @@ Chemical concentration is calculated qualitatively as a response:
 
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
+\examples{
+level0 <- kreutz2020
+level1 <- format_fup_uc(level0,
+  FILENAME="Kreutz2020",
+  compound.col="Name",
+  compound.conc.col="Standard.Conc",
+  area.col="Chem.Area"
+  )
+
+}
 \references{
 Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
 lipoproteins by density-gradient ultracentrifugation." Analytical 

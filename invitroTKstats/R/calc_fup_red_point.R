@@ -137,8 +137,14 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     }
   }
 
-# Write out a "level 1" file (data organized into a standard format):  
-  write.table(PPB.data, 
+  rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
+  out.table <- apply(out.table,2,unlist) 
+  out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3) 
+  out.table <- as.data.frame(out.table)
+  out.table$Fup <- as.numeric(out.table$Fup)
+  
+# Write out a "level 3" file (data organized into a standard format):  
+  write.table(out.table, 
     file=paste(FILENAME,"-PPB-RED-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
