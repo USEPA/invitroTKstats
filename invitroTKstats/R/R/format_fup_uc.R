@@ -1,18 +1,18 @@
-#' Creates a standardized data table reporting RED PPB data
+#' Creates a standardized data table reporting UC PPB data
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
+#' unbound in plasma using ultracentrifugation (Redgrave 1975?).
 #' An input dataframe is organized into a standard set of columns and is written
 #' to a tab-separated text file. 
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
-#'   Plasma well concentration \tab Plasma\cr
-#'   Phosphate-buffered well concentration\tab PBS\cr
-#'   Time zero plasma concentration \tab T0\cr
+#'   Calibration Curve \tab CC\cr
+#'   Ultra-centrifugation Aqueous Fraction \tab UC\cr
+#'   Whole Plasma T1h Sample  \tab T1\cr
+#'   Whole Plasma T5h Sample \tab T5\cr
 #' }
 #' Chemical concentration is calculated qualitatively as a response:
 #'
@@ -74,38 +74,21 @@
 #' @author John Wambaugh
 #' 
 #' @examples
-#' library(invitroTKstats)
-#'red <- wambaugh2019.red
-#'red$Date <- "2019"
-#'red$Sample.Type <- "Blank"
-#'red <- subset(red,!is.na(SampleName))
-#'red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-#'red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-#'red$Dilution.Factor <- NA
-#'red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-#'red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-#'red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-#'red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
-#'
-#'red$Test.Target.Conc <- 5
-#'red$ISTD.Name <- "Bucetin and Diclofenac"
-#'red$ISTD.Conc <- 1
-#'red$Series <- 1
-#'
-#'level1 <- format_fup_red(red,
-#'  FILENAME="Wambaugh2019",
-#'  sample.col="SampleName",
-#'  compound.col="Preferred.Name",
-#'  lab.compound.col="CompoundName",
-#'  cal.col="RawDataSet")
-#'
+#' level0 <- kreutz2020
+#' level1 <- format_fup_uc(level0,
+#'   FILENAME="Kreutz2020",
+#'   compound.col="Name",
+#'   compound.conc.col="Standard.Conc",
+#'   area.col="Chem.Area"
+#'   )
+#' 
 #' @references
-#' Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
-#' approach for the measurement of plasma protein binding." Journal of 
-#' Pharmaceutical Sciences 97.10 (2008): 4586-4595.
-#'
-#' @export format_fup_red
-format_fup_red <- function(PPB.data,
+#' Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
+#' lipoproteins by density-gradient ultracentrifugation." Analytical 
+#' Biochemistry 65.1-2 (1975): 42-49.#' 
+#' 
+#' @export format_fup_uc
+format_fup_uc <- function(PPB.data,
   FILENAME = "MYDATA",
   sample.col="Lab.Sample.Name",
   lab.compound.col="Lab.Compound.Name",
@@ -115,6 +98,7 @@ format_fup_red <- function(PPB.data,
   area.col="Area",
   series.col="Series",
   type.col="Sample.Type",
+  compound.conc.col="Nominal.Conc",
   cal.col="Cal",
   dilution.col="Dilution.Factor",
   istd.col="ISTD.Area",
@@ -122,7 +106,7 @@ format_fup_red <- function(PPB.data,
   istd.conc.col="ISTD.Conc",
   nominal.test.conc.col="Test.Target.Conc" 
   )
-{
+{  
   PPB.data <- as.data.frame(PPB.data)
 
 # We need all these columns in PPB.data
@@ -135,6 +119,7 @@ format_fup_red <- function(PPB.data,
     type.col,
     dilution.col,
     cal.col,
+    compound.conc.col,
     nominal.test.conc.col,
     istd.name.col,
     istd.conc.col,
@@ -149,8 +134,7 @@ format_fup_red <- function(PPB.data,
   }
 
   # Only include the data types used:
-  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c(
-    "Plasma","PBS","T0"))
+  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c("CC","T1","T5","AF"))
   
   # Organize the columns:
   PPB.data <- PPB.data[,cols]
@@ -164,13 +148,14 @@ format_fup_red <- function(PPB.data,
     type.col <- "Sample.Type"
     dilution.col <- "Dilution.Factor"
     cal.col <- "Calibration"
+    compound.conc.col <- "Standard.Conc"
     nominal.test.conc.col <- "Test.Target.Conc"
     istd.name.col <- "ISTD.Name"
     istd.conc.col <- "ISTD.Conc"
     istd.col <- "ISTD.Area"
     series.col <- "Series"
     area.col <- "Area"
-
+    
   colnames(PPB.data) <- c(
     sample.col,
     date.col,
@@ -180,6 +165,7 @@ format_fup_red <- function(PPB.data,
     type.col,
     dilution.col,
     cal.col,
+    compound.conc.col,
     nominal.test.conc.col,
     istd.name.col,
     istd.conc.col,
@@ -189,17 +175,14 @@ format_fup_red <- function(PPB.data,
   
   # calculate the reponse:
   PPB.data[,"Response"] <- PPB.data[,area.col] /
-     PPB.data[,istd.col] * PPB.data[,istd.conc.col]
+     PPB.data[,istd.col] *  PPB.data[,istd.conc.col]
   
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(PPB.data, 
-    file=paste(FILENAME,"-PPB-RED-Level1.tsv",sep=""),
+    file=paste(FILENAME,"-PPB-UC-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
-
-  summarize_table(PPB.data,
-    req.types=c("Plasma","PBS","T0"))
 
   return(PPB.data)  
 }

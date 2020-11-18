@@ -99,6 +99,7 @@ Chemical concentration is calculated qualitatively as a response:
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
+library(invitroTKstats)
 red <- wambaugh2019.red
 red$Date <- "2019"
 red$Sample.Type <- "Blank"
@@ -123,10 +124,11 @@ level1 <- format_fup_red(red,
  lab.compound.col="CompoundName",
  cal.col="RawDataSet")
 
+}
+\references{
 Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
 approach for the measurement of plasma protein binding." Journal of 
 Pharmaceutical Sciences 97.10 (2008): 4586-4595.
-
 }
 \author{
 John Wambaugh

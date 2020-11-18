@@ -74,7 +74,6 @@
 #' @author John Wambaugh
 #' 
 #' @examples
-#' library(invitroTKstats)
 #'red <- wambaugh2019.red
 #'red$Date <- "2019"
 #'red$Sample.Type <- "Blank"
@@ -99,7 +98,6 @@
 #'  lab.compound.col="CompoundName",
 #'  cal.col="RawDataSet")
 #'
-#' @references
 #' Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
 #' approach for the measurement of plasma protein binding." Journal of 
 #' Pharmaceutical Sciences 97.10 (2008): 4586-4595.
@@ -197,9 +195,6 @@ format_fup_red <- function(PPB.data,
     sep="\t",
     row.names=F,
     quote=F)
-
-  summarize_table(PPB.data,
-    req.types=c("Plasma","PBS","T0"))
 
   return(PPB.data)  
 }

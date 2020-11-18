@@ -74,6 +74,7 @@
 #' @author John Wambaugh
 #' 
 #' @examples
+#' library(invitroTKstats)
 #' level0 <- kreutz2020
 #' level1 <- format_fup_uc(level0,
 #'   FILENAME="Kreutz2020",
@@ -183,6 +184,9 @@ format_fup_uc <- function(PPB.data,
     sep="\t",
     row.names=F,
     quote=F)
+    
+  summarize_table(PPB.data,
+    req.types=c("CC","T1","T5","AF"))
 
   return(PPB.data)  
 }
