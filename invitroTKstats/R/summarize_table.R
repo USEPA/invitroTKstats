@@ -56,7 +56,7 @@ summarize_table <- function(input.table,
   N.obs <- dim(input.table)[1]
   N.meas <- length(unique(paste(input.table[,dtxsid.col],input.table[,cal.col])))
   
-  cat(paste(N.obs,"observations of",N.chems,"chemicals based on",N.meas,"separate measrurements (calibrations).\n"))
+  cat(paste(N.obs,"observations of",N.chems,"chemicals based on",N.meas,"separate measurements (calibrations).\n"))
   
   repeat.chems <- NULL
   N.complete <- 0

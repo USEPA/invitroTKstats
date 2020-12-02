@@ -37,7 +37,10 @@ of these types:
 
 F_up is calculated from MS responses as:
 
-f_up = mean(PBS Response * Dilution.Factor) / mean(Plasma Response * Dilution Factor)
+f_up = max(0,(mean(PBS Response * Dilution.Factor) - 
+  mean(Blank Response * Dilution.Factor))) / (
+  mean(Plasma Response * Dilution Factor) -
+  mean(Blank Response * Dilution.Factor))
 }
 \references{
 Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 

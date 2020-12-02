@@ -19,7 +19,10 @@
 #'
 #' F_up is calculated from MS responses as:
 #'
-#' f_up = mean(PBS Response * Dilution.Factor) / mean(Plasma Response * Dilution Factor)
+#' f_up = max(0,(mean(PBS Response * Dilution.Factor) - 
+#'   mean(Blank Response * Dilution.Factor))) / (
+#'   mean(Plasma Response * Dilution Factor) -
+#'   mean(Blank Response * Dilution.Factor))
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")
@@ -104,12 +107,20 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
         Fup=NaN))
     this.pbs <- subset(this.subset,Sample.Type=="PBS")
     this.plasma <- subset(this.subset,Sample.Type=="Plasma")
- # Check to make sure there are data for PBS and plasma: 
+    this.blank <- subset(this.subset,Sample.Type=="Blank")
+    if (length(unique(this.pbs$Dilution.Factor))>1) browser()
+    df.pbs <- this.pbs$Dilution.Factor[1]
+    if (length(unique(this.plasma$Dilution.Factor))>1) browser()
+    df.plasma <- this.plasma$Dilution.Factor[1]
+    
+  # Check to make sure there are data for PBS and plasma: 
     if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
     {
       num.chem <- num.chem + 1
-      this.row$Fup <- mean(this.pbs$Response*this.pbs$Dilution.Factor) /
-        mean(this.plasma$Response*this.plasma$Dilution.Factor)
+      this.row$Fup <- max(0,df.pbs*(mean(this.pbs$Response) -
+        mean(this.blank$Response))) /
+        (df.plasma*(mean(this.plasma$Response) -
+        mean(this.blank$Response)))
       out.table <- rbind(out.table, this.row)
       print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
   # If fup is NA something is wrong, stop and figure it out:
@@ -124,11 +135,14 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
           this.row <- this.cal.subset[1,c(compound.col,dtxsid.col,cal.col)]
           this.pbs <- subset(this.cal.subset,Sample.Type=="PBS")
           this.plasma <- subset(this.cal.subset,Sample.Type=="Plasma")
+          this.blank <- subset(this.cal.subset,Sample.Type=="Blank")
        # Check to make sure there are data for PBS and plasma: 
           if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
           {
-            this.row$Fup <- mean(this.pbs$Response*this.pbs$Dilution.Factor) /
-              mean(this.plasma$Response*this.plasma$Dilution.Factor)
+            this.row$Fup <- max(0,df.pbs*(mean(this.pbs$Response) -
+              mean(this.blank$Response))) /
+              (df.plasma*(mean(this.plasma$Response) -
+              mean(this.blank$Response)))
             out.table <- rbind(out.table, this.row)
             num.cal <- num.cal + 1
           }

@@ -100,6 +100,7 @@ Chemical concentration is calculated qualitatively as a response:
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
+library(invitroTKstats)
 level0 <- kreutz2020
 level1 <- format_fup_uc(level0,
   FILENAME="Kreutz2020",

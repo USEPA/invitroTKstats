@@ -26,7 +26,7 @@ ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
 \item{cal.col}{Which column of input.table indicates the MS calibration -- for
 instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")}
+MS analyzer (Defaults to "Calibration")}
 
 \item{type.col}{Which column of input.table indicates the sample type (see table
 above)(Defaults to "Sample.Type")}
