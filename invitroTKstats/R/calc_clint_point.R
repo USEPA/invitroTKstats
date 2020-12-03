@@ -30,6 +30,59 @@
 #'
 #' @author John Wambaugh
 #' 
+#' @examples
+#' 
+#' library(invitroTKstats)
+#' 
+#' clint <- wambaugh2019.clint
+#' clint$Date <- "2019"
+#' clint$Sample.Type <- "Blank"
+#' clint$Time..mins. <- as.numeric(clint$Time..mins.)
+#' clint[!is.na(clint$Time..mins.),"Sample.Type"] <- "Cvst"
+#' clint$ISTD.Name <- "Bucetin, Propranolol, and Diclofenac"
+#' clint$ISTD.Conc <- 1
+#' clint$Dilution.Factor <- 1
+#' clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
+#' clint$Hep.Density <- 0.5
+#' 
+#' level1 <- format_clint(clint,
+#'   FILENAME="Wambaugh2019",
+#'   sample.col="Sample.Name",
+#'   compound.col="Preferred.Name",
+#'   lab.compound.col="Name",
+#'   time.col="Time..mins.",
+#'   cal.col="FileName")
+#'
+#' level2 <- level1
+#' level2$Verified <- "Y"
+#' 
+#' # All data (allows test for saturation):
+#' write.table(level2,
+#'   file="Wambaugh2019-Clint-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F)
+#' 
+#' level3 <- calc_clint_point(FILENAME="Wambaugh2019")
+#'  
+#' # Just 1 uM data:
+#' write.table(subset(level2,Conc==1),
+#'   file="Wambaugh2019-1-Clint-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F)
+#' 
+#' level3.1 <- calc_clint_point(FILENAME="Wambaugh2019-1")
+#' 
+#' # Just 10 uM data:
+#' write.table(subset(level2,Conc==10),
+#'   file="Wambaugh2019-10-Clint-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F) 
+#' 
+#' level3.10 <- calc_clint_point(FILENAME="Wambaugh2019-10")
+#'
 #' @references
 #' Shibata, Yoshihiro, Hiroyuki Takahashi, and Yasuyuki Ishii. "A convenient in 
 #' vitro screening method for predicting in vivo drug metabolic clearance using 
@@ -41,7 +94,7 @@
 #' @export calc_clint_point
 calc_clint_point <- function(FILENAME, good.col="Verified")
 {
-  clint.data <- read.csv(file=paste(FILENAME,"-PPB-RED-Level2.tsv",sep=""), 
+  clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""), 
     sep="\t",header=T)  
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
@@ -116,6 +169,21 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     ll <- ll+sum(-1/2*res^2/sigma^2)
     return(-ll)
   }
+  satdecay <- function(time.min,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.min)
+  llsatdecay <- function(cal,k_elim,sigma,sat)
+  {
+    N <- dim(this.data)[1]
+    pred <- satdecay(
+      time.min=this.data$Time,
+      conc=this.data$Conc,
+      cal=cal,
+      k_elim=k_elim,
+      sat=sat)
+    ll <- log(1/sigma/sqrt(2*pi))*N
+    res <- pred-this.data$Response
+    ll <- ll+sum(-1/2*res^2/sigma^2)
+    return(-ll)
+  }
 
   for (this.chem in unique(clint.data[,compound.col]))
   {     
@@ -123,7 +191,8 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
       data.frame(Calibration="All Data",
-        Fup=NaN))
+        Clint=NaN,
+        Clint.pValue=NaN))
     this.cvt <- subset(this.subset,Sample.Type=="Cvst")
     this.blank <- subset(this.subset,Sample.Type=="Blank")
     if (length(unique(this.cvt$Dilution.Factor))>1) browser()
@@ -148,19 +217,40 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       
       this.fit <- try(mle(lldecay,
         start=list(cal=1,k_elim=0.1,sigma=1),
-        lower=list(cal=0,k_elim=0,sigma = 0.01)))
+        lower=list(cal=0,k_elim=0,sigma = 0.0001)))
       this.null <- try(mle(lldecay,
         start=list(cal=1,sigma=1),
-        lower=list(cal=0,sigma = 0.01),
+        lower=list(cal=0,sigma = 0.0001),
         fixed=list(k_elim=0)))      
       
       if (class(this.fit)!="try-error" & class(this.null)!="try-error")
       {
         this.row$Clint <- 1000*coef(this.fit)["k_elim"]/hep.density
-        this.row$Clint.pValue <- exp(-(AIC(this.null)-AIC(this.fit)))
-        this.row$Fit <- "All Concs"
+        this.row$Clint.pValue <- min(exp(-(AIC(this.null)-AIC(this.fit))),1)
+        this.row$Fit <- paste(paste(unique(this.data$Conc),collapse=", "),"uM")
         this.row$AIC <- AIC(this.fit)
         this.row$AIC.Null <- AIC(this.null)
+        this.row$Clint.1 <- NA
+        this.row$Clint.10 <- NA
+        this.row$AIC.Sat <- NA
+        this.row$Sat.pValue <- NA
+        if (all(c(1,10)%in%unique(this.data$Conc)))
+        {
+          this.sat.fit <- try(mle(llsatdecay,
+            start=list(cal=1,k_elim=0.1,sigma=1,sat=1),
+            lower=list(cal=0,k_elim=0,sigma = 0.0001,sat=0),
+            upper=list(sat=1)))
+          if (class(this.sat.fit)!="try-error")
+          {
+            this.row$Clint.1 <- 1000*coef(this.sat.fit)["k_elim"]/hep.density
+            this.row$Clint.10 <- 1000*coef(this.sat.fit)["k_elim"]*
+              coef(this.sat.fit)["sat"]/hep.density
+            this.row$AIC.Sat <- AIC(this.sat.fit)
+            if (this.row$Clint.pValue==1) test.AIC <- this.row$AIC.Null
+            else test.AIC <- this.row$AIC
+            this.row$Sat.pValue <- min(exp(-(test.AIC-AIC(this.sat.fit))),1)
+          }
+        }
         out.table <- rbind(out.table, this.row)
         print(paste(
           this.row$Compound.Name,
@@ -177,7 +267,15 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
   out.table <- apply(out.table,2,unlist) 
   out.table[,"Clint"] <- signif(as.numeric(out.table[,"Clint"]),3) 
+  out.table[,"Clint.1"] <- signif(as.numeric(out.table[,"Clint.1"]),3) 
+  out.table[,"Clint.10"] <- signif(as.numeric(out.table[,"Clint.10"]),3) 
   out.table[,"Clint.pValue"] <- signif(as.numeric(out.table[,"Clint.pValue"]),3) 
+  out.table[,"AIC"] <- signif(as.numeric(out.table[,"AIC"]),3)
+  out.table[,"AIC.Null"] <- signif(as.numeric(out.table[,"AIC.Null"]),3)
+  out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
+  out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3) 
+   
+  
   out.table <- as.data.frame(out.table)
   out.table$Clint <- as.numeric(out.table$Clint)
   out.table$Clint.pValue <- as.numeric(out.table$Clint.pValue)

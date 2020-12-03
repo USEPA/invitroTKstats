@@ -110,30 +110,27 @@ Chemical concentration is calculated qualitatively as a response:
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
+
 library(invitroTKstats)
-red <- wambaugh2019.red
-red$Date <- "2019"
-red$Sample.Type <- "Blank"
-red <- subset(red,!is.na(SampleName))
-red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-red$Dilution.Factor <- NA
-red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
 
-red$Test.Target.Conc <- 5
-red$ISTD.Name <- "Bucetin and Diclofenac"
-red$ISTD.Conc <- 1
-red$Series <- 1
+clint <- wambaugh2019.clint
+clint$Date <- "2019"
+clint$Sample.Type <- "Blank"
+clint$Time..mins. <- as.numeric(clint$Time..mins.)
+clint[!is.na(clint$Time..mins.),"Sample.Type"] <- "Cvst"
+clint$ISTD.Name <- "Bucetin, Propranolol, and Diclofenac"
+clint$ISTD.Conc <- 1
+clint$Dilution.Factor <- 1
+clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
+clint$Hep.Density <- 0.5
 
-level1 <- format_fup_red(red,
- FILENAME="Wambaugh2019",
- sample.col="SampleName",
- compound.col="Preferred.Name",
- lab.compound.col="CompoundName",
- cal.col="RawDataSet")
+level1 <- format_clint(clint,
+  FILENAME="Wambaugh2019",
+  sample.col="Sample.Name",
+  compound.col="Preferred.Name",
+  lab.compound.col="Name",
+  time.col="Time..mins.",
+  cal.col="FileName")
 
 }
 \references{

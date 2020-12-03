@@ -1,12 +1,4 @@
-setwd("C:/Users/jwambaug/git/invitroTKstats/working")
-
-library(readxl)
 library(invitroTKstats)
-           
-# read from the Excel file using library(readxl)
-wambaugh2019.clint <- as.data.frame(read_excel("toxsci-19-0394-File012.xlsx"))
-save(wambaugh2019.clint,wambaugh2019.red,file="wambaugh2019.RData")
-
 
 clint <- wambaugh2019.clint
 clint$Date <- "2019"
@@ -31,17 +23,31 @@ level1 <- format_clint(clint,
 level2 <- level1
 level2$Verified <- "Y"
 
-# Just use first 1000 observations for speed:
+# All data (allows test for saturation):
 write.table(level2,
-  file="Wambaugh2019-PPB-RED-Level2.tsv",
+  file="Wambaugh2019-Clint-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
 
 level3 <- calc_clint_point(FILENAME="Wambaugh2019")
+ 
+# Just 1 uM data:
+write.table(subset(level2,Conc==1),
+  file="Wambaugh2019-1-Clint-Level2.tsv",
+  sep="\t",
+  row.names=F,
+  quote=F)
 
+level3.1 <- calc_clint_point(FILENAME="Wambaugh2019-1")
 
-
+# Just 10 uM data:
+write.table(subset(level2,Conc==10),
+  file="Wambaugh2019-10-Clint-Level2.tsv",
+  sep="\t",
+  row.names=F,
+  quote=F)
   
-
+level3.10 <- calc_clint_point(FILENAME="Wambaugh2019-10")
+  
  

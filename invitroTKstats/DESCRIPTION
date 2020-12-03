@@ -1,6 +1,6 @@
 Package: invitroTKstats
-Version: 0.0.3
-Date: 2020-11-18
+Version: 0.0.4
+Date: 2020-12-02
 Title: Tools for Analyzing In Vitro Toxicokinetic Measurements
 Description: These functions were developed for performing Bayesian
              statistical analysis of in vitro measurements to characterize
