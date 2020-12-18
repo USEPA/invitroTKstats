@@ -44,6 +44,9 @@
 #' clint$Dilution.Factor <- 1
 #' clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
 #' clint$Hep.Density <- 0.5
+#' clint$Analysis.Method <- "LC or GC" 
+#' clint$Analysis.Instrument <- "No Idea"
+#' clint$Analysis.Parameters <- "None"
 #' 
 #' level1 <- format_clint(clint,
 #'   FILENAME="Wambaugh2019",

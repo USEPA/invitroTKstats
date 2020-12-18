@@ -21,7 +21,10 @@ format_clint(
   density.col = "Hep.Density",
   conc.col = "Conc",
   time.col = "Time",
-  area.col = "Area"
+  area.col = "Area",
+  analysis.method.col = "Analysis.Method",
+  analysis.instrument.col = "Analysis.Instrument",
+  analysis.parameters.col = "Analysis.Parameters"
 )
 }
 \arguments{
@@ -84,11 +87,26 @@ into the hepatocyte incubation (Defaults to "Time")}
 \item{area.col}{Which column of clint.data indicates the target analyte (that 
 is, the test compound) MS peak area (Defaults to "Area")}
 
+\item{analysis.method.col}{Which column of PPB.data indicates the analytical
+chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+"Analysis.Method")}
+
+\item{analysis.instrument.col}{Which column of PPB.data indicates the 
+instrument used for chemical analysis, for example 
+"Agilent 6890 GC with model 5973 MS" (Defaults to 
+"Analysis.Instrument")}
+
+\item{analysis.parameters.col}{Which column of PPB.data indicates the 
+parameters used to identify the compound on the chemical analysis instrument,
+for example 
+"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
+(Defaulys to "Analysis.Paramaters").}
+
 \item{series.col}{Which column of clint.data indicates the "series", that is
 a simultaneous replicate (Defaults to "Series")}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+\item{data.frame}{A data.frame in standardized "level1" format}
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas

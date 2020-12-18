@@ -20,7 +20,10 @@ format_fup_red(
   istd.col = "ISTD.Area",
   istd.name.col = "ISTD.Name",
   istd.conc.col = "ISTD.Conc",
-  nominal.test.conc.col = "Test.Target.Conc"
+  nominal.test.conc.col = "Test.Target.Conc",
+  analysis.method.col = "Analysis.Method",
+  analysis.instrument.col = "Analysis.Instrument",
+  analysis.parameters.col = "Analysis.Parameters"
 )
 }
 \arguments{
@@ -74,9 +77,24 @@ the internal standard (Defaults to "ISTD.Conc")}
 
 \item{nominal.test.conc.col}{Which column of PPB.data indicates the intended
 test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
+
+\item{analysis.method.col}{Which column of PPB.data indicates the analytical
+chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+"Analysis.Method")}
+
+\item{analysis.instrument.col}{Which column of PPB.data indicates the 
+instrument used for chemical analysis, for example 
+"Agilent 6890 GC with model 5973 MS" (Defaults to 
+"Analysis.Instrument")}
+
+\item{analysis.parameters.col}{Which column of PPB.data indicates the 
+parameters used to identify the compound on the chemical analysis instrument,
+for example 
+"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
+(Defaulys to "Analysis.Paramaters").}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+\item{data.frame}{A data.frame in standardized "level1" format}
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas

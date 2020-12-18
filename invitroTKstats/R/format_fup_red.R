@@ -172,7 +172,7 @@ format_fup_red <- function(PPB.data,
 
   # Only include the data types used:
   PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c(
-    "Plasma","PBS","T0"))
+    "Plasma","PBS","T0","Blank"))
   
   # Organize the columns:
   PPB.data <- PPB.data[,cols]
@@ -229,7 +229,7 @@ format_fup_red <- function(PPB.data,
     quote=F)
 
   summarize_table(PPB.data,
-    req.types=c("Plasma","PBS","T0"))
+    req.types=c("Plasma","PBS","T0","Blank"))
 
   return(PPB.data)  
 }

@@ -144,7 +144,7 @@ format_clint <- function(clint.data,
   density.col="Hep.Density",
   conc.col="Conc", 
   time.col="Time", 
-  area.col="Area".
+  area.col="Area",
   analysis.method.col="Analysis.Method",
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters.col="Analysis.Parameters" 

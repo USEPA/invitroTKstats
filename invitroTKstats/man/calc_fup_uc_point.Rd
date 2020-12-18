@@ -41,6 +41,9 @@ f_up = mean(AF Response * Dilution.Factor) / mean(T5 Response * Dilution Factor)
 }
 \examples{
 level0 <- kreutz2020
+level0$Analysis.Method <- "GC" 
+level0$Analysis.Instrument <- "No Idea"
+level0$Analysis.Parameters <- "None"
 level1 <- format_fup_uc(level0,
   FILENAME="Kreutz2020",
   compound.col="Name",

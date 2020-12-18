@@ -33,6 +33,42 @@
 #' @return \item{data.frame}{A data.frame in standardized format} 
 #'
 #' @author John Wambaugh
+#'
+#' @examples
+#' red <- subset(wambaugh2019.red, Protein==100)
+#' red$Date <- "2019"
+#' red$Sample.Type <- "Blank"
+#' red <- subset(red,!is.na(SampleName))
+#' red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
+#' red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
+#' red$Dilution.Factor <- NA
+#' red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
+#' red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
+#' red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
+#' red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
+#' 
+#' red$Test.Target.Conc <- 5
+#' red$ISTD.Name <- "Bucetin and Diclofenac"
+#' red$ISTD.Conc <- 1
+#' red$Series <- 1
+#' 
+#' level1 <- format_fup_red(red,
+#'   FILENAME="Wambaugh2019",
+#'   sample.col="SampleName",
+#'   compound.col="Preferred.Name",
+#'   lab.compound.col="CompoundName",
+#'   cal.col="RawDataSet")
+#' 
+#' level2 <- level1
+#' level2$Verified <- "Y"
+#' 
+#' write.table(level2,
+#'   file="Wambaugh2019-PPB-RED-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F)
+#'   
+#' level3 <- calc_fup_red_point(FILENAME="Wambaugh2019")
 #' 
 #' @references
 #' Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
@@ -90,7 +126,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
 
   # Only include the data types used:
   PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c(
-    "Plasma","PBS","T0"))
+    "Plasma","PBS","T0","Blank"))
   
   # Only used verfied data:
   PPB.data <- subset(PPB.data, PPB.data[,good.col] == "Y")
@@ -114,7 +150,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     df.plasma <- this.plasma$Dilution.Factor[1]
     
   # Check to make sure there are data for PBS and plasma: 
-    if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
+    if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.blank)[1] > 0 )
     {
       num.chem <- num.chem + 1
       this.row$Fup <- max(0,df.pbs*(mean(this.pbs$Response) -
@@ -137,7 +173,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
           this.plasma <- subset(this.cal.subset,Sample.Type=="Plasma")
           this.blank <- subset(this.cal.subset,Sample.Type=="Blank")
        # Check to make sure there are data for PBS and plasma: 
-          if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 )
+          if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.blank)[1] > 0)
           {
             this.row$Fup <- max(0,df.pbs*(mean(this.pbs$Response) -
               mean(this.blank$Response))) /

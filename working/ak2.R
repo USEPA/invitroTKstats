@@ -1,9 +1,8 @@
+library(invitroTKstats)
+
 # There are multiple packages for loading Excel files, but I've been using this
 # one lately:
 library(readxl)
-# This package allows us to convert rows and columns od data to different
-# formats:
-library(reshape2)
 
 # Change to the directory that has your Excel file 
 # (this is where it is on my computer):
@@ -15,163 +14,110 @@ sheet1 <- read_excel(
   "021220_915_965_476_267_906_273_913_899_900_analysis_090920.xlsx",
   sheet=6,
   skip=1)
-
-# For a level 1 file we need 1 row per observation, so we can use the "melt"
-# function from the package reshape2 to simplify the more complicated structure 
-# used in the Wetmore lab data sheets 
-# (see https://www.r-bloggers.com/2012/04/melt/):
-chem.data1.mt <- melt(
-  sheet1, 
-  id.vars = c(
-    "Name",
-    "Data File",
-    "Type",
-    "Acq. Date-Time"
-    ) 
-  )
   
-  
-# To figure out which columns we need for which variables, it helps to add
-# the column numbers to the excel file (I used the =COLUMN() command:
-  
-# Now lets find the internal standard curves:
-chem.data1.ISTDs <- list()
-
-# BET is given by "Area...16" 
-# (the sixteenth column of the sheet, which is named "Area")
-chem.data1.ISTDs[["BET"]] <-subset(chem.data1.mt,variable=="Area...16")
-chem.data1.ISTDs[["BET"]]$Internal.Standard <- "BET"
-
-# HET is given by "Area...24" 
-# (the twenty fourth column of the sheet, which is named "Area")
-chem.data1.ISTDs[["HET"]] <-subset(chem.data1.mt,variable=="Area...24")
-chem.data1.ISTDs[["HET"]]$Internal.Standard <- "HET"
-
-# MFHET is given by "Area...32" 
-# (the thirty second column of the sheet, which is named "Area")
-chem.data1.ISTDs[["MFHET"]] <-subset(chem.data1.mt,variable=="Area...32")
-chem.data1.ISTDs[["MFHET"]]$Internal.Standard <- "MFHET"
-
-# MFHET is given by "Area...40" 
-# (the thirty second column of the sheet, which is named "Area")
-chem.data1.ISTDs[["DET"]] <-subset(chem.data1.mt,variable=="Area...40")
-chem.data1.ISTDs[["DET"]]$Internal.Standard <- "DET"
-
-# 4NT13C6 is given by "Area...80"
-chem.data1.ISTDs[["4NT13C6"]] <-subset(chem.data1.mt,variable=="Area...80")
-chem.data1.ISTDs[["4NT13C6"]]$Internal.Standard <- "4NT13C6"
-
-# Lets make a function to automate anotation of Wetmore lab data:
-convert_to_level1 <- function(data.set, ISTD.set,
-  chem.name, area.col.num, ISTD, analysis.method,
-  instrument, inst.param.offset = -3, conc.offset = -2, area.base="Area...",
-  inst.param.base="RT...",conc.base="Final Conc....")
-{
-  area.col <- paste(area.base,area.col.num,sep="")
-  instr.param.col <- paste(inst.param.base,area.col.num+inst.param.offset,sep="")
-  conc.col <- paste(conc.base,area.col.num+conc.offset,sep="")
-  
-  out <- subset(data.set,variable==area.col)
-  out$Lab.Compound.Name <- chem.name
-# (the merge function matches columns with like data):
-  out <- merge(out,ISTD.set[[ISTD]], by=c(
-    "Name",
-    "Data File",
-    "Type",
-    "Acq. Date-Time"
-    ) 
-  )
-  # Change the value column names to reflect what we've got:
-  colnames(out)[colnames(out)=="value.x"] <- "Area"
-  colnames(out)[colnames(out)=="value.y"] <- "ISTD.Area"
-  # We don't need the "variable columns anymore:'
-  out <- out[,!(colnames(out) %in% c("variable.x","variable.y"))]
-  # Add in instrument parameters:
-  out <- merge(out,
-  subset(data.set,variable==instr.param.col), 
-  by=c(
-    "Name",
-    "Data File",
-    "Type",
-    "Acq. Date-Time"
-    ) 
-  )
-  # Change the value column names to reflect what we've got:
-  colnames(out)[colnames(out)=="value"] <- "Instrument.Param"
-  # We don't need the "variable columns anymore:'
-  out <- out[,!(colnames(out) %in% c("variable"))]
-  # Add in intended conc for cal curves:
-  out <- merge(out,
-  subset(data.set,variable==conc.col), 
-  by=c(
-    "Name",
-    "Data File",
-    "Type",
-    "Acq. Date-Time"
-    ) 
-  )
-  # Change the value column names to reflect what we've got:
-  colnames(out)[colnames(out)=="value"] <- "Conc"
-  # We don't need the "variable columns anymore:'
-  out <- out[,!(colnames(out) %in% c("variable"))]
-  # Set instrument parameters:
-  out$Analysis.Method <- analysis.method
-  out$Instrument <- instrument
-
-  return(out)
-}
-
-# Then do each test chemical:
+# Do each test chemical:
 # 915 is given by "Area...14"
-chem.data1.915 <- convert_to_level1(
-  chem.data1.mt,
-  chem.data1.ISTDs,
+sheet1.915 <- extract_level1_fup_uc(
+  sheet1,
   chem.name="915",
   area.col=14,
-  ISTD="BET",
-  analysis.method="GC",
-  instrument="Some Machine 3000")
+  ISTD.name="BET")
   
-# 965 is given by "Area...22", we also need to change the ISTD, instrument
-# param (retention time) column, and intended conc columns appropriately:
-chem.data1.965 <- convert_to_level1(
-  chem.data1.mt,
-  chem.data1.ISTDs,
+# 965 is given by "Area...22", we also need to change the ISTD name
+sheet1.965 <- extract_level1_fup_uc(
+  sheet1,
   chem.name="965",
-  area.col="Area...22",
-  ISTD="HET",
-  instr.param="RT...19",
-  intended.conc="Final Conc....20",
-  analysis.method="GC",
-  instrument="Some Machine 3000")
+  area.col=22,
+  ISTD.name="HET")
 
-# 476 is given by "Area...30", we also need to change the ISTD, instrument
-# param (retention time) column, and intended conc columns appropriately: 
-chem.data1.476 <- convert_to_level1(
-  chem.data1.mt,
-  chem.data1.ISTDs,
+# 476 is given by "Area...30", we also need to change the ISTD name
+sheet1.476 <- extract_level1_fup_uc(
+  sheet1,
   chem.name="476",
-  area.col="Area...30",
-  ISTD="MFHET",
-  instr.param="RT...27",
-  intended.conc="Final Conc....28",
-  analysis.method="GC",
-  instrument="Some Machine 3000")
+  area.col=30,
+  ISTD.name="MFHET")
 
-# 267 is given by "Area...38", we also need to change the ISTD, instrument
-# param (retention time) column, and intended conc columns appropriately: 
-chem.data1.267 <- convert_to_level1(
-  chem.data1.mt,
-  chem.data1.ISTDs,
+# 267 is given by "Area...38", we also need to change the ISTD name
+sheet1.267 <- extract_level1_fup_uc(
+  sheet1,
   chem.name="267",
-  area.col="Area...38",
-  ISTD="DET",
-  instr.param="RT...27",
-  intended.conc="Final Conc....28",
-  analysis.method="GC",
-  instrument="Some Machine 3000")
-  
-  
+  area.col=38,
+  ISTD.name="DET")
 
+# 3125 is given by "Area...46", we also need to change the ISTD name
+sheet1.3125 <- extract_level1_fup_uc(
+  sheet1,
+  chem.name="3125",
+  area.col=46,
+  ISTD.name="DET")
+
+# 906 is given by "Area...54", we also need to change the ISTD name
+sheet1.906 <- extract_level1_fup_uc(
+  sheet1,
+  chem.name="906",
+  area.col=54,
+  ISTD.name="DET")
+
+# 273 is given by "Area...62", we also need to change the ISTD name
+sheet1.273 <- extract_level1_fup_uc(
+  sheet1,
+  chem.name="273",
+  area.col=62,
+  ISTD.name="DET")
+
+# 913 is given by "Area...70", we also need to change the ISTD name
+sheet1.913 <- extract_level1_fup_uc(
+  sheet1,
+  chem.name="913",
+  area.col=70,
+  ISTD.name="DET")
+
+# 4NT is given by "Area...78", we also need to change the ISTD name
+sheet1.4NT <- extract_level1_fup_uc(
+  sheet1,
+  chem.name="4NT",
+  area.col=78,
+  ISTD.name="4NT13C6")  
+
+
+AK.UCdata <- rbind(
+  sheet1.915,
+  sheet1.965,
+  sheet1.476,
+  sheet1.267,
+  sheet1.3125,
+  sheet1.906,
+  sheet1.273,
+  sheet1.913,
+  sheet1.4NT
+  )
+
+# No replicates:
+AK.UCdata$Series <- 1
+# Extract the date from the time stamp
+AK.UCdata$Date <- unlist(lapply(strsplit(as.character(as.data.frame(AK.UCdata[,3])[,1])," "),function(x) x[1]))
+# Assume all samples analyzed on same date were the same calibration
+AK.UCdata$Cal <- AK.UCdata$Date
+# I need to look up what the ID's for each lab sample were
+AK.UCdata$DTXSID <- NA
+# We'll need to go back and set this per sample type:
+AK.UCdata$Dilution.Factor <- 1
+# I don't think we need this:
+AK.UCdata$Test.Target.Conc <- NA
+# I'm assiming all ISTD were 1 PPM
+AK.UCdata$ISTD.Conc <- 1
+
+
+
+level1 <- format_fup_uc(AK.UCdata,
+  FILENAME="Kreutz2020",
+  sample.col="Name",
+  compound.col="Lab.Compound.Name", 
+  lab.compound.col="Lab.Compound.Name", 
+  type.col="Type", 
+  compound.conc.col="Target.Conc", 
+  analysis.instrument.col="Instrument", 
+  analysis.parameters.col="Analysis.Instrument.Param"
+  )
 
 
