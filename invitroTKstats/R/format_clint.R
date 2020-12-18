@@ -79,7 +79,22 @@
 #' time of the measurment (in minutes) since the test chemical was introduced
 #' into the hepatocyte incubation (Defaults to "Time") 
 #'
-#' @return \item{data.frame}{A data.frame in standardized format} 
+#' @param analysis.method.col Which column of PPB.data indicates the analytical
+#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+#' "Analysis.Method")
+#'
+#' @param analysis.instrument.col Which column of PPB.data indicates the 
+#' instrument used for chemical analysis, for example 
+#' "Agilent 6890 GC with model 5973 MS" (Defaults to 
+#' "Analysis.Instrument")
+#'
+#' @param analysis.parameters.col Which column of PPB.data indicates the 
+#' parameters used to identify the compound on the chemical analysis instrument,
+#' for example 
+#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
+#' (Defaulys to "Analysis.Paramaters"). 
+#'
+#' @return \item{data.frame}{A data.frame in standardized "level1" format} 
 #'
 #' @author John Wambaugh
 #' 
@@ -129,7 +144,10 @@ format_clint <- function(clint.data,
   density.col="Hep.Density",
   conc.col="Conc", 
   time.col="Time", 
-  area.col="Area"
+  area.col="Area".
+  analysis.method.col="Analysis.Method",
+  analysis.instrument.col="Analysis.Instrument",
+  analysis.parameters.col="Analysis.Parameters" 
   )
 {
   clint.data <- as.data.frame(clint.data)
@@ -150,7 +168,11 @@ format_clint <- function(clint.data,
     density.col,
     conc.col,
     time.col,
-    area.col)
+    area.col,
+    analysis.method.col,
+    analysis.instrument.col,
+    analysis.parameters.col
+    )
   
   if (!(all(cols %in% colnames(clint.data))))
   {
@@ -181,6 +203,9 @@ format_clint <- function(clint.data,
   conc.col <- "Conc"
   time.col <- "Time"
   area.col <- "Area"
+  analysis.method.col <- "Analysis.Method"
+  analysis.instrument.col <- "Analysis.Instrument"
+  analysis.parameters.col <- "Analysis.Parameters" 
 
   colnames(clint.data) <- c(
     sample.col,
@@ -197,7 +222,11 @@ format_clint <- function(clint.data,
     density.col,
     conc.col,
     time.col,
-    area.col)
+    area.col,
+    analysis.method.col,
+    analysis.instrument.col,
+    analysis.parameters.col
+    )
   
   # calculate the reponse:
   clint.data[,"Response"] <- clint.data[,area.col] /
