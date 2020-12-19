@@ -54,6 +54,9 @@ red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
 red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
 red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
 red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
+red$Analysis.Method <- "LC or GC" 
+red$Analysis.Instrument <- "No Idea"
+red$Analysis.Parameters <- "None"
 
 red$Test.Target.Conc <- 5
 red$ISTD.Name <- "Bucetin and Diclofenac"
