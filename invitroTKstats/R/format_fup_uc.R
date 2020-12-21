@@ -84,7 +84,7 @@
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 #' (Defaulys to "Analysis.Paramaters"). 
 #'
-#' @return \item{data.frame}{A data.frame in standardized "level1" format} 
+#' @return data.frame A data.frame in standardized "level1" format 
 #'
 #' @author John Wambaugh
 #' 

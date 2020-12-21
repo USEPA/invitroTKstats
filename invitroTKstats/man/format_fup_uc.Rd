@@ -95,7 +95,7 @@ for example
 (Defaulys to "Analysis.Paramaters").}
 }
 \value{
-\item{data.frame}{A data.frame in standardized "level1" format}
+data.frame A data.frame in standardized "level1" format
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas

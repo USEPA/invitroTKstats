@@ -82,8 +82,7 @@ model {
 #' @param RANDOM.SEED The seed used by the random number generator 
 #' (default 1111)
 #'
-#' @return \item{data.frame}{A data.frame containing quunantiles of the 
-#' Bayesian posteriors} 
+#' @return A data.frame containing quunantiles of the Bayesian posteriors 
 #'
 #' @author John Wambaugh and Chantel Nicolas
 #' 

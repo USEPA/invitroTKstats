@@ -66,25 +66,31 @@ model {
 #'
 #' @param PPB.data A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identiy, and measurment type.
+#'
 #' @param this.conc The plasma protein concentration relative to physiologic
 #' levels (default 100%)
+#'
 #' @param FILENAME A string used to identify outputs of the function call.
 #' (defaults to "BASE_Model_Results")
+#'
 #' @param TEMP.DIR An optional directory where file writing may be faster.
+#'
 #' @param JAGS.PATH The file path to JAGS.
+#'
 #' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
 #' of convergence according to Gelman and Rubin diagnostic.
+#'
 #' @param NUM.CORES The number of processors to use (default 2)
+#'
 #' @param RANDOM.SEED The seed used by the random number generator 
 #' (default 1111)
 #'
-#' @return \item{data.frame}{A data.frame containing quunantiles of the 
-#' Bayesian posteriors} 
+#' @return A data.frame containing quunantiles of the Bayesian posteriors 
 #'
 #' @author John Wambaugh and Chantel Nicolas
 #' 
-#' @export calc_red_fup_base
-calc_red_fup_base <- function(PPB.data,
+#' @export calc_fup_red_base
+calc_fup_red_base <- function(PPB.data,
   this.conc = 100,
   FILENAME = "BASE_Model_Results",
   TEMP.DIR = NULL,

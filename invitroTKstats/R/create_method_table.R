@@ -30,11 +30,11 @@
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 #' (Defaulys to "Analysis.Paramaters"). 
 #'
-#' @return \item{data.frame}{A data.frame with one row pwer method} 
+#' @return A data.frame with one row per method 
 #'
 #' @author John Wambaugh
 #'
-#' @export create_method.table
+#' @export create_method_table
 create_method_table <- function(input.table,
   dtxsid.col="DTXSID",
   compound.col="Compound.Name",
@@ -74,6 +74,7 @@ create_method_table <- function(input.table,
           )
         out.table <- rbind(out.table,this.row)
         N.methods <- N.methods + 1
+      }
     }
 
   cat(paste(N.methods,"analytical methods for",N.chems,"chemicals.\n"))
