@@ -30,7 +30,8 @@ calc_fup_uc(
 }
 \arguments{
 \item{PPB.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type.}
+indication of chemical identiy, and measurment type. The data frame should
+contain columns with names specified by the following arguments:}
 
 \item{FILENAME}{A string used to identify outputs of the function call.
 (defaults to "BASE_Model_Results")}
@@ -45,8 +46,52 @@ of convergence according to Gelman and Rubin diagnostic.}
 \item{RANDOM.SEED}{The seed used by the random number generator 
 (default 1111)}
 
-\item{this.conc}{The plasma protein concentration relative to physiologic
-levels (default 100%)}
+\item{sample.col}{Which column of PPB.data indicates the unique mass 
+spectrometry (MS) sample name used by the laboratory. (Defaults to 
+"Lab.Sample.Name")}
+
+\item{lab.compound.col}{Which column of PPB.data indicates The test compound 
+name used by the laboratory (Defaults to "Lab.Compound.Name")}
+
+\item{dtxsid.col}{Which column of PPB.data indicates EPA's DSSTox Structure 
+ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
+
+\item{date.col}{Which column of PPB.data indicates the laboratory measurment
+date (Defaults to "Date")}
+
+\item{compound.col}{Which column of PPB.data indicates the test compound
+(Defaults to "Compound.Name")}
+
+\item{area.col}{Which column of PPB.data indicates the target analyte (that 
+is, the test compound) MS peak area (Defaults to "Area")}
+
+\item{series.col}{Which column of PPB.data indicates the "series", that is
+a simultaneous replicate (Defaults to "Series")}
+
+\item{type.col}{Which column of PPB.data indicates the sample type (see table
+above)(Defaults to "Sample.Type")}
+
+\item{cal.col}{Which column of PPB.data indicates the MS calibration -- for
+instance different machines on the same day or different days with the same
+MS analyzer (Defaults to "Cal")
+
+#param compound.conc.col Which column indictes the intended concentration 
+of the test chemical for calibration curves (Defaults to "Standard.Conc")}
+
+\item{dilution.col}{Which column of PPB.data indicates how many times the
+sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
+
+\item{istd.col}{Which column of PPB.data indicates the MS peak area for the
+internal standard (Defaults to "ISTD.Area")}
+
+\item{istd.name.col}{Which column of PPB.data indicates identity of the 
+internal standard (Defaults to "ISTD.Name")}
+
+\item{istd.conc.col}{Which column of PPB.data indicates the concentration of
+the internal standard (Defaults to "ISTD.Conc")}
+
+\item{nominal.test.conc.col}{Which column of PPB.data indicates the intended
+test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
 
 \item{JAGS.PATH}{The file path to JAGS.}
 }

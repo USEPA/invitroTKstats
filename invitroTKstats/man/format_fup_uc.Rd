@@ -62,7 +62,10 @@ above)(Defaults to "Sample.Type")}
 
 \item{cal.col}{Which column of PPB.data indicates the MS calibration -- for
 instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")}
+MS analyzer (Defaults to "Cal")
+
+#param compound.conc.col Which column indictes the intended concentration 
+of the test chemical for calibration curves (Defaults to "Standard.Conc")}
 
 \item{dilution.col}{Which column of PPB.data indicates how many times the
 sample was diluted before MS analysis (Defaults to "Dilution.Factor")}

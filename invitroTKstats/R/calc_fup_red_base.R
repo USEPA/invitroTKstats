@@ -68,7 +68,7 @@ model {
 #' indication of chemical identiy, and measurment type.
 #'
 #' @param this.conc The plasma protein concentration relative to physiologic
-#' levels (default 100%)
+#' levels (default 100\%)
 #'
 #' @param FILENAME A string used to identify outputs of the function call.
 #' (defaults to "BASE_Model_Results")
@@ -83,7 +83,51 @@ model {
 #' @param NUM.CORES The number of processors to use (default 2)
 #'
 #' @param RANDOM.SEED The seed used by the random number generator 
-#' (default 1111)
+#' (default 1111) 
+#'
+#' @param sample.col Which column of PPB.data indicates the unique mass 
+#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
+#' "Lab.Sample.Name")
+#' 
+#' @param lab.compound.col Which column of PPB.data indicates The test compound 
+#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' 
+#' @param dtxsid.col Which column of PPB.data indicates EPA's DSSTox Structure 
+#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' 
+#' @param date.col Which column of PPB.data indicates the laboratory measurment
+#' date (Defaults to "Date")
+#' 
+#' @param compound.col Which column of PPB.data indicates the test compound
+#' (Defaults to "Compound.Name")
+#' 
+#' @param area.col Which column of PPB.data indicates the target analyte (that 
+#' is, the test compound) MS peak area (Defaults to "Area")
+#' 
+#' @param series.col Which column of PPB.data indicates the "series", that is
+#' a simultaneous replicate (Defaults to "Series")
+#' 
+#' @param type.col Which column of PPB.data indicates the sample type (see table
+#' above)(Defaults to "Sample.Type")
+#' 
+#' @param cal.col Which column of PPB.data indicates the MS calibration -- for
+#' instance different machines on the same day or different days with the same
+#' MS analyzer (Defaults to "Cal")
+#' 
+#' @param dilution.col Which column of PPB.data indicates how many times the
+#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
+#' 
+#' @param istd.col Which column of PPB.data indicates the MS peak area for the
+#' internal standard (Defaults to "ISTD.Area")
+#' 
+#' @param istd.name.col Which column of PPB.data indicates identity of the 
+#' internal standard (Defaults to "ISTD.Name")
+#' 
+#' @param istd.conc.col Which column of PPB.data indicates the concentration of
+#' the internal standard (Defaults to "ISTD.Conc")
+#' 
+#' @param nominal.test.conc.col Which column of PPB.data indicates the intended
+#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")       
 #'
 #' @return A data.frame containing quunantiles of the Bayesian posteriors 
 #'
@@ -94,7 +138,6 @@ calc_fup_red_base <- function(PPB.data,
   this.conc = 100,
   FILENAME = "BASE_Model_Results",
   TEMP.DIR = NULL,
-#  JAGS.PATH ="C:/Program Files/JAGS/JAGS-4.3.0/x64/bin/",
   NUM.CHAINS=5, 
   NUM.CORES=2,
   sample.col="Lab.Sample.Name",
