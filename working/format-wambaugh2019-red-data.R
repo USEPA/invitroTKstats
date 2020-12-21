@@ -1,12 +1,11 @@
 setwd("C:/Users/jwambaug/git/invitroTKstats/working")
 
 library(readxl)
-source("../invitroTKstats/R/format_fup_red.R")
-source("../invitroTKstats/R/calc_fup_red_point.R")
+library(invitroTKstats)
 
 # read from the Excel file using library(readxl)
 wambaugh2019.red <- as.data.frame(read_excel("toxsci-19-0394-File011.xlsx"))
-save(wambaugh2019.red,file="../invitroTKstats/data/wambaugh2019.RData")
+save(wambaugh2019.red,file="wambaugh2019.RData")
 
 red <- subset(wambaugh2019.red, Protein==100)
 red$Date <- "2019"
@@ -27,6 +26,12 @@ red$Test.Target.Conc <- 5
 red$ISTD.Name <- "Bucetin and Diclofenac"
 red$ISTD.Conc <- 1
 red$Series <- 1
+
+# Strip out protein conc information from compound names:
+red$CompoundName <- gsub("-100P","",red$CompoundName)
+red$CompoundName <- gsub("-30P","",red$CompoundName)
+red$CompoundName <- gsub("-10P","",red$CompoundName)
+
 
 level1 <- format_fup_red(red,
   FILENAME="Wambaugh2019",

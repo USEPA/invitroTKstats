@@ -1,4 +1,12 @@
+setwd("C:/Users/jwambaug/git/invitroTKstats/working")
+
+library(readxl)
 library(invitroTKstats)
+
+# read from the Excel file using library(readxl)
+load("wambaugh2019.RData")
+wambaugh2019.clint <- as.data.frame(read_excel("toxsci-19-0394-File012.xlsx"))
+save(wambaugh2019.clint,wambaugh2019.red,file="wambaugh2019.RData")
 
 clint <- wambaugh2019.clint
 clint$Date <- "2019"

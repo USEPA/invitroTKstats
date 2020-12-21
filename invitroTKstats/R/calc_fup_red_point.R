@@ -50,6 +50,12 @@
 #' red$Analysis.Instrument <- "No Idea"
 #' red$Analysis.Parameters <- "None"
 #' 
+#'
+#' # Strip out protein conc information from compound names:
+#' red$CompoundName <- gsub("-100P","",red$CompoundName)
+#' red$CompoundName <- gsub("-30P","",red$CompoundName)
+#' red$CompoundName <- gsub("-10P","",red$CompoundName)
+#' 
 #' red$Test.Target.Conc <- 5
 #' red$ISTD.Name <- "Bucetin and Diclofenac"
 #' red$ISTD.Conc <- 1
