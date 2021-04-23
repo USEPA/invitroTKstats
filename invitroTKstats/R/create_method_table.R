@@ -41,7 +41,7 @@
 #'
 #' create_method_table(kreutz2020,compound.col="Name")
 #'
-#' # Create the sort of method columns invitroTKstats is expecting from the
+#' # Create the method columns invitroTKstats is expecting from the
 #' # Wambaugh et al. (2019) supplemental table 10:
 #' wambaugh2019.methods$Method <- ""
 #' # Need to convert NA's to something to allow logic to work on whole column:
