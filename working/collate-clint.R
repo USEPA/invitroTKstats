@@ -43,19 +43,30 @@ for (this.file in dir(PATH))
         new.data$Heat.Control <- 0
       } else if (this.sheet %in% c("10uM_a Inactive","10uM_b Inactive",
         "10uM Inactive","10uM Data - Inactive","Xevo 10 uM Inactive",
-        "6500 10 uM Inactive"))
+        "6500 10 uM Inactive","10 uM HI"," 10 uM HI","10 uM Raw data"))
       {
         good <- TRUE
         new.data$Test.Conc <- 10
         new.data$Heat.Control <- 1
       } else if (this.sheet %in% c("1uM_a Inactive","1uM_b Inactive",
         "1uM Inactive","1uM Data - Inactive","Xevo 1 uM Inactive",
-        "6500 1 uM Inactive"))
+        "6500 1 uM Inactive","1 uM HI"," 1 uM HI","1 uM Raw data"))
       {
         good <- TRUE
         new.data$Test.Conc <- 1
         new.data$Heat.Control <- 1
-      }      
+      } else if (this.sheet %in% c("Data","Data2","Control",
+        "DTXSID6025272 10uM Control","Data-Plate 2","Xevo1.PRO}"))
+      {
+        good <- TRUE
+        new.data$Test.Conc <- NA
+        new.data$Heat.Control <- NA
+      } else if (this.sheet %in% c("Heat inactivated data","Control Inactive"))
+      {
+        good <- TRUE
+        new.data$Test.Conc <- NA
+        new.data$Heat.Control <- 1
+      }     
       if (good)
       {
         new.data <- subset(new.data,new.data[,2]!="")
@@ -67,8 +78,12 @@ for (this.file in dir(PATH))
           new.data <- new.data[(first.row+1):dim(new.data)[1],]
         }
         colnames(new.data)[colnames(new.data)=="ISTD.Area"] <- "ISTD Area"
+        colnames(new.data)[colnames(new.data)=="Filename"] <- "SampleName"
+        colnames(new.data)[colnames(new.data)=="Sample Name"] <- "CompoundName"
+        colnames(new.data)[colnames(new.data)=="Area Ratio"] <- "ISTDResponseRatio"
         colnames(new.data)[colnames(new.data)=="mass"] <- "Feature"
         colnames(new.data)[colnames(new.data)=="Transition"] <- "Feature"
+        if (!("Feature" %in% colnames(new.data))) new.data$Feature <- ""
         new.data <- new.data[,c(
           "SampleName",
           "CompoundName",
@@ -79,12 +94,53 @@ for (this.file in dir(PATH))
         new.data$TO <- 1
         new.data$FileName <- this.file
         if (!is.null(TO1clint)) new.data <- new.data[,colnames(TO1clint)] 
-        TO1caco2 <- rbind(TO1clint, new.data)
+        TO1clint <- rbind(TO1clint, new.data)
       } else {
-        print(this.sheet)
+        print(paste(this.file,":",this.sheet))
       }
     }
   }
+
+TO1clint$CompoundName <- gsub("_Human","",TO1clint$CompoundName)
+TO1clint[regexpr("_1uM",TO1clint$CompoundName)!=-1,"Test.Conc"] <- 1
+TO1clint[regexpr("_10uM",TO1clint$CompoundName)!=-1,"Test.Conc"] <- 10
+TO1clint[regexpr("-1uM",TO1clint$CompoundName)!=-1,"Test.Conc"] <- 1
+TO1clint[regexpr("-10uM",TO1clint$CompoundName)!=-1,"Test.Conc"] <- 10
+TO1clint[regexpr("_1uM",TO1clint$SampleName)!=-1,"Test.Conc"] <- 1
+TO1clint[regexpr("_10uM",TO1clint$SampleName)!=-1,"Test.Conc"] <- 10
+TO1clint$CompoundName <- gsub("_1uM","",TO1clint$CompoundName)
+TO1clint$CompoundName <- gsub("_10uM","",TO1clint$CompoundName)
+TO1clint$CompoundName <- gsub("-1uM","",TO1clint$CompoundName)
+TO1clint$CompoundName <- gsub("-10uM","",TO1clint$CompoundName)
+TO1clint[regexpr("_HI",TO1clint$CompoundName)!=-1,"Heat.Control"] <- 1
+TO1clint[regexpr("_HI",TO1clint$SampleName)!=-1,"Heat.Control"] <- 1
+TO1clint$CompoundName <- gsub("_HI","",TO1clint$CompoundName)
+
+TO1clint$Time <- -999
+TO1clint[regexpr("_120",TO1clint$CompoundName)!=-1,"Time"] <- 120
+TO1clint[regexpr("_120",TO1clint$SampleName)!=-1,"Time"] <- 120
+TO1clint$CompoundName <- gsub("_120","",TO1clint$CompoundName)
+TO1clint[regexpr("_60",TO1clint$CompoundName)!=-1,"Time"] <- 60
+TO1clint[regexpr("_60",TO1clint$SampleName)!=-1,"Time"] <- 60
+TO1clint$CompoundName <- gsub("_60","",TO1clint$CompoundName)
+TO1clint[regexpr("_30",TO1clint$CompoundName)!=-1,"Time"] <- 30
+TO1clint[regexpr("_30",TO1clint$SampleName)!=-1,"Time"] <- 30
+TO1clint$CompoundName <- gsub("_30","",TO1clint$CompoundName)
+TO1clint[regexpr("_15",TO1clint$CompoundName)!=-1,"Time"] <- 15
+TO1clint[regexpr("_15",TO1clint$SampleName)!=-1,"Time"] <- 15
+TO1clint$CompoundName <- gsub("_15","",TO1clint$CompoundName)
+TO1clint[regexpr("_0",TO1clint$CompoundName)!=-1,"Time"] <- 0
+TO1clint[regexpr("_0",TO1clint$SampleName)!=-1,"Time"] <- 0
+TO1clint[regexpr("Blank",TO1clint$SampleName)!=-1,"Time"] <- NA
+TO1clint$CompoundName <- gsub("_0","",TO1clint$CompoundName)
+TO1clint$CompoundName <- gsub("_1","",TO1clint$CompoundName)
+TO1clint$CompoundName <- gsub("_2","",TO1clint$CompoundName)
+TO1clint$CompoundName <- gsub("_3","",TO1clint$CompoundName)
+TO1clint[regexpr("_HI",TO1clint$SampleName)!=-1,"Time"] <- 120
+TO1clint[TO1clint$CompoundName=="57.1","CompoundName"] <- "DTXSID5020605"   
+
+TO1clint <- subset(TO1clint,!is.na(Area))
+                           
  
 length(unique(TO1clint$CompoundName)) 
 
