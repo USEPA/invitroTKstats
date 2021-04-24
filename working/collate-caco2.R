@@ -9,34 +9,52 @@ PATH <- "CyprotexCaco2"
 TO1caco2 <- NULL
 for (this.file in dir(PATH))
   if (this.file !="Problem")
-{
-  new.data <- read_excel(paste(PATH,"/",this.file,sep=""),skip=0,sheet=2)
-  new.data <- subset(new.data,new.data[,2]!="")
-  new.data[,1][is.na(new.data[,1])] <- ""
-  if (any(new.data[1]=="Client ID"))
   {
-    first.row <- which(new.data[,1]=="Client ID")
-    colnames(new.data) <- new.data[first.row,]
-    new.data <- new.data[(first.row+1):dim(new.data)[1],]
+    sheets <- excel_sheets(paste(PATH,"/",this.file,sep=""))
+    for (this.sheet in sheets)
+    {
+      new.data <- read_excel(paste(PATH,"/",this.file,sep=""),
+        skip=0,
+        sheet=which(sheets==this.sheet))
+      good <- FALSE
+      if (this.sheet %in% c("Data","Data (2)","Raw data 1","Raw data 2",
+        "Raw Data","Control Data"))
+      {
+        good <- TRUE
+      }
+      if (good)
+      {
+        new.data <- subset(new.data,new.data[,2]!="")
+        new.data[,1][is.na(new.data[,1])] <- ""
+        if (any(new.data[1]=="Client ID"))
+        {
+          first.row <- which(new.data[,1]=="Client ID")
+          colnames(new.data) <- new.data[first.row,]
+          new.data <- new.data[(first.row+1):dim(new.data)[1],]
+        }
+        colnames(new.data)[colnames(new.data)=="ISTD.Area"] <- "ISTD Area"
+        colnames(new.data)[colnames(new.data)=="Filename"] <- "SampleName"
+        colnames(new.data)[colnames(new.data)=="Sample Name"] <- "CompoundName"
+        colnames(new.data)[colnames(new.data)=="Area Ratio"] <- "ISTDResponseRatio"
+        colnames(new.data)[colnames(new.data)=="mass"] <- "Feature"
+        colnames(new.data)[colnames(new.data)=="Transition"] <- "Feature"
+        if (!("Feature" %in% colnames(new.data))) new.data$Feature <- ""
+        new.data <- new.data[,c(
+          "SampleName",
+          "CompoundName",
+          "Feature",
+          "Area",
+          "ISTD Area",
+          "ISTDResponseRatio")]
+        new.data$TO <- 1
+        new.data$FileName <- this.file
+        if (!is.null(TO1caco2)) new.data <- new.data[,colnames(TO1caco2)] 
+        TO1caco2 <- rbind(TO1caco2, new.data)
+      }  else {
+        print(paste(this.file,":",this.sheet))
+      }
+    }
   }
-  colnames(new.data)[colnames(new.data)=="ISTD.Area"] <- "ISTD Area"
-  colnames(new.data)[colnames(new.data)=="mass"] <- "Feature"
-  colnames(new.data)[colnames(new.data)=="Transition"] <- "Feature"
-  new.data <- new.data[,c(
-    "SampleName",
-    "CompoundName",
-    "Feature",
-    "Area",
-    "ISTD Area",
-    "ISTDResponseRatio")]
-  new.data$TO <- 1
-  new.data$FileName <- this.file
-#  colnames(new.data)[1] <- "Compound"
-#  colnames(new.data)[10] <- "Test.Article"
-#  colnames(new.data)[11] <- "Test.Conc"
-  if (!is.null(TO1caco2)) new.data <- new.data[,colnames(TO1caco2)] 
-  TO1caco2 <- rbind(TO1caco2, new.data)
-}
  
 length(unique(TO1caco2$CompoundName)) 
 

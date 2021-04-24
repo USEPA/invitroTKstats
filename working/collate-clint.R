@@ -83,14 +83,21 @@ for (this.file in dir(PATH))
         colnames(new.data)[colnames(new.data)=="Area Ratio"] <- "ISTDResponseRatio"
         colnames(new.data)[colnames(new.data)=="mass"] <- "Feature"
         colnames(new.data)[colnames(new.data)=="Transition"] <- "Feature"
+        colnames(new.data)[colnames(new.data)=="Time (mins"] <- "Time"
         if (!("Feature" %in% colnames(new.data))) new.data$Feature <- ""
+        if (!("Time" %in% colnames(new.data))) new.data$Time <- NA
+        if (!("Test.Conc" %in% colnames(new.data))) new.data$Test.Conc <- NA
+        if (!("Heat.Control" %in% colnames(new.data))) new.data$Heat.Control <- NA
         new.data <- new.data[,c(
           "SampleName",
           "CompoundName",
           "Feature",
           "Area",
           "ISTD Area",
-          "ISTDResponseRatio")]
+          "ISTDResponseRatio",
+          "Time",
+          "Test.Conc",
+          "Heat.Control")]
         new.data$TO <- 1
         new.data$FileName <- this.file
         if (!is.null(TO1clint)) new.data <- new.data[,colnames(TO1clint)] 
