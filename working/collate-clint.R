@@ -20,11 +20,8 @@ for (this.file in dir(PATH))
       if (this.sheet %in% c("10 uM","10uM","10uM_a","10uM_b",
          "Data 10uM","10 uM raw data","10uM Data","10 uM active",
          "6500 10uM Active","Xevo 10uM Active","5500 10uM Active",
-         "Data 10uM control","10 uM control","6500 10uM Control",
-         "10uM Control Group 2","Xevo 10uM Control","5500 10uM Control",
-         "Xevo-1 10uM Active","Xevo-1 10uM Control",
-         "Data - 10uM","Data - 10uM controls","Xevo 10 uM Active",
-         "6500 10 uM Active","Data 10uM 5500","Data 10uM Xevo"))
+         "Xevo-1 10uM Active","Xevo 10 uM Active","Data - 10uM",
+         "6500 10 uM Active","Data 10uM 5500","Data 10uM Xevo","1 uM Raw data"))
       {
         good <- TRUE
         new.data$Test.Conc <- 10
@@ -32,41 +29,46 @@ for (this.file in dir(PATH))
       } else if (this.sheet %in% c("1 uM","1uM","1uM_a","1uM_b",
          "Data 1uM","1 uM raw data","1uM Data","1 uM active",
          "6500 1uM Active","Xevo 1uM Active","5500 1uM Active",
-         "Data 1uM Control","1 uM control","6500 1uM Control",
-         "1uM Control Group 2","Xevo 1uM Control","5500 1uM Control",
-         "Xevo-1 1uM Active","Xevo-1 1uM Control",
-         "Data - 1uM","Data - 1uM controls","Xevo 1 uM Active",
-         "6500 1 uM Active","Data 1uM 5500","Data 1uM Xevo"))
+         "Xevo-1 1uM Active","Data - 1uM","Xevo 1 uM Active",
+         "6500 1 uM Active","Data 1uM 5500","Data 1uM Xevo","1 uM Raw data"))
       {
         good <- TRUE
         new.data$Test.Conc <- 1
         new.data$Heat.Control <- 0
       } else if (this.sheet %in% c("10uM_a Inactive","10uM_b Inactive",
+        "Data 10uM control","10 uM control","6500 10uM Control",
+        "10uM Control Group 2","Xevo 10uM Control","5500 10uM Control",
         "10uM Inactive","10uM Data - Inactive","Xevo 10 uM Inactive",
-        "6500 10 uM Inactive","10 uM HI"," 10 uM HI","10 uM Raw data"))
+        "Xevo-1 10uM Control","Data - 10uM controls",
+        "6500 10 uM Inactive","10 uM HI"," 10 uM HI",
+        "DTXSID6025272 10uM Control"))
       {
         good <- TRUE
         new.data$Test.Conc <- 10
         new.data$Heat.Control <- 1
       } else if (this.sheet %in% c("1uM_a Inactive","1uM_b Inactive",
+        "Data 1uM Control","1 uM control","6500 1uM Control",
+        "1uM Control Group 2","Xevo 1uM Control","5500 1uM Control",
         "1uM Inactive","1uM Data - Inactive","Xevo 1 uM Inactive",
-        "6500 1 uM Inactive","1 uM HI"," 1 uM HI","1 uM Raw data"))
+        "Xevo-1 1uM Control","Data - 1uM controls",
+        "6500 1 uM Inactive","1 uM HI"," 1 uM HI"))
       {
         good <- TRUE
         new.data$Test.Conc <- 1
         new.data$Heat.Control <- 1
-      } else if (this.sheet %in% c("Data","Data2","Control",
-        "DTXSID6025272 10uM Control","Data-Plate 2","Xevo1.PRO}"))
+      } else if (this.sheet %in% c("Data","Data2",
+        "Data-Plate 2","Xevo1.PRO}"))
       {
         good <- TRUE
         new.data$Test.Conc <- NA
         new.data$Heat.Control <- NA
-      } else if (this.sheet %in% c("Heat inactivated data","Control Inactive"))
+      } else if (this.sheet %in% c("Heat inactivated data",
+        "Control","Control Inactive"))
       {
         good <- TRUE
         new.data$Test.Conc <- NA
         new.data$Heat.Control <- 1
-      }     
+      }  
       if (good)
       {
         new.data <- subset(new.data,new.data[,2]!="")
@@ -100,6 +102,7 @@ for (this.file in dir(PATH))
           "Heat.Control")]
         new.data$TO <- 1
         new.data$FileName <- this.file
+        new.data$SheetName <- this.sheet
         if (!is.null(TO1clint)) new.data <- new.data[,colnames(TO1clint)] 
         TO1clint <- rbind(TO1clint, new.data)
       } else {

@@ -53,38 +53,61 @@ for (this.file in dir(PATH))
         colnames(new.data)[colnames(new.data)=="mass"] <- "Feature"
         colnames(new.data)[colnames(new.data)=="Transition"] <- "Feature"
         if (!("Feature" %in% colnames(new.data))) new.data$Feature <- ""
-        if (!("Protein.Conc" %in% colnames(new.data))) new.data$Protein.Conc <- NA
+        if (!("Protein.Conc" %in% colnames(new.data))) new.data$Protein.Conc <- NaN
         new.data <- new.data[,c(
           "SampleName",
           "CompoundName",
           "Feature",
           "Area",
           "ISTD Area",
-          "ISTDResponseRatio")]
-        new.data$TO <- 1
-        new.data$FileName <- this.file
-        new.data$Protein.Conc <- 100
+          "ISTDResponseRatio",
+          "Protein.Conc")]
+        new.data[regexpr("100%_Plasma",new.data$SampleName)!=-1,"Protein.Conc"] <- 100
         new.data[regexpr("30%_Plasma",new.data$SampleName)!=-1,"Protein.Conc"] <- 30
         new.data[regexpr("10%_Plasma",new.data$SampleName)!=-1,"Protein.Conc"] <- 10
-      if (!is.null(TO1ppb)) new.data <- new.data[,colnames(TO1ppb)] 
-      TO1ppb <- rbind(TO1ppb, new.data)
+        # Sometimes no protein concentration is given in an experiment (yes there's no
+        # protein for the specific measurment, but we need to know which experiment it
+        # corresponds to:)
+        if (any(is.nan(new.data$Protein.Conc)))
+        {
+          this.row <- 1
+          this.conc <- NaN
+          while (this.row < dim(new.data)[1])
+          {
+            if (!is.nan(unlist(new.data[this.row,"Protein.Conc"])))
+            {
+              this.conc <- new.data[this.row,"Protein.Conc"]
+            } else {
+              new.data[this.row,"Protein.Conc"] <- this.conc 
+            }
+            this.row <- this.row + 1
+          }
+        }
+        new.data$TO <- 1
+        new.data$FileName <- this.file
+        new.data$SheetName <- this.sheet
+
+        if (!is.null(TO1ppb)) new.data <- new.data[,colnames(TO1ppb)] 
+        TO1ppb <- rbind(TO1ppb, new.data)
       }  else {
         print(paste(this.file,":",this.sheet))
       }
     }
   }
  
+TO1ppb[regexpr("-10",TO1ppb$CompoundName)!=-1,"Protein.Conc"] <- 10
 TO1ppb[regexpr("-100",TO1ppb$CompoundName)!=-1,"Protein.Conc"] <- 100
 TO1ppb[regexpr("-30",TO1ppb$CompoundName)!=-1,"Protein.Conc"] <- 30
-TO1ppb[regexpr("-10",TO1ppb$CompoundName)!=-1,"Protein.Conc"] <- 10
+TO1ppb[regexpr("-10",TO1ppb$SampleName)!=-1,"Protein.Conc"] <- 10
 TO1ppb[regexpr("-100",TO1ppb$SampleName)!=-1,"Protein.Conc"] <- 100
 TO1ppb[regexpr("-30",TO1ppb$SampleName)!=-1,"Protein.Conc"] <- 30
-TO1ppb[regexpr("-10",TO1ppb$SampleName)!=-1,"Protein.Conc"] <- 10
 TO1ppb$CompoundName <- gsub("-100","",TO1ppb$CompoundName)
 TO1ppb$CompoundName <- gsub("-30","",TO1ppb$CompoundName)
 TO1ppb$CompoundName <- gsub("-10","",TO1ppb$CompoundName)
 TO1ppb$CompoundName <- gsub("-1","",TO1ppb$CompoundName)
 TO1ppb$CompoundName <- gsub("-2","",TO1ppb$CompoundName)
+
+
 
  
 length(unique(TO1ppb$CompoundName)) 

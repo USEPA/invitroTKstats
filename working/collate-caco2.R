@@ -48,6 +48,7 @@ for (this.file in dir(PATH))
           "ISTDResponseRatio")]
         new.data$TO <- 1
         new.data$FileName <- this.file
+        new.data$SheetName <- this.sheet
         if (!is.null(TO1caco2)) new.data <- new.data[,colnames(TO1caco2)] 
         TO1caco2 <- rbind(TO1caco2, new.data)
       }  else {
