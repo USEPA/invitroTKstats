@@ -1,7 +1,8 @@
 all.chems <- sort(unique(c(
   TO1clint$CompoundName,
   TO1ppb$CompoundName,
-  TO1caco2$CompoundName)))
+  TO1caco2$CompoundName,
+  TO1b2p$CompoundName)))
 
 all.chems <- all.chems[regexpr("DTXSID",all.chems)!=-1]
 
@@ -33,6 +34,10 @@ for (this.chem in all.chems)
   caco2.data <- subset(TO1caco2,CompoundName==this.chem)
   this.row$Caco2 <- 0
   if (dim(caco2.data)[1]>0) this.row$Caco2 <- 1
+
+  b2p.data <- subset(TO1b2p,CompoundName==this.chem)
+  this.row$B2P <- 0
+  if (dim(b2p.data)[1]>0) this.row$B2P <- 1
   
   all.data <- rbind(all.data,this.row)
 }
