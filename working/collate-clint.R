@@ -13,9 +13,9 @@ for (this.file in dir(PATH))
     sheets <- excel_sheets(paste(PATH,"/",this.file,sep=""))
     for (this.sheet in sheets)
     {
-      new.data <- read_excel(paste(PATH,"/",this.file,sep=""),
+      new.data <- suppressMessages(read_excel(paste(PATH,"/",this.file,sep=""),
         skip=0,
-        sheet=which(sheets==this.sheet))
+        sheet=which(sheets==this.sheet)))
       good <- FALSE
       if (this.sheet %in% c("10 uM","10uM","10uM_a","10uM_b",
          "Data 10uM","10 uM raw data","10uM Data","10 uM active",
@@ -106,7 +106,7 @@ for (this.file in dir(PATH))
         if (!is.null(TO1clint)) new.data <- new.data[,colnames(TO1clint)] 
         TO1clint <- rbind(TO1clint, new.data)
       } else {
-        print(paste(this.file,":",this.sheet))
+        print("Skipped",paste(this.file,":",this.sheet))
       }
     }
   }

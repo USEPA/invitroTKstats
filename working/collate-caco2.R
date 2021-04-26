@@ -13,9 +13,9 @@ for (this.file in dir(PATH))
     sheets <- excel_sheets(paste(PATH,"/",this.file,sep=""))
     for (this.sheet in sheets)
     {
-      new.data <- read_excel(paste(PATH,"/",this.file,sep=""),
+      new.data <- suppressMessages(read_excel(paste(PATH,"/",this.file,sep=""),
         skip=0,
-        sheet=which(sheets==this.sheet))
+        sheet=which(sheets==this.sheet)))
       good <- FALSE
       if (this.sheet %in% c("Data","Data (2)","Raw data 1","Raw data 2",
         "Raw Data","Control Data"))
@@ -52,7 +52,7 @@ for (this.file in dir(PATH))
         if (!is.null(TO1caco2)) new.data <- new.data[,colnames(TO1caco2)] 
         TO1caco2 <- rbind(TO1caco2, new.data)
       }  else {
-        print(paste(this.file,":",this.sheet))
+        print("Skipped",paste(this.file,":",this.sheet))
       }
     }
   }

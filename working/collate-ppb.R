@@ -101,7 +101,7 @@ for (this.file in dir(PATH))
         if (!is.null(TO1ppb)) new.data <- new.data[,colnames(TO1ppb)] 
         TO1ppb <- rbind(TO1ppb, new.data)
       }  else {
-        print(paste(this.file,":",this.sheet))
+        print("Skipped",paste(this.file,":",this.sheet))
       }
     }
   }
