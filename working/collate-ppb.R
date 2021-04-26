@@ -13,9 +13,9 @@ for (this.file in dir(PATH))
     sheets <- excel_sheets(paste(PATH,"/",this.file,sep=""))
     for (this.sheet in sheets)
     {
-      new.data <- read_excel(paste(PATH,"/",this.file,sep=""),
+      new.data <- suppressMessages(read_excel(paste(PATH,"/",this.file,sep=""),
         skip=0,
-        sheet=which(sheets==this.sheet))
+        sheet=which(sheets==this.sheet)))
       good <- FALSE
       if (this.sheet %in% c("Data","Data-All Comps","Control","Data (2)",
         "Data-Raw","Control Data","Raw data Control","Control data"))
@@ -37,12 +37,16 @@ for (this.file in dir(PATH))
       }
       if (good)
       {
-        new.data <- read_excel(paste(PATH,"/",this.file,sep=""),skip=0,sheet=2)
         new.data <- subset(new.data,new.data[,2]!="")
         new.data[,1][is.na(new.data[,1])] <- ""
         if (any(new.data[1]=="Client ID"))
         {
           first.row <- which(new.data[,1]=="Client ID")
+          colnames(new.data) <- new.data[first.row,]
+          new.data <- new.data[(first.row+1):dim(new.data)[1],]
+        } else if (any(new.data[1]=="Filename"))
+        {
+          first.row <- which(new.data[,1]=="Filename")
           colnames(new.data) <- new.data[first.row,]
           new.data <- new.data[(first.row+1):dim(new.data)[1],]
         }
@@ -54,6 +58,13 @@ for (this.file in dir(PATH))
         colnames(new.data)[colnames(new.data)=="Transition"] <- "Feature"
         if (!("Feature" %in% colnames(new.data))) new.data$Feature <- ""
         if (!("Protein.Conc" %in% colnames(new.data))) new.data$Protein.Conc <- NaN
+        if (any(regexpr("BLANK",toupper(new.data$CompoundName)!=-1)))
+        {
+          this.id <- new.data$CompoundName[regexpr("BLANK",
+            toupper(new.data$CompoundName))==-1][1]
+          new.data[regexpr("BLANK",toupper(new.data$CompoundName))!=-1,
+            "CompoundName"] <- this.id
+        }
         new.data <- new.data[,c(
           "SampleName",
           "CompoundName",
@@ -106,6 +117,23 @@ TO1ppb$CompoundName <- gsub("-30","",TO1ppb$CompoundName)
 TO1ppb$CompoundName <- gsub("-10","",TO1ppb$CompoundName)
 TO1ppb$CompoundName <- gsub("-1","",TO1ppb$CompoundName)
 TO1ppb$CompoundName <- gsub("-2","",TO1ppb$CompoundName)
+
+TO1ppb[regexpr("_Plasma",TO1ppb$CompoundName)!=-1,"Type"] <- "Plasma"
+TO1ppb[regexpr("_TO",TO1ppb$CompoundName)!=-1,"Type"] <- "T0"
+TO1ppb[regexpr("_PBS",TO1ppb$CompoundName)!=-1,"Type"] <- "PBS"
+TO1ppb[regexpr("Plasma",TO1ppb$SampleName)!=-1,"Type"] <- "Plasma"
+TO1ppb[regexpr("TO",TO1ppb$SampleName)!=-1,"Type"] <- "T0"
+TO1ppb[regexpr("PBS",TO1ppb$SampleName)!=-1,"Type"] <- "PBS"
+TO1ppb[regexpr("Blank",TO1ppb$SampleName)!=-1,"Type"] <- "PBS"
+TO1ppb$CompoundName <- gsub("_Plasma","",TO1ppb$CompoundName)
+TO1ppb$CompoundName <- gsub("_T0","",TO1ppb$CompoundName)
+TO1ppb$CompoundName <- gsub("_PBS","",TO1ppb$CompoundName)
+TO1ppb$CompoundName <- gsub("_T4","",TO1ppb$CompoundName)
+TO1ppb$CompoundName <- gsub("_1","",TO1ppb$CompoundName)
+TO1ppb$CompoundName <- gsub("_2","",TO1ppb$CompoundName)
+TO1ppb$CompoundName <- gsub("_","",TO1ppb$CompoundName)
+
+
 
 
 

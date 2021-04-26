@@ -116,4 +116,4 @@ TO1b2p[regexpr("Ref_Plasma",TO1b2p$SampleName)==-1 &
  
 length(unique(TO1b2p$CompoundName)) 
 
-write.csv(TO1b2p,file="HTTK2TO1-Clint-all.txt")
+write.csv(TO1b2p,file="HTTK2TO1-b2p-all.txt")
