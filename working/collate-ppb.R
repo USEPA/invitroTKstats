@@ -140,6 +140,6 @@ TO1ppb$CompoundName <- gsub("_","",TO1ppb$CompoundName)
  
 length(unique(TO1ppb$CompoundName)) 
 
-write.csv(TO1ppb,file="HTTK2TO1-PPB-all.txt")
+write.table(TO1ppb,file="HTTK2TO1-PPB-all.txt",row.names=F,sep="\t")
 
   

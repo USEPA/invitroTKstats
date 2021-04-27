@@ -154,4 +154,4 @@ TO1clint <- subset(TO1clint,!is.na(Area))
  
 length(unique(TO1clint$CompoundName)) 
 
-write.csv(TO1clint,file="HTTK2TO1-Clint-all.txt")
+write.table(TO1clint,file="HTTK2TO1-Clint-all.txt",row.names=F,sep="\t")

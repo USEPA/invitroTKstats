@@ -59,4 +59,4 @@ for (this.file in dir(PATH))
  
 length(unique(TO1caco2$CompoundName)) 
 
-write.csv(TO1caco2,file="HTTK2TO1-Caco2-all.txt")
+write.table(TO1caco2,file="HTTK2TO1-Caco2-all.txt",row.names=F,sep="\t")

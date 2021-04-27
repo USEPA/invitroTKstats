@@ -42,5 +42,5 @@ for (this.chem in all.chems)
   all.data <- rbind(all.data,this.row)
 }
 
-write.csv(TO1ppb,file="HTTK2TO1-datastatus.txt")
+write.table(all.data,file="HTTK2TO1-datastatus.txt",row.names=F,sep="\t")
 
