@@ -9,7 +9,7 @@ model {
     log.const.analytic.sd[i] ~ dunif(-10,-0.5)
     log.hetero.analytic.slope[i] ~ dunif(-5,0)
     C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
-    log.calibration[i] ~ dunif(-2, 2)
+    log.calibration[i] ~ dunif(-3, 2)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
@@ -162,7 +162,8 @@ calc_fup_uc <- function(PPB.data,
   istd.col="ISTD.Area",
   istd.name.col="ISTD.Name",
   istd.conc.col="ISTD.Conc",
-  nominal.test.conc.col="Test.Target.Conc" 
+  nominal.test.conc.col="Test.Target.Conc" ,
+  good.col="Verified"
   )
 {
   if (!is.null(TEMP.DIR)) 
@@ -171,75 +172,68 @@ calc_fup_uc <- function(PPB.data,
     setwd(TEMP.DIR)
   }
   
-  PPB.data <- as.data.frame(PPB.data)
-  all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
+  PPB.data <- read.csv(file=paste(FILENAME,"-PPB-UC-Level2.tsv",sep=""), 
+    sep="\t",header=T)  
+  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
+  PPB.data <- subset(PPB.data,!is.na(Response))
+
+# Standardize the column names:
+  sample.col <- "Lab.Sample.Name"
+  date.col <- "Date"
+  compound.col <- "Compound.Name"
+  dtxsid.col <- "DTXSID"
+  lab.compound.col <- "Lab.Compound.Name"
+  type.col <- "Sample.Type"
+  dilution.col <- "Dilution.Factor"
+  compound.conc.col <- "Standard.Conc"
+  cal.col <- "Calibration"
+  nominal.test.conc.col <- "Test.Target.Conc"
+  istd.name.col <- "ISTD.Name"
+  istd.conc.col <- "ISTD.Conc"
+  istd.col <- "ISTD.Area"
+  series.col <- "Series"
+  area.col <- "Area"
+
+# For a properly formatted level 2 file we should have all these columns:
+  cols <-c(
+    sample.col,
+    date.col,
+    compound.col,
+    dtxsid.col,
+    lab.compound.col,
+    type.col,
+    dilution.col,
+    cal.col,
+    compound.conc.col,
+    nominal.test.conc.col,
+    istd.name.col,
+    istd.conc.col,
+    istd.col,
+    series.col,
+    area.col,
+    "Response",
+    good.col)
+  if (!(all(cols %in% colnames(PPB.data))))
+  {
+    warning("Run format_fup_uc first (level 1) then curate to level 2.")
+    stop(paste("Missing columns named:",
+      paste(cols[!(cols%in%colnames(PPB.data))],collapse=", ")))
+  }
 
   # Only include the data types used:
-  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c("CC","T1","T5","AF"))
+  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c(
+    "CC",
+    "T1",
+    "T5",
+    "AF"))   
   
-  # Organize the columns:
-  PPB.data <- PPB.data[,c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col)]
-    
-  # Rename the columns:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    compound.conc.col <- "Standard.Conc"
-    nominal.test.conc.col <- "Test.Target.Conc"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-  colnames(PPB.data) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col)
+  # Only used verfied data:
+  PPB.data <- subset(PPB.data, PPB.data[,good.col] == "Y")
   
-  # calculate the reponse:
-  PPB.data[,"Response"] <- PPB.data[,area.col] /
-     PPB.data[,istd.col] *  PPB.data[,istd.conc.col]
+  PPB.data <- as.data.frame(PPB.data)
+  all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
   
-# Write out a "level 1" file (data organized into a standard format):  
-  write.table(PPB.data, 
-    file=paste(FILENAME,"-Level1.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-
-  OUTPUT.FILE <- paste(FILENAME,"-Level2.tsv",sep="")
+  OUTPUT.FILE <- paste(FILENAME,"-Level4.tsv",sep="")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
@@ -378,8 +372,8 @@ calc_fup_uc <- function(PPB.data,
             log.const.analytic.sd =runif(Num.cal,-5,-0.5),
             log.hetero.analytic.slope = runif(Num.cal,-5,-0.5),
 # Average across all the calibrations (the sampler will vary these):
-            C.thresh = rep(max(0,intercept/slope),Num.cal),
-            log.calibration = rep(log10(slope),Num.cal),
+            C.thresh = rep(min(max(0,intercept/slope),Test.Nominal.Conc/10),Num.cal),
+            log.calibration = rep(max(min(-2.95,log10(slope)),1.95),Num.cal),
 # There is only one Fup per chemical:
             log.Fup = log10(runif(1,0,1)),
 # Set the initial concentrations:
@@ -455,7 +449,7 @@ calc_fup_uc <- function(PPB.data,
   
   View(Results)
   save(Results,
-    file=paste("UC-Fup-Analysis-",Sys.Date(),".RData",sep=""))
+    file=paste(FILENAME,"-UC-Fup-Level4Analysis-",Sys.Date(),".RData",sep=""))
 
   return(list(Results=Results,coda=coda.out))  
 }

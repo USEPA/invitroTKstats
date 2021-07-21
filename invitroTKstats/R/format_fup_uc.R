@@ -207,8 +207,8 @@ format_fup_uc <- function(PPB.data,
     )
   
   # calculate the reponse:
-  PPB.data[,"Response"] <- PPB.data[,area.col] /
-     PPB.data[,istd.col] *  PPB.data[,istd.conc.col]
+  PPB.data[,"Response"] <- as.numeric(PPB.data[,area.col]) /
+     as.numeric(PPB.data[,istd.col]) * as.numeric(PPB.data[,istd.conc.col])
   
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(PPB.data, 
