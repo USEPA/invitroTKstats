@@ -7,9 +7,9 @@ model {
   {
     # Priors:
     log.const.analytic.sd[i] ~ dunif(-10,-0.5)
-    log.hetero.analytic.slope[i] ~ dunif(-5,0)
+    log.hetero.analytic.slope[i] ~ dunif(-5,1)
     C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
-    log.calibration[i] ~ dunif(-3, 2)
+    log.calibration[i] ~ dunif(-3, 3)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
@@ -391,7 +391,7 @@ calc_fup_uc <- function(PPB.data,
           summarise=T,
           inits = initfunction,
           startburnin = 25000, 
-          startsample = 25000, 
+          startsample = 50000, 
           max.time="5m",
           crash.retry=2,
           adapt=10000,
