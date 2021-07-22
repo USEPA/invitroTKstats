@@ -97,7 +97,9 @@ UC.data$Analysis.Parameters <- "None"
 # ISTD cocn 1ppm:
 UC.data$ISTD.Conc <- 1 #ppm
 
-UC.data$Test.Target.Conc <- 0.01 # uM
+# Test chemical concentration:
+UC.data$Test.Target.Conc <- 10 # uM
+
 # Make the numeric values numeric:
 UC.data[,"Area"] <- as.numeric(unlist(UC.data[,"Area"]))
 UC.data[,"IS Area"] <- as.numeric(unlist(UC.data[,"IS Area"]))

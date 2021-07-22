@@ -233,7 +233,7 @@ calc_fup_uc <- function(PPB.data,
   PPB.data <- as.data.frame(PPB.data)
   all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
   
-  OUTPUT.FILE <- paste(FILENAME,"-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste(FILENAME,"-PPB-UC-Level4.tsv",sep="")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
