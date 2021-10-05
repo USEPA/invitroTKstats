@@ -25,7 +25,8 @@ calc_fup_uc(
   istd.col = "ISTD.Area",
   istd.name.col = "ISTD.Name",
   istd.conc.col = "ISTD.Conc",
-  nominal.test.conc.col = "Test.Target.Conc"
+  nominal.test.conc.col = "Test.Target.Conc",
+  good.col = "Verified"
 )
 }
 \arguments{

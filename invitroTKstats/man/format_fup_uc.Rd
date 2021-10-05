@@ -55,7 +55,8 @@ date (Defaults to "Date")}
 is, the test compound) MS peak area (Defaults to "Area")}
 
 \item{series.col}{Which column of PPB.data indicates the "series", that is
-a simultaneous replicate (Defaults to "Series")}
+a simultaneous replicate with the same analytical chemistry 
+(Defaults to "Series")}
 
 \item{type.col}{Which column of PPB.data indicates the sample type (see table
 above)(Defaults to "Sample.Type")}

@@ -1,21 +1,29 @@
-#' Creates a standardized data table reporting Caco2 data
+#' Creates a standardized data table reporting Caco-2 data
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of membrane 
-#' permeability using Caco2 cells (). 
-#' unbound in plasma using ultracentrifugation (Redgrave 1975?).
-#' An input dataframe is organized into a standard set of columns and is written
-#' to a tab-separated text file. 
+#' permeability using Caco-2 cells (Hubatsch, 2007). The input dataframe is 
+#' organized into a standard set of columns and is written to a tab-separated 
+#' text file. 
+#' 
+#' In this experiment an 
+#' in vitro well is separated into two by a membrane composed of a monolayer of
+#' Caco-2 cells. A test chemical is added to eithe the apical or basal side of
+#' of the monolayer at time 0, and after a set time samples are taken from both
+#' the "donor" (side where the test chemical was added) and the "receiver side.
+#' Depending on the direction of the test the donor side can be either apical or
+#' basal. 
 #'
 #' The data frame of observations should be annotated according to direction 
 #' (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
 #' of concentrtion measured:
 #' \tabular{rr}{
-#'   Blank with no chemical added \tab Blank \tab \cr
-#'   Dosing vehicle (C0) at target concentration \tab Dosing\cr
-#'   Donor compartment at end of experiment \tab Donor\cr
-#'   Receiver compartment at end of experiment\tab Receiver\cr
+#'   Blank with no chemical added \tab Blank \cr
+#'   Dosing vehicle (C0) at target concentration \tab D0\cr
+#'   Donor compartment at end of experiment \tab D2\cr
+#'   Receiver compartment at end of experiment\tab R2\cr
 #' }
+#' 
 #' Chemical concentration is calculated qualitatively as a response:
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
@@ -39,6 +47,14 @@
 #' 
 #' @param date.col Which column of input.data indicates the laboratory measurment
 #' date (Defaults to "Date")
+#' 
+#' @param series.col Which column of PPB.data indicates the "series", that is
+#' a simultaneous replicate with the same analytical chemistry 
+#' (Defaults to "Series")
+#' 
+#' @param series If this argument is used (defaults to NULL) every observation 
+#' in the table is assigned the value of the argument and the corresponding
+#' column in input.table (if present) is ignored.
 #' 
 #' @param compound.col Which column of input.data indicates the test compound
 #' (Defaults to "Compound.Name")
@@ -71,6 +87,33 @@
 #' observation in the table is assigned the value of the argument and the 
 #' corresponding column in input.table (if present) is ignored.
 #' 
+#' @param membrane.area.col Which column of input.data indicates the area of the
+#' Caco-2 monolayer (in cm^2) (Defaults to "Membrane.Area")
+#' 
+#' @param membrane.area If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param receiver.vol.col Which column of input.data indicates the volume 
+#' (in cm^3) of the receiver portion of the Caco-2 experimental well
+#' (Defaults to "Vol.Receiver")
+#' 
+#' @param donor.vol.col Which column of input.data indicates the volume 
+#' (in cm^3) of the donor portion of the Caco-2 experimental well where the
+#' test chemical is added
+#' (Defaults to "Vol.Donor")
+#' 
+#' @param direction.col Which column of input.data indicates the direction of
+#' the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
+#' to aprical (BtoA). (Defaults to "Direction")
+#' 
+#' @param meas.time.col Which column of input.data indicates the amount of time
+#' before the receiver and donor compartments are measured (Defaults to "Time")
+#'
+#' @param meas.time If this argument is used (defaults to 2 h) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored. 
+#' 
 #' @param istd.col Which column of input.data indicates the MS peak area for the
 #' internal standard (Defaults to "ISTD.Area")
 #' 
@@ -89,7 +132,8 @@
 #' corresponding column in input.table (if present) is ignored.
 #' 
 #' @param nominal.test.conc.col Which column of input.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc") 
+#' test chemical concentration at time zero in the dosing solution (added to the
+#' donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc") 
 #' 
 #' @param nominal.test.conc If this argument is used (defaults to NULL) every 
 #' observation in the table is assigned the value of the argument and the 
@@ -128,12 +172,12 @@
 #' 
 #' @examples
 #' library(invitroTKstats)
-#' level0 <- kreutz2020
-#' level1 <- format_fup_uc(level0,
-#'   FILENAME="Kreutz2020",
-#'   compound.col="Name",
+#' level0 <- TO1caco2
+#' level1 <- format_caco2(level0,
+#'   FILENAME="EPACyprotex2021",
+#'   compound.col="CompoundName",
 #'   compound.conc.col="Standard.Conc",
-#'   area.col="Chem.Area"
+#'   membrane.area.col=0.11
 #'   )
 #' 
 #' @references
@@ -148,17 +192,25 @@ format_caco2 <- function(input.data,
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
   date.col="Date",
+  series.col="Series",
+  series=NULL,
   compound.col="Compound.Name",
   area.col="Area",
   istd.col="ISTD.Area",
   type.col="Type",
   direction.col="Direction",
+  membrane.area.col="Membrane.Area",
+  membrane.area=NULL,
+  receiver.vol.col="Vol.Receiver",
+  donor.vol.col="Vol.Donor",
   compound.conc=NULL,
   compound.conc.col="Nominal.Conc",
   cal=NULL,
   cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
+  meas.time.col="Time",
+  meas.time = 2,
   istd.name=NULL,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
@@ -170,30 +222,34 @@ format_caco2 <- function(input.data,
   analysis.instrument=NULL,
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
-  analysis.parameters.col="Analysis.Parameters" 
+  analysis.parameters.col="Analysis.Parameters"
   )
 {  
+  # These are the required data types as indicated by type.col.
+  # In order to calculate the parameter a chemical must have peak areas for each
+  # of these measurements:
+  req.types=c("Blank","D0","D2","R2")
+
   output.data <- as.data.frame(input.data)
 
 # These arguments allow the user to specify a single value for every obseration 
 # in the table:  
-  if (!is.null(cal)) output.data$Cal <- cal
-  if (!is.null(dilution)) output.data$Dilution.Factor <- dilution
-  if (!is.null(istd.name)) output.data$ISTD.Name <- istd.name
-  if (!is.null(istd.conc)) output.data$ISTD.Conc <- istd.conc
-  if (!is.null(nominal.test.conc)) output.data$Test.Target.Conc <- 
+  if (!is.null(cal)) output.data[,cal.col] <- cal
+  if (!is.null(dilution)) output.data[,dilution.factor.col] <- dilution
+  if (!is.null(istd.name)) output.data[,istd.name.col] <- istd.name
+  if (!is.null(istd.conc)) output.data[,istd.conc.col] <- istd.conc
+  if (!is.null(nominal.test.conc)) output.data[,nominal.test.conc.col] <- 
     nominal.test.conc
-  if (!is.null(analysis.method)) output.data$Analysis.Method <- analysis.method
-  if (!is.null(analysis.instrument)) output.data$Analysis.Instrument <- 
+  if (!is.null(analysis.method)) output.data[,analysis.method.col]<- analysis.method
+  if (!is.null(analysis.instrument)) output.data[,analysis.instrument.col] <- 
     analysis.instrument
-  if (!is.null(analysis.parameters)) output.data$Analysis.Parameters <- 
+  if (!is.null(analysis.parameters)) output.data[,analysis.parameters.col] <- 
     analysis.parameters
+  if (!is.null(membrane.area)) output.data[,membrane.area.col] <- membrane.area
+  if (!is.null(series)) output.data[,series.col] <- series
+  if (!is.null(meas.time)) output.data[,meas.time.col] <- meas.time 
   
-  
-  
-  
-  
-# We need all these columns in input.data
+# We need all these columns in output.data
   cols <-c(
     sample.col,
     date.col,
@@ -201,31 +257,36 @@ format_caco2 <- function(input.data,
     dtxsid.col,
     lab.compound.col,
     type.col,
+    direction.col,
     dilution.col,
     cal.col,
+    series.col,
     compound.conc.col,
     nominal.test.conc.col,
+    meas.time.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
-    series.col,
     area.col,
+    membrane.area.col,
+    donor.vol.col,
+    receiver.vol.col,
     analysis.method.col,
     analysis.instrument.col,
     analysis.parameters.col
     )
   
-  if (!(all(cols %in% colnames(input.data))))
+  if (!(all(cols %in% colnames(output.data))))
   {
     stop(paste("Missing columns named:",
-      paste(cols[!(cols%in%colnames(input.data))],collapse=", ")))
+      paste(cols[!(cols%in%colnames(output.data))],collapse=", ")))
   }
 
   # Only include the data types used:
-  input.data <- subset(input.data,input.data[,type.col] %in% c("CC","T1","T5","AF"))
+  output.data <- subset(output.data,output.data[,type.col] %in% req.types)
   
   # Organize the columns:
-  input.data <- input.data[,cols]
+  output.data <- output.data[,cols]
     
   # Standardize the column names:
     sample.col <- "Lab.Sample.Name"
@@ -234,55 +295,68 @@ format_caco2 <- function(input.data,
     dtxsid.col <- "DTXSID"
     lab.compound.col <- "Lab.Compound.Name"
     type.col <- "Sample.Type"
+    direction.col <- "Direction"
     dilution.col <- "Dilution.Factor"
     cal.col <- "Calibration"
+    series.col <- "Series"
     compound.conc.col <- "Standard.Conc"
     nominal.test.conc.col <- "Test.Target.Conc"
+    meas.time.col <- "Time"
     istd.name.col <- "ISTD.Name"
     istd.conc.col <- "ISTD.Conc"
     istd.col <- "ISTD.Area"
-    series.col <- "Series"
     area.col <- "Area"
+    membrane.area.col <- "Membrane.Area"
+    donor.vol.col <- "Vol.Donor"
+    recevier.vol.col <- "Vol.Receiver"
     analysis.method.col <- "Analysis.Method"
     analysis.instrument.col <- "Analysis.Instrument"
     analysis.parameters.col <- "Analysis.Parameters" 
     
-  colnames(input.data) <- c(
+  colnames(output.data) <- c(
     sample.col,
     date.col,
     compound.col,
     dtxsid.col,
     lab.compound.col,
     type.col,
+    direction.col,
     dilution.col,
     cal.col,
+    series.col,
     compound.conc.col,
     nominal.test.conc.col,
+    meas.time.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
-    series.col,
     area.col,
+    membrane.area.col,
+    donor.vol.col,
+    receiver.vol.col,
     analysis.method.col,
     analysis.instrument.col,
     analysis.parameters.col
     )
   
   # calculate the reponse:
-  input.data[,"Response"] <- input.data[,area.col] /
-     input.data[,istd.col] *  input.data[,istd.conc.col]
+  output.data[,area.col] <- as.numeric(output.data[,area.col])
+  output.data[,istd.col] <- as.numeric(output.data[,istd.col])
+  output.data[,istd.conc.col] <- as.numeric(output.data[,istd.conc.col])
+  output.data[,"Response"] <- output.data[,area.col] /
+     output.data[,istd.col] *  output.data[,istd.conc.col]
   
 # Write out a "level 1" file (data organized into a standard format):  
-  write.table(input.data, 
-    file=paste(FILENAME,"-PPB-UC-Level1.tsv",sep=""),
+  write.table(output.data, 
+    file=paste(FILENAME,"-Caco-2-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
     
-  summarize_table(input.data,
-    req.types=c("CC","T1","T5","AF"))
+  summarize_table(output.data,
+    req.types=req.types)
 
-  return(input.data)  
+  return(output.data)  
 }
 
 

@@ -1,6 +1,6 @@
 #' Calculate a point estimate of Fraction Unbound in Plasma (RED)
 #'
-#' This function use describing mass spectrometry (MS) peak areas
+#' This function uses mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
 #' Data are read from a "Level2" text file that should have been formatted and created 
@@ -8,8 +8,7 @@
 #' should have been curated and had a column added with the value "Y" indicating
 #' that each row is verified as usable for analysis (that is, the Level2 file).
 #' 
-#' The should be annotated according to
-#' of these types:
+#' The data should be annotated according to these types:
 #' \tabular{rrrrr}{
 #'   Blank (ignored) \tab Blank\cr
 #'   Plasma well concentration \tab Plasma\cr
