@@ -13,17 +13,28 @@ format_clint(
   dtxsid.col = "DTXSID",
   lab.compound.col = "Lab.Compound.Name",
   type.col = "Sample.Type",
-  dilution.col = "Dilution.Factor",
-  cal.col = "Cal",
-  istd.name.col = "ISTD.Name",
-  istd.conc.col = "ISTD.Conc",
-  istd.col = "ISTD.Area",
+  density = NULL,
   density.col = "Hep.Density",
-  conc.col = "Conc",
-  time.col = "Time",
-  area.col = "Area",
+  compound.conc = NULL,
+  compound.conc.col = "Nominal.Conc",
+  cal = NULL,
+  cal.col = "Cal",
+  dilution = NULL,
+  dilution.col = "Dilution.Factor",
+  meas.time.col = "Time",
+  meas.time = 2,
+  istd.col = "ISTD.Area",
+  istd.name = NULL,
+  istd.name.col = "ISTD.Name",
+  istd.conc = NULL,
+  istd.conc.col = "ISTD.Conc",
+  nominal.test.conc = NULL,
+  nominal.test.conc.col = "Test.Target.Conc",
+  analysis.method = NULL,
   analysis.method.col = "Analysis.Method",
+  analysis.instrument = NULL,
   analysis.instrument.col = "Analysis.Instrument",
+  analysis.parameters = NULL,
   analysis.parameters.col = "Analysis.Parameters"
 )
 }
@@ -35,45 +46,106 @@ contain columns with names specified by the following arguments:}
 \item{FILENAME}{A string used to identify outputs of the function call.
 (defaults to "MYDATA")}
 
-\item{sample.col}{Which column of clint.data indicates the unique mass 
+\item{sample.col}{Which column of input.data indicates the unique mass 
 spectrometry (MS) sample name used by the laboratory. (Defaults to 
 "Lab.Sample.Name")}
 
-\item{date.col}{Which column of clint.data indicates the laboratory measurment
+\item{date.col}{Which column of input.data indicates the laboratory measurment
 date (Defaults to "Date")}
 
-\item{compound.col}{Which column of clint.data indicates the test compound
+\item{compound.col}{Which column of input.data indicates the test compound
 (Defaults to "Compound.Name")}
 
-\item{dtxsid.col}{Which column of clint.data indicates EPA's DSSTox Structure 
+\item{dtxsid.col}{Which column of input.data indicates EPA's DSSTox Structure 
 ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
-\item{lab.compound.col}{Which column of clint.data indicates The test compound 
+\item{lab.compound.col}{Which column of input.data indicates The test compound 
 name used by the laboratory (Defaults to "Lab.Compound.Name")}
 
-\item{type.col}{Which column of clint.data indicates the sample type (see table
-above)(Defaults to "Sample.Type")}
-
-\item{dilution.col}{Which column of clint.data indicates how many times the
-sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
-
-\item{cal.col}{Which column of clint.data indicates the MS calibration -- for
-instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")}
-
-\item{istd.name.col}{Which column of clint.data indicates identity of the 
-internal standard (Defaults to "ISTD.Name")}
-
-\item{istd.conc.col}{Which column of clint.data indicates the concentration 
-(units if uM) of
-the internal standard (Defaults to "ISTD.Conc")}
-
-\item{istd.col}{Which column of clint.data indicates the MS peak area for the
-internal standard (Defaults to "ISTD.Area")}
+\item{type.col}{Which column of input.data indicates the direction of the 
+measurements (either "AtoB" for apical to basolateral or "BtoA" for vice 
+versa) (Defaults to "Direction")}
 
 \item{density.col}{Which column of clint.data indicates the density (units of
 millions of hepatocytes per mL) hepatocytes in the in vitro incubation 
 (Defaults to "Hep.Density" )}
+
+\item{cal}{If this argument is used (defaults to NULL) every observation in
+the table is assigned the value of the argument and the corresponding
+column in input.table (if present) is ignored.
+
+#param compound.conc.col Which column indictes the intended concentration 
+of the test chemical for calibration curves (Defaults to "Standard.Conc")}
+
+\item{cal.col}{Which column of input.data indicates the MS calibration -- for
+instance different machines on the same day or different days with the same
+MS analyzer (Defaults to "Cal")}
+
+\item{dilution}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{dilution.col}{Which column of clint.data indicates how many times the
+sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
+
+\item{meas.time.col}{Which column of input.data indicates the amount of time
+before the receiver and donor compartments are measured (Defaults to "Time")}
+
+\item{meas.time}{If this argument is used (defaults to 2 h) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{istd.col}{Which column of input.data indicates the MS peak area for the
+internal standard (Defaults to "ISTD.Area")}
+
+\item{istd.name}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{istd.name.col}{Which column of input.data indicates identity of the 
+internal standard (Defaults to "ISTD.Name")}
+
+\item{istd.conc}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{istd.conc.col}{Which column of input.data indicates the concentration of
+the internal standard (Defaults to "ISTD.Conc")}
+
+\item{nominal.test.conc}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{nominal.test.conc.col}{Which column of input.data indicates the intended
+test chemical concentration at time zero in the dosing solution (added to the
+donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
+
+\item{analysis.method}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{analysis.method.col}{Which column of input.data indicates the analytical
+chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+"Analysis.Method")}
+
+\item{analysis.instrument}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{analysis.instrument.col}{Which column of input.data indicates the 
+instrument used for chemical analysis, for example 
+"Agilent 6890 GC with model 5973 MS" (Defaults to 
+"Analysis.Instrument")}
+
+\item{analysis.parameters}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{analysis.parameters.col}{Which column of input.data indicates the 
+parameters used to identify the compound on the chemical analysis instrument,
+for example 
+"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
+(Defaulys to "Analysis.Paramaters").}
 
 \item{conc.col}{Which column of clint.data indicates the intended
 test chemical concentration 
@@ -84,26 +156,40 @@ at time zero (Defaults to "Conc")}
 time of the measurment (in minutes) since the test chemical was introduced
 into the hepatocyte incubation (Defaults to "Time")}
 
-\item{area.col}{Which column of clint.data indicates the target analyte (that 
+\item{input.data}{A data frame containing mass-spectrometry peak areas,
+indication of chemical identiy, and measurment type. The data frame should
+contain columns with names specified by the following arguments:}
+
+\item{series.col}{Which column of PPB.data indicates the "series", that is
+a simultaneous replicate with the same analytical chemistry 
+(Defaults to "Series")}
+
+\item{series}{If this argument is used (defaults to NULL) every observation 
+in the table is assigned the value of the argument and the corresponding
+column in input.table (if present) is ignored.}
+
+\item{area.col}{Which column of input.data indicates the target analyte (that 
 is, the test compound) MS peak area (Defaults to "Area")}
 
-\item{analysis.method.col}{Which column of PPB.data indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
-"Analysis.Method")}
+\item{membrane.area.col}{Which column of input.data indicates the area of the
+Caco-2 monolayer (in cm^2) (Defaults to "Membrane.Area")}
 
-\item{analysis.instrument.col}{Which column of PPB.data indicates the 
-instrument used for chemical analysis, for example 
-"Agilent 6890 GC with model 5973 MS" (Defaults to 
-"Analysis.Instrument")}
+\item{membrane.area}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
 
-\item{analysis.parameters.col}{Which column of PPB.data indicates the 
-parameters used to identify the compound on the chemical analysis instrument,
-for example 
-"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-(Defaulys to "Analysis.Paramaters").}
+\item{receiver.vol.col}{Which column of input.data indicates the volume 
+(in cm^3) of the receiver portion of the Caco-2 experimental well
+(Defaults to "Vol.Receiver")}
 
-\item{series.col}{Which column of clint.data indicates the "series", that is
-a simultaneous replicate (Defaults to "Series")}
+\item{donor.vol.col}{Which column of input.data indicates the volume 
+(in cm^3) of the donor portion of the Caco-2 experimental well where the
+test chemical is added
+(Defaults to "Vol.Donor")}
+
+\item{direction.col}{Which column of input.data indicates the direction of
+the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
+to aprical (BtoA). (Defaults to "Direction")}
 }
 \value{
 \item{data.frame}{A data.frame in standardized "level1" format}
@@ -152,10 +238,7 @@ level1 <- format_clint(clint,
 
 }
 \references{
-Shibata, Yoshihiro, Hiroyuki Takahashi, and Yasuyuki Ishii. "A convenient in 
-vitro screening method for predicting in vivo drug metabolic clearance using 
-isolated hepatocytes suspended in serum." Drug metabolism and disposition 
-28.12 (2000): 1518-1523.
+\insertRef{shibata2002prediction}{invitroTKstats}
 }
 \author{
 John Wambaugh

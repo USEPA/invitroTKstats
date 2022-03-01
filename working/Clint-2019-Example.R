@@ -80,6 +80,7 @@ level2$Verified <- "Y"
    row.names=F,
    quote=F)
     
-level3 <- calc_clint_point(FILENAME="Wambaugh2019")
+#level3 <- calc_clint_point(FILENAME="Wambaugh2019")
 
-level4 <- calc_fup_uc(FILENAME="SmeltzPFASAug2021/SmeltzAug2021") 
+level4 <- calc_clint(FILENAME="Wambaugh2019")
+

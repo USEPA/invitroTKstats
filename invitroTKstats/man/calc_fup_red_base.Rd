@@ -107,6 +107,10 @@ of these types:
   Equilibrium chemical in plasma well \tab Plasma\cr
 }
 }
+\references{
+\insertRef{waters2008validation}{invitroTKstats}
+\insertRef{wambaugh2019assessing}{invitroTKstats}
+}
 \author{
 John Wambaugh and Chantel Nicolas
 }

@@ -146,9 +146,6 @@
 #' #param compound.conc.col Which column indictes the intended concentration 
 #' of the test chemical for calibration curves (Defaults to "Standard.Conc")
 #'
-#' @param dilution.col Which column of input.data indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#' 
 #' @param dilution If this argument is used (defaults to NULL) every 
 #' observation in the table is assigned the value of the argument and the 
 #' corresponding column in input.table (if present) is ignored.
@@ -232,7 +229,7 @@
 #' observation in the table is assigned the value of the argument and the 
 #' corresponding column in input.table (if present) is ignored.
 #'
-' @return \item{data.frame}{A data.frame in standardized "level1" format} 
+#' @return \item{data.frame}{A data.frame in standardized "level1" format} 
 #'
 #' @author John Wambaugh
 #' 
@@ -271,7 +268,6 @@ format_clint <- function(clint.data,
   dtxsid.col="DTXSID",
   lab.compound.col="Lab.Compound.Name",
   type.col="Sample.Type",
-  dilution.col="Dilution.Factor",
   density=NULL,
   density.col="Hep.Density",
   compound.conc=NULL,
@@ -280,15 +276,16 @@ format_clint <- function(clint.data,
   cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  meas.time.col="Time",
-  meas.time = 2,
+  time.col="Time",
+  time = 2,
   istd.col="ISTD.Area",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  nominal.test.conc=NULL,
-  nominal.test.conc.col="Test.Target.Conc",
+  conc.col="Conc",
+  conc=NULL,
+  area.col="Area",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
   analysis.instrument=NULL,

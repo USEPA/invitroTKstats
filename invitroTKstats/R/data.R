@@ -11,21 +11,23 @@
 #' @aliases wambaugh2019.clint
 #' @docType data
 #' @format A data.frame 23,021 rows and 15 variables: \describe{
-#' \insertRef{Preferred.Name}}{}
-#' \insertRef{CAS}}{}
-#' \insertRef{DTXSID}}{}
-#' \insertRef{Sample.Name}}{}
-#' \insertRef{Name}}{}
-#' \insertRef{Transition}}{}
-#' \insertRef{Area}}{}
-#' \insertRef{ISTD.Area}}{}
-#' \insertRef{ISTDResponseRatio}}{}
-#' \insertRef{ln...Remaining}}{}
-#' \insertRef{Time..mins.}}{}
-#' \insertRef{Conc}}{}
-#' \insertRef{TaskOrder}}{}
-#' \insertRef{FileName}}{}
-#' \insertRef{X}}{}  
+#' \item{\code{Preferred.Name}}{}
+#' \item{\code{CAS}}{}
+#' \item{\code{DTXSID}}{}
+#' \item{\code{Sample.Name}}{}
+#' \item{\code{Name}}{}
+#' \item{\code{Transition}}{}
+#' \item{\code{Area}}{}
+#' \item{\code{ISTD.Area}}{}
+#' \item{\code{ISTDResponseRatio}}{}
+#' \item{\code{ln...Remaining}}{}
+#' \item{\code{Time..mins.}}{}
+#' \item{\code{Conc}}{}
+#' \item{\code{TaskOrder}}{}
+#' \item{\code{FileName}}{}
+#' \item{\code{X}}{} 
+#' } 
+#'
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
@@ -93,7 +95,8 @@
 #' \item{\code{Task.Order}}{}         
 #' \item{\code{RawDataSet}}{}
 #' \item{\code{CyprotexEPASetNumber}}{}
-#'   }
+#' }
+#'
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
@@ -130,8 +133,9 @@
 #' \item{\code{Response}}{}
 #' \item{\code{Analysis.Method}}{}
 #' \item{\code{Analysis.Instrument}}{}
-#' \item{\Analysis.Parameters}}{}
-#'   }
+#' \item{\code{Analysis.Parameters}}{}
+#' }
+#'
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}
 #' @keywords data
@@ -165,7 +169,7 @@
 #' \item{\code{Response}}{}
 #' \item{\code{Analysis.Method}}{}
 #' \item{\code{Analysis.Instrument}}{}
-#' \item{\Analysis.Parameters}}{}
+#' \item{\code{Analysis.Parameters}}{}
 #'   }
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}

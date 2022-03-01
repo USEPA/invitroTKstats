@@ -1,6 +1,6 @@
 Package: invitroTKstats
-Version: 0.0.6
-Date: 2020-12-21
+Version: 0.0.7
+Date: 2022-03-01
 Title: Tools for Analyzing In Vitro Toxicokinetic Measurements
 Description: These functions were developed for performing Bayesian
              statistical analysis of in vitro measurements to characterize
@@ -19,7 +19,8 @@ Authors@R: c(
            person("Anna", "Kreutz", role = c("ctb"))
            )
 Depends: R (>= 2.10)
-Imports: runjags, parallel, gdata, coda, ggplot2
+Imports: runjags, parallel, gdata, coda, ggplot2, Rdpack
+RdMacros: Rdpack
 Suggests:
 License: GPL-3
 LazyData: true
