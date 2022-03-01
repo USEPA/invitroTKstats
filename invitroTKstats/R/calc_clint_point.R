@@ -87,10 +87,7 @@
 #' level3.10 <- calc_clint_point(FILENAME="Wambaugh2019-10")
 #'
 #' @references
-#' Shibata, Yoshihiro, Hiroyuki Takahashi, and Yasuyuki Ishii. "A convenient in 
-#' vitro screening method for predicting in vivo drug metabolic clearance using 
-#' isolated hepatocytes suspended in serum." Drug metabolism and disposition 
-#' 28.12 (2000): 1518-1523.
+#' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @importFrom stats4 mle coef AIC
 #'

@@ -45,6 +45,7 @@
 #' @return \item{list}{A list containing the summary counts from the table} 
 #'
 #' @author John Wambaugh
+#' @export summarize_table
 summarize_table <- function(input.table,
   dtxsid.col="DTXSID",
   compound.col="Compound.Name",

@@ -94,7 +94,145 @@
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 #' (Defaulys to "Analysis.Paramaters"). 
 #'
-#' @return \item{data.frame}{A data.frame in standardized "level1" format} 
+##' @param FILENAME A string used to identify outputs of the function call.
+#' (defaults to "MYDATA")
+#' 
+#' @param input.data A data frame containing mass-spectrometry peak areas,
+#' indication of chemical identiy, and measurment type. The data frame should
+#' contain columns with names specified by the following arguments:
+#' 
+#' @param sample.col Which column of input.data indicates the unique mass 
+#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
+#' "Lab.Sample.Name")
+#' 
+#' @param lab.compound.col Which column of input.data indicates The test compound 
+#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' 
+#' @param dtxsid.col Which column of input.data indicates EPA's DSSTox Structure 
+#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' 
+#' @param date.col Which column of input.data indicates the laboratory measurment
+#' date (Defaults to "Date")
+#' 
+#' @param series.col Which column of PPB.data indicates the "series", that is
+#' a simultaneous replicate with the same analytical chemistry 
+#' (Defaults to "Series")
+#' 
+#' @param series If this argument is used (defaults to NULL) every observation 
+#' in the table is assigned the value of the argument and the corresponding
+#' column in input.table (if present) is ignored.
+#' 
+#' @param compound.col Which column of input.data indicates the test compound
+#' (Defaults to "Compound.Name")
+#' 
+#' @param area.col Which column of input.data indicates the target analyte (that 
+#' is, the test compound) MS peak area (Defaults to "Area")
+#' 
+#' @param type.col Which column of input.data indicates the sample type (see table
+#' above)(Defaults to "Type")
+#' 
+#' @param type.col Which column of input.data indicates the direction of the 
+#' measurements (either "AtoB" for apical to basolateral or "BtoA" for vice 
+#' versa) (Defaults to "Direction")
+#' 
+#' @param cal.col Which column of input.data indicates the MS calibration -- for
+#' instance different machines on the same day or different days with the same
+#' MS analyzer (Defaults to "Cal")
+#' 
+#' @param cal If this argument is used (defaults to NULL) every observation in
+#' the table is assigned the value of the argument and the corresponding
+#' column in input.table (if present) is ignored.
+#' 
+#' #param compound.conc.col Which column indictes the intended concentration 
+#' of the test chemical for calibration curves (Defaults to "Standard.Conc")
+#'
+#' @param dilution.col Which column of input.data indicates how many times the
+#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
+#' 
+#' @param dilution If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param membrane.area.col Which column of input.data indicates the area of the
+#' Caco-2 monolayer (in cm^2) (Defaults to "Membrane.Area")
+#' 
+#' @param membrane.area If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param receiver.vol.col Which column of input.data indicates the volume 
+#' (in cm^3) of the receiver portion of the Caco-2 experimental well
+#' (Defaults to "Vol.Receiver")
+#' 
+#' @param donor.vol.col Which column of input.data indicates the volume 
+#' (in cm^3) of the donor portion of the Caco-2 experimental well where the
+#' test chemical is added
+#' (Defaults to "Vol.Donor")
+#' 
+#' @param direction.col Which column of input.data indicates the direction of
+#' the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
+#' to aprical (BtoA). (Defaults to "Direction")
+#' 
+#' @param meas.time.col Which column of input.data indicates the amount of time
+#' before the receiver and donor compartments are measured (Defaults to "Time")
+#'
+#' @param meas.time If this argument is used (defaults to 2 h) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored. 
+#' 
+#' @param istd.col Which column of input.data indicates the MS peak area for the
+#' internal standard (Defaults to "ISTD.Area")
+#' 
+#' @param istd.name.col Which column of input.data indicates identity of the 
+#' internal standard (Defaults to "ISTD.Name")
+#' 
+#' @param istd.name If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param istd.conc.col Which column of input.data indicates the concentration of
+#' the internal standard (Defaults to "ISTD.Conc")
+#' 
+#' @param istd.conc If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param nominal.test.conc.col Which column of input.data indicates the intended
+#' test chemical concentration at time zero in the dosing solution (added to the
+#' donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc") 
+#' 
+#' @param nominal.test.conc If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#'
+#' @param analysis.method.col Which column of input.data indicates the analytical
+#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+#' "Analysis.Method")
+#' 
+#' @param analysis.method If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#'
+#' @param analysis.instrument.col Which column of input.data indicates the 
+#' instrument used for chemical analysis, for example 
+#' "Agilent 6890 GC with model 5973 MS" (Defaults to 
+#' "Analysis.Instrument")
+#' 
+#' @param analysis.instrument If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#'
+#' @param analysis.parameters.col Which column of input.data indicates the 
+#' parameters used to identify the compound on the chemical analysis instrument,
+#' for example 
+#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
+#' (Defaulys to "Analysis.Paramaters"). 
+#' 
+#' @param analysis.parameters If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#'
+' @return \item{data.frame}{A data.frame in standardized "level1" format} 
 #'
 #' @author John Wambaugh
 #' 
@@ -122,10 +260,7 @@
 #'   cal.col="FileName")
 #'
 #' @references
-#' Shibata, Yoshihiro, Hiroyuki Takahashi, and Yasuyuki Ishii. "A convenient in 
-#' vitro screening method for predicting in vivo drug metabolic clearance using 
-#' isolated hepatocytes suspended in serum." Drug metabolism and disposition 
-#' 28.12 (2000): 1518-1523.
+#' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @export format_clint
 format_clint <- function(clint.data,
@@ -137,17 +272,29 @@ format_clint <- function(clint.data,
   lab.compound.col="Lab.Compound.Name",
   type.col="Sample.Type",
   dilution.col="Dilution.Factor",
-  cal.col="Cal",
-  istd.name.col="ISTD.Name",
-  istd.conc.col="ISTD.Conc",
-  istd.col="ISTD.Area",
+  density=NULL,
   density.col="Hep.Density",
-  conc.col="Conc", 
-  time.col="Time", 
-  area.col="Area",
+  compound.conc=NULL,
+  compound.conc.col="Nominal.Conc",
+  cal=NULL,
+  cal.col="Cal",
+  dilution=NULL,
+  dilution.col="Dilution.Factor",
+  meas.time.col="Time",
+  meas.time = 2,
+  istd.col="ISTD.Area",
+  istd.name=NULL,
+  istd.name.col="ISTD.Name",
+  istd.conc=NULL,
+  istd.conc.col="ISTD.Conc",
+  nominal.test.conc=NULL,
+  nominal.test.conc.col="Test.Target.Conc",
+  analysis.method=NULL,
   analysis.method.col="Analysis.Method",
+  analysis.instrument=NULL,
   analysis.instrument.col="Analysis.Instrument",
-  analysis.parameters.col="Analysis.Parameters" 
+  analysis.parameters=NULL,
+  analysis.parameters.col="Analysis.Parameters"
   )
 {
   clint.data <- as.data.frame(clint.data)

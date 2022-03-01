@@ -131,6 +131,10 @@ model {
 #'
 #' @return A data.frame containing quunantiles of the Bayesian posteriors 
 #'
+#' @references
+#' \insertRef{waters2008validation}{invitroTKstats}
+#' \insertRef{wambaugh2019assessing}{invitroTKstats}
+#'
 #' @author John Wambaugh and Chantel Nicolas
 #' 
 #' @export calc_fup_red_base

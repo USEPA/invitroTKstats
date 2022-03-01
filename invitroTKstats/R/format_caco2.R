@@ -181,9 +181,7 @@
 #'   )
 #' 
 #' @references
-#' Hubatsch, Ina, Eva GE Ragnarsson, and Per Artursson. 
-#' "Determination of drug permeability and prediction of drug absorption in 
-#' Caco-2 monolayers." Nature protocols 2.9 (2007): 2111.
+#' \insertRef{hubatsch2007determination}{invitroTKstats}
 #' 
 #' @export format_caco2
 format_caco2 <- function(input.data,
