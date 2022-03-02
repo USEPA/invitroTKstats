@@ -442,7 +442,8 @@ calc_clint <- function(FILENAME, good.col="Verified")
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
         results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
-    
+        results <- as.data.frame(results)
+        
         # Convert disappareance rates (1/h)to 
         # heaptic clearance (uL/min/10^6 hepatocytes)):
         hep.density <- this.subset[1,density.col]
@@ -464,8 +465,13 @@ calc_clint <- function(FILENAME, good.col="Verified")
         # Round to 3 sig figs:
         for (i in dim(results)[2])
           results[,i] <- signif(results[,i],3)
-        colnames(results)[colnames(results)=="decreases"] <- "Clint.pValue"
-        colnames(results)[colnames(results)=="saturates"] <- "Sat.pValue"
+
+        # Calculate a Clint "pvalue" from probability that we observed a decrease:
+        results[,"Clint.pValue"] <- 1 - results[,"decreases"]
+         
+        # Calculate a "pvalue" fror saturation probability that we observed
+        # a lower Clint at higher conc:
+        results[,"Sat.pValue"] <- 1 - results[,"saturates"]
     
         # Create a row of formatted results:
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
