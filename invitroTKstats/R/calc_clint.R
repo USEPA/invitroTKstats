@@ -34,7 +34,7 @@ model {
   decreases ~ dbern(0.5) 
 # Slope is the clearance rate at the lower concentration (fastest slope we can 
 #identify is assumed to be 99.4% gone in the first 15 minutes):
-  rate ~ dunif(0,-5/15)
+  rate ~ dunif(0,5/15)
   slope[1] <- decreases*rate
 # Saturates is whether or not the clearance rate decreases (1 is yes, 0 is no):
   saturates ~ dbern(0.5) 
@@ -162,8 +162,6 @@ calc_clint <- function(FILENAME, good.col="Verified")
       Num.blanks <- 1
       warning("Mean blank across data set used because of missing blank data.")
     }
-    blank.conc <- rep(2,Num.blanks)
-    blank.conc[this.blanks$Conc ==1] <- 1
 # Match to correct calibration curve:
     blank.cal <- rep(NA, Num.blanks)
     for (this.cal in unique(this.blanks$Calibration))
@@ -206,10 +204,12 @@ calc_clint <- function(FILENAME, good.col="Verified")
  # Match to correct calibration curve:
     obs.cal <- rep(NA, Num.obs)
     for (this.cal in unique(this.blanks$Calibration))
-    {
-      obs.cal[this.cvt$Calibration == this.cal] <- 
-        which(Cal.name == this.cal & Cal.conc == Test.conc[obs.conc])
-    }
+      for (this.conc in Test.conc)
+      {
+        obs.cal[this.cvt$Calibration == this.cal &
+          this.cvt$Conc == this.conc] <- 
+          which(Cal.name == this.cal & Cal.conc == this.conc)
+      }
     
     return(mydata <- list('obs' = obs,
       'obs.conc' = obs.conc,
@@ -217,10 +217,8 @@ calc_clint <- function(FILENAME, good.col="Verified")
       'obs.cal' = obs.cal,
       'Num.obs' = Num.obs,
       'Blank.obs' = blank.obs,
-      'Blank.conc' = blank.conc,
       'Blank.cal' = blank.cal,
       'Num.blank.obs' = Num.blanks,
-      'Num.conc' = Num.conc,
       'Test.conc' = Test.conc,
       'Num.cal' = Num.cal,
       'Cal.conc' = Cal.conc
@@ -256,7 +254,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
         fit1 <- lm(log(obs/mydata$Test.conc[1])~time,fit.data)
         if (-fit1[["coefficients"]][2] > 0) 
         {
-          rate <- -fit1[["coefficients"]][2]
+          rate <- as.numeric(-fit1[["coefficients"]][2])
           decreases <- 1
         } else {
           rate <- 0
@@ -274,11 +272,11 @@ calc_clint <- function(FILENAME, good.col="Verified")
       .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
-      log.const.analytic.sd =runif(Num.cal,-5,-0.5),
-      log.hetero.analytic.slope = runif(Num.cal,-5,-0.5),
+      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
+      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
 # Average across all the calibrations (the sampler will vary these):
-      C.thresh = Cal.conc/10,
-      log.calibration = rep(0,Num.cal),
+      C.thresh = mydata$Cal.conc/10,
+      log.calibration = rep(0,mydata$Num.cal),
       decreases = decreases,
       rate = rate,
       saturates = 0,
