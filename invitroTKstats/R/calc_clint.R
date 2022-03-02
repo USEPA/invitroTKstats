@@ -162,13 +162,6 @@ calc_clint <- function(FILENAME, good.col="Verified")
       Num.blanks <- 1
       warning("Mean blank across data set used because of missing blank data.")
     }
-# Match to correct calibration curve:
-    blank.cal <- rep(NA, Num.blanks)
-    for (this.cal in unique(this.blanks$Calibration))
-    {
-      blank.cal[this.blanks$Calibration == this.cal] <- 
-        which(Cal.name == this.cal)
-    }
 
 # Separate the 1 and 10 uM data so we can order obs by concentration:
     this.cvt <- subset(this.data, Sample.Type=="Cvst")
@@ -182,13 +175,12 @@ calc_clint <- function(FILENAME, good.col="Verified")
     
     # Establish a vector of unique nominal test concentrations:
     Test.conc <- NULL
+    Num.conc <- 0
     # Do we have 1uM data:
     if (Num.obs1 > 0) 
     {
-      Num.conc <- 1
-      Test.conc[1] <- 1
-    } else {
-      Num.conc <- 0
+      Num.conc <- Num.conc + 1
+      Test.conc[Num.conc] <- 1
     }
     # Do we have 10 uM data:
     if (Num.obs > Num.obs1)
@@ -196,18 +188,29 @@ calc_clint <- function(FILENAME, good.col="Verified")
       Num.conc <- Num.conc + 1
       Test.conc[Num.conc] <- 10  
     }
+    # Force Test.conc to be a vector:
+    Test.conc[Num.conc+1] <- 0
         
     obs.time <- c(this.1data[!is.na(this.1data[,time.col]), time.col],
       this.1data[!is.na(this.1data[,time.col]), time.col])
     obs.conc <- c(rep(1,Num.obs1),rep(2,Num.obs-Num.obs1))
       
- # Match to correct calibration curve:
+ # Match observations to correct calibration curve:
     obs.cal <- rep(NA, Num.obs)
-    for (this.cal in unique(this.blanks$Calibration))
+    for (this.cal in unique(this.cvt$Calibration))
       for (this.conc in Test.conc)
       {
         obs.cal[this.cvt$Calibration == this.cal &
           this.cvt$Conc == this.conc] <- 
+          which(Cal.name == this.cal & Cal.conc == this.conc)
+      }
+# Match the blanks to correct calibration curve:
+    blank.cal <- rep(NA, Num.blanks)
+    for (this.cal in unique(this.blanks$Calibration))
+      for (this.conc in Test.conc)
+      {
+        blank.cal[this.blanks$Calibration == this.cal &
+          this.blanks$Conc == this.conc] <- 
           which(Cal.name == this.cal & Cal.conc == this.conc)
       }
     
@@ -365,7 +368,9 @@ calc_clint <- function(FILENAME, good.col="Verified")
     if (!(this.compound %in% Results[,compound.col]))
     {
       this.subset <- subset(clint.data,clint.data[,compound.col]==this.compound)
-      this.dtxsid <- this.subset$dtxsid[1]
+      this.dtxsid <- this.subset$DTXSID[1]
+      this.lab.name <- this.subset[1,lab.compound.col]
+
       this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
         data.frame(Calibration="All Data",
           Clint=NaN,
@@ -417,15 +422,18 @@ calc_clint <- function(FILENAME, good.col="Verified")
                            jags = JAGS.PATH,
                            monitor = c(
                              'log.const.analytic.sd',
-                             'hetero.analytic.slope.factor',
+                             'hetero.analytic.slope',
                              'C.thresh',
                              'calibration',
                              'background'))
         
-        coda.out[[this.compound]] <-extend.jags(coda.out[[this.cas]],
+        coda.out[[this.compound]] <-extend.jags(coda.out[[this.compound]],
                               drop.monitor = c(
-                                'log.const.analytic.sd','
-                                hetero.analytic.slope.factor'), 
+                             'log.const.analytic.sd',
+                             'hetero.analytic.slope',
+                             'C.thresh',
+                             'calibration',
+                             'background'), 
                               add.monitor = c(
                                 'slope',
                                 'decreases',
@@ -435,20 +443,45 @@ calc_clint <- function(FILENAME, good.col="Verified")
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
         results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
     
-        browser()
-        new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
-        colnames(new.results) <- c("Compound","DTXSID","Lab.Compound.Name")
-        new.results <- cbind.data.frame(new.results,
-          t(as.data.frame(as.numeric(results[c(2,1,3),"slope"]))))
-        colnames(new.results)[4:6] <- c(
-          "Fup.Med",
-          "Fup.Low",
-          "Fup.High")
-
-        rownames(new.results) <- this.compound
+        # Convert disappareance rates (1/h)to 
+        # heaptic clearance (uL/min/10^6 hepatocytes)):
+        hep.density <- this.subset[1,density.col]
+        
+        # Calculate a Clint only for 1 and 10 uM (if tested)
+        if (1 %in% mydata$Test.conc)
+        {
+          index <- which(mydata$Test.conc == 1)
+          results[,"Clint.1"] <- 1000 *
+            results[,paste("slope[",index,"]",sep="")] / hep.density
+        } else results[,"Clint.1"] <- NA
+        if (1 %in% mydata$Test.conc)
+        {
+          index <- which(mydata$Test.conc == 1)
+          results[,"Clint.10"] <- 1000 *
+            results[,paste("slope[",index,"]",sep="")] / hep.density
+        } else results[,"Clint.10"] <- NA
     
-        print(mydata$Num.obs)
-        print(mydata$Response.obs)
+        # Round to 3 sig figs:
+        for (i in dim(results)[2])
+          results[,i] <- signif(results[,i],3)
+        colnames(results)[colnames(results)=="decreases"] <- "Clint.pValue"
+        colnames(results)[colnames(results)=="saturates"] <- "Sat.pValue"
+    
+        # Create a row of formatted results:
+        new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
+        colnames(new.results) <- c(compound.col, dtxsid.col, lab.compound.col)
+        for (this.param in c("Clint.1","Clint.10","Clint.pValue","Sat.pValue"))
+        {
+          new.results <- cbind.data.frame(new.results,
+            t(as.data.frame(as.numeric(results[c(2,1,3), this.param]))))
+          last.col <- length(new.results)
+          colnames(new.results)[(last.col-2):last.col] <- c(
+            paste(this.param,".Med",sep=""),
+            paste(this.param,".Low",sep=""),
+            paste(this.param,".High",sep=""))
+        }
+        rownames(new.results) <- this.compound
+         
         print(results)
     
         Results <- rbind(Results,new.results)
@@ -461,10 +494,6 @@ calc_clint <- function(FILENAME, good.col="Verified")
       }    
     }  
   
-  if (!is.null(TEMP.DIR)) 
-  {
-    setwd(current.dir)
-  }
   stopCluster(CPU.cluster)
   
   View(Results)

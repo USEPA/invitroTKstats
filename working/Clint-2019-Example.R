@@ -1,5 +1,7 @@
 library(invitroTKstats)
 
+level0 <- library(invitroTKstats)
+
 level0 <- wambaugh2019.clint
 level0$Date <- "2019"
 level0$Sample.Type <- "Blank"
@@ -13,7 +15,27 @@ level0$Hep.Density <- 0.5
 level0$Analysis.Method <- "LCMS or GCMS"
 level0$Analysis.Instrument <- "Agilent QQQ or Water.s.Xevo or AB Sciex Qtrap or Agilent GCMS or GCTOF"
 level0$Analysis.Parameters <- "Unknown"
-  
+level0[is.na(level0$FileName),"FileName"] <- "Unknown"
+level0[is.na(level0$TaskOrder),"TaskOrder"] <- "Unknown"
+this.cal <- 1
+this.row <- 1
+while (this.row < dim(level0)[1])
+{
+  while (level0[this.row,"Preferred.Name"]=="Umbelliferone")
+  {
+    level0[this.row,"Calibration"] <- this.cal
+    this.row <- this.row + 1
+    if (is.na(level0[this.row,"Preferred.Name"])) break()
+  }
+  while (level0[this.row,"Preferred.Name"]!="Umbelliferone")
+  {
+    level0[this.row,"Calibration"] <- this.cal
+    this.row <- this.row + 1
+    if (is.na(level0[this.row,"Preferred.Name"])) break()
+  }
+  this.cal <- this.cal + 1
+}
+
 for (this.id in unique(level0$DTXSID))
   if (this.id %in% unique(wambaugh2019.methods$DTXSID))
   {
@@ -67,7 +89,7 @@ level1 <- format_clint(level0,
   compound.col="Preferred.Name",
   lab.compound.col="Name",
   time.col="Time..mins.",
-  cal.col="FileName"
+  cal.col="Calibration"
 )
 
    
@@ -81,6 +103,7 @@ level2$Verified <- "Y"
    quote=F)
     
 #level3 <- calc_clint_point(FILENAME="Wambaugh2019")
+library(invitroTKstats)
 
 level4 <- calc_clint(FILENAME="Wambaugh2019")
 
