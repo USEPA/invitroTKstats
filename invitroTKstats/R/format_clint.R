@@ -92,9 +92,9 @@
 #' parameters used to identify the compound on the chemical analysis instrument,
 #' for example 
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaulys to "Analysis.Paramaters"). 
+#' (Defaulys to "Analysis.Parameters"). 
 #'
-##' @param FILENAME A string used to identify outputs of the function call.
+#' @param FILENAME A string used to identify outputs of the function call.
 #' (defaults to "MYDATA")
 #' 
 #' @param input.data A data frame containing mass-spectrometry peak areas,
@@ -104,6 +104,13 @@
 #' @param sample.col Which column of input.data indicates the unique mass 
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to 
 #' "Lab.Sample.Name")
+#' 
+#' @param density.col Which column of input.data indicates the density of 
+#' hepatocytes in suspension (10^6 hepatocytes / mL) (Defaults to "Hep.Density")
+#' 
+#' @param density.col A single value to be used for all samples indicating
+#' the density of hepatocytes in suspension (10^6 hepatocytes / mL) 
+#' (Defaults to NULL)
 #' 
 #' @param lab.compound.col Which column of input.data indicates The test compound 
 #' name used by the laboratory (Defaults to "Lab.Compound.Name")
@@ -150,32 +157,6 @@
 #' observation in the table is assigned the value of the argument and the 
 #' corresponding column in input.table (if present) is ignored.
 #' 
-#' @param membrane.area.col Which column of input.data indicates the area of the
-#' Caco-2 monolayer (in cm^2) (Defaults to "Membrane.Area")
-#' 
-#' @param membrane.area If this argument is used (defaults to NULL) every 
-#' observation in the table is assigned the value of the argument and the 
-#' corresponding column in input.table (if present) is ignored.
-#' 
-#' @param receiver.vol.col Which column of input.data indicates the volume 
-#' (in cm^3) of the receiver portion of the Caco-2 experimental well
-#' (Defaults to "Vol.Receiver")
-#' 
-#' @param donor.vol.col Which column of input.data indicates the volume 
-#' (in cm^3) of the donor portion of the Caco-2 experimental well where the
-#' test chemical is added
-#' (Defaults to "Vol.Donor")
-#' 
-#' @param direction.col Which column of input.data indicates the direction of
-#' the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
-#' to aprical (BtoA). (Defaults to "Direction")
-#' 
-#' @param meas.time.col Which column of input.data indicates the amount of time
-#' before the receiver and donor compartments are measured (Defaults to "Time")
-#'
-#' @param meas.time If this argument is used (defaults to 2 h) every 
-#' observation in the table is assigned the value of the argument and the 
-#' corresponding column in input.table (if present) is ignored. 
 #' 
 #' @param istd.col Which column of input.data indicates the MS peak area for the
 #' internal standard (Defaults to "ISTD.Area")
@@ -263,6 +244,7 @@
 format_clint <- function(clint.data,
   FILENAME = "MYDATA",
   sample.col="Lab.Sample.Name",
+  date=NULL,
   date.col="Date",
   compound.col="Compound.Name",
   dtxsid.col="DTXSID",
@@ -295,6 +277,20 @@ format_clint <- function(clint.data,
   )
 {
   clint.data <- as.data.frame(clint.data)
+
+# These arguments allow the user to specify a single value for every obseration 
+# in the table:  
+  if (!is.null(cal)) clint.data[,cal.col] <- cal
+  if (!is.null(dilution)) clint.data[,dilution.factor.col] <- dilution
+  if (!is.null(istd.name)) clint.data[,istd.name.col] <- istd.name
+  if (!is.null(istd.conc)) clint.data[,istd.conc.col] <- istd.conc
+  if (!is.null(conc)) clint.data[,conc.col] <- 
+    conc
+  if (!is.null(analysis.method)) clint.data[,analysis.method.col]<- analysis.method
+  if (!is.null(analysis.instrument)) clint.data[,analysis.instrument.col] <- 
+    analysis.instrument
+  if (!is.null(analysis.parameters)) clint.data[,analysis.parameters.col] <- 
+    analysis.parameters
 
 # We need all these columns in clint.data
   cols <-c(

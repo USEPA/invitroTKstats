@@ -141,7 +141,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
     for (this.cal in unique(this.data$Calibration))
     {
       this.cal.data <- subset(this.data, Calibration==this.cal)
-      this.cal.concs <- unique(this.cal.data$Conc)
+      this.cal.concs <- sort(unique(this.cal.data$Conc))
       for (this.conc in this.cal.concs)
       {
         Num.cal <- Num.cal + 1
@@ -154,14 +154,17 @@ calc_clint <- function(FILENAME, good.col="Verified")
     this.blanks <- subset(this.data, Sample.Type=="Blank")
     blank.obs <- this.blanks[,"Response"]
     Num.blanks <- length(blank.obs)
-# If there are no blanks create a single blank with the average blank response:
-    if (Num.blanks==0 | all(is.na(blank.obs)))
-    {
-      all.blanks <- subset(clint.data,is.na(this.data) & !is.na(area.col))
-      blank.obs <- median(all.blanks$ISTDResponseRatio,na.rm=T)
-      Num.blanks <- 1
-      warning("Mean blank across data set used because of missing blank data.")
-    }
+## If there are no blanks create a single blank with the average blank response:
+#    if (Num.blanks==0 | all(is.na(blank.obs)))
+#    {
+#      all.blanks <- subset(clint.data,is.na(this.data) & !is.na(area.col))
+#      blank.obs <- median(all.blanks$ISTDResponseRatio,na.rm=T)
+#      Num.blanks <- 1
+#      warning("Mean blank across data set used because of missing blank data.")
+#    }
+    # Create a dummy vector to keep JAGS happy:
+    if (Num.blanks == 0) blank.obs <- c(NA, NA)
+    if (Num.blanks == 1) blank.obs <- c(blank.obs, NA)
 
 # Separate the 1 and 10 uM data so we can order obs by concentration:
     this.cvt <- subset(this.data, Sample.Type=="Cvst")
@@ -205,7 +208,8 @@ calc_clint <- function(FILENAME, good.col="Verified")
           which(Cal.name == this.cal & Cal.conc == this.conc)
       }
 # Match the blanks to correct calibration curve:
-    blank.cal <- rep(NA, Num.blanks)
+    if (Num.blanks > 0) blank.cal <- rep(NA, Num.blanks)
+    else blank.cal <- c(NA, NA)
     for (this.cal in unique(this.blanks$Calibration))
       for (this.conc in Test.conc)
       {
