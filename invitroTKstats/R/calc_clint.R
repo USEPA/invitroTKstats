@@ -1,35 +1,34 @@
 Clint_model <- "
 model {
 # Measurement Model:
-  log.const.analytic.sd ~ dnorm(-2,0.1)
-  const.analytic.sd <- 10^log.const.analytic.sd
-  log.hetero.analytic.slope.factor ~ dnorm(1,.1)
-  hetero.analytic.slope.factor <- 10^log.hetero.analytic.slope.factor
-  hetero.analytic.slope <- hetero.analytic.slope.factor*const.analytic.sd
-  for (i in 1:2)
+  # Mass-spec calibration:
+  for (i in 1:Num.cal)
   {
-# Number of pixels in the background signal:
-    background[i] ~ dunif(0,1000)         
-    log.calibration[j] ~ dnorm(0,.1)
-# calibration*concentration = number of pixles:
+    # Priors:
+    log.const.analytic.sd[i] ~ dunif(-10,-0.5)
+    log.hetero.analytic.slope[i] ~ dunif(-5,1)
+    C.thresh[i] ~ dunif(0,Cal.conc[i]/10)
+    log.calibration[i] ~ dunif(-3, 3)
+    # Scale conversions:
+    const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
+    hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
-# Concentrations below this value are not detectable:
-    log.C.thresh[j] ~ dnorm(log(C.frank/2),0.25)T(log(C.frank/1000),log(10*C.frank))
-    C.thresh[j] <- exp(log.C.thresh[j])
-    Blank.pred[i] <- background[i]  
-    Blank.prec[i] <- (const.analytic.sd+hetero.analytic.slope*(Blank.pred[i]))^(-2)
+    # Concentrations below this value are not detectable:
+    background[i] <- C.thresh[i]/calibration[i]
   }
 
+  
 # Likelihood for the blank observations:
+  for (i in 1:Num.cal)
+  {
+    Blank.pred[i] <- background[i]  
+    Blank.prec[i] <- (const.analytic.sd[i]+hetero.analytic.slope[i]*(Blank.pred[i]))^(-2)
+  }
   for (i in 1:Num.blank.obs) {
-    Blank.obs[i] ~ dnorm(Blank.pred[Blank.conc[i]],Blank.prec[Blank.conc[i]])
+    Blank.obs[i] ~ dnorm(Blank.pred[Blank.cal[i]],Blank.prec[Blank.cal[i]])
   }
 
 # Clearance model:
-
-# Specify the nominal conc:
-  C0[1] <- 1
-  C0[2] <- 10
 
 # Decreases indicates whether or not the concentration decreases (1 is yes, 0 is no):
   decreases ~ dbern(0.5) 
@@ -46,9 +45,9 @@ model {
 # The observations are normally distributed (heteroskedastic error):
   for (i in 1:Num.obs)
   {
-    C[i] <- C0[obs.conc[i]]*exp(-slope[obs.conc[i]]*obs.time[i])
-    obs.pred[i] <- calibration[obs.conc[i]]*(C[i]-C.thresh[obs.conc[i]])*step(C[i]-C.thresh[obs.conc[i]])+ background[obs.conc[i]]    
-    obs.prec[i] <- (const.analytic.sd+hetero.analytic.slope*obs.pred[i])^(-2)
+    C[i] <- Test.conc[obs.conc[i]]*exp(-slope[obs.conc[i]]*obs.time[i])
+    obs.pred[i] <- calibration[obs.cal[i]]*(C[i]-C.thresh[obs.cal[i]])*step(C[i]-C.thresh[obs.cal[i]])+ background[obs.cal[i]]    
+    obs.prec[i] <- (const.analytic.sd[obs.cal[i]]+hetero.analytic.slope[obs.cal[i]]*obs.pred[i])^(-2)
     
     obs[i] ~ dnorm(obs.pred[i],obs.prec[i])
   }
@@ -131,6 +130,26 @@ calc_clint <- function(FILENAME, good.col="Verified")
 # Internal function for constructing data object given to JAGS:
   build_mydata <- function(this.data)
   {
+  # Identify the number of calibrations:
+    Num.cal <- 0
+# Identify the test conc for the calibration (in case both concs tested the same day),
+ # in effect we are always treating the 1 and 10 uM samples as separate calibrations
+    Cal.conc <- NULL
+# Cal.name is used for matching the observations to the calibrations, but is not
+# passed on to JAGS
+    Cal.name <- NULL
+    for (this.cal in unique(this.data$Calibration))
+    {
+      this.cal.data <- subset(this.data, Calibration==this.cal)
+      this.cal.concs <- unique(this.cal.data$Conc)
+      for (this.conc in this.cal.concs)
+      {
+        Num.cal <- Num.cal + 1
+        Cal.conc[Num.cal] <- this.conc
+        Cal.name[Num.cal] <- this.cal
+      }
+    } 
+  
 # Identify the blanks (observation time should be NA):    
     this.blanks <- subset(this.data, Sample.Type=="Blank")
     blank.obs <- this.blanks[,"Response"]
@@ -145,6 +164,13 @@ calc_clint <- function(FILENAME, good.col="Verified")
     }
     blank.conc <- rep(2,Num.blanks)
     blank.conc[this.blanks$Conc ==1] <- 1
+# Match to correct calibration curve:
+    blank.cal <- rep(NA, Num.blanks)
+    for (this.cal in unique(this.blanks$Calibration))
+    {
+      blank.cal[this.blanks$Calibration == this.cal] <- 
+        which(Cal.name == this.cal)
+    }
 
 # Separate the 1 and 10 uM data so we can order obs by concentration:
     this.cvt <- subset(this.data, Sample.Type=="Cvst")
@@ -155,17 +181,49 @@ calc_clint <- function(FILENAME, good.col="Verified")
       this.1data[!is.na(this.1data[,time.col]), "Response"])
     Num.obs <- length(obs)
     Num.obs1 <- dim(subset(this.1data, !is.na(Time)))[1]
+    
+    # Establish a vector of unique nominal test concentrations:
+    Test.conc <- NULL
+    # Do we have 1uM data:
+    if (Num.obs1 > 0) 
+    {
+      Num.conc <- 1
+      Test.conc[1] <- 1
+    } else {
+      Num.conc <- 0
+    }
+    # Do we have 10 uM data:
+    if (Num.obs > Num.obs1)
+    {
+      Num.conc <- Num.conc + 1
+      Test.conc[Num.conc] <- 10  
+    }
+        
     obs.time <- c(this.1data[!is.na(this.1data[,time.col]), time.col],
       this.1data[!is.na(this.1data[,time.col]), time.col])
     obs.conc <- c(rep(1,Num.obs1),rep(2,Num.obs-Num.obs1))
       
+ # Match to correct calibration curve:
+    obs.cal <- rep(NA, Num.obs)
+    for (this.cal in unique(this.blanks$Calibration))
+    {
+      obs.cal[this.cvt$Calibration == this.cal] <- 
+        which(Cal.name == this.cal & Cal.conc == Test.conc[obs.conc])
+    }
+    
     return(mydata <- list('obs' = obs,
       'obs.conc' = obs.conc,
       'obs.time' = obs.time,
+      'obs.cal' = obs.cal,
       'Num.obs' = Num.obs,
       'Blank.obs' = blank.obs,
       'Blank.conc' = blank.conc,
-      'Num.blank.obs' = Num.blanks
+      'Blank.cal' = blank.cal,
+      'Num.blank.obs' = Num.blanks,
+      'Num.conc' = Num.conc,
+      'Test.conc' = Test.conc,
+      'Num.cal' = Num.cal,
+      'Cal.conc' = Cal.conc
       ))
   }
  
@@ -187,28 +245,15 @@ calc_clint <- function(FILENAME, good.col="Verified")
   # function to initialize a Markov chain:
   initfunction <- function(chain)
   {
-    background <- rep(0,2)
-    calibration <- rep(1,2)
-    log.C.thresh <- rep(NA,2)
-    for (this.conc in 1:2)
-    {
-      Blank.data <- mydata[["Blank.obs"]][data[["Blank.conc"]]==this.conc]
-      T0.data <- mydata[["obs"]][
-        data[["obs.conc"]]==this.conc & mydata[["obs.time"]]==0]
-      background[this.conc] <- runif(1,min(Blank.data),max(Blank.data))
-      background[is.na(background)] <- 0
-      calibration[this.conc] <- runif(1,min(T0.data),
-        max(T0.data))/c(1,10)[this.conc]-background[this.conc]        
-      calibration[this.conc] <- min(max(calibration[this.conc],10^-3),10^2)
-      log.C.thresh[this.conc] <- log(runif(1,0.01,1))
-    }
-    calibration[is.na(calibration)] <- 1
+    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
+    set.seed(seed)
+
     if (!is.null(fit.data))
     { 
       if (dim(fit.data)[1]>1 & any(fit.data$time>0))
       {
         fit.data$obs <- fit.data$obs*runif(length(fit.data$obs),0.9,1.1)
-        fit1 <- lm(log(obs/calibration[1])~time,fit.data)
+        fit1 <- lm(log(obs/mydata$Test.conc[1])~time,fit.data)
         if (-fit1[["coefficients"]][2] > 0) 
         {
           rate <- -fit1[["coefficients"]][2]
@@ -226,17 +271,18 @@ calc_clint <- function(FILENAME, good.col="Verified")
       decreases <- 0
     }
     return(list(
-      .RNG.seed=as.numeric(paste(rep(chain,6),sep="",collapse="")),
+      .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
-      log.const.analytic.sd =runif(1,0,0.1),
-      hetero.analytic.slope.factor =runif(1,0, 1),
-      background = background,
-      log.calibration = log10(calibration),
+# Parameters that may vary between calibrations:
+      log.const.analytic.sd =runif(Num.cal,-5,-0.5),
+      log.hetero.analytic.slope = runif(Num.cal,-5,-0.5),
+# Average across all the calibrations (the sampler will vary these):
+      C.thresh = Cal.conc/10,
+      log.calibration = rep(0,Num.cal),
       decreases = decreases,
       rate = rate,
       saturates = 0,
-      saturation = 0.5,
-      log.C.thresh = log.C.thresh
+      saturation = 0.5
     ))
   }
 
