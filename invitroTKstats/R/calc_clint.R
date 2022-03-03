@@ -285,7 +285,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
       C.thresh = mydata$Cal.conc/10,
       log.calibration = rep(0,mydata$Num.cal),
       decreases = decreases,
-      rate = rate,
+      rate = max(0,min(1/15,rate)),
       saturates = 0,
       saturation = 0.5
     ))
@@ -459,9 +459,9 @@ calc_clint <- function(FILENAME, good.col="Verified")
           results[,"Clint.1"] <- 1000 *
             results[,paste("slope[",index,"]",sep="")] / hep.density
         } else results[,"Clint.1"] <- NA
-        if (1 %in% mydata$Test.conc)
+        if (10 %in% mydata$Test.conc)
         {
-          index <- which(mydata$Test.conc == 1)
+          index <- which(mydata$Test.conc == 10)
           results[,"Clint.10"] <- 1000 *
             results[,paste("slope[",index,"]",sep="")] / hep.density
         } else results[,"Clint.10"] <- NA

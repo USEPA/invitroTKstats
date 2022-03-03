@@ -281,7 +281,8 @@ format_clint <- function(clint.data,
 # These arguments allow the user to specify a single value for every obseration 
 # in the table:  
   if (!is.null(cal)) clint.data[,cal.col] <- cal
-  if (!is.null(dilution)) clint.data[,dilution.factor.col] <- dilution
+  if (!is.null(dilution)) clint.data[,dilution.col] <- dilution
+  if (!is.null(density)) clint.data[,density.col] <- density
   if (!is.null(istd.name)) clint.data[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) clint.data[,istd.conc.col] <- istd.conc
   if (!is.null(conc)) clint.data[,conc.col] <- 

@@ -68,28 +68,59 @@ smeltz.hep[regexpr("t60",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 60/
 smeltz.hep[regexpr("t30",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 30/60
 smeltz.hep[regexpr("t15",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 15/60
 smeltz.hep[regexpr("t0",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 0/60
+smeltz.hep <- subset(smeltz.hep,!is.na(Time) | Type != "Cvst")
 
 # Indicate whether hepatocytes have been inactivated:
-smeltz.hep$Active.Hep <- 1
+smeltz.hep$Active.Hep <- NA
+
+smeltz.hep[regexpr("living",tolower(smeltz.hep[,"Sample Text"]))!=-1,
+  "Active.Hep"] <- 1
 smeltz.hep[regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))!=-1,
   "Active.Hep"] <- 0
-# For now we don't handle the inactives:
-smeltz.hep <- subset(smeltz.hep, Active.Hep==1)
   
-level0 <- format_clint(smeltz.hep,
+# For now we don't handle the inactives:
+smeltz.hep <- subset(smeltz.hep, 
+  regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))==-1)
+  
+# Make sure the areas are numeric:
+smeltz.hep$Area <- as.numeric(smeltz.hep$Area)
+smeltz.hep[,"IS Area"] <- as.numeric(smeltz.hep[,"IS Area"])
+smeltz.hep[,"Std. Conc"] <- as.numeric(smeltz.hep[,"Std. Conc"])
+smeltz.hep <- subset(smeltz.hep, !is.na(Area) & 
+  !is.na(smeltz.hep[,"IS Area"]))
+  
+  
+level1 <- format_clint(smeltz.hep,
   sample.col ="Name",
   date.col="Acq.Date",
   compound.col="Compound",
   lab.compound.col="Compound",
   type.col="Type",
   dilution=1,
-  Cal=1,
-  istd.conc = "Std. Conc",
+  cal=1,
+  istd.conc = 1,
   istd.col= "IS Area",
-  hep.density = 0.5,
+  density = 0.5,
   conc = 1,
   time.col = "Time",
   analysis.method = "LCMS",
   analysis.instrument = "Unknown",
   analysis.parameters = "RT"
   )
+
+level2 <- level1
+level2$Verified <- "Y"
+  
+write.table(level2,
+  file="Smeltz2022-Clint-Level2.tsv",
+  sep="\t",
+  row.names=F,
+  quote=F)
+
+level3 <- calc_clint_point(FILENAME="Smeltz2022")
+   
+# repeat these bits in case a markov chain crashes and we need to restart:
+library(invitroTKstats)
+setwd("c:/users/jwambaug/git/invitroTKstats/working/")
+
+level4 <- calc_clint(FILENAME="Smeltz2022")   

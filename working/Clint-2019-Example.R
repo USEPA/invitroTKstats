@@ -96,7 +96,7 @@ level1 <- format_clint(level0,
 level2 <- level1
 level2$Verified <- "Y"
   
- write.table(subset(level2, DTXSID %in% unique(level2$DTXSID)[4:100]),
+ write.table(subset(level2, DTXSID %in% unique(level2$DTXSID)),#[4:100]),
    file="Wambaugh2019-Clint-Level2.tsv",
    sep="\t",
    row.names=F,

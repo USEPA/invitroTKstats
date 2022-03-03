@@ -151,7 +151,8 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   # Clean up data:
   clint.data <- subset(clint.data,!is.na(Response))
   clint.data[clint.data$Response<0,"Response"] <- 0
-
+  clint.data[clint.data$Sample.Type=="Blank" & is.na(clint.data$Time),"Time"] <- 0
+                  
   out.table <-NULL
   num.chem <- 0
   num.cal <- 0

@@ -1,0 +1,8 @@
+Compound.Name	DTXSID	Lab.Compound.Name	Clint.1.Med	Clint.1.Low	Clint.1.High	Clint.10.Med	Clint.10.Low	Clint.10.High	Clint.pValue.Med	Clint.pValue.Low	Clint.pValue.High	Sat.pValue.Med	Sat.pValue.Low	Sat.pValue.High
+Phenacetin	DTXSID1021116	Phenacetin	72.6	0	640	72.6	0	640	0	1	0	1	1	0
+propranolol	DTXSID6023525	propranolol	0	0	626	0	0	626	1	1	0	0	1	0
+TFMFPA	DTXSID80380256	TFMFPA	520	123	660	520	123	660	0	0	0	1	1	0
+NaPFOA	DTXSID40880025	NaPFOA	0	0	628	0	0	628	1	1	0	0	1	0
+6:2 monoPAP	DTXSID90558000	6:2 monoPAP	528	136.8	660	528	137	660	0	0	0	1	1	0
+PFPE-5	DTXSID50381073	PFPE-5	0	0	574	0	0	574	1	1	0	0	1	0
+11H-PFUnDA	DTXSID5061954	11H-PFUnDA	0	0	624	0	0	624	1	1	0	0	1	0
