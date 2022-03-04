@@ -127,10 +127,13 @@ format_fup_uc <- function(PPB.data,
   nominal.test.conc.col="Test.Target.Conc",
   analysis.method.col="Analysis.Method",
   analysis.instrument.col="Analysis.Instrument",
-  analysis.parameters.col="Analysis.Parameters" 
+  analysis.parameters.col="Analysis.Parameters",
+  note.col=NULL 
   )
 {  
   PPB.data <- as.data.frame(PPB.data)
+  
+  if (is.null(note.col)) PPB.data[,"Note"] <- ""
 
 # We need all these columns in PPB.data
   cols <-c(
@@ -151,7 +154,8 @@ format_fup_uc <- function(PPB.data,
     area.col,
     analysis.method.col,
     analysis.instrument.col,
-    analysis.parameters.col
+    analysis.parameters.col,
+    note.col
     )
   
   if (!(all(cols %in% colnames(PPB.data))))
@@ -185,6 +189,7 @@ format_fup_uc <- function(PPB.data,
     analysis.method.col <- "Analysis.Method"
     analysis.instrument.col <- "Analysis.Instrument"
     analysis.parameters.col <- "Analysis.Parameters" 
+    note.col <- "Note"
     
   colnames(PPB.data) <- c(
     sample.col,
@@ -204,7 +209,8 @@ format_fup_uc <- function(PPB.data,
     area.col,
     analysis.method.col,
     analysis.instrument.col,
-    analysis.parameters.col
+    analysis.parameters.col,
+    note.col
     )
   
   # calculate the reponse:
