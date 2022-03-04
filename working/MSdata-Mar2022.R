@@ -17,134 +17,65 @@ AF.DILUTE <- 2*16
 T5.DILUTE <- 5*16
 T1.DILUTE <- 5*16
 
-# There are five data files in this batch, store them in a list:
+assayinfo <- read_excel(
+           "20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
+           sheet=1)
+assayinfo <- as.data.frame(assayinfo)
+
+cheminfo <- read_excel(
+           "20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
+           sheet=2)
+cheminfo <- as.data.frame(cheminfo)
+
+
+
+# Fill in the date column for all rows:
+this.date <- assayinfo[1,"LCMS Analysis Date"]
+this.row <- 1
+while (this.row <= dim(assayinfo)[1])
+{
+  if (is.na(assayinfo[this.row,"LCMS Analysis Date"]))
+  {
+    assayinfo[this.row,"LCMS Analysis Date"] <- this.date 
+  } else {
+    this.date <- assayinfo[this.row,"LCMS Analysis Date"] 
+  }
+  this.row <- this.row + 1
+}
+# Get rid of the UTC:
+assayinfo[,1] <- sapply(assayinfo[,1],function(x) gsub("  UTC","",x))
+
+# Define the info for control chemicals:
+controls <- data.frame(
+  Compound="n-butylparaben",
+  DTXSID="DTXSID3020209",
+  ISTD="13C6-n-butylparaben")
+                                     
+# All the data (for now) are in different tabs (by date) of a single file 
+# (still going with a list called files but each "file") is now a tab:
 files <- list()
 # This list stores the chemical ID's in each file
+compounds <- list()           
 DTXSIDs <- list()           
 # This list stores the internal standards for each chemical in each file:
 ISTDs <- list()
 
-files[[1]] <- read_excel(
-           "SmeltzPFASAug2021/20210127_UCRepeat2_Data_MGS.xlsx",
-           sheet=2,
-           skip=5)
-
-DTXSIDs[[1]] <- c(
-  "DTXSID0060985",  # Compound 1:  Hexafluoroglutaryl Chloride
-  "DTXSID20375106", # Compound 2:  Diox8-dioic
-  "DTXSID60380390",  # Compound 3:  TFE-PFBS
-  "DTXSID90315130", # Compound 4:  PFOS-Cl
-  "DTXSID50469320",  # Compound 5:  PFHxSA
-  "DTXSID3020209", # Compound 6:  n-Butylparaben
-  "DTXSID30382104",  # Compound 7:  Cl-PFNA
-  "DTXSID8051419",  # Compound 8:  PFOSAA
-  "MPFBA", # Compound 9:  MPFBA
-  "M3PFBS", # Compound 10:  M3PFBS
-  "M9PFNA", # Compound 11:  M9PFNA
-  "M8PFOS", # Compound 12:  M8PFOS
-  "13C6 n-Butylparaben", # Compound 13:  13C6 n-Butylparaben
-  "M8FOSA")  # Compound 14:  M8FOSA
-
-ISTDs[[1]] <- c(
-  "MPFBA",  # Compound 1:  Hexafluoroglutaryl Chloride
-  "MPFBA", # Compound 2:  Diox8-dioic
-  "M3PFBS",  # Compound 3:  TFE-PFBS
-  "M8PFOS", # Compound 4:  PFOS-Cl
-  "M8PFOS",  # Compound 5:  PFHxSA
-  "13C6 n-Butylparaben", # Compound 6:  n-Butylparaben
-  "M9PFNA",  # Compound 7:  Cl-PFNA
-  "M8FOSA",  # Compound 8:  PFOSAA
-  "Eponymous", # Compound 9:  MPFBA
-  "Eponymous", # Compound 10:  M3PFBS
-  "Eponymous", # Compound 11:  M9PFNA
-  "Eponymous", # Compound 12:  M8PFOS
-  "Eponymous", # Compound 13:  13C6 n-Butylparaben
-  "Eponymous")  # Compound 14:  M8FOSA
-
-files[[2]] <- read_excel(
-           "SmeltzPFASAug2021/20210312_UC_PFAS36_Data_MGS.xlsx",
-           sheet=2,
-           skip=5)
-           
-DTXSIDs[[2]] <- c(
-  "DTXSID80380256",  # Compound 1:  TFMFPA
-  "DTXSID90558000",  # Compound 2:  6:2 monoPAP
-  "DTXSID50379814",  # Compound 3:  PFEOES
-  "DTXSID50226894",  # Compound 4:  9H-PFNA 
-  "DTXSID40880025",  # Compound 5:  NaPFOA 
-  "DTXSID50381073",  # Compound 6:  PFPE-5
-  "DTXSID5061954",  # Compound 7:  11H-PFUnDA
-  "DTXSID3020209",  # Compound 8:  n-Butylparaben
-  "M5PFPeA",  # Compound 9:  M5PFPeA
-  "M4PFHpA",  # Compound 10:  M4PFHpA
-  "M8PFOA",  # Compound 11:  M8PFOA
-  "M3PFHxS",  # Compound 12:  M3PFHxS
-  "M9PFNA",  # Compound 13:  M9PFNA
-  "M6PFDA",  # Compound 14:  M6PFDA
-  "13C6 n-Butylparaben",  # Compound 15:  13C6 n-Butylparaben
-  "M7PFUdA ")  # Compound 16:  M7PFUdA 
-
-ISTDs[[2]] <- c(
-  "M5PFPeA",  # Compound 1:  TFMFPA
-  "M4PFHpA",  # Compound 2:  6:2 monoPAP
-  "M3PFHxS",  # Compound 3:  PFEOES
-  "M9PFNA",  # Compound 4:  9H-PFNA
-  "M8PFOA",  # Compound 5:  NaPFOA  
-  "M6PFDA",  # Compound 6:  PFPE-5
-  "M7PFUdA",  # Compound 7:  11H-PFUnDA
-  "13C6 n-Butylparaben",  # Compound 8:  n-Butylparaben
-  "Eponymous",  # Compound 9:  M5PFPeA
-  "Eponymous",  # Compound 10:  M4PFHpA
-  "Eponymous",  # Compound 11:  M8PFOA
-  "Eponymous",  # Compound 12:  M3PFHxS 
-  "Eponymous",  # Compound 13:  M9PFNA      
-  "Eponymous",  # Compound 14:  M6PFDA
-  "Eponymous",  # Compound 15:  13C6 n-Butylparaben
-  "Eponymous") # Compound 16:  M7PFUdA 
-           
-           
-files[[3]] <- read_excel(
-           "SmeltzPFASAug2021/20210503_UCRepeat1_Data_MGS.xlsx",
-           sheet=2,
-           skip=5)   
-
-DTXSIDs[[3]] <- c(
-  "DTXSID4059833",  # Compound 1:  octafluoroadipic
-  "pyruvate")  # Compound 2:  pyruvate
-
-ISTDs[[3]] <- c(
-  "pyruvate",  # Compound 1:  octafluoroadipic
-  "Eponymous") # Compound 2:  pyruvate
-
-files[[4]] <- read_excel(
-           "SmeltzPFASAug2021/20210504_UCRepeat2_Data_MGS.xlsx",
-           sheet=2,
-           skip=5)   
-
-DTXSIDs[[4]] <- c(
-  "DTXSID20375106",  # Compound 1:  diox8
-  "DTXSID0060985",  # Compound 2:  hexafluoroCl
-  "pyruvate")  # Compound 3:  pyruvate
-
-ISTDs[[4]] <- c(
-  "pyruvate",  # Compound 1:  diox8
-  "pyruvate",  # Compound 2:  hexafluoroCl
-  "Eponymous") # Compound 3:  pyruvate
-
-files[[5]] <- read_excel(
-           "SmeltzPFASAug2021/20210507_UC_PFAS36_EarlyEluter_Data_MGS.xlsx",
-           sheet=2,
-           skip=5)   
-
-DTXSIDs[[5]] <- c(
-  "DTXSID8059928",  # Compound 1:  tetrafluorosuccinate
-  "DTXSID8059926",  # Compound 2:  hexafluoroglutarate
-  "pyruvate")  # Compound 3:  pyruvate
-
-ISTDs[[5]] <- c(
-  "pyruvate",  # Compound 1:  tetrafluorosuccinate
-  "pyruvate",  # Compound 2:  hexafluoroglutarate
-  "Eponymous") # Compound 3:  pyruvate
+for (this.date in unique(assayinfo[,1]))
+{
+  this.sheet <- gsub("-","",this.date)
+  this.index <- which(unique(assayinfo[,1])==this.date)
+      
+  files[[this.index]] <- as.data.frame(read_excel(
+           "20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
+           sheet=this.sheet))
+  files[[this.index]]$Date <- this.date        
+  this.assayinfo <- subset(assayinfo,regexpr(this.date,assayinfo[,1])!=-1)
+  
+  compounds[[this.index]] <- this.assayinfo[,"Analyte"]
+  DTXSIDs[[this.index]] <- this.assayinfo[,"DTXSID"]
+  ISTDs[[this.index]] <- this.assayinfo[,"Int Std"]
+}
+         
 
 
 # Now loop over the files and annotate the chemicals:
@@ -161,16 +92,112 @@ for (this.file in 1:length(files))
     if (!is.na(as.character(files[[this.file]][this.row,1])))
       if (regexpr("Compound",as.character(files[[this.file]][this.row,1]))!=-1)
       {
-        this.compound <- this.compound + 1
-        files[[this.file]][this.row:total.rows,"DTXSID"] <- 
-          DTXSIDs[[this.file]][this.compound]  
-        files[[this.file]][this.row:total.rows,"ISTD.Name"] <- 
-          ISTDs[[this.file]][this.compound] 
+        this.id <- NA
+        # Try to get the id using two spaces after colon:
+        this.id <- 
+          strsplit(as.character(files[[this.file]][this.row,1]),":  ")[[1]][2]
+        # If is.na, try with only one:
+        if (is.na(this.id)) this.id <- 
+          strsplit(as.character(files[[this.file]][this.row,1]),": ")[[1]][2]
+        
+        this.chem.index <- regexpr(paste("\\(",this.id,"\\)",sep=""), 
+          cheminfo[,2])!=-1
+        # check to see if this is one of the test chemicals:
+        if (any(this.chem.index))
+        {
+          this.dtxsid <- cheminfo[this.chem.index,"DTXSID"]
+          if (length(this.dtxsid)>1)
+          {
+            match.strings <- unlist(lapply(
+              strsplit(cheminfo[this.chem.index,2],this.id),
+              function(x) x[[1]]))
+            match.strings <- gsub(" \\(","",match.strings)
+            for (this.string in match.strings)
+              if (any(regexpr(tolower(this.string),
+                tolower(compounds[[this.file]]))!=-1))
+              {
+                this.assay.index <- which(regexpr(tolower(this.string),
+                tolower(compounds[[this.file]]))!=-1)
+                files[[this.file]][this.row:total.rows,"Compound.Name"] <- 
+                  compounds[[this.file]][this.assay.index]
+                files[[this.file]][this.row:total.rows,"DTXSID"] <- 
+                  DTXSIDs[[this.file]][this.assay.index]
+                this.dtxsid <- DTXSIDs[[this.file]][this.assay.index]
+                files[[this.file]][this.row:total.rows,"ISTD.Name"] <- 
+                  ISTDs[[this.file]][this.assay.index]
+              }
+          }
+          this.assay.index <- which(DTXSIDs[[this.file]] == this.dtxsid)
+          if (any(this.assay.index))
+          {
+            files[[this.file]][this.row:total.rows,"Compound.Name"] <- 
+              compounds[[this.file]][this.assay.index]
+            files[[this.file]][this.row:total.rows,"DTXSID"] <- 
+              this.dtxsid
+            files[[this.file]][this.row:total.rows,"ISTD.Name"] <- 
+              ISTDs[[this.file]][this.assay.index]
+          }
+        # Check to see if we can find the chemical in the assay table:
+        } else if (any(
+          regexpr(tolower(this.id), tolower(assayinfo[,"Analyte"]))!=-1 &
+          assayinfo[,"LCMS Analysis Date"] == files[[this.file]][this.row,"Date"]))
+        {
+          this.assay.index <- which(any(
+            regexpr(tolower(this.id), tolower(assayinfo[,"Analyte"]))!=-1 &
+            assayinfo[,"LCMS Analysis Date"] == files[[this.file]][this.row,"Date"]))
+          files[[this.file]][this.row:total.rows,"Compound.Name"] <- 
+            compounds[[this.file]][this.assay.index]
+          files[[this.file]][this.row:total.rows,"DTXSID"] <- 
+            DTXSIDs[[this.file]][this.assay.index]
+          files[[this.file]][this.row:total.rows,"ISTD.Name"] <- 
+            ISTDs[[this.file]][this.assay.index]          
+        } else {
+        # Maybe it's a control:
+          this.index <- regexpr(tolower(this.id), tolower(controls[,"Compound"]))!=-1
+          if (any(this.index))
+          {
+            this.compound <- this.compound + 1
+            files[[this.file]][this.row:total.rows,"Compound.Name"] <- 
+              controls[this.index,"Compound"]
+            files[[this.file]][this.row:total.rows,"DTXSID"]  <- 
+              controls[this.index,"DTXSID"]
+            files[[this.file]][this.row:total.rows,"ISTD.Name"]  <- 
+              controls[this.index,"ISTD"]
+          } else {
+          # Assume it's an internal standard:
+            files[[this.file]][this.row:total.rows,"Compound.Name"] <- this.id
+            files[[this.file]][this.row:total.rows,"DTXSID"] <- "ISTD"
+            files[[this.file]][this.row:total.rows,"ISTD.Name"] <- "Eponymous"
+          }
+        } 
       }
   }
   UC.data <- rbind(UC.data,files[[this.file]])
 }
 dim(UC.data)
+misses <- unique(subset(UC.data,DTXSID=="ISTD")$Compound.Name)
+misses <- misses[!(misses %in% unique(assayinfo[,"Int Std"]))]
+
+miss.table <- NULL
+for (i in 1:length(misses))
+{
+  this.miss <- misses[i]
+  dates <- unique(subset(UC.data,Compound.Name==this.miss)$Date)
+  for (this.date in dates)
+  {
+    this.row <- data.frame(Compound = this.miss, Date = this.date)
+    miss.table <- rbind(miss.table,this.row)
+  }
+}
+miss.table[order(miss.table$Date),]
+
+write.csv(miss.table[order(miss.table$Date),],file="chems-not-identified.csv",row.names=FALSE)
+
+
+
+
+
+
 
 UC.data <- as.data.frame(UC.data)
 UC.data <- subset(UC.data,!is.na(UC.data[,"Sample Text"]))
