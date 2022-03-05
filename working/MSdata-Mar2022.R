@@ -208,18 +208,19 @@
   UC.data[regexpr("UF",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "AF"
   UC.data[regexpr("T1",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "T1"
   UC.data[regexpr("T5",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "T5"
-  UC.data[regexpr("CC",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "CC"
-  UC.data[regexpr("Blank",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "Blank"
+  UC.data[UC.data$Type == "Standard","Sample.Type"] <- "CC"
+  UC.data[UC.data$Type == "Blank","Sample.Type"] <- "Blank"
   
   # Get rid of unused samples (QC samples):
   UC.data <- subset(UC.data,!is.na(Sample.Type))
   dim(UC.data)
   
-  # Extract the standard concentration fro column Sample Text:
-  UC.data[,"Std.Conc"] <- unlist(lapply(
-    strsplit(gsub(" pg/uL","",unlist(UC.data[,"Sample Text"]))," - "),
-    function(x) ifelse(length(x)==2,as.numeric(x[2]),NA)))
-  UC.data[,"Std.Units"] <- "pg/uL" 
+  # Extract the concentration of the standard from column Sample Text:
+#  UC.data[,"Std.Conc"] <- unlist(lapply(
+#    strsplit(gsub(" pg/uL","",unlist(UC.data[,"Sample Text"]))," - "),
+#    function(x) ifelse(length(x)==2,as.numeric(x[2]),NA)))
+  UC.data[,"Std.Conc"] <- UC.data[,"Std. Conc"]
+  UC.data[,"Std.Units"] <- "uM" 
   
   # No replicates:
   UC.data$Series <- 1
@@ -237,13 +238,12 @@
    
   # Treat the blanks as calibration data with concentration 0:
   UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Conc"] <- 0
-  UC.data[UC.data[,"Sample.Type"]=="Blank","Std. Conc (nM)"] <- "0"
   
   UC.data[UC.data[,"Sample.Type"]=="Blank","Sample.Type"] <- "CC"
   dim(UC.data)
   
   # Convert to uM:
-  UC.data[,"Std.Conc"] <- as.numeric(unlist(UC.data[,"Std. Conc (nM)"]))/1000
+  #UC.data[,"Std.Conc"] <- as.numeric(unlist(UC.data[,"Std. Conc (nM)"]))/1000
   # Get rid of CC samples that don't have a concentration:
   UC.data <- subset(UC.data,Sample.Type=!"CC" | !is.na(Std.Conc))
   
@@ -280,9 +280,9 @@
   level1 <- format_fup_uc(subset(UC.data,DTXSID!="ISTD"),
     FILENAME="SmeltzPFAS/SmeltzPFAS",
     sample.col="Name",
-    compound.col="DTXSID",
+    compound.col="Compound.Name",
     compound.conc.col="Std.Conc", 
-    lab.compound.col="DTXSID", 
+    lab.compound.col="Compound.Name", 
     type.col="Sample.Type", 
     istd.col="IS Area",
     note.col="Replicate"
@@ -445,5 +445,6 @@
   
   level3 <- calc_fup_uc_point(FILENAME="SmeltzPFAS/SmeltzPFAS") 
   
-
-level4 <- calc_fup_uc(FILENAME="SmeltzPFAS/SmeltzPFAS") 
+  library(invitroTKstats)
+  setwd("c:/users/jwambaug/git/invitroTKstats/working/")
+  level4 <- calc_fup_uc(FILENAME="SmeltzPFAS/SmeltzPFAS") 

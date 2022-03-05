@@ -360,20 +360,20 @@ calc_fup_uc <- function(PPB.data,
           
 # We need a vector with NA's for all the values that are not sampled, but 
 # initial values for the concentrations that are inferred (the T5's):
-          init.Conc <- rep(NA,Num.cc.obs+Num.series*2)
-          init.Conc[(Num.cc.obs+1):(Num.cc.obs+Num.series)] <- 
+          init.Conc <- rep(NA,mydata$Num.cc.obs+mydata$Num.series*2)
+          init.Conc[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)] <- 
             mydata$Test.Nominal.Conc[
-              mydata$obs.cal[(Num.cc.obs+1):(Num.cc.obs+Num.series)]]
+              mydata$obs.cal[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)]]
             
           return(list(
             .RNG.seed=seed,
             .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
-            log.const.analytic.sd =runif(Num.cal,-5,-0.5),
-            log.hetero.analytic.slope = runif(Num.cal,-5,-0.5),
+            log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
+            log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
 # Average across all the calibrations (the sampler will vary these):
-            C.thresh = rep(min(max(0,intercept/slope),Test.Nominal.Conc/10),Num.cal),
-            log.calibration = rep(max(min(-2.95,log10(slope)),1.95),Num.cal),
+            C.thresh = rep(min(max(0,intercept/slope),mydata$Test.Nominal.Conc/10),mydata$Num.cal),
+            log.calibration = rep(max(min(-2.95,log10(max(0,slope))),1.95),mydata$Num.cal),
 # There is only one Fup per chemical:
             log.Fup = log10(runif(1,0,1)),
 # Set the initial concentrations:
