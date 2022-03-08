@@ -1,83 +1,113 @@
 Compound.Name	DTXSID	Calibration	Fup
 n-butylparaben	DTXSID3020209	All Data	0.0331
-n-butylparaben	DTXSID3020209	20190723	0.0794
-n-butylparaben	DTXSID3020209	20200102	0.0261
-n-butylparaben	DTXSID3020209	20200103	0.056
-n-butylparaben	DTXSID3020209	20200106	0.0298
-n-butylparaben	DTXSID3020209	20200107	0.0193
-n-butylparaben	DTXSID3020209	20200108	0.0247
-n-butylparaben	DTXSID3020209	20201123	0.0232
-n-butylparaben	DTXSID3020209	20201124	0.0206
-n-butylparaben	DTXSID3020209	20210225	0.0264
-n-butylparaben	DTXSID3020209	20210301	0.0313
-n-butylparaben	DTXSID3020209	20210308	0.0256
-n-butylparaben	DTXSID3020209	20210311	0.0279
-n-butylparaben	DTXSID3020209	20210402	0.0252
-n-butylparaben	DTXSID3020209	20210602	0.016
-n-butylparaben	DTXSID3020209	20210603	0.0181
-Perfluorobutanesulfonic acid	DTXSID5030030	All Data	0.013
-Perfluorobutanesulfonic acid	DTXSID5030030	20190723	0.0108
-Perfluorobutanesulfonic acid	DTXSID5030030	20200103	0.0151
-4:2 Fluorotelomer sulfonic acid	DTXSID30891564	All Data	0.0065
-4:2 Fluorotelomer sulfonic acid	DTXSID30891564	20190723	0.00623
-4:2 Fluorotelomer sulfonic acid	DTXSID30891564	20200103	0.00697
-Perfluorooctanesulfonamide	DTXSID3038939	All Data	0.00435
-Perfluorooctanesulfonamide	DTXSID3038939	20190723	0.00442
-Perfluorooctanesulfonamide	DTXSID3038939	20200103	0.00427
+n-butylparaben	DTXSID3020209	2019-07-23	0.0794
+n-butylparaben	DTXSID3020209	2020-01-02	0.0261
+n-butylparaben	DTXSID3020209	2020-01-03	0.056
+n-butylparaben	DTXSID3020209	2020-01-06	0.0298
+n-butylparaben	DTXSID3020209	2020-01-07	0.0193
+n-butylparaben	DTXSID3020209	2020-01-08	0.0247
+n-butylparaben	DTXSID3020209	2020-11-23	0.0232
+n-butylparaben	DTXSID3020209	2020-11-24	0.0206
+n-butylparaben	DTXSID3020209	2021-02-25	0.0264
+n-butylparaben	DTXSID3020209	2021-03-01	0.0313
+n-butylparaben	DTXSID3020209	2021-03-08	0.0256
+n-butylparaben	DTXSID3020209	2021-03-11	0.0279
+n-butylparaben	DTXSID3020209	2021-04-02	0.0252
+n-butylparaben	DTXSID3020209	2021-06-02	0.0159
+n-butylparaben	DTXSID3020209	2021-06-03	0.0182
+Perfluorobutanoic acid	DTXSID4059916	All Data	0.104
+Perfluorobutanoic acid	DTXSID4059916	2019-07-23	0.101
+Perfluorobutanoic acid	DTXSID4059916	2020-01-06	0.107
+N-Ethylperfluorooctanesulfonamide	DTXSID1032646	All Data	0.013
+N-Ethylperfluorooctanesulfonamide	DTXSID1032646	2019-07-23	0.0104
+N-Ethylperfluorooctanesulfonamide	DTXSID1032646	2020-01-08	0.0237
+Perfluorobutanesulfonic acid	DTXSID5030030	All Data	0.0201
+Perfluorobutanesulfonic acid	DTXSID5030030	2019-07-23	0.0137
+Perfluorobutanesulfonic acid	DTXSID5030030	2020-01-03	0.0265
+4:2 Fluorotelomer sulfonic acid	DTXSID30891564	All Data	0.0105
+4:2 Fluorotelomer sulfonic acid	DTXSID30891564	2019-07-23	0.00623
+4:2 Fluorotelomer sulfonic acid	DTXSID30891564	2020-01-03	0.0157
+Perfluorooctanoic acid	DTXSID8031865	All Data	0.00606
+Perfluorooctanoic acid	DTXSID8031865	2019-07-23	0.00611
+Perfluorooctanoic acid	DTXSID8031865	2020-01-06	0.00601
+Perfluoro-3,6,9-trioxatridecanoic acid	DTXSID50375114	All Data	0.00613
+Perfluoro-3,6,9-trioxatridecanoic acid	DTXSID50375114	2019-07-23	0.00779
+Perfluoro-3,6,9-trioxatridecanoic acid	DTXSID50375114	2020-01-07	0.00662
+Perfluoro-3,6,9-trioxatridecanoic acid	DTXSID50375114	2020-11-23	0.00224
+Perfluorooctanesulfonamide	DTXSID3038939	All Data	0.0148
+Perfluorooctanesulfonamide	DTXSID3038939	2019-07-23	0.00442
+Perfluorooctanesulfonamide	DTXSID3038939	2020-01-03	0.023
+N-Methylperfluorooctanesulfonamide	DTXSID1067629	All Data	0.0164
+N-Methylperfluorooctanesulfonamide	DTXSID1067629	2019-07-23	0.0391
+N-Methylperfluorooctanesulfonamide	DTXSID1067629	2020-01-08	0.0159
 3:3 Fluorotelomer carboxylic acid	DTXSID00379268	All Data	0.165
 4H-Perfluorobutanoic acid	DTXSID50892417	All Data	0.18
 2H,2H,3H,3H-perfluorooctanoic acid	DTXSID20874028	All Data	0.00376
+9-Chloro-perfluorononanoic acid	DTXSID30382104	All Data	0.0586
+9-Chloro-perfluorononanoic acid	DTXSID30382104	2020-01-02	0.0749
+9-Chloro-perfluorononanoic acid	DTXSID30382104	2020-11-24	0.0135
 3-Perfluoroheptylpropanoic acid	DTXSID90382620	All Data	0.00778
+Perfluorooctanesulfonate	DTXSID3031864	All Data	0.00825
+Perfluorooctanesulfonate	DTXSID3031864	2020-01-02	0.00899
+Perfluorooctanesulfonate	DTXSID80108992	2020-11-23	0.00656
 6:2 Fluorotelomer sulfonic acid	DTXSID6067331	All Data	0.0169
 Perfluorohexanesulfonic acid	DTXSID7040150	All Data	0.00285
 Perfluoroheptanesulfonic acid	DTXSID8059920	All Data	0.000608
 8:2 Fluorotelomer sulfonic acid	DTXSID00192353	All Data	0.0469
-Perfluorooctanesulfonic acid	DTXSID3031864	All Data	0.0167
+Perfluorooctanesulfonic acid	DTXSID3031864	All Data	0.0377
 Perfluorohexanesulfonamide	DTXSID50469320	All Data	0.000842
-Perfluorohexanesulfonamide	DTXSID50469320	20201124	0.000474
+Perfluorohexanesulfonamide	DTXSID50469320	2020-11-24	0.000474
 Perfluoropropanoic acid	DTXSID8059970	All Data	0.318
-Perfluorobutanoic acid	DTXSID4059916	All Data	0.107
 Perfluoropentanoic acid	DTXSID6062599	All Data	0.0531
 Perfluorohexanoic acid	DTXSID3031862	All Data	0.0095
-Perfluorooctanoic acid	DTXSID8031865	All Data	0.00601
+Perfluoroheptanoic acid	DTXSID1037303	All Data	0.0358
+Perfluoroheptanoic acid	DTXSID1037303	2020-01-06	0.0459
+Perfluoroheptanoic acid	DTXSID1037303	2020-11-23	0.00331
 Perfluorononanoic acid	DTXSID8031863	All Data	0.00259
-Perfluoroundecanoic acid	DTXSID8047553	All Data	0.0166
+Perfluorodecanoic acid	DTXSID3031860	All Data	0.00619
+Perfluorodecanoic acid	DTXSID3031860	2020-01-06	0.0078
+Perfluorodecanoic acid	DTXSID3031860	2020-11-23	0.00307
+Perfluoroundecanoic acid	DTXSID8047553	All Data	0.0133
 Perfluoro-3-methoxypropanoic acid	DTXSID70191136	All Data	0.255
-Perfluoro(4-methoxybutanoic) acid	DTXSID60500450	All Data	0.0134
+Perfluoro(4-methoxybutanoic) acid	DTXSID60500450	All Data	0.00807
 Perfluoro-4-isopropoxybutanoic acid	DTXSID60663110	All Data	0.00415
 Potassium perfluorooctanesulfonate	DTXSID8037706	All Data	0.00506
-N-Ethylperfluorooctanesulfonamide	DTXSID1032646	All Data	0.0155
-N-Methylperfluorooctanesulfonamide	DTXSID1067629	All Data	0.0159
+N-Methyl-N-(2-hydroxyethyl)perfluorooctanesulfonamide	DTXSID7027831	All Data	0.0822
 N-Ethyl-N-(2-hydroxyethyl)perfluorooctanesulfonamide	DTXSID6027426	All Data	0.0822
-Perfluoroheptanoic acid	DTXSID1037303	All Data	0.00331
-Perfluorodecanoic acid	DTXSID3031860	All Data	0.00307
-Perfluorooctanesulfonate	DTXSID80108992	All Data	0.00656
-Perfluoro-3,6,9-trioxatridecanoic acid	DTXSID50375114	All Data	0.00224
 Perfluorotridecanoic acid	DTXSID90868151	All Data	0.0527
 Perfluorotetradecanoic acid	DTXSID3059921	All Data	0.0279
-Sodium perfluorooctanoate (NaPFOA)	DTXSID40880025	All Data	0.00225
+Hexafluoroglutaryl chloride	DTXSID0060985	All Data	0.0331
+Sodium perfluorooctanoate (NaPFOA)	DTXSID40880025	All Data	0.0035
 6:2 Fluorotelomer phosphate monoester	DTXSID90558000	All Data	0.0071
-9H-Perfluorononanoic acid	DTXSID50226894	All Data	0.00136
+9H-Perfluorononanoic acid	DTXSID50226894	All Data	0.00288
 Perfluoro-3,6-dioxadecanoic acid	DTXSID50381073	All Data	0.00107
 11-H-Perfluoroundecanoic acid	DTXSID5061954	All Data	0.00172
-Perfluoro-3,6-dioxaheptanoic acid	DTXSID30382063	All Data	0.00243
-Perfluoro-3,6-dioxaheptanoic acid	DTXSID30382063	20210301	0.00322
-Perfluoro-3,6-dioxaheptanoic acid	DTXSID30382063	20210402	0.00243
-Potassium perfluorooctanoate (K-PFOA)	DTXSID00880026	All Data	0.0113
+Perfluorobutanesulfonyl fluoride	DTXSID20861913	All Data	0.169
+Perfluoro-3,6-dioxaheptanoic acid	DTXSID30382063	All Data	0.00957
+Perfluoro-3,6-dioxaheptanoic acid	DTXSID30382063	2021-03-01	0.00745
+Perfluoro-3,6-dioxaheptanoic acid	DTXSID30382063	2021-04-02	0.00959
+Potassium perfluorooctanoate (K-PFOA)	DTXSID00880026	All Data	0.00499
 Perfluorooctanoyl fluoride	DTXSID0059829	All Data	0.00305
-8H-Perfluorooctanoic acid	DTXSID70565479	All Data	0.0023
-8H-Perfluorooctanoic acid	DTXSID70565479	20210311	0.00254
-8H-Perfluorooctanoic acid	DTXSID70565479	20210603	0.00204
-9-H-Perfluorononanoic acid	DTXSID50226894	All Data	0.000864
+Perfluorooctanesulfonyl fluoride	DTXSID5027140	All Data	0.246
+Perfluorononanoyl chloride	DTXSID00379925	All Data	0.0212
+Perfluorononanoyl chloride	DTXSID00379925	2021-03-11	0.0275
+Perfluorononanoyl chloride	DTXSID00379925	2021-06-02	0.0161
+7H-Perfluoroheptanoic acid	DTXSID70165670	All Data	0.00794
+7H-Perfluoroheptanoic acid	DTXSID70165670	2021-03-11	0.0226
+7H-Perfluoroheptanoic acid	DTXSID70165670	2021-06-02	0.00229
+8H-Perfluorooctanoic acid	DTXSID70565479	All Data	0.00299
+8H-Perfluorooctanoic acid	DTXSID70565479	2021-03-11	0.00466
+8H-Perfluorooctanoic acid	DTXSID70565479	2021-06-03	0.00161
+Perfluoroheptanoyl chloride	DTXSID80382154	All Data	0.00214
+Perfluoroheptanoyl chloride	DTXSID80382154	2021-03-11	0.00279
+Perfluoroheptanoyl chloride	DTXSID80382154	2021-06-03	0.00142
+Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	All Data	0.00152
+Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	2021-03-11	0.00347
+Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	2021-06-02	0.000442
+4,4,5,5,6,6,7,7,8,8,9,9,9-Tridecafluorononanoic acid	DTXSID70379917	All Data	0.00373
+4,4,5,5,6,6,7,7,8,8,9,9,9-Tridecafluorononanoic acid	DTXSID70379917	2021-03-11	0.00728
+4,4,5,5,6,6,7,7,8,8,9,9,9-Tridecafluorononanoic acid	DTXSID70379917	2021-06-02	0.00206
+9-H-Perfluorononanoic acid	DTXSID50226894	All Data	0.00135
 Octafluoroadipic acid	DTXSID4059833	All Data	0.118
 Hexafluoroglutaric acid (hexafluoroglutarate)	DTXSID8059926	All Data	0.533
-Perfluorononanoyl chloride	DTXSID00379925	All Data	0.0161
-Perfluorononanoyl chloride	DTXSID00379925	20210602	0.0171
-7H-Perfluoroheptanoic acid	DTXSID70165670	All Data	0.00229
-7H-Perfluoroheptanoic acid	DTXSID70165670	20210602	0.00196
-Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	All Data	0.000442
-Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	20210602	0.000444
-4,4,5,5,6,6,7,7,8,8,9,9,9-Tridecafluorononanoic acid	DTXSID70379917	All Data	0.00206
-4,4,5,5,6,6,7,7,8,8,9,9,9-Tridecafluorononanoic acid	DTXSID70379917	20210602	0.00206
-Perfluoroheptanoyl chloride	DTXSID80382154	All Data	0.00142
-Potassium perfluorooctanoate (KPFOA)	DTXSID00880026	All Data	0.00182
+Potassium perfluorooctanoate (KPFOA)	DTXSID00880026	All Data	0.00141

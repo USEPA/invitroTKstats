@@ -1,5 +1,25 @@
 Compound	DTXSID	Lab.Compound.Name	Fup.Med	Fup.Low	Fup.High	Fup.point
-n-butylparaben	DTXSID3020209	n-butylparaben	0.0293	1.42e-13	0.0496	0.0331
-Perfluorobutanesulfonic acid	DTXSID5030030	Perfluorobutanesulfonic acid	0.0123	0.0081	0.0186	0.013
-4:2 Fluorotelomer sulfonic acid	DTXSID30891564	4:2 Fluorotelomer sulfonic acid	0.00564	0.00307	0.00998	0.0065
-Perfluorooctanesulfonamide	DTXSID3038939	Perfluorooctanesulfonamide	0.0043	0.00294	0.00631	0.00435
+n-butylparaben	DTXSID3020209	n-butylparaben	0.0282	2.68e-14	0.0573	0.0331
+Perfluorobutanoic acid	DTXSID4059916	Perfluorobutanoic acid	3.49e-08	2.33e-15	0.446	0.104
+N-Ethylperfluorooctanesulfonamide	DTXSID1032646	N-Ethylperfluorooctanesulfonamide	0.00851	0.00542	0.0126	0.013
+Perfluorobutanesulfonic acid	DTXSID5030030	Perfluorobutanesulfonic acid	0.0214	0.0143	0.032	0.0201
+4:2 Fluorotelomer sulfonic acid	DTXSID30891564	4:2 Fluorotelomer sulfonic acid	0.016	3.94e-14	0.0311	0.0105
+Perfluorooctanoic acid	DTXSID8031865	Perfluorooctanoic acid	4.14e-06	3.07e-15	0.00398	0.00606
+Perfluoro-3,6,9-trioxatridecanoic acid	DTXSID50375114	Perfluoro-3,6,9-trioxatridecanoic acid	2.59e-08	2.42e-15	0.409	0.00613
+Perfluorooctanesulfonamide	DTXSID3038939	Perfluorooctanesulfonamide	0.0143	0.00771	0.0284	0.0148
+N-Methylperfluorooctanesulfonamide	DTXSID1067629	N-Methylperfluorooctanesulfonamide	0.0158	0.0101	0.0267	0.0164
+3:3 Fluorotelomer carboxylic acid	DTXSID00379268	3:3 Fluorotelomer carboxylic acid	3.9e-08	2.35e-15	0.456	0.165
+4H-Perfluorobutanoic acid	DTXSID50892417	4H-Perfluorobutanoic acid	0.13	9.49e-15	0.307	0.18
+2H,2H,3H,3H-perfluorooctanoic acid	DTXSID20874028	2H,2H,3H,3H-perfluorooctanoic acid	3.48e-09	2.34e-15	0.0133	0.00376
+9-Chloro-perfluorononanoic acid	DTXSID30382104	9-Chloro-perfluorononanoic acid	2.35e-08	2.35e-15	0.321	0.0586
+3-Perfluoroheptylpropanoic acid	DTXSID90382620	3-Perfluoroheptylpropanoic acid	1.18e-08	2.38e-15	0.0702	0.00778
+Perfluorooctanesulfonate	DTXSID3031864	Perfluorooctanesulfonate	3.53e-08	2.55e-15	0.393	0.00825
+6:2 Fluorotelomer sulfonic acid	DTXSID6067331	6:2 Fluorotelomer sulfonic acid	0.0148	8.77e-15	0.11	0.0169
+Perfluorohexanesulfonic acid	DTXSID7040150	Perfluorohexanesulfonic acid	0.00107	0.000628	0.00177	0.00285
+Perfluoroheptanesulfonic acid	DTXSID8059920	Perfluoroheptanesulfonic acid	0.00063	0.00038	0.00101	0.000608
+8:2 Fluorotelomer sulfonic acid	DTXSID00192353	8:2 Fluorotelomer sulfonic acid	0.0449	0.0307	0.0646	0.0469
+Perfluorooctanesulfonic acid	DTXSID3031864	Perfluorooctanesulfonic acid	0.0379	0.0215	0.0669	0.0377
+Perfluorohexanesulfonamide	DTXSID50469320	Perfluorohexanesulfonamide	2.69e-08	2.47e-15	0.379	0.000842
+Perfluoropropanoic acid	DTXSID8059970	Perfluoropropanoic acid	2.84e-08	2.28e-15	0.384	0.318
+Perfluoropentanoic acid	DTXSID6062599	Perfluoropentanoic acid	3.12e-08	2.32e-15	0.432	0.0531
+Perfluorohexanoic acid	DTXSID3031862	Perfluorohexanoic acid	3.54e-08	2.45e-15	0.419	0.0095

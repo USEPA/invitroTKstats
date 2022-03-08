@@ -166,6 +166,41 @@ calc_fup_uc <- function(PPB.data,
   good.col="Verified"
   )
 {
+
+# local function to give each chain it's own starting values:
+  initfunction <- function(chain)
+  {
+    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
+    set.seed(seed)
+    cal.coeff <- lm(
+      mydata$Response.obs[1:mydata$Num.cc.obs]~
+      mydata$Conc[1:mydata$Num.cc.obs])[["coefficients"]]
+    slope <- as.numeric(cal.coeff[2])
+    intercept <- as.numeric(cal.coeff[1])
+    
+# We need a vector with NA's for all the values that are not sampled, but 
+# initial values for the concentrations that are inferred (the T5's):
+    init.Conc <- rep(NA,mydata$Num.cc.obs+mydata$Num.series*2)
+    init.Conc[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)] <- 
+      mydata$Test.Nominal.Conc[
+        mydata$obs.cal[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)]]
+      
+    return(list(
+      .RNG.seed=seed,
+      .RNG.name="base::Super-Duper",
+# Parameters that may vary between calibrations:
+      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
+      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
+# Average across all the calibrations (the sampler will vary these):
+      C.thresh = rep(min(max(0,intercept/slope),mydata$Test.Nominal.Conc/10,na.rm=TRUE),mydata$Num.cal),
+      log.calibration = rep(max(min(-2.95,log10(max(0,slope))),1.95),mydata$Num.cal),
+# There is only one Fup per chemical:
+      log.Fup = log10(runif(1,0,1)),
+# Set the initial concentrations:
+      Conc = init.Conc
+    ))
+  }
+        
   if (!is.null(TEMP.DIR)) 
   {
     current.dir <- getwd()
@@ -347,40 +382,7 @@ calc_fup_uc <- function(PPB.data,
           "Dilution.Factor" = Dilution.Factor,
           "Test.Nominal.Conc" = Test.Nominal.Conc
         )
-        
-        initfunction <- function(chain)
-        {
-          seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
-          set.seed(seed)
-          cal.coeff <- lm(
-            mydata$Response.obs[1:mydata$Num.cc.obs]~
-            mydata$Conc[1:mydata$Num.cc.obs])[["coefficients"]]
-          slope <- as.numeric(cal.coeff[2])
-          intercept <- as.numeric(cal.coeff[1])
-          
-# We need a vector with NA's for all the values that are not sampled, but 
-# initial values for the concentrations that are inferred (the T5's):
-          init.Conc <- rep(NA,mydata$Num.cc.obs+mydata$Num.series*2)
-          init.Conc[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)] <- 
-            mydata$Test.Nominal.Conc[
-              mydata$obs.cal[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)]]
-            
-          return(list(
-            .RNG.seed=seed,
-            .RNG.name="base::Super-Duper",
-# Parameters that may vary between calibrations:
-            log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
-            log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
-# Average across all the calibrations (the sampler will vary these):
-            C.thresh = rep(min(max(0,intercept/slope),mydata$Test.Nominal.Conc/10),mydata$Num.cal),
-            log.calibration = rep(max(min(-2.95,log10(max(0,slope))),1.95),mydata$Num.cal),
-# There is only one Fup per chemical:
-            log.Fup = log10(runif(1,0,1)),
-# Set the initial concentrations:
-            Conc = init.Conc
-          ))
-        }
-        
+      
         save(this.compound,mydata,UC_PPB_model,initfunction,
           file=paste(FILENAME,"-PREJAGS.RData",sep=""))  
         coda.out[[this.compound]] <- autorun.jags(

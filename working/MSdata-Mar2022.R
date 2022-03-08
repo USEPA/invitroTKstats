@@ -193,7 +193,9 @@
   
   write.csv(miss.table[order(miss.table$Date),],file="chems-not-identified.csv",row.names=FALSE)
   
-  
+subset(UC.data, DTXSID=="DTXSID00379925")
+
+ 
   
   UC.data <- as.data.frame(UC.data)
   colnames(UC.data)[3:16] <- UC.data[6,3:16]
@@ -214,7 +216,7 @@
   # Get rid of unused samples (QC samples):
   UC.data <- subset(UC.data,!is.na(Sample.Type))
   dim(UC.data)
-  
+ subset(UC.data, DTXSID=="DTXSID00379925"&Date=="2021-06-03") 
   # Extract the concentration of the standard from column Sample Text:
 #  UC.data[,"Std.Conc"] <- unlist(lapply(
 #    strsplit(gsub(" pg/uL","",unlist(UC.data[,"Sample Text"]))," - "),
@@ -224,9 +226,9 @@
   
   # No replicates:
   UC.data$Series <- 1
-  # Extract the date from the time stamp
-  UC.data$Date <- unlist(lapply(strsplit(unlist(UC.data[,"Name"]),"_PFAS"),
-    function(x) x[1]))
+#  # Extract the date from the time stamp
+#  UC.data$Date <- unlist(lapply(strsplit(unlist(UC.data[,"Name"]),"_PFAS"),
+#    function(x) x[1]))
   # Assume all samples analyzed on same date were the same calibration
   UC.data$Cal <- UC.data$Date
   # We'll need to go back and set this per sample type:
@@ -235,7 +237,8 @@
   UC.data[UC.data[,"Sample.Type"]=="T5","Dilution.Factor"] <- T5.DILUTE
   UC.data[UC.data[,"Sample.Type"]=="CC","Dilution.Factor"] <- CC.DILUTE
   UC.data[UC.data[,"Sample.Type"]=="Blank","Dilution.Factor"] <- BLANK.DILUTE
-   
+ subset(UC.data, DTXSID=="DTXSID00379925"&Date=="2021-06-03") 
+    
   # Treat the blanks as calibration data with concentration 0:
   UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Conc"] <- 0
   
