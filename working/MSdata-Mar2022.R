@@ -308,11 +308,11 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
     "DTXSID4059916",
     "DTXSID50375114",
     "DTXSID8031865") &
-    level2$Date == "20190723", "Verified"] <- "Exclude"
+    level2$Date == "2019-07-23", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID5030030",
     "DTXSID8037706") &
-    level2$Date == "20190723" &
+    level2$Date == "2019-07-23" &
     level2$Note == "A", "Verified"] <- "Exclude"
   # 01/02/20:
   level2[level2$DTXSID %in% c(
@@ -321,17 +321,17 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
     "DTXSID30382104",
     "DTXSID4059833",
     "DTXSID3031864") &
-    level2$Date == "20200102", "Verified"] <- "Exclude"
+    level2$Date == "2020-01-02", "Verified"] <- "Exclude"
   # 01/03/20:
   level2[level2$DTXSID %in% c(
     "DDTXSID504693204") &
-    level2$Date == "20200103", "Verified"] <- "Exclude"
+    level2$Date == "2020-01-03", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID3031864",
     "DTXSID3038939",
     "DTXSID30891564",
     "DTXSID5030030") &
-    level2$Date == "20200103" &
+    level2$Date == "2020-01-03" &
     level2$Note == "A", "Verified"] <- "Exclude"
   # 01/06/20:
   level2[level2$DTXSID %in% c(
@@ -339,10 +339,10 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
     "DTXSID3031860",
     "DTXSID3059921",
     "DTXSID90868151") &
-    level2$Date == "20200106", "Verified"] <- "Exclude"
+    level2$Date == "2020-01-06", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID8047553") &
-    level2$Date == "20200106" &
+    level2$Date == "2020-01-06" &
     level2$Note == "A", "Verified"] <- "Exclude"  
   # 01/07/20:
   level2[level2$DTXSID %in% c(
@@ -351,66 +351,66 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
     "DTXSID3037709",
     "DTXSID30382063",
     "DTXSID50375114") &
-    level2$Date == "20200107", "Verified"] <- "Exclude"
+    level2$Date == "2020-01-07", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID60500450") &
-    level2$Date == "20200107" &
+    level2$Date == "2020-01-07" &
     level2$Note == "B", "Verified"] <- "Exclude"    
   # 01/08/20:
   level2[level2$DTXSID %in% c(
     "DDTXSID60380390",
-    "DTXSID7027831",
+    "DTXSID8051419",
     "DTXSID90315130") &
-    level2$Date == "20200108", "Verified"] <- "Exclude"
+    level2$Date == "2020-01-08", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID1032646",
     "DTXSID20179883",
     "DTXSID30627108") &
-    level2$Date == "20200108" &
+    level2$Date == "2020-01-08" &
     level2$Note == "A", "Verified"] <- "Exclude"     
   # 11/23/20:
   level2[level2$DTXSID %in% c(
     "DTXSID4059833") &
-    level2$Date == "20201123", "Verified"] <- "Exclude"
+    level2$Date == "2020-11-23", "Verified"] <- "Exclude"
   # 11/24/20:
   level2[level2$DTXSID %in% c(
     "DTXSID0060985",
     "DTXSID20375106",
     "DTXSID30382104",
     "DTXSID90315130") &
-    level2$Date == "20201124", "Verified"] <- "Exclude"
+    level2$Date == "2020-11-24", "Verified"] <- "Exclude"
   # 02/25/21:
   level2[level2$DTXSID %in% c(
     "DTXSID8059926",
     "DTXSID8059928") &
-    level2$Date == "20210225", "Verified"] <- "Exclude"
+    level2$Date == "2021-02-25", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID40880025",
     "DTXSID50226894",
     "DTXSID50379814") &
-    level2$Date == "20210225" &
+    level2$Date == "2021-02-25" &
     level2$Note == "A", "Verified"] <- "Exclude"   
   # 03/01/21:
   level2[level2$DTXSID %in% c(
     "DTXSID20861913") &
-    level2$Date == "20210301", "Verified"] <- "Exclude"
+    level2$Date == "2021-03-01", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID30382063") &
-    level2$Date == "20210301" &
+    level2$Date == "2021-03-01" &
     level2$Note == "A", "Verified"] <- "Exclude"        
   level2[level2$DTXSID %in% c(
     "DTXSID00880026") &
-    level2$Date == "20210301" &
+    level2$Date == "2021-03-01" &
     level2$Note == "B", "Verified"] <- "Exclude"  
   level2[level2$DTXSID %in% c(
     "DTXSID00880026",
     "DTXSID30382063") &
-    level2$Date == "20210301" &
+    level2$Date == "2021-03-01" &
     level2$Note == "C", "Verified"] <- "Exclude"  
   # 03/08/21:
   level2[level2$DTXSID %in% c(
     "DTXSID5027140") &
-    level2$Date == "20210308", "Verified"] <- "Exclude"
+    level2$Date == "2021-03-08", "Verified"] <- "Exclude"
   # 03/11/21:
   level2[level2$DTXSID %in% c(
     "DTXSID00379925",
@@ -419,28 +419,28 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
     "DTXSID70379917",
     "DTXSID80380837",
     "DTXSID80382154") &
-    level2$Date == "20210311", "Verified"] <- "Exclude"
+    level2$Date == "2021-03-11", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID70565479",
     "DTXSID9059915") &
-    level2$Date == "20210311" &
+    level2$Date == "2021-03-11" &
     level2$Note == "A", "Verified"] <- "Exclude"   
   # 04/02/21:
   level2[level2$DTXSID %in% c(
     "DTXSID90315130") &
-    level2$Date == "20210402", "Verified"] <- "Exclude"
+    level2$Date == "2021-04-02", "Verified"] <- "Exclude"
   level2[level2$DTXSID %in% c(
     "DTXSID30382063",
     "DTXSID40880025",
     "DTXSID50226894",
     "DTXSID50379814") &
-    level2$Date == "20210402" &
+    level2$Date == "2021-04-02" &
     level2$Note == "A", "Verified"] <- "Exclude"     
   # 06/03/21:
   level2[level2$DTXSID %in% c(
     "DTXSID00880026",
     "DTXSID70565479") &
-    level2$Date == "20210603" &
+    level2$Date == "2021-06-03" &
     level2$Note == "C", "Verified"] <- "Exclude"      
         
   write.table(level2,

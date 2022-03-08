@@ -34,7 +34,7 @@ model {
   decreases ~ dbern(0.5) 
 # Slope is the clearance rate at the lower concentration (fastest slope we can 
 #identify is assumed to be 99.4% gone in the first 15 minutes):
-  rate ~ dunif(0,5/15)
+  rate ~ dunif(0,10)
   slope[1] <- decreases*rate
 # Saturates is whether or not the clearance rate decreases (1 is yes, 0 is no):
   saturates ~ dbern(0.5) 
@@ -351,7 +351,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
   clint.data[clint.data$Response<0,"Response"] <- 0
    
   # Because of the possibility of crashes we save the results one chemical at a time:
-  OUTPUT.FILE <- paste(FILENAME,"-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste(FILENAME,"-Clint-Level4.tsv",sep="")
 
   # Check to see if we crashed earlier, if so, don't redo something that already is done
   if (!file.exists(OUTPUT.FILE))

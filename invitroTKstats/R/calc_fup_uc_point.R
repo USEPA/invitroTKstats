@@ -125,7 +125,7 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
   for (this.chem in unique(PPB.data[,compound.col]))
   {
     this.subset <- subset(PPB.data,PPB.data[,compound.col]==this.chem)
-    this.dtxsid <- this.subset$dtxsid[1]
+    this.dtxsid <- this.subset$DTXSID[1]
     this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
       data.frame(Calibration="All Data",
         Fup=NaN))

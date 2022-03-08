@@ -215,6 +215,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       this.data[this.data$Response==0,"Response"] <- min.response/2
 
       num.chem <- num.chem + 1
+      num.cal <- length(unique(this.data[,"Calibration"]))
       
       this.fit <- try(mle(lldecay,
         start=list(cal=1,k_elim=0.1,sigma=1),

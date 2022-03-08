@@ -68,6 +68,9 @@ smeltz.hep[regexpr("t60",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 60/
 smeltz.hep[regexpr("t30",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 30/60
 smeltz.hep[regexpr("t15",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 15/60
 smeltz.hep[regexpr("t0",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- 0/60
+
+# Don't want media-only samples:
+ smeltz.hep[regexpr("wem",tolower(smeltz.hep[,"Sample Text"]))!=-1,"Time"] <- NA
 smeltz.hep <- subset(smeltz.hep,!is.na(Time) | Type != "Cvst")
 
 # Indicate whether hepatocytes have been inactivated:
@@ -91,6 +94,7 @@ smeltz.hep <- subset(smeltz.hep, !is.na(Area) &
   
   
 level1 <- format_clint(smeltz.hep,
+  FILENAME="SmeltzPFAS/SmeltzPFAS",
   sample.col ="Name",
   date.col="Acq.Date",
   compound.col="Compound",
@@ -112,15 +116,15 @@ level2 <- level1
 level2$Verified <- "Y"
   
 write.table(level2,
-  file="Smeltz2022-Clint-Level2.tsv",
+  file="SmeltzPFAS/SmeltzPFAS-Clint-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
 
-level3 <- calc_clint_point(FILENAME="Smeltz2022")
+level3 <- calc_clint_point(FILENAME="SmeltzPFAS/SmeltzPFAS")
    
 # repeat these bits in case a markov chain crashes and we need to restart:
 library(invitroTKstats)
 setwd("c:/users/jwambaug/git/invitroTKstats/working/")
 
-level4 <- calc_clint(FILENAME="Smeltz2022")   
+level4 <- calc_clint(FILENAME="SmeltzPFAS/SmeltzPFAS")   
