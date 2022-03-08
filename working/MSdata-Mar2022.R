@@ -85,10 +85,13 @@
     total.rows <- dim(files[[this.file]])[1]
     this.compound <- 1
     
-    files[[this.file]]$DTXSID <- DTXSIDs[[this.file]][this.compound] 
-    files[[this.file]]$ISTD.Name <- ISTDs[[this.file]][this.compound] 
+# Temporarily assign NA to all rows to initialize columns:
+    files[[this.file]]$DTXSID <- NA 
+    files[[this.file]]$ISTD.Name <- NA
+    this.id <- NA
     for (this.row in 1:total.rows)
     {
+# Check to see if we should change the chemical identity:
       if (!is.na(as.character(files[[this.file]][this.row,1])))
         if (regexpr("Compound",as.character(files[[this.file]][this.row,1]))!=-1)
         {
@@ -142,15 +145,15 @@
             regexpr(tolower(this.id), tolower(assayinfo[,"Analyte"]))!=-1 &
             assayinfo[,"LCMS Analysis Date"] == files[[this.file]][this.row,"Date"]))
           {
-            this.assay.index <- which(any(
+            this.assay.index <- which(
               regexpr(tolower(this.id), tolower(assayinfo[,"Analyte"]))!=-1 &
-              assayinfo[,"LCMS Analysis Date"] == files[[this.file]][this.row,"Date"]))
+              assayinfo[,"LCMS Analysis Date"] == files[[this.file]][this.row,"Date"])
             files[[this.file]][this.row:total.rows,"Compound.Name"] <- 
-              compounds[[this.file]][this.assay.index]
+              assayinfo[this.assay.index,"Analyte"]
             files[[this.file]][this.row:total.rows,"DTXSID"] <- 
-              DTXSIDs[[this.file]][this.assay.index]
+              assayinfo[this.assay.index,"DTXSID"]  
             files[[this.file]][this.row:total.rows,"ISTD.Name"] <- 
-              ISTDs[[this.file]][this.assay.index]          
+              assayinfo[this.assay.index,"Int Std"]   
           } else {
           # Maybe it's a control:
             this.index <- regexpr(tolower(this.id), tolower(controls[,"Compound"]))!=-1
@@ -171,6 +174,7 @@
             }
           } 
         }
+  #      if (this.file==16) browser()
     }
     UC.data <- rbind(UC.data,files[[this.file]])
   }
@@ -194,12 +198,11 @@
   write.csv(miss.table[order(miss.table$Date),],file="chems-not-identified.csv",row.names=FALSE)
   
 subset(UC.data, DTXSID=="DTXSID00379925")
-
- 
+subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
   
   UC.data <- as.data.frame(UC.data)
   colnames(UC.data)[3:16] <- UC.data[6,3:16]
-  
+   
   
   UC.data <- subset(UC.data,!is.na(UC.data[,"Sample Text"]))
   dim(UC.data)
