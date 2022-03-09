@@ -29,7 +29,7 @@
 #'
 #' @references
 #'
-#' @export plog_clint
+#' @export plot_clint
 #' @import ggplot2
 plot_clint <- function(level2,dtxsid)
 {

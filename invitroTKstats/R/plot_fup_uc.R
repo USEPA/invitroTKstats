@@ -29,7 +29,7 @@
 #'
 #' @references
 #'
-#' @export plog_fup_uc
+#' @export plot_fup_uc
 #' @import ggplot2
 plot_fup_uc <- function(level2,dtxsid)
 {
