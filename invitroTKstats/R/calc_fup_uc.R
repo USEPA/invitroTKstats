@@ -6,7 +6,7 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dunif(-10,-0.5)
+    log.const.analytic.sd[i] ~ dnorm(0.1,0.01)
     log.hetero.analytic.slope[i] ~ dunif(-5,1)
     C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
     log.calibration[i] ~ dunif(-3, 3)
@@ -48,7 +48,7 @@ model {
   {
   # Priors for whole samples for ultra centrigugation UC):
     Conc[i] ~ dnorm(Test.Nominal.Conc[obs.cal[i]],
-      100*Test.Nominal.Conc[obs.cal[i]]^-2)
+      100)
   # Aqueous fraction concentrations for UC samples:
     Conc[i+Num.series] <- Fup * Conc[i]
   }   
@@ -393,7 +393,7 @@ calc_fup_uc <- function(PPB.data,
           inits = initfunction,
           startburnin = 25000, 
           startsample = 50000, 
-          max.time="5m",
+          max.time="15m",
           crash.retry=2,
           adapt=10000,
           psrf.target = 1.1,
@@ -431,6 +431,8 @@ calc_fup_uc <- function(PPB.data,
         print(mydata$Num.obs)
         print(mydata$Response.obs)
         print(results)
+     
+        if (results[1,"Fup"]<1e-8) browser()
     
         Results <- rbind(Results,new.results)
     

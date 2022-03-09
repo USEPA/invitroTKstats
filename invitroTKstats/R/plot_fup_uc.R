@@ -84,7 +84,10 @@ plot_fup_uc <- function(level2,dtxsid)
   {
     this.t5 <- subset(level2, Calibration==this.cal & Sample.Type=="T5")
     mean.t5 <- mean(this.t5$Response*this.t5$Dilution.Factor,na.rm=TRUE)
-    frac$Response <- frac$Response*frac$Dilution.Factor/mean.t5
+    frac[frac$Calibration == this.cal,"Response"] <- 
+      frac[frac$Calibration == this.cal,"Response"] * 
+      frac[frac$Calibration == this.cal,"Dilution.Factor"] /
+      mean.t5
   }
   frac$Sample.Type = "Rough Fup"
   level2 <- rbind(level2,frac)
