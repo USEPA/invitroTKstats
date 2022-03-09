@@ -45,12 +45,15 @@ while (this.row <= dim(smeltz.hep)[1])
       this.dtxsid <- chem.ids[row.index, "DTXSID"]
       this.istdname <- chem.ids[row.index, "Internal Standard"]
     }
+    print(this.compound)
   }
   smeltz.hep[this.row, "Compound"] <- this.compound
   smeltz.hep[this.row, "DTXSID"] <- this.dtxsid
   smeltz.hep[this.row, "ISTD.Name"] <- this.istdname
   this.row <- this.row + 1
 }
+
+subset(smeltz.hep,DTXSID=="DTXSID5061954")
 
 # Get rid of internal standard data:
 smeltz.hep <- subset(smeltz.hep, Compound != "ISTD")
@@ -120,6 +123,13 @@ write.table(level2,
   sep="\t",
   row.names=F,
   quote=F)
+
+for (this.id in unique(level2$DTXSID))
+{
+  this.subset <- subset(level2,DTXSID==this.id)
+  plot(this.subset$Time,this.subset$Area,main=unique(this.subset$Compound.Name))
+  browser()
+}
 
 level3 <- calc_clint_point(FILENAME="SmeltzPFAS/SmeltzPFAS")
    

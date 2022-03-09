@@ -132,7 +132,14 @@ format_fup_uc <- function(PPB.data,
   )
 {  
   PPB.data <- as.data.frame(PPB.data)
-  
+
+# Write out a "level 0" file (data the function received it):  
+  write.table(PPB.data, 
+    file=paste(FILENAME,"-PPB-UC-Level0.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
+     
   if (is.null(note.col)) PPB.data[,"Note"] <- ""
 
 # We need all these columns in PPB.data

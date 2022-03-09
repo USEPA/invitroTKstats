@@ -277,6 +277,15 @@ format_clint <- function(clint.data,
   )
 {
   clint.data <- as.data.frame(clint.data)
+  
+  # Write out a "level 0" file (data as the function received it):  
+  write.table(clint.data, 
+    file=paste(FILENAME,"-Clint-Level0.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
+    
+  if (is.null(note.col)) clint.data[,"Note"] <- ""
 
 # These arguments allow the user to specify a single value for every obseration 
 # in the table:  

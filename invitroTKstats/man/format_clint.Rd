@@ -8,6 +8,7 @@ format_clint(
   clint.data,
   FILENAME = "MYDATA",
   sample.col = "Lab.Sample.Name",
+  date = NULL,
   date.col = "Date",
   compound.col = "Compound.Name",
   dtxsid.col = "DTXSID",
@@ -21,15 +22,16 @@ format_clint(
   cal.col = "Cal",
   dilution = NULL,
   dilution.col = "Dilution.Factor",
-  meas.time.col = "Time",
-  meas.time = 2,
+  time.col = "Time",
+  time = 2,
   istd.col = "ISTD.Area",
   istd.name = NULL,
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
   istd.conc.col = "ISTD.Conc",
-  nominal.test.conc = NULL,
-  nominal.test.conc.col = "Test.Target.Conc",
+  conc.col = "Conc",
+  conc = NULL,
+  area.col = "Area",
   analysis.method = NULL,
   analysis.method.col = "Analysis.Method",
   analysis.instrument = NULL,
@@ -66,9 +68,9 @@ name used by the laboratory (Defaults to "Lab.Compound.Name")}
 measurements (either "AtoB" for apical to basolateral or "BtoA" for vice 
 versa) (Defaults to "Direction")}
 
-\item{density.col}{Which column of clint.data indicates the density (units of
-millions of hepatocytes per mL) hepatocytes in the in vitro incubation 
-(Defaults to "Hep.Density" )}
+\item{density.col}{A single value to be used for all samples indicating
+the density of hepatocytes in suspension (10^6 hepatocytes / mL) 
+(Defaults to NULL)}
 
 \item{cal}{If this argument is used (defaults to NULL) every observation in
 the table is assigned the value of the argument and the corresponding
@@ -88,12 +90,9 @@ corresponding column in input.table (if present) is ignored.}
 \item{dilution.col}{Which column of clint.data indicates how many times the
 sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
 
-\item{meas.time.col}{Which column of input.data indicates the amount of time
-before the receiver and donor compartments are measured (Defaults to "Time")}
-
-\item{meas.time}{If this argument is used (defaults to 2 h) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{time.col}{Which column of clint.data indicates the intended
+time of the measurment (in minutes) since the test chemical was introduced
+into the hepatocyte incubation (Defaults to "Time")}
 
 \item{istd.col}{Which column of input.data indicates the MS peak area for the
 internal standard (Defaults to "ISTD.Area")}
@@ -112,13 +111,13 @@ corresponding column in input.table (if present) is ignored.}
 \item{istd.conc.col}{Which column of input.data indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{nominal.test.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{conc.col}{Which column of clint.data indicates the intended
+test chemical concentration 
+(units if uM) of
+at time zero (Defaults to "Conc")}
 
-\item{nominal.test.conc.col}{Which column of input.data indicates the intended
-test chemical concentration at time zero in the dosing solution (added to the
-donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
+\item{area.col}{Which column of input.data indicates the target analyte (that 
+is, the test compound) MS peak area (Defaults to "Area")}
 
 \item{analysis.method}{If this argument is used (defaults to NULL) every 
 observation in the table is assigned the value of the argument and the 
@@ -147,15 +146,6 @@ for example
 "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 (Defaulys to "Analysis.Paramaters").}
 
-\item{conc.col}{Which column of clint.data indicates the intended
-test chemical concentration 
-(units if uM) of
-at time zero (Defaults to "Conc")}
-
-\item{time.col}{Which column of clint.data indicates the intended
-time of the measurment (in minutes) since the test chemical was introduced
-into the hepatocyte incubation (Defaults to "Time")}
-
 \item{input.data}{A data frame containing mass-spectrometry peak areas,
 indication of chemical identiy, and measurment type. The data frame should
 contain columns with names specified by the following arguments:}
@@ -168,28 +158,13 @@ a simultaneous replicate with the same analytical chemistry
 in the table is assigned the value of the argument and the corresponding
 column in input.table (if present) is ignored.}
 
-\item{area.col}{Which column of input.data indicates the target analyte (that 
-is, the test compound) MS peak area (Defaults to "Area")}
+\item{nominal.test.conc.col}{Which column of input.data indicates the intended
+test chemical concentration at time zero in the dosing solution (added to the
+donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
 
-\item{membrane.area.col}{Which column of input.data indicates the area of the
-Caco-2 monolayer (in cm^2) (Defaults to "Membrane.Area")}
-
-\item{membrane.area}{If this argument is used (defaults to NULL) every 
+\item{nominal.test.conc}{If this argument is used (defaults to NULL) every 
 observation in the table is assigned the value of the argument and the 
 corresponding column in input.table (if present) is ignored.}
-
-\item{receiver.vol.col}{Which column of input.data indicates the volume 
-(in cm^3) of the receiver portion of the Caco-2 experimental well
-(Defaults to "Vol.Receiver")}
-
-\item{donor.vol.col}{Which column of input.data indicates the volume 
-(in cm^3) of the donor portion of the Caco-2 experimental well where the
-test chemical is added
-(Defaults to "Vol.Donor")}
-
-\item{direction.col}{Which column of input.data indicates the direction of
-the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
-to aprical (BtoA). (Defaults to "Direction")}
 }
 \value{
 \item{data.frame}{A data.frame in standardized "level1" format}

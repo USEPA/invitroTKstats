@@ -181,7 +181,9 @@
   dim(UC.data)
   misses <- unique(subset(UC.data,DTXSID=="ISTD")$Compound.Name)
   misses <- misses[!(misses %in% unique(assayinfo[,"Int Std"]))]
-  
+ 
+  unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
+   
   miss.table <- NULL
   for (i in 1:length(misses))
   {
@@ -199,7 +201,8 @@
   
 subset(UC.data, DTXSID=="DTXSID00379925")
 subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
-  
+  unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
+   
   UC.data <- as.data.frame(UC.data)
   colnames(UC.data)[3:16] <- UC.data[6,3:16]
    
@@ -226,7 +229,8 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
 #    function(x) ifelse(length(x)==2,as.numeric(x[2]),NA)))
   UC.data[,"Std.Conc"] <- UC.data[,"Std. Conc"]
   UC.data[,"Std.Units"] <- "uM" 
-  
+  unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
+   
   # No replicates:
   UC.data$Series <- 1
 #  # Extract the date from the time stamp
@@ -241,7 +245,8 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
   UC.data[UC.data[,"Sample.Type"]=="CC","Dilution.Factor"] <- CC.DILUTE
   UC.data[UC.data[,"Sample.Type"]=="Blank","Dilution.Factor"] <- BLANK.DILUTE
  subset(UC.data, DTXSID=="DTXSID00379925"&Date=="2021-06-03") 
-    
+  unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
+       
   # Treat the blanks as calibration data with concentration 0:
   UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Conc"] <- 0
   
@@ -280,7 +285,8 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
   # Make the numeric values numeric:
   UC.data[,"Area"] <- as.numeric(unlist(UC.data[,"Area"]))
   UC.data[,"IS Area"] <- as.numeric(unlist(UC.data[,"IS Area"]))
-  
+    unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
+   
   write.table(UC.data,file="SmeltzPFAS/SmeltzPFAS-PPB-UC-Level0.tsv",sep="\t",row.names=FALSE)
   
   level1 <- format_fup_uc(subset(UC.data,DTXSID!="ISTD"),
@@ -293,7 +299,8 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
     istd.col="IS Area",
     note.col="Replicate"
     )
-   
+     unique(subset(level1,DTXSID=="DTXSID00880026")$Date)
+     
   level2 <- level1
   # Taking all data in spreadsheet as human verfied for starters
   level2$Verified <- "Y"
@@ -448,7 +455,11 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
     sep="\t",
     row.names=F,
     quote=F)
-  
+     unique(subset(level2,DTXSID=="DTXSID00880026")$Date)
+ plot_fup_uc(level2,dtxsid="DTXSID00880026")
+ 
+ 
+ 
   level3 <- calc_fup_uc_point(FILENAME="SmeltzPFAS/SmeltzPFAS") 
   
   library(invitroTKstats)

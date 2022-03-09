@@ -27,7 +27,6 @@ model {
 # Mass spec response as a function of diluted concentration:        
     Response.pred[i] <- 
       slope[i] * 
-#      (Conc[obs.conc[i]]/Dilution.Factor[i] +
       (Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) *
       step(Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) +
       intercept[i] 
@@ -44,12 +43,12 @@ model {
   # Scale conversion:
   Fup <- 10^log.Fup
 
-
+# The conc's we don't know are for the AF and T5 samples
   for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
   {
   # Priors for whole samples for ultra centrigugation UC):
     Conc[i] ~ dnorm(Test.Nominal.Conc[obs.cal[i]],
-      Test.Nominal.Conc[obs.cal[i]]^-2)
+      100*Test.Nominal.Conc[obs.cal[i]]^-2)
   # Aqueous fraction concentrations for UC samples:
     Conc[i+Num.series] <- Fup * Conc[i]
   }   

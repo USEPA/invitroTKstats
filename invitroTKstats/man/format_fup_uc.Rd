@@ -24,7 +24,8 @@ format_fup_uc(
   nominal.test.conc.col = "Test.Target.Conc",
   analysis.method.col = "Analysis.Method",
   analysis.instrument.col = "Analysis.Instrument",
-  analysis.parameters.col = "Analysis.Parameters"
+  analysis.parameters.col = "Analysis.Parameters",
+  note.col = NULL
 )
 }
 \arguments{
