@@ -6,7 +6,7 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dnorm(0.1,0.01)
+    log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
     log.hetero.analytic.slope[i] ~ dunif(-5,1)
     C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
     log.calibration[i] ~ dunif(-3, 3)
@@ -15,7 +15,7 @@ model {
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
     # Concentrations below this value are not detectable:
-    background[i] <- C.thresh[i]/calibration[i]
+    background[i] <- C.thresh[i]
   }
   
   # Mass-spec observations:  
@@ -188,7 +188,7 @@ calc_fup_uc <- function(PPB.data,
       .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
-      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
+      log.const.analytic.sd =runif(mydata$Num.cal,-1.5,0.5),
       log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
 # Average across all the calibrations (the sampler will vary these):
       C.thresh = rep(min(max(0,intercept/slope),mydata$Test.Nominal.Conc/10,na.rm=TRUE),mydata$Num.cal),
@@ -393,7 +393,7 @@ calc_fup_uc <- function(PPB.data,
           inits = initfunction,
           startburnin = 25000, 
           startsample = 50000, 
-          max.time="15m",
+          max.time="1h",
           crash.retry=2,
           adapt=10000,
           psrf.target = 1.1,
