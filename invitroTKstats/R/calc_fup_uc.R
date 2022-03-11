@@ -7,15 +7,15 @@ model {
   {
     # Priors:
     log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
-    log.hetero.analytic.slope[i] ~ dunif(-5,1)
+    log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
     C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
-    log.calibration[i] ~ dunif(-3, 3)
+    log.calibration[i] ~ dnorm(0,0.01)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
     # Concentrations below this value are not detectable:
-    background[i] <- C.thresh[i]
+    background[i] <- calibration[i]*C.thresh[i]
   }
   
   # Mass-spec observations:  
@@ -391,22 +391,22 @@ calc_fup_uc <- function(PPB.data,
           cl=CPU.cluster,
           summarise=T,
           inits = initfunction,
-          startburnin = 25000, 
+          startburnin = 50000, 
           startsample = 50000, 
           max.time="1h",
           crash.retry=2,
-          adapt=10000,
-          psrf.target = 1.1,
+          adapt=15000,
+          psrf.target = 1.05,
           thin.sample=2000,
           data = mydata,
           jags = findjags(),
           monitor = c(
-            'const.analytic.sd',
-            'hetero.analytic.slope',
             'Fup',
             'C.thresh',
-            'background',
-            'calibration'))
+            'log.const.analytic.sd',
+            'log.hetero.analytic.slope',
+            'log.calibration'
+            ))
             #,
             #"Response.pred",
             #"Conc"))
@@ -432,7 +432,7 @@ calc_fup_uc <- function(PPB.data,
         print(mydata$Response.obs)
         print(results)
      
-        if (results[1,"Fup"]<1e-8) browser()
+ #       if (results[1,"Fup"]<1e-8) browser()
     
         Results <- rbind(Results,new.results)
     

@@ -56,7 +56,7 @@
 #' MS analyzer (Defaults to "Cal")
 #' 
 #' #param compound.conc.col Which column indictes the intended concentration 
-#' of the test chemical for calibration curves (Defaults to "Standard.Conc")
+#' of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")
 #'
 #' @param dilution.col Which column of PPB.data indicates how many times the
 #' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
@@ -70,8 +70,8 @@
 #' @param istd.conc.col Which column of PPB.data indicates the concentration of
 #' the internal standard (Defaults to "ISTD.Conc")
 #' 
-#' @param nominal.test.conc.col Which column of PPB.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc") 
+#' @param nominal.test.conc.col Which column indicates the intended
+#' test chemical concentration in uM at time zero (Defaults to "Test.Target.Conc") 
 #'
 #' @param analysis.method.col Which column of PPB.data indicates the analytical
 #' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 

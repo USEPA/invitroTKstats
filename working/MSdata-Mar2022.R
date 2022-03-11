@@ -26,8 +26,7 @@
              "20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
              sheet=2)
   cheminfo <- as.data.frame(cheminfo)
-  
-  
+ 
   
   # Fill in the date column for all rows:
   this.date <- assayinfo[1,"LCMS Analysis Date"]
@@ -150,8 +149,9 @@
               assayinfo[,"LCMS Analysis Date"] == files[[this.file]][this.row,"Date"])
             files[[this.file]][this.row:total.rows,"Compound.Name"] <- 
               assayinfo[this.assay.index,"Analyte"]
+            this.dtxsid <- assayinfo[this.assay.index,"DTXSID"] 
             files[[this.file]][this.row:total.rows,"DTXSID"] <- 
-              assayinfo[this.assay.index,"DTXSID"]  
+              this.dtxsid  
             files[[this.file]][this.row:total.rows,"ISTD.Name"] <- 
               assayinfo[this.assay.index,"Int Std"]   
           } else {
@@ -162,8 +162,9 @@
               this.compound <- this.compound + 1
               files[[this.file]][this.row:total.rows,"Compound.Name"] <- 
                 controls[this.index,"Compound"]
+              this.dtxsid <- controls[this.index,"DTXSID"] 
               files[[this.file]][this.row:total.rows,"DTXSID"]  <- 
-                controls[this.index,"DTXSID"]
+                this.dtxsid
               files[[this.file]][this.row:total.rows,"ISTD.Name"]  <- 
                 controls[this.index,"ISTD"]
             } else {
@@ -173,7 +174,10 @@
               files[[this.file]][this.row:total.rows,"ISTD.Name"] <- "Eponymous"
             }
           } 
-        }
+        # units for standard vary from chemical to chemical:
+        files[[this.file]]$Std.Units <- files[[this.file]][this.row+2,13]
+        
+      }
   #      if (this.file==16) browser()
     }
     UC.data <- rbind(UC.data,files[[this.file]])
@@ -198,7 +202,8 @@
   miss.table[order(miss.table$Date),]
   
   write.csv(miss.table[order(miss.table$Date),],file="chems-not-identified.csv",row.names=FALSE)
-  
+
+
 subset(UC.data, DTXSID=="DTXSID00379925")
 subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
   unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
@@ -227,8 +232,16 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
 #  UC.data[,"Std.Conc"] <- unlist(lapply(
 #    strsplit(gsub(" pg/uL","",unlist(UC.data[,"Sample Text"]))," - "),
 #    function(x) ifelse(length(x)==2,as.numeric(x[2]),NA)))
-  UC.data[,"Std.Conc"] <- UC.data[,"Std. Conc"]
+  UC.data[,"Std.Conc"] <- UC.data[,"uM"]
+  # Convert to numeric:
+  UC.data[,"Std.Conc"] <- signif(as.numeric(UC.data[,"Std.Conc"]),4)
+  # Convert to uM:
+  UC.data[UC.data[,"Std.Units"]=="nM","Std.Conc"] <- UC.data[UC.data[,"Std.Units"]=="nM","Std.Conc"]/1000
+  
   UC.data[,"Std.Units"] <- "uM" 
+  UC.data[UC.data[,"Sample.Type"]!="CC","Std.Units"] <- NA 
+  UC.data[UC.data[,"Sample.Type"]!="CC","Std.Conc"] <- NA 
+  
   unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
    
   # No replicates:
@@ -238,6 +251,35 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
 #    function(x) x[1]))
   # Assume all samples analyzed on same date were the same calibration
   UC.data$Cal <- UC.data$Date
+
+dim(UC.data)  
+# get rid of mixes that don't contain analyte:
+for (this.id in unique(UC.data[,"DTXSID"]))
+  for (this.date in unique(subset(UC.data,DTXSID==this.id)$Date))
+  {
+    this.assay.index <- which(
+      assayinfo[,"DTXSID"] == this.id &
+      assayinfo[,"LCMS Analysis Date"] == this.date)
+    
+    if (any(this.assay.index))
+    {
+      this.mix <- assayinfo[this.assay.index,"Mix"]
+      for (other.mix in 1:3)
+        if (other.mix != this.mix)
+        {
+          UC.data <- subset(UC.data,
+            DTXSID != this.dtxsid |
+            DTXSID %in% controls$DTXSID |
+            Date != this.date |
+            regexpr(paste("Mix",other.mix,sep=""),UC.data[,"Sample Text"])==-1)
+        }
+    }
+  }
+dim(UC.data) 
+  
+  
+  
+  
   # We'll need to go back and set this per sample type:
   UC.data[UC.data[,"Sample.Type"]=="AF","Dilution.Factor"] <- AF.DILUTE
   UC.data[UC.data[,"Sample.Type"]=="T1","Dilution.Factor"] <- T1.DILUTE
@@ -249,18 +291,17 @@ subset(UC.data,signif(as.numeric(UC.data[,9]),5)==40565)
        
   # Treat the blanks as calibration data with concentration 0:
   UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Conc"] <- 0
+  UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Units"] <- "uM"
   
   UC.data[UC.data[,"Sample.Type"]=="Blank","Sample.Type"] <- "CC"
   dim(UC.data)
   
-  # Convert to uM:
-  #UC.data[,"Std.Conc"] <- as.numeric(unlist(UC.data[,"Std. Conc (nM)"]))/1000
   # Get rid of CC samples that don't have a concentration:
-  UC.data <- subset(UC.data,Sample.Type=!"CC" | !is.na(Std.Conc))
+  UC.data <- subset(UC.data,!(Sample.Type=="CC" & is.na(Std.Conc)))
   
   dim(UC.data)
   
-  
+   subset(UC.data,Sample.Type=="CC" & is.na(Std.Conc))
   
   # Should update this with input from Marci:
   UC.data$Analysis.Method <- "UPLC-MS/MS"

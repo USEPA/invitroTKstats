@@ -5,18 +5,17 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dunif(-10,-0.5)
+    log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
     log.hetero.analytic.slope[i] ~ dunif(-5,1)
-    C.thresh[i] ~ dunif(0,Cal.conc[i]/10)
+    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
     log.calibration[i] ~ dunif(-3, 3)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
     # Concentrations below this value are not detectable:
-    background[i] <- C.thresh[i]/calibration[i]
+    background[i] <- calibration[i]*C.thresh[i]
   }
-
   
 # Likelihood for the blank observations:
   for (i in 1:Num.cal)
