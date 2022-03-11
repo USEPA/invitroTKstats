@@ -76,7 +76,7 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
   dilution.col <- "Dilution.Factor"
   compound.conc.col <- "Standard.Conc"
   cal.col <- "Calibration"
-  nominal.test.conc.col <- "Test.Target.Conc"
+  nominal.test.conc.col <- "UC.Assay.T1.Conc"
   istd.name.col <- "ISTD.Name"
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"

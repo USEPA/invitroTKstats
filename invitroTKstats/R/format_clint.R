@@ -273,7 +273,8 @@ format_clint <- function(clint.data,
   analysis.instrument=NULL,
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
-  analysis.parameters.col="Analysis.Parameters"
+  analysis.parameters.col="Analysis.Parameters",
+  note.col=NULL
   )
 {
   clint.data <- as.data.frame(clint.data)
@@ -321,7 +322,8 @@ format_clint <- function(clint.data,
     area.col,
     analysis.method.col,
     analysis.instrument.col,
-    analysis.parameters.col
+    analysis.parameters.col,
+    note.col
     )
   
   if (!(all(cols %in% colnames(clint.data))))
@@ -356,6 +358,7 @@ format_clint <- function(clint.data,
   analysis.method.col <- "Analysis.Method"
   analysis.instrument.col <- "Analysis.Instrument"
   analysis.parameters.col <- "Analysis.Parameters" 
+  note.col <- "Note"
 
   colnames(clint.data) <- c(
     sample.col,
@@ -375,12 +378,13 @@ format_clint <- function(clint.data,
     area.col,
     analysis.method.col,
     analysis.instrument.col,
-    analysis.parameters.col
+    analysis.parameters.col,
+    note.col
     )
   
   # calculate the reponse:
-  clint.data[,"Response"] <- clint.data[,area.col] /
-     clint.data[,istd.col] * clint.data[,istd.conc.col]
+  clint.data[,"Response"] <- signif(clint.data[,area.col] /
+     clint.data[,istd.col] * clint.data[,istd.conc.col],4)
   
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(clint.data, 

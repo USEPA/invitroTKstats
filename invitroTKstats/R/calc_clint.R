@@ -6,9 +6,9 @@ model {
   {
     # Priors:
     log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
-    log.hetero.analytic.slope[i] ~ dunif(-5,1)
+    log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
     C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
-    log.calibration[i] ~ dunif(-3, 3)
+    log.calibration[i] ~ dnorm(0,0.01)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
@@ -27,28 +27,82 @@ model {
     Blank.obs[i] ~ dnorm(Blank.pred[Blank.cal[i]],Blank.prec[Blank.cal[i]])
   }
 
+# Likelihood for the calibration curve observations:
+  for (i in 1:Num.cc)
+  {
+# The parameters for calibration curve
+    cc.slope[i] <- calibration[cc.cal[i]]
+    cc.intercept[i] <- background[cc.cal[i]]
+# Mass spec response as a function of diluted concentration:        
+    cc.Response.pred[i] <- 
+      cc.slope[i] * 
+      (cc.Conc[obs.conc[i]]/cc.Dilution.Factor[i] - C.thresh[cc.cal[i]]) *
+      step(cc.Conc[obs.conc[i]]/cc.Dilution.Factor[i] - C.thresh[cc.cal[i]]) +
+      cc.intercept[i] 
+# Heteroskedastic precision:
+    cc.Response.prec[i] <- (const.analytic.sd[cc.cal[i]] +
+      hetero.analytic.slope[cc.cal[i]] * cc.Response.pred[i])^(-2)
+# Model for the observation:
+    cc.Response.obs[i] ~ dnorm(cc.Response.pred[i],cc.Response.prec[i])
+  }
+
 # Clearance model:
 
-# Decreases indicates whether or not the concentration decreases (1 is yes, 0 is no):
+# Decreases indicates whether the concentration decreases (1 is yes, 0 is no):
   decreases ~ dbern(0.5) 
-# Slope is the clearance rate at the lower concentration (fastest slope we can 
-#identify is assumed to be 99.4% gone in the first 15 minutes):
-  rate ~ dunif(0,10)
-  slope[1] <- decreases*rate
-# Saturates is whether or not the clearance rate decreases (1 is yes, 0 is no):
+# Slope is the clearance rate at the lower concentration:
+  bio.rate ~ dunif(0,10)
+# In addition to biological elimination, we also check for abiotic elimination
+# (for example, degradation) which we can distinguish if we have data from
+# inactivated hepatocutes (Num.abio.obs > 0):
+  abio.rate ~ dunif(0,10)
+# Total elimination rate is a sum of both:
+  slope[1] <- decreases * (bio.rate + abio.rate)
+# Actual biological elimination rate:
+  bio.slope[1] <- decreases * rate
+# Saturates is whether the bio clearance rate decreases (1 is yes, 0 is no):
   saturates ~ dbern(0.5) 
-# Saturation is how much the clearance rate decreases at the higher conc:
+# Saturation is how much the bio clearance rate decreases at the higher conc:
   saturation ~ dunif(0,1)
-  slope[2] <- slope[1]*(1 - saturates*saturation)
-
+# Calculate a slope at the highe concentration:
+  slope[2] <- decreases * (abio.rate +
+    bio.rate*(1 - saturates*saturation))
+# Actual biological elimination rate:
+  bio.slope[1] <- decreases * bio.rate*(1 - saturates*saturation)
 # The observations are normally distributed (heteroskedastic error):
   for (i in 1:Num.obs)
   {
-    C[i] <- Test.conc[obs.conc[i]]*exp(-slope[obs.conc[i]]*obs.time[i])
-    obs.pred[i] <- calibration[obs.cal[i]]*(C[i]-C.thresh[obs.cal[i]])*step(C[i]-C.thresh[obs.cal[i]])+ background[obs.cal[i]]    
-    obs.prec[i] <- (const.analytic.sd[obs.cal[i]]+hetero.analytic.slope[obs.cal[i]]*obs.pred[i])^(-2)
+  # Exponential decay:
+    C[i] <- Test.conc[obs.conc[i]] *
+      exp(-slope[obs.conc[i]]*obs.time[i])
+  # MS prediction:
+    obs.pred[i] <- calibration[obs.cal[i]] *
+      (C[i] - C.thresh[obs.cal[i]]) *
+      step(C[i] - C.thresh[obs.cal[i]]) + 
+      background[obs.cal[i]]    
+    obs.prec[i] <- (const.analytic.sd[obs.cal[i]] + 
+      hetero.analytic.slope[obs.cal[i]]*obs.pred[i])^(-2)
     
-    obs[i] ~ dnorm(obs.pred[i],obs.prec[i])
+    obs[i] ~ dnorm(obs.pred[i], obs.prec[i])
+  }
+  
+# non-biological clearance model:
+  abio.slope <- decreases * abio.rate
+# The observations are normally distributed (heteroskedastic error):
+  for (i in 1:Num.abio.obs)
+  {
+  # Exponential decay:
+    abio.C[i] <- Test.conc[abio.obs.conc[i]] *
+      exp(-abio.slope[abio.obs.conc[i]]*abio.obs.time[i])
+  # MS prediction:
+    abio.obs.pred[i] <- calibration[abio.obs.cal[i]] *
+      (abio.C[i] - C.thresh[abio.obs.cal[i]]) *
+      step(abio.C[i] - C.thresh[abio.obs.cal[i]]) + 
+      background[abio.obs.cal[i]]    
+    abio.obs.prec[i] <- (const.analytic.sd[abio.obs.cal[i]] + 
+      hetero.analytic.slope[abio.obs.cal[i]]*abio.obs.pred[i])^(-2)
+    
+    abio.obs[i] ~ dnorm(abio.obs.pred[i], abio.obs.prec[i])
   }
 }
 "

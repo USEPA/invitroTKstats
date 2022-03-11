@@ -51,12 +51,20 @@
 #' @param type.col Which column of PPB.data indicates the sample type (see table
 #' above)(Defaults to "Sample.Type")
 #' 
+#' @param cal If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#' 
 #' @param cal.col Which column of PPB.data indicates the MS calibration -- for
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
 #' 
-#' #param compound.conc.col Which column indictes the intended concentration 
+#' #param std.conc.col Which column indictes the intended concentration 
 #' of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")
+#' 
+#' @param dilution If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
 #'
 #' @param dilution.col Which column of PPB.data indicates how many times the
 #' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
@@ -64,23 +72,47 @@
 #' @param istd.col Which column of PPB.data indicates the MS peak area for the
 #' internal standard (Defaults to "ISTD.Area")
 #' 
+#' @param istd.name If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#' 
 #' @param istd.name.col Which column of PPB.data indicates identity of the 
 #' internal standard (Defaults to "ISTD.Name")
 #' 
-#' @param istd.conc.col Which column of PPB.data indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
+#' @param istd.conc If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
 #' 
-#' @param nominal.test.conc.col Which column indicates the intended
-#' test chemical concentration in uM at time zero (Defaults to "Test.Target.Conc") 
+#' @param istd.conc.col Which column of PPB.data indicates the concentration of
+#' the internal standard in uM (Defaults to "ISTD.Conc")
+#' 
+#' @param uc.assay.conc If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#'
+#' @param uc.assay.conc.col Which column indicates the intended initial
+#' test chemical concentration in the UC assay in uM (Defaults to "Test.Target.Conc") 
+#'
+#' @param analysis.method If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
 #'
 #' @param analysis.method.col Which column of PPB.data indicates the analytical
 #' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
 #' "Analysis.Method")
 #'
+#' @param analysis.instrument If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
+#'
 #' @param analysis.instrument.col Which column of PPB.data indicates the 
 #' instrument used for chemical analysis, for example 
 #' "Agilent 6890 GC with model 5973 MS" (Defaults to 
 #' "Analysis.Instrument")
+#'
+#' @param analysis.parameters If this argument is used (defaults to NULL) every 
+#' observation in the table is assigned the value of the argument and the 
+#' corresponding column in input.table (if present) is ignored.
 #'
 #' @param analysis.parameters.col Which column of PPB.data indicates the 
 #' parameters used to identify the compound on the chemical analysis instrument,
@@ -118,15 +150,24 @@ format_fup_uc <- function(PPB.data,
   area.col="Area",
   series.col="Series",
   type.col="Sample.Type",
-  compound.conc.col="Nominal.Conc",
+  std.conc=NULL,
+  std.conc.col="Standard.Conc",
+  cal=NULL,
   cal.col="Cal",
+  dilution=NULL,
   dilution.col="Dilution.Factor",
   istd.col="ISTD.Area",
+  istd.name=NULL,
   istd.name.col="ISTD.Name",
+  istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  nominal.test.conc.col="Test.Target.Conc",
+  uc.assay.conc=NULL,
+  uc.assay.conc.col="UC.Assay.Conc",
+  analysis.method=NULL,
   analysis.method.col="Analysis.Method",
+  analysis.instrument=NULL,
   analysis.instrument.col="Analysis.Instrument",
+  analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
   note.col=NULL 
   )
@@ -142,6 +183,21 @@ format_fup_uc <- function(PPB.data,
      
   if (is.null(note.col)) PPB.data[,"Note"] <- ""
 
+# These arguments allow the user to specify a single value for every obseration 
+# in the table:  
+  if (!is.null(cal)) PPB.data[,cal.col] <- cal
+  if (!is.null(dilution)) PPB.data[,dilution.col] <- dilution
+  if (!is.null(compound.conc)) PPB.data[,compound.conc.col] <- compound.conc
+  if (!is.null(istd.name)) PPB.data[,istd.name.col] <- istd.name
+  if (!is.null(istd.conc)) PPB.data[,istd.conc.col] <- istd.conc
+  if (!is.null(std.conc)) PPB.data[,std.conc.col] <- std.conc
+  if (!is.null(uc.assay.conc)) PPB.data[,uc.assay.conc.col] <- uc.assay.conc
+  if (!is.null(analysis.method)) PPB.data[,analysis.method.col]<- analysis.method
+  if (!is.null(analysis.instrument)) PPB.data[,analysis.instrument.col] <- 
+    analysis.instrument
+  if (!is.null(analysis.parameters)) PPB.data[,analysis.parameters.col] <- 
+    analysis.parameters
+
 # We need all these columns in PPB.data
   cols <-c(
     sample.col,
@@ -152,8 +208,8 @@ format_fup_uc <- function(PPB.data,
     type.col,
     dilution.col,
     cal.col,
-    compound.conc.col,
-    nominal.test.conc.col,
+    std.conc.col,
+    uc.assay.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
@@ -186,8 +242,8 @@ format_fup_uc <- function(PPB.data,
     type.col <- "Sample.Type"
     dilution.col <- "Dilution.Factor"
     cal.col <- "Calibration"
-    compound.conc.col <- "Standard.Conc"
-    nominal.test.conc.col <- "Test.Target.Conc"
+    std.conc.col <- "Standard.Conc"
+    uc.assay.conc.col <- "UC.Assay.T1.Conc"
     istd.name.col <- "ISTD.Name"
     istd.conc.col <- "ISTD.Conc"
     istd.col <- "ISTD.Area"
@@ -221,8 +277,8 @@ format_fup_uc <- function(PPB.data,
     )
   
   # calculate the reponse:
-  PPB.data[,"Response"] <- as.numeric(PPB.data[,area.col]) /
-     as.numeric(PPB.data[,istd.col]) * as.numeric(PPB.data[,istd.conc.col])
+  PPB.data[,"Response"] <- signif(as.numeric(PPB.data[,area.col]) /
+     as.numeric(PPB.data[,istd.col]) * as.numeric(PPB.data[,istd.conc.col]),4)
   
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(PPB.data, 
