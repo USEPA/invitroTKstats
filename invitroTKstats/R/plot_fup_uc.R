@@ -31,28 +31,32 @@
 #'
 #' @export plot_fup_uc
 #' @import ggplot2
-plot_fup_uc <- function(level2,dtxsid)
+plot_fup_uc <- function(level2,dtxsid, good.col="Verified")
 {
 # We need all these columns in uc data
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  compound.conc.col <- "Standard.Conc"
-  cal.col <- "Calibration"
-  nominal.test.conc.col <- "Test.Target.Conc"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  series.col <- "Series"
-  area.col <- "Area"
-  good.col <- "Verified"
+  # Standardize the column names:
+    sample.col <- "Lab.Sample.Name"
+    date.col <- "Date"
+    compound.col <- "Compound.Name"
+    dtxsid.col <- "DTXSID"
+    lab.compound.col <- "Lab.Compound.Name"
+    type.col <- "Sample.Type"
+    dilution.col <- "Dilution.Factor"
+    cal.col <- "Calibration"
+    std.conc.col <- "Standard.Conc"
+    uc.assay.conc.col <- "UC.Assay.T1.Conc"
+    istd.name.col <- "ISTD.Name"
+    istd.conc.col <- "ISTD.Conc"
+    istd.col <- "ISTD.Area"
+    series.col <- "Series"
+    area.col <- "Area"
+    analysis.method.col <- "Analysis.Method"
+    analysis.instrument.col <- "Analysis.Instrument"
+    analysis.parameters.col <- "Analysis.Parameters" 
+    note.col <- "Note"
     
 # For a properly formatted level 2 file we should have all these columns:
+# We need all these columns in PPB.data
   cols <-c(
     sample.col,
     date.col,
@@ -62,13 +66,17 @@ plot_fup_uc <- function(level2,dtxsid)
     type.col,
     dilution.col,
     cal.col,
-    compound.conc.col,
-    nominal.test.conc.col,
+    std.conc.col,
+    uc.assay.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
     series.col,
     area.col,
+    analysis.method.col,
+    analysis.instrument.col,
+    analysis.parameters.col,
+    note.col,
     "Response",
     good.col)
   if (!(all(cols %in% colnames(level2))))
@@ -89,7 +97,7 @@ plot_fup_uc <- function(level2,dtxsid)
       frac[frac$Calibration == this.cal,"Dilution.Factor"] /
       mean.t5
   }
-  frac$Sample.Type = "Rough Fup"
+  frac$Sample.Type = "Rough Fup"                                                    
   level2 <- rbind(level2,frac)
       
   out <- ggplot(level2, aes(x=factor(Sample.Type), y=Response*Dilution.Factor)) +  

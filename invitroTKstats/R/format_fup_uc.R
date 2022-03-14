@@ -130,7 +130,7 @@
 #' level1 <- format_fup_uc(level0,
 #'   FILENAME="Kreutz2020",
 #'   compound.col="Name",
-#'   compound.conc.col="Standard.Conc",
+#'   std.conc.col="Standard.Conc",
 #'   area.col="Chem.Area"
 #'   )
 #' 
@@ -187,7 +187,6 @@ format_fup_uc <- function(PPB.data,
 # in the table:  
   if (!is.null(cal)) PPB.data[,cal.col] <- cal
   if (!is.null(dilution)) PPB.data[,dilution.col] <- dilution
-  if (!is.null(compound.conc)) PPB.data[,compound.conc.col] <- compound.conc
   if (!is.null(istd.name)) PPB.data[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) PPB.data[,istd.conc.col] <- istd.conc
   if (!is.null(std.conc)) PPB.data[,std.conc.col] <- std.conc
@@ -263,8 +262,8 @@ format_fup_uc <- function(PPB.data,
     type.col,
     dilution.col,
     cal.col,
-    compound.conc.col,
-    nominal.test.conc.col,
+    std.conc.col,
+    uc.assay.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,

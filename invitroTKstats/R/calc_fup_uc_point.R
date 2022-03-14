@@ -66,24 +66,30 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
 
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  compound.conc.col <- "Standard.Conc"
-  cal.col <- "Calibration"
-  nominal.test.conc.col <- "UC.Assay.T1.Conc"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  series.col <- "Series"
-  area.col <- "Area"
+  # Standardize the column names:
+    sample.col <- "Lab.Sample.Name"
+    date.col <- "Date"
+    compound.col <- "Compound.Name"
+    dtxsid.col <- "DTXSID"
+    lab.compound.col <- "Lab.Compound.Name"
+    type.col <- "Sample.Type"
+    dilution.col <- "Dilution.Factor"
+    cal.col <- "Calibration"
+    std.conc.col <- "Standard.Conc"
+    uc.assay.conc.col <- "UC.Assay.T1.Conc"
+    istd.name.col <- "ISTD.Name"
+    istd.conc.col <- "ISTD.Conc"
+    istd.col <- "ISTD.Area"
+    series.col <- "Series"
+    area.col <- "Area"
+    analysis.method.col <- "Analysis.Method"
+    analysis.instrument.col <- "Analysis.Instrument"
+    analysis.parameters.col <- "Analysis.Parameters" 
+    note.col <- "Note"
+    
 
 # For a properly formatted level 2 file we should have all these columns:
+# We need all these columns in PPB.data
   cols <-c(
     sample.col,
     date.col,
@@ -93,13 +99,17 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
     type.col,
     dilution.col,
     cal.col,
-    compound.conc.col,
-    nominal.test.conc.col,
+    std.conc.col,
+    uc.assay.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
     series.col,
     area.col,
+    analysis.method.col,
+    analysis.instrument.col,
+    analysis.parameters.col,
+    note.col,
     "Response",
     good.col)
   if (!(all(cols %in% colnames(PPB.data))))

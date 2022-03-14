@@ -115,7 +115,7 @@ model {
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
 #'
-#' #param compound.conc.col Which column indictes the intended concentration 
+#' #param std.conc.col Which column indictes the intended concentration 
 #' of the test chemical for calibration curves (Defaults to "Standard.Conc")
 #' 
 #' @param dilution.col Which column of PPB.data indicates how many times the
@@ -130,8 +130,8 @@ model {
 #' @param istd.conc.col Which column of PPB.data indicates the concentration of
 #' the internal standard (Defaults to "ISTD.Conc")
 #' 
-#' @param nominal.test.conc.col Which column of PPB.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc") 
+#' @param uc.assay.conc.col Which column of PPB.data indicates the intended
+#' test chemical concentration at time zero (Defaults to "UC.Assay.Conc") 
 #'
 #' @return A data.frame containing quunantiles of the Bayesian posteriors 
 #'
@@ -147,21 +147,6 @@ calc_fup_uc <- function(PPB.data,
   NUM.CHAINS=5, 
   NUM.CORES=2,
   RANDOM.SEED=1111,
-  sample.col="Lab.Sample.Name",
-  lab.compound.col="Lab.Compound.Name",
-  dtxsid.col="DTXSID",
-  date.col="Date",
-  compound.col="Compound.Name",
-  area.col="Area",
-  series.col="Series",
-  type.col="Sample.Type",
-  compound.conc.col="Nominal.Conc",
-  cal.col="Cal",
-  dilution.col="Dilution.Factor",
-  istd.col="ISTD.Area",
-  istd.name.col="ISTD.Name",
-  istd.conc.col="ISTD.Conc",
-  nominal.test.conc.col="Test.Target.Conc" ,
   good.col="Verified"
   )
 {
@@ -191,7 +176,7 @@ calc_fup_uc <- function(PPB.data,
       log.const.analytic.sd =runif(mydata$Num.cal,-1.5,0.5),
       log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
 # Average across all the calibrations (the sampler will vary these):
-      C.thresh = rep(min(max(0,intercept/slope),mydata$Test.Nominal.Conc/10,na.rm=TRUE),mydata$Num.cal),
+      C.thresh = rep(min(max(0,intercept/slope),mydata$UC.Assay.Conc/10,na.rm=TRUE),mydata$Num.cal),
       log.calibration = rep(max(min(-2.95,log10(max(0,slope))),1.95),mydata$Num.cal),
 # There is only one Fup per chemical:
       log.Fup = log10(runif(1,0,1)),
@@ -211,22 +196,26 @@ calc_fup_uc <- function(PPB.data,
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
 
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  compound.conc.col <- "Standard.Conc"
-  cal.col <- "Calibration"
-  nominal.test.conc.col <- "Test.Target.Conc"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  series.col <- "Series"
-  area.col <- "Area"
+  # Standardize the column names:
+    sample.col <- "Lab.Sample.Name"
+    date.col <- "Date"
+    compound.col <- "Compound.Name"
+    dtxsid.col <- "DTXSID"
+    lab.compound.col <- "Lab.Compound.Name"
+    type.col <- "Sample.Type"
+    dilution.col <- "Dilution.Factor"
+    cal.col <- "Calibration"
+    std.conc.col <- "Standard.Conc"
+    uc.assay.conc.col <- "UC.Assay.T1.Conc"
+    istd.name.col <- "ISTD.Name"
+    istd.conc.col <- "ISTD.Conc"
+    istd.col <- "ISTD.Area"
+    series.col <- "Series"
+    area.col <- "Area"
+    analysis.method.col <- "Analysis.Method"
+    analysis.instrument.col <- "Analysis.Instrument"
+    analysis.parameters.col <- "Analysis.Parameters" 
+    note.col <- "Note"
 
 # For a properly formatted level 2 file we should have all these columns:
   cols <-c(
@@ -238,13 +227,17 @@ calc_fup_uc <- function(PPB.data,
     type.col,
     dilution.col,
     cal.col,
-    compound.conc.col,
-    nominal.test.conc.col,
+    std.conc.col,
+    uc.assay.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
     series.col,
     area.col,
+    analysis.method.col,
+    analysis.instrument.col,
+    analysis.parameters.col,
+    note.col,
     "Response",
     good.col)
   if (!(all(cols %in% colnames(PPB.data))))
@@ -312,7 +305,7 @@ calc_fup_uc <- function(PPB.data,
         CC.data <- MSdata[MSdata[,type.col]=="CC",]
         Num.cc.obs <- dim(CC.data)[1]
         CC.data$Obs.Conc <- seq(1,Num.cc.obs)
-        Conc <- CC.data[,compound.conc.col]
+        Conc <- CC.data[,std.conc.col]
         Dilution.Factor <- CC.data[,dilution.col]
   #
   #
@@ -346,7 +339,7 @@ calc_fup_uc <- function(PPB.data,
           all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
           Test.Nominal.Conc[i] <- mean(T1.data[
             T1.data[,cal.col]==all.cal[i],
-            nominal.test.conc.col],na.rm=T)
+            uc.assay.conc.col],na.rm=T)
         }
         for (i in 1:Num.series)
         {

@@ -351,11 +351,12 @@
       FILENAME="SmeltzPFAS/SmeltzPFAS",
       sample.col="Name",
       compound.col="Compound.Name",
-      compound.conc.col="Std.Conc", 
+      std.conc.col="Std.Conc", 
       lab.compound.col="Compound.Name", 
       type.col="Sample.Type", 
       istd.col="IS Area",
-      note.col="Replicate"
+      note.col="Replicate",
+      uc.assay.conc.col="Test.Target.Conc"
       )
        unique(subset(level1,DTXSID=="DTXSID00880026")$Date)
        
