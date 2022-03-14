@@ -85,7 +85,7 @@ smeltz.hep[regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))!=-1,
   "Active.Hep"] <- 0
   
 # For now we don't handle the inactives:
-smeltz.hep <- subset(smeltz.hep, 
+smeltz.hep <- subset(smeltz.hep,                           
   regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))==-1)
   
 # Make sure the areas are numeric:
@@ -108,7 +108,7 @@ level1 <- format_clint(smeltz.hep,
   istd.conc = 10/1000,
   istd.col= "IS Area",
   density = 0.5,
-  conc = 1,
+  clint.assay.conc = 1,
   time.col = "Time",
   analysis.method = "LCMS",
   analysis.instrument = "Unknown",
@@ -119,7 +119,7 @@ level2 <- level1
 level2$Verified <- "Y"
   
 write.table(level2,
-  file="SmeltzPFAS/SmeltzPFAS-Clint-Level2.tsv",
+  file="SmeltzPFAS/SmeltzPFAS-nocc-noinactive-Clint-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
@@ -128,13 +128,13 @@ for (this.id in unique(level2$DTXSID))
 {
   this.subset <- subset(level2,DTXSID==this.id)
   plot(this.subset$Time,this.subset$Area,main=unique(this.subset$Compound.Name))
-  browser()
 }
 
-level3 <- calc_clint_point(FILENAME="SmeltzPFAS/SmeltzPFAS")
+level3 <- calc_clint_point(FILENAME="SmeltzPFAS/SmeltzPFAS-nocc-noinactive")
    
 # repeat these bits in case a markov chain crashes and we need to restart:
 library(invitroTKstats)
 setwd("c:/users/jwambaug/git/invitroTKstats/working/")
 
-level4 <- calc_clint(FILENAME="SmeltzPFAS/SmeltzPFAS")   
+level4 <- calc_clint(FILENAME="SmeltzPFAS/SmeltzPFAS-nocc-noinactive")  
+ 

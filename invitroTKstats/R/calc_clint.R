@@ -31,19 +31,19 @@ model {
   for (i in 1:Num.cc)
   {
 # The parameters for calibration curve
-    cc.slope[i] <- calibration[cc.cal[i]]
-    cc.intercept[i] <- background[cc.cal[i]]
+    cc.slope[i] <- calibration[cc.obs.cal[i]]
+    cc.intercept[i] <- background[cc.obs.cal[i]]
 # Mass spec response as a function of diluted concentration:        
-    cc.Response.pred[i] <- 
+    cc.pred[i] <- 
       cc.slope[i] * 
-      (cc.Conc[obs.conc[i]]/cc.Dilution.Factor[i] - C.thresh[cc.cal[i]]) *
-      step(cc.Conc[obs.conc[i]]/cc.Dilution.Factor[i] - C.thresh[cc.cal[i]]) +
+      (cc.obs.conc[i]/cc.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) *
+      step(cc.obs.conc[i]/cc.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) +
       cc.intercept[i] 
 # Heteroskedastic precision:
-    cc.Response.prec[i] <- (const.analytic.sd[cc.cal[i]] +
-      hetero.analytic.slope[cc.cal[i]] * cc.Response.pred[i])^(-2)
+    cc.prec[i] <- (const.analytic.sd[cc.cal[i]] +
+      hetero.analytic.slope[cc.cal[i]] * cc.pred[i])^(-2)
 # Model for the observation:
-    cc.Response.obs[i] ~ dnorm(cc.Response.pred[i],cc.Response.prec[i])
+    cc.obs[i] ~ dnorm(cc.pred[i],cc.prec[i])
   }
 
 # Clearance model:
@@ -59,7 +59,7 @@ model {
 # Total elimination rate is a sum of both:
   slope[1] <- decreases * (bio.rate + abio.rate)
 # Actual biological elimination rate:
-  bio.slope[1] <- decreases * rate
+  bio.slope[1] <- decreases * bio.rate
 # Saturates is whether the bio clearance rate decreases (1 is yes, 0 is no):
   saturates ~ dbern(0.5) 
 # Saturation is how much the bio clearance rate decreases at the higher conc:
@@ -68,12 +68,12 @@ model {
   slope[2] <- decreases * (abio.rate +
     bio.rate*(1 - saturates*saturation))
 # Actual biological elimination rate:
-  bio.slope[1] <- decreases * bio.rate*(1 - saturates*saturation)
+  bio.slope[2] <- decreases * bio.rate*(1 - saturates*saturation)
 # The observations are normally distributed (heteroskedastic error):
   for (i in 1:Num.obs)
   {
   # Exponential decay:
-    C[i] <- Test.conc[obs.conc[i]] *
+    C[i] <- Test.Nominal.Conc[obs.conc[i]] *
       exp(-slope[obs.conc[i]]*obs.time[i])
   # MS prediction:
     obs.pred[i] <- calibration[obs.cal[i]] *
@@ -92,7 +92,7 @@ model {
   for (i in 1:Num.abio.obs)
   {
   # Exponential decay:
-    abio.C[i] <- Test.conc[abio.obs.conc[i]] *
+    abio.C[i] <- Test.Nominal.Conc[abio.obs.conc[i]] *
       exp(-abio.slope[abio.obs.conc[i]]*abio.obs.time[i])
   # MS prediction:
     abio.obs.pred[i] <- calibration[abio.obs.cal[i]] *
@@ -183,93 +183,117 @@ calc_clint <- function(FILENAME, good.col="Verified")
 # Internal function for constructing data object given to JAGS:
   build_mydata <- function(this.data)
   {
-  # Identify the number of calibrations:
-    Num.cal <- 0
-# Identify the test conc for the calibration (in case both concs tested the same day),
- # in effect we are always treating the 1 and 10 uM samples as separate calibrations
-    Cal.conc <- NULL
+#
+# What concentrations were tested (1 and 10 uM typical):
+#
+ # Establish a vector of unique nominal test concentrations:
+    Test.conc <- sort(unique(unique(this.cvt[,"Clint.Assay.Conc"])))
+    Num.conc <- length(Test.conc)
+
+#
+# How many separate mass-spec calibrations were made:
+#
 # Cal.name is used for matching the observations to the calibrations, but is not
 # passed on to JAGS
-    Cal.name <- NULL
-    for (this.cal in unique(this.data$Calibration))
+    Cal.name <- unique(this.data$Calibration)
+# Identify the number of calibrations:
+    Num.cal <- length(Cal.name)
+
+#
+# CvT Obs:
+#
+# Extract the observations
+    this.cvt <- subset(this.data, Sample.Type=="Cvst")
+    obs <-  this.cvt[!is.na(this.cvt[,time.col]), "Response"]
+    Num.obs <- length(obs)
+    obs.time <- this.cvt[!is.na(this.cvt[,time.col]), "Time"]
+    obs.conc <- rep(NA, Num.obs)
+    for (this.conc in Test.conc)
     {
-      this.cal.data <- subset(this.data, Calibration==this.cal)
-      this.cal.concs <- sort(unique(this.cal.data$Conc))
-      for (this.conc in this.cal.concs)
-      {
-        Num.cal <- Num.cal + 1
-        Cal.conc[Num.cal] <- this.conc
-        Cal.name[Num.cal] <- this.cal
-      }
-    } 
-  
+      obs.conc[this.cvt[
+        !is.na(this.cvt[,time.col]), "Clint.Assay.Conc"] == this.conc] <-
+        which(Test.conc == this.conc)
+    }
+ # Match observations to correct calibration curve:
+    obs.cal <- rep(NA, Num.obs)
+    for (this.cal in unique(this.cvt$Calibration))
+    {
+      obs.cal[this.cvt$Calibration == this.cal] <- 
+        which(Cal.name == this.cal)
+    }
+                                 
+#
+# Blanks (hepatocytes, no chemical):
+#
 # Identify the blanks (observation time should be NA):    
     this.blanks <- subset(this.data, Sample.Type=="Blank")
     blank.obs <- this.blanks[,"Response"]
     Num.blanks <- length(blank.obs)
-## If there are no blanks create a single blank with the average blank response:
-#    if (Num.blanks==0 | all(is.na(blank.obs)))
-#    {
-#      all.blanks <- subset(clint.data,is.na(this.data) & !is.na(area.col))
-#      blank.obs <- median(all.blanks$ISTDResponseRatio,na.rm=T)
-#      Num.blanks <- 1
-#      warning("Mean blank across data set used because of missing blank data.")
-#    }
     # Create a dummy vector to keep JAGS happy:
     if (Num.blanks == 0) blank.obs <- c(NA, NA)
     if (Num.blanks == 1) blank.obs <- c(blank.obs, NA)
-
-# Separate the 1 and 10 uM data so we can order obs by concentration:
-    this.cvt <- subset(this.data, Sample.Type=="Cvst")
-    this.1data <- subset(this.cvt, Conc==1)
-    this.10data <- subset(this.cvt, Conc==10)
-# Order the data so that all the 1 uM come first:
-    obs <- c(this.1data[!is.na(this.1data[,time.col]), "Response"],
-      this.1data[!is.na(this.1data[,time.col]), "Response"])
-    Num.obs <- length(obs)
-    Num.obs1 <- dim(subset(this.1data, !is.na(Time)))[1]
-    
-    # Establish a vector of unique nominal test concentrations:
-    Test.conc <- NULL
-    Num.conc <- 0
-    # Do we have 1uM data:
-    if (Num.obs1 > 0) 
-    {
-      Num.conc <- Num.conc + 1
-      Test.conc[Num.conc] <- 1
-    }
-    # Do we have 10 uM data:
-    if (Num.obs > Num.obs1)
-    {
-      Num.conc <- Num.conc + 1
-      Test.conc[Num.conc] <- 10  
-    }
-    # Force Test.conc to be a vector:
-    Test.conc[Num.conc+1] <- 0
-        
-    obs.time <- c(this.1data[!is.na(this.1data[,time.col]), time.col],
-      this.1data[!is.na(this.1data[,time.col]), time.col])
-    obs.conc <- c(rep(1,Num.obs1),rep(2,Num.obs-Num.obs1))
-      
- # Match observations to correct calibration curve:
-    obs.cal <- rep(NA, Num.obs)
-    for (this.cal in unique(this.cvt$Calibration))
-      for (this.conc in Test.conc)
-      {
-        obs.cal[this.cvt$Calibration == this.cal &
-          this.cvt$Conc == this.conc] <- 
-          which(Cal.name == this.cal & Cal.conc == this.conc)
-      }
 # Match the blanks to correct calibration curve:
     if (Num.blanks > 0) blank.cal <- rep(NA, Num.blanks)
     else blank.cal <- c(NA, NA)
     for (this.cal in unique(this.blanks$Calibration))
+    {
+      blank.cal[this.blanks$Calibration == this.cal] <- 
+        which(Cal.name == this.cal)
+    }
+      
+#
+# Inactivated hepatocytes
+#
+# Get the inactive hepatocyte data (if any):
+    this.abio <- subset(this.data, Sample.Type=="Inactive" &
+      !is.na(Time))
+    Num.abio.obs <- dim(this.abio)[1]
+    if (Num.abio.obs > 0)
+    {
+      abio.obs <-  this.abio.[!is.na(this.abio[,time.col]), "Response"]
+      abio.obs.time <- this.abio.[!is.na(this.abio[,time.col]), "Time"]
+      abio.obs.conc <- rep(NA, Num.abio.obs)
       for (this.conc in Test.conc)
       {
-        blank.cal[this.blanks$Calibration == this.cal &
-          this.blanks$Conc == this.conc] <- 
-          which(Cal.name == this.cal & Cal.conc == this.conc)
+        abio.obs.conc[this.abio[
+          !is.na(this.abio[,time.col]), "Clint.Assay.Conc"] == this.conc] <-
+          which(Test.conc == this.conc)
       }
+      abio.obs.cal <- rep(NA, Num.abio.obs)
+      for (this.cal in unique(this.abio$Calibration))
+      {
+        abio.obs.cal[this.abio$Calibration == this.cal] <- 
+          which(Cal.name == this.cal)
+      }
+    } else {
+      abio.obs <- c(NA,NA)
+      abio.obs.conc <- c(NA,NA)
+      abio.obs.time <- c(NA,NA)
+      abio.obs.cal <- c(NA,NA)
+    }
+
+#
+# Calibration curve measurements
+#
+# Get the calibration curves (if any):
+    this.cc <- subset(this.data, Sample.Type=="CC" &
+      !is.na(Std.Conc))
+    Num.cc.obs <- dim(this.cc)[1]
+    if (Num.cc.obs > 0) 
+    {
+      cc.obs <- this.cc[, "Response"]
+      cc.obs.conc <- this.cc[, "Std.Conc"]
+      cc.obs.cal <- rep(NA, Num.cc.obs)
+      for (this.cal in unique(this.cc[,"Calibration"]))
+      {
+        cc.obs.cal[this.cc[,"Calibration"] == this.cal] <- 
+          which(Cal.name == this.cal)
+      }
+    } else {
+      cc.obs <- c(NA,NA)
+      cc.obs.conc <- c(NA,NA)
+      cc.obs.cal <- c(NA,NA)
+    }
     
     return(mydata <- list('obs' = obs,
       'obs.conc' = obs.conc,
@@ -279,68 +303,39 @@ calc_clint <- function(FILENAME, good.col="Verified")
       'Blank.obs' = blank.obs,
       'Blank.cal' = blank.cal,
       'Num.blank.obs' = Num.blanks,
-      'Test.conc' = Test.conc,
+      'Test.Nominal.Conc' = Test.conc,
       'Num.cal' = Num.cal,
-      'Cal.conc' = Cal.conc
+      'Num.cc' = Num.cc.obs,
+      'cc.obs.conc' = cc.obs.conc,
+      'cc.obs' = cc.obs,
+      'cc.obs.cal' = cc.obs.cal,
+      'Num.abio.obs' = Num.abio.obs,
+      'abio.obs' = abio.obs,
+      'abio.obs.conc' = abio.obs.conc,
+      'abio.obs.time' = abio.obs.time,
+      'abio.obs.cal' = abio.obs.cal
       ))
   }
  
-# Function to organize the data to get initial slope estimate: 
-  make.fit.data <- function(mydata)
-  {
-    fit.data <- cbind(mydata$obs,mydata$obs.time,mydata$obs.conc)
-    colnames(fit.data) <- c("obs","time","conc")
-    fit.data <- as.data.frame(fit.data)
-    fit.data1 <- subset(fit.data,conc==1 & obs>0)
-  
-    if (dim(fit.data1)[1]<2) fit.data1 <- subset(fit.data,conc==2 & obs>0)
-    if (dim(fit.data1)[1]<2) fit.data <- NULL
-    else fit.data <- fit.data1
-   
-    return(fit.data)
-  }
-  
   # function to initialize a Markov chain:
   initfunction <- function(chain)
   {
     seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
     set.seed(seed)
 
-    if (!is.null(fit.data))
-    { 
-      if (dim(fit.data)[1]>1 & any(fit.data$time>0))
-      {
-        fit.data$obs <- fit.data$obs*runif(length(fit.data$obs),0.9,1.1)
-        fit1 <- lm(log(obs/mydata$Test.conc[1])~time,fit.data)
-        if (-fit1[["coefficients"]][2] > 0) 
-        {
-          rate <- as.numeric(-fit1[["coefficients"]][2])
-          decreases <- 1
-        } else {
-          rate <- 0
-          decreases <- 0
-        }
-      } else {
-        decreases <- 1
-        rate <- 1/15
-      }
-    } else {
-      rate <- 0
-      decreases <- 0
-    }
     return(list(
       .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
       log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
       log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
-# Average across all the calibrations (the sampler will vary these):
-      C.thresh = mydata$Cal.conc/10,
+      C.thresh = runif(mydata$Num.cal, 0, 0.1),
       log.calibration = rep(0,mydata$Num.cal),
-      decreases = decreases,
-      rate = max(0,min(1/15,rate)),
+      decreases = 1,
+      bio.rate = runif(1,0,1/15),
+      abio.rate = runif(1,0,1/15),
       saturates = 0,
-      saturation = 0.5
+      saturation = runif(1,0,1)
     ))
   }
 
@@ -362,7 +357,8 @@ calc_clint <- function(FILENAME, good.col="Verified")
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   density.col <- "Hep.Density"
-  conc.col <- "Conc"
+  std.conc.col <- "Std.Conc"
+  clint.assay.conc.col <- "Clint.Assay.Conc"
   time.col <- "Time"
   area.col <- "Area"
 
@@ -380,7 +376,8 @@ calc_clint <- function(FILENAME, good.col="Verified")
     istd.conc.col,
     istd.col,
     density.col,
-    conc.col,
+    std.conc.col,
+    clint.assay.conc.col,
     time.col,
     area.col)
       
@@ -453,13 +450,12 @@ calc_clint <- function(FILENAME, good.col="Verified")
       mydata <- build_mydata(this.subset)
       if (!is.null(mydata))
       {
-        fit.data <- make.fit.data(mydata)
         # Use random number seed for reproducibility
         set.seed(RANDOM.SEED)
         
         # write out arguments to runjags:
         save(this.compound,mydata,initfunction,
-          file=paste(FILENAME,"-PREJAGS.RData",sep=""))
+          file=paste(FILENAME,"-Clint-PREJAGS.RData",sep=""))
           
         # Run JAGS:
         coda.out[[this.compound]] <-  autorun.jags(Clint_model, 
@@ -506,15 +502,15 @@ calc_clint <- function(FILENAME, good.col="Verified")
         hep.density <- this.subset[1,density.col]
         
         # Calculate a Clint only for 1 and 10 uM (if tested)
-        if (1 %in% mydata$Test.conc)
+        if (1 %in% mydata$Test.Nominal.Conc)
         {
-          index <- which(mydata$Test.conc == 1)
+          index <- which(mydata$Test.Nominal.Conc == 1)
           results[,"Clint.1"] <- 1000 *
             results[,paste("slope[",index,"]",sep="")] / hep.density
         } else results[,"Clint.1"] <- NA
-        if (10 %in% mydata$Test.conc)
+        if (10 %in% mydata$Test.Nominal.Conc)
         {
-          index <- which(mydata$Test.conc == 10)
+          index <- which(mydata$Test.Nominal.Conc == 10)
           results[,"Clint.10"] <- 1000 *
             results[,paste("slope[",index,"]",sep="")] / hep.density
         } else results[,"Clint.10"] <- NA
@@ -524,11 +520,11 @@ calc_clint <- function(FILENAME, good.col="Verified")
           results[,i] <- signif(results[,i],3)
 
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
-        results[,"Clint.pValue"] <- 1 - results[,"decreases"]
+        results[,"Clint.pValue"] <- sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
          
         # Calculate a "pvalue" fror saturation probability that we observed
         # a lower Clint at higher conc:
-        results[,"Sat.pValue"] <- 1 - results[,"saturates"]
+        results[,"Sat.pValue"] <- sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
     
         # Create a row of formatted results:
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))

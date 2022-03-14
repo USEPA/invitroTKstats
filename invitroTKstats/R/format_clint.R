@@ -12,6 +12,8 @@
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
 #'   Hepatocyte inciubation concentration \tab Cvst\cr
+#'   Inactivated Hepatocytes \tab Inactive\cr
+#'   Calibration Curve \tab CC\cr
 #' }
 #' Chemical concentration is calculated qualitatively as a response:
 #'
@@ -265,8 +267,10 @@ format_clint <- function(clint.data,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  conc.col="Conc",
-  conc=NULL,
+  std.conc=NULL,
+  std.conc.col="Standard.Conc",
+  clint.assay.conc=NULL,
+  clint.assay.conc.col="Clint.Assay.Conc",
   area.col="Area",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
@@ -286,8 +290,22 @@ format_clint <- function(clint.data,
     row.names=F,
     quote=F)
     
-  if (is.null(note.col)) clint.data[,"Note"] <- ""
-
+  if (is.null(note.col)) 
+  {
+    clint.data[,"Note"] <- ""
+    note.col <- "Note"
+  }
+  
+  if (!(std.conc.col %in% colnames(clint.data)))
+  {
+    if (is.null(std.conc))
+    {
+      clint.data[,std.conc.col] <- NA
+    } else {
+      clint.data[,std.conc.col] <- std.conc
+    }
+  }
+  
 # These arguments allow the user to specify a single value for every obseration 
 # in the table:  
   if (!is.null(cal)) clint.data[,cal.col] <- cal
@@ -295,8 +313,10 @@ format_clint <- function(clint.data,
   if (!is.null(density)) clint.data[,density.col] <- density
   if (!is.null(istd.name)) clint.data[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) clint.data[,istd.conc.col] <- istd.conc
-  if (!is.null(conc)) clint.data[,conc.col] <- 
-    conc
+  if (!is.null(std.conc)) clint.data[,std.conc.col] <- 
+    std.conc
+  if (!is.null(clint.assay.conc)) clint.data[,clint.assay.conc.col] <- 
+    clint.assay.conc
   if (!is.null(analysis.method)) clint.data[,analysis.method.col]<- analysis.method
   if (!is.null(analysis.instrument)) clint.data[,analysis.instrument.col] <- 
     analysis.instrument
@@ -317,7 +337,8 @@ format_clint <- function(clint.data,
     istd.conc.col,
     istd.col,
     density.col,
-    conc.col,
+    std.conc.col,
+    clint.assay.conc.col,
     time.col,
     area.col,
     analysis.method.col,
@@ -334,7 +355,7 @@ format_clint <- function(clint.data,
 
   # Only include the data types used:
   clint.data <- subset(clint.data,clint.data[,type.col] %in% c(
-    "Blank","Cvst"))
+    "Blank","Cvst","CC","Inactive"))
   
   # Organize the columns:
   clint.data <- clint.data[,cols]
@@ -352,7 +373,8 @@ format_clint <- function(clint.data,
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   density.col <- "Hep.Density"
-  conc.col <- "Conc"
+  std.conc.col <- "Std.Conc"
+  clint.assay.conc.col <- "Clint.Assay.Conc"
   time.col <- "Time"
   area.col <- "Area"
   analysis.method.col <- "Analysis.Method"
@@ -373,7 +395,8 @@ format_clint <- function(clint.data,
     istd.conc.col,
     istd.col,
     density.col,
-    conc.col,
+    std.conc.col,
+    clint.assay.conc.col,
     time.col,
     area.col,
     analysis.method.col,

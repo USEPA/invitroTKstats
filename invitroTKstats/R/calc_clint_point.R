@@ -112,9 +112,14 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   density.col <- "Hep.Density"
-  conc.col <- "Conc"
+  std.conc.col <- "Std.Conc"
+  clint.assay.conc.col <- "Clint.Assay.Conc"
   time.col <- "Time"
   area.col <- "Area"
+  analysis.method.col <- "Analysis.Method"
+  analysis.instrument.col <- "Analysis.Instrument"
+  analysis.parameters.col <- "Analysis.Parameters" 
+  note.col <- "Note"
 
 # We need all these columns in clint.data
   cols <-c(
@@ -130,9 +135,15 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     istd.conc.col,
     istd.col,
     density.col,
-    conc.col,
+    std.conc.col,
+    clint.assay.conc.col,
     time.col,
-    area.col)
+    area.col,
+    analysis.method.col,
+    analysis.instrument.col,
+    analysis.parameters.col,
+    note.col
+    )
       
   if (!(all(cols %in% colnames(clint.data))))
   {
@@ -159,30 +170,34 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   decay <- function(time.min,conc,cal,k_elim) cal*conc*exp(-k_elim*time.min)
   lldecay <- function(cal,k_elim,sigma)
   {
+    if (sigma < 0.0001) sigma <- 0.0001
     N <- dim(this.data)[1]
     pred <- decay(
       time.min=this.data$Time,
-      conc=this.data$Conc,
+      conc=this.data$Clint.Assay.Conc,
       cal=cal,
       k_elim=k_elim)
     ll <- log(1/sigma/sqrt(2*pi))*N
     res <- pred-this.data$Response
     ll <- ll+sum(-1/2*res^2/sigma^2)
+    if (is.na(ll)) browser()
     return(-ll)
   }
   satdecay <- function(time.min,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.min)
   llsatdecay <- function(cal,k_elim,sigma,sat)
   {
+    if (sigma < 0.0001) sigma <- 0.0001
     N <- dim(this.data)[1]
     pred <- satdecay(
       time.min=this.data$Time,
-      conc=this.data$Conc,
+      conc=this.data$Clint.Assay.Conc,
       cal=cal,
       k_elim=k_elim,
       sat=sat)
     ll <- log(1/sigma/sqrt(2*pi))*N
     res <- pred-this.data$Response
     ll <- ll+sum(-1/2*res^2/sigma^2)
+    if (is.na(ll)) browser()
     return(-ll)
   }
 
@@ -205,7 +220,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     if (dim(this.cvt)[1] > 1 & dim(this.blank)[1] > 1)
     {
       this.data <- rbind(this.blank,this.cvt)
-      this.data[this.data$Sample.Type=="Blank","Conc"] <- 0
+      this.data[this.data$Sample.Type=="Blank","Clint.Assay.Conc"] <- 0
       this.data[this.data$Sample.Type=="Blank","Time"] <- 0
       this.data[this.data$Sample.Type=="Cvst","Response"] <-
         this.data[this.data$Sample.Type=="Cvst","Response"]*df.cvt
@@ -229,14 +244,14 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       {
         this.row$Clint <- 1000*coef(this.fit)["k_elim"]/hep.density
         this.row$Clint.pValue <- min(exp(-(AIC(this.null)-AIC(this.fit))),1)
-        this.row$Fit <- paste(paste(unique(this.data$Conc),collapse=", "),"uM")
+        this.row$Fit <- paste(paste(unique(this.data$Clint.Assay.Conc),collapse=", "),"uM")
         this.row$AIC <- AIC(this.fit)
         this.row$AIC.Null <- AIC(this.null)
         this.row$Clint.1 <- NA
         this.row$Clint.10 <- NA
         this.row$AIC.Sat <- NA
         this.row$Sat.pValue <- NA
-        if (all(c(1,10)%in%unique(this.data$Conc)))
+        if (all(c(1,10)%in%unique(this.data$Clint.Assay.Conc)))
         {
           this.sat.fit <- try(mle(llsatdecay,
             start=list(cal=1,k_elim=0.1,sigma=1,sat=1),

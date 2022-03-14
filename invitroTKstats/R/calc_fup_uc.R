@@ -376,7 +376,7 @@ calc_fup_uc <- function(PPB.data,
         )
       
         save(this.compound,mydata,UC_PPB_model,initfunction,
-          file=paste(FILENAME,"-PREJAGS.RData",sep=""))  
+          file=paste(FILENAME,"-FupUC-PREJAGS.RData",sep=""))  
         coda.out[[this.compound]] <- autorun.jags(
           UC_PPB_model, 
           n.chains = NUM.CHAINS,
