@@ -242,7 +242,9 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       
       if (class(this.fit)!="try-error" & class(this.null)!="try-error")
       {
-        this.row$Clint <- 1000*coef(this.fit)["k_elim"]/hep.density
+        # k_elim has units 1/h, convert to uL/min/10^6 hepatocytes
+        # hep density is 10^6 hepatocytes/mL
+        this.row$Clint <- 1000*coef(this.fit)["k_elim"]/hep.density/60
         this.row$Clint.pValue <- min(exp(-(AIC(this.null)-AIC(this.fit))),1)
         this.row$Fit <- paste(paste(unique(this.data$Clint.Assay.Conc),collapse=", "),"uM")
         this.row$AIC <- AIC(this.fit)
@@ -259,9 +261,9 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
             upper=list(sat=1)))
           if (class(this.sat.fit)!="try-error")
           {
-            this.row$Clint.1 <- 1000*coef(this.sat.fit)["k_elim"]/hep.density
+            this.row$Clint.1 <- 1000*coef(this.sat.fit)["k_elim"]/hep.density/60
             this.row$Clint.10 <- 1000*coef(this.sat.fit)["k_elim"]*
-              coef(this.sat.fit)["sat"]/hep.density
+              coef(this.sat.fit)["sat"]/hep.density/60
             this.row$AIC.Sat <- AIC(this.sat.fit)
             if (this.row$Clint.pValue==1) test.AIC <- this.row$AIC.Null
             else test.AIC <- this.row$AIC

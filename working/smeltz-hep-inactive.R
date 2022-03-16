@@ -64,16 +64,24 @@ smeltz.hep <- subset(smeltz.hep, Compound != "ISTD")
 smeltz.hep$Active.Hep <- NA
 
 
-smeltz.hep[regexpr("living",tolower(smeltz.hep[,"Sample Text"]))!=-1,
-  "Active.Hep"] <- 1
-smeltz.hep[regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))!=-1,
-  "Active.Hep"] <- 0
+
 
 # Use invitroTKstats annotation of type:
 smeltz.hep <- subset(smeltz.hep,!is.na(Type))
 smeltz.hep[smeltz.hep$Type == "Analyte", "Type"] <- "Cvst"
 smeltz.hep[smeltz.hep$Type == "Standard", "Type"] <- "CC"
 
+
+# Were the hepatocytes alive?:
+smeltz.hep[smeltz.hep[,"Type"]=="Cvst", "Active.Hep"] <- 1
+smeltz.hep[regexpr("living",tolower(smeltz.hep[,"Sample Text"]))!=-1,
+  "Active.Hep"] <- 1
+smeltz.hep[regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))!=-1,
+  "Active.Hep"] <- 0
+smeltz.hep[
+  sapply(smeltz.hep$Active.Hep,function(x) ifelse(is.na(x),FALSE,x==0)), 
+  "Type"] <- "Inactive"
+  
 # Add time of sample:
 smeltz.hep <- subset(smeltz.hep,!is.na(smeltz.hep[,"Sample Text"]))
 smeltz.hep[,"Time"] <- NA
@@ -105,9 +113,9 @@ smeltz.hep[regexpr("wax2",tolower(smeltz.hep[,"Sample Text"]))!=-1,
 smeltz.hep[regexpr("cc",tolower(smeltz.hep[,"Sample Text"]))!=-1,
   "Dilution.Factor"] <- 240
     
-# For now we don't handle the inactives:
-smeltz.hep <- subset(smeltz.hep,                           
-  regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))==-1)
+## For now we don't handle the inactives:
+#smeltz.hep <- subset(smeltz.hep,                           
+#  regexpr("inactive",tolower(smeltz.hep[,"Sample Text"]))==-1)
   
 # Make sure the areas are numeric:
 smeltz.hep$Area <- as.numeric(smeltz.hep$Area)
@@ -153,11 +161,13 @@ for (this.id in chem.ids$DTXSID)
   this.mix <- chem.ids[chem.ids$DTXSID==this.id,"Mix"]
   if (regexpr("WAX1",this.mix)!=-1)
   {
-    level2[level2$DTXSID==this.id & level2$Sample.Type =="Cvst" &
+    level2[level2$DTXSID==this.id & 
+      (level2$Sample.Type %in% c("Cvst", "Inactive")) &
       regexpr("WAX2",level2$Note)!=-1,"Verified"] <- "Wrong Mix"
   } else if (regexpr("WAX2",this.mix)!=-1)
   {
-    level2[level2$DTXSID==this.id & level2$Sample.Type =="Cvst" &
+    level2[level2$DTXSID==this.id & 
+      (level2$Sample.Type %in% c("Cvst", "Inactive")) &
       regexpr("WAX1",level2$Note)!=-1,"Verified"] <- "Wrong Mix"
   }
 }
@@ -168,7 +178,7 @@ level2[level2$Sample.Type=="CC" & is.na(level2$Std.Conc),"Verified"] <-
 
   
 write.table(level2,
-  file="SmeltzPFAS/SmeltzPFAS-noinactive-Clint-Level2.tsv",
+  file="SmeltzPFAS/SmeltzPFAS-Clint-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
@@ -188,11 +198,11 @@ subset(this.subset,Time==0)$Response/1*subset(this.subset,Time==0)$Dilution.Fact
 
 
 
-level3 <- calc_clint_point(FILENAME="SmeltzPFAS/SmeltzPFAS-noinactive")
+level3 <- calc_clint_point(FILENAME="SmeltzPFAS/SmeltzPFAS")
    
 # repeat these bits in case a markov chain crashes and we need to restart:
 library(invitroTKstats)
 setwd("c:/users/jwambaug/git/invitroTKstats/working/")
 
-level4 <- calc_clint(FILENAME="SmeltzPFAS/SmeltzPFAS-noinactive")  
+level4 <- calc_clint(FILENAME="SmeltzPFAS/SmeltzPFAS")  
  

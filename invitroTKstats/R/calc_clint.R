@@ -49,10 +49,10 @@ model {
 # Clearance model:
 
 # Decreases indicates whether the concentration decreases (1 is yes, 0 is no):
-  decreases ~ dbern(0.5) 
+  decreases ~ dbern(DECREASE.PROB) 
 # Degrades indicates whether we think abiotic degradation is a factor
-# ()1 is yes, 0 is no):
-  degrades ~ dbern(0.5) 
+# (1 is yes, 0 is no), p=0.05 assumes 5 percent of chemicals degrade:
+  degrades ~ dbern(DEGRADE.PROB) 
 # Slope is the clearance rate at the lower concentration:
   bio.rate ~ dunif(0,10)
 # In addition to biological elimination, we also check for abiotic elimination
@@ -63,11 +63,13 @@ model {
   slope[1] <- decreases * (bio.rate + degrades * abio.rate)
 # Actual biological elimination rate:
   bio.slope[1] <- decreases * bio.rate
-# Saturates is whether the bio clearance rate decreases (1 is yes, 0 is no):
-  saturates ~ dbern(0.5) 
+# Saturates is whether the bio clearance rate decreases (1 is yes, 0 is no)
+# p=0.25 assumes 25 percent of chemicals show some metabolic saturation between
+# 1 and 10 uM:
+  saturates ~ dbern(SATURATE.PROB) 
 # Saturation is how much the bio clearance rate decreases at the higher conc:
   saturation ~ dunif(0,1)
-# Calculate a slope at the highe concentration:
+# Calculate a slope at the higher concentration:
   slope[2] <- decreases * (degrades * abio.rate +
     bio.rate*(1 - saturates*saturation))
 # Actual biological elimination rate:
@@ -90,7 +92,7 @@ model {
   }
   
 # non-biological clearance model:
-  abio.slope <- decreases * abio.rate
+  abio.slope <- degrades * abio.rate
 # The observations are normally distributed (heteroskedastic error):
   for (i in 1:Num.abio.obs)
   {
@@ -138,6 +140,15 @@ model {
 #' @param good.col Name of a column indicating which rows have been verified for 
 #' analysis, indicated by a "Y" (Defaults to "Verified")
 #'
+#' @param decrease.prob Prior probability that a chemical will decrease in
+#' the assay (defaults to 0.5)
+#'
+#' @param saturate.prob Prior probability that a chemicals rate of metabolism
+#' will decrease between 1 and 10 uM (defaults to 0.25)
+#'
+#' @param degrade.prob Prior probability that a chemical will be unstable
+#' (that is, degrade abiotically) in the assay (defaults to 0.05)
+#'
 #' @return \item{data.frame}{A data.frame in standardized format} 
 #'
 #' @author John Wambaugh
@@ -181,7 +192,11 @@ model {
 #' level4 <- calc_clint_point(FILENAME="Wambaugh2019")
 #'
 #' @export calc_clint
-calc_clint <- function(FILENAME, good.col="Verified")
+calc_clint <- function(FILENAME, 
+  good.col="Verified",
+  decrease.prob = 0.5,
+  saturate.prob = 0.25,
+  degrade.prob = 0.05)
 {
 # Internal function for constructing data object given to JAGS:
   build_mydata <- function(this.data)
@@ -329,7 +344,11 @@ calc_clint <- function(FILENAME, good.col="Verified")
       'abio.obs.conc' = abio.obs.conc,
       'abio.obs.time' = abio.obs.time,
       'abio.obs.cal' = abio.obs.cal,
-      'abio.obs.Dilution.Factor' = abio.obs.df
+      'abio.obs.Dilution.Factor' = abio.obs.df,
+# Priors for decrease/saturation/degradation:
+      'DECREASE.PROB' = decrease.prob,
+      'SATURATE.PROB' = saturate.prob,
+      'DEGRADE.PROB' = degrade.prob
       ))
   }
  
@@ -524,33 +543,23 @@ calc_clint <- function(FILENAME, good.col="Verified")
         {
           index <- which(mydata$Test.Nominal.Conc == 1)
           results[,"Clint.1"] <- 1000 *
-            results[,paste("slope[",index,"]",sep="")] / hep.density
+            results[,paste("slope[",index,"]",sep="")] / hep.density / 60
         } else results[,"Clint.1"] <- NA
         if (10 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 10)
           results[,"Clint.10"] <- 1000 *
-            results[,paste("slope[",index,"]",sep="")] / hep.density
+            results[,paste("slope[",index,"]",sep="")] / hep.density / 60
         } else results[,"Clint.10"] <- NA
     
         # Round to 3 sig figs:
         for (i in dim(results)[2])
           results[,i] <- signif(results[,i],3)
 
-        # Calculate a Clint "pvalue" from probability that we observed a decrease:
-        results[,"Clint.pValue"] <- sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
-         
-        # Calculate a "pvalue" for saturation probability that we observed
-        # a lower Clint at higher conc:
-        results[,"Sat.pValue"] <- sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
-
-        # Calculate a "pvalue" for abiotic degradation:
-        results[,"degrades.pValue"] <- sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]    
-
         # Create a row of formatted results:
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
         colnames(new.results) <- c(compound.col, dtxsid.col, lab.compound.col)
-        for (this.param in c("Clint.1","Clint.10","Clint.pValue","Sat.pValue"))
+        for (this.param in c("Clint.1","Clint.10"))
         {
           new.results <- cbind.data.frame(new.results,
             t(as.data.frame(as.numeric(results[c(2,1,3), this.param]))))
@@ -560,6 +569,17 @@ calc_clint <- function(FILENAME, good.col="Verified")
             paste(this.param,".Low",sep=""),
             paste(this.param,".High",sep=""))
         }
+
+        # Calculate a Clint "pvalue" from probability that we observed a decrease:
+        new.results[,"Clint.pValue"] <- sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
+         
+        # Calculate a "pvalue" for saturation probability that we observed
+        # a lower Clint at higher conc:
+        new.results[,"Sat.pValue"] <- sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
+
+        # Calculate a "pvalue" for abiotic degradation:
+        new.results[,"degrades.pValue"] <- sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]    
+                
         rownames(new.results) <- this.compound
          
         print(results)
