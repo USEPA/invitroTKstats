@@ -508,7 +508,7 @@
       "DTXSID70565479") &
       level2$Date == "2021-06-03" &
       level2$Note == "C", "Verified"] <- "Exclude"      
-          
+                      
     write.table(level2,
       file="SmeltzPFAS/SmeltzPFAS-PPB-UC-Level2.tsv",
       sep="\t",

@@ -36,12 +36,12 @@ model {
 # Mass spec response as a function of diluted concentration:        
     cc.pred[i] <- 
       cc.slope[i] * 
-      (cc.obs.conc[i]/cc.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) *
-      step(cc.obs.conc[i]/cc.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) +
+      (cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) *
+      step(cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) +
       cc.intercept[i] 
 # Heteroskedastic precision:
-    cc.prec[i] <- (const.analytic.sd[cc.cal[i]] +
-      hetero.analytic.slope[cc.cal[i]] * cc.pred[i])^(-2)
+    cc.prec[i] <- (const.analytic.sd[cc.obs.cal[i]] +
+      hetero.analytic.slope[cc.obs.cal[i]] * cc.pred[i])^(-2)
 # Model for the observation:
     cc.obs[i] ~ dnorm(cc.pred[i],cc.prec[i])
   }
@@ -50,6 +50,9 @@ model {
 
 # Decreases indicates whether the concentration decreases (1 is yes, 0 is no):
   decreases ~ dbern(0.5) 
+# Degrades indicates whether we think abiotic degradation is a factor
+# ()1 is yes, 0 is no):
+  degrades ~ dbern(0.5) 
 # Slope is the clearance rate at the lower concentration:
   bio.rate ~ dunif(0,10)
 # In addition to biological elimination, we also check for abiotic elimination
@@ -57,7 +60,7 @@ model {
 # inactivated hepatocutes (Num.abio.obs > 0):
   abio.rate ~ dunif(0,10)
 # Total elimination rate is a sum of both:
-  slope[1] <- decreases * (bio.rate + abio.rate)
+  slope[1] <- decreases * (bio.rate + degrades * abio.rate)
 # Actual biological elimination rate:
   bio.slope[1] <- decreases * bio.rate
 # Saturates is whether the bio clearance rate decreases (1 is yes, 0 is no):
@@ -65,7 +68,7 @@ model {
 # Saturation is how much the bio clearance rate decreases at the higher conc:
   saturation ~ dunif(0,1)
 # Calculate a slope at the highe concentration:
-  slope[2] <- decreases * (abio.rate +
+  slope[2] <- decreases * (degrades * abio.rate +
     bio.rate*(1 - saturates*saturation))
 # Actual biological elimination rate:
   bio.slope[2] <- decreases * bio.rate*(1 - saturates*saturation)
@@ -77,8 +80,8 @@ model {
       exp(-slope[obs.conc[i]]*obs.time[i])
   # MS prediction:
     obs.pred[i] <- calibration[obs.cal[i]] *
-      (C[i] - C.thresh[obs.cal[i]]) *
-      step(C[i] - C.thresh[obs.cal[i]]) + 
+      (C[i]/obs.Dilution.Factor[i] - C.thresh[obs.cal[i]]) *
+      step(C[i]/obs.Dilution.Factor[i] - C.thresh[obs.cal[i]]) + 
       background[obs.cal[i]]    
     obs.prec[i] <- (const.analytic.sd[obs.cal[i]] + 
       hetero.analytic.slope[obs.cal[i]]*obs.pred[i])^(-2)
@@ -96,8 +99,8 @@ model {
       exp(-abio.slope[abio.obs.conc[i]]*abio.obs.time[i])
   # MS prediction:
     abio.obs.pred[i] <- calibration[abio.obs.cal[i]] *
-      (abio.C[i] - C.thresh[abio.obs.cal[i]]) *
-      step(abio.C[i] - C.thresh[abio.obs.cal[i]]) + 
+      (abio.C[i]/abio.obs.Dilution.Factor[i] - C.thresh[abio.obs.cal[i]]) *
+      step(abio.C[i]/abio.obs.Dilution.Factor[i] - C.thresh[abio.obs.cal[i]]) + 
       background[abio.obs.cal[i]]    
     abio.obs.prec[i] <- (const.analytic.sd[abio.obs.cal[i]] + 
       hetero.analytic.slope[abio.obs.cal[i]]*abio.obs.pred[i])^(-2)
@@ -207,6 +210,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
     obs <-  this.cvt[!is.na(this.cvt[,time.col]), "Response"]
     Num.obs <- length(obs)
     obs.time <- this.cvt[!is.na(this.cvt[,time.col]), "Time"]
+    obs.df <- this.cvt[!is.na(this.cvt[,time.col]), "Dilution.Factor"]
     obs.conc <- rep(NA, Num.obs)
     for (this.conc in Test.conc)
     {
@@ -250,8 +254,9 @@ calc_clint <- function(FILENAME, good.col="Verified")
     Num.abio.obs <- dim(this.abio)[1]
     if (Num.abio.obs > 0)
     {
-      abio.obs <-  this.abio.[!is.na(this.abio[,time.col]), "Response"]
-      abio.obs.time <- this.abio.[!is.na(this.abio[,time.col]), "Time"]
+      abio.obs <-  this.abio[!is.na(this.abio[,time.col]), "Response"]
+      abio.obs.time <- this.abio[!is.na(this.abio[,time.col]), "Time"]
+      abio.obs.df <- this.abio[!is.na(this.abio[,time.col]), "Dilution.Factor"]
       abio.obs.conc <- rep(NA, Num.abio.obs)
       for (this.conc in Test.conc)
       {
@@ -270,6 +275,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
       abio.obs.conc <- c(NA,NA)
       abio.obs.time <- c(NA,NA)
       abio.obs.cal <- c(NA,NA)
+      abio.obs.df<- c(NA,NA)
     }
 
 #
@@ -283,6 +289,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
     {
       cc.obs <- this.cc[, "Response"]
       cc.obs.conc <- this.cc[, "Std.Conc"]
+      cc.obs.df <- this.cc[, "Dilution.Factor"]
       cc.obs.cal <- rep(NA, Num.cc.obs)
       for (this.cal in unique(this.cc[,"Calibration"]))
       {
@@ -293,27 +300,36 @@ calc_clint <- function(FILENAME, good.col="Verified")
       cc.obs <- c(NA,NA)
       cc.obs.conc <- c(NA,NA)
       cc.obs.cal <- c(NA,NA)
+      cc.obs.df <- c(NA,NA)
     }
     
     return(mydata <- list('obs' = obs,
+# Describe assay:
+      'Test.Nominal.Conc' = Test.conc,
+      'Num.cal' = Num.cal,
+# Cvt data:
+      'Num.obs' = Num.obs,
       'obs.conc' = obs.conc,
       'obs.time' = obs.time,
       'obs.cal' = obs.cal,
-      'Num.obs' = Num.obs,
+      'obs.Dilution.Factor' = obs.df,
+# Blank data:
+      'Num.blank.obs' = Num.blanks,
       'Blank.obs' = blank.obs,
       'Blank.cal' = blank.cal,
-      'Num.blank.obs' = Num.blanks,
-      'Test.Nominal.Conc' = Test.conc,
-      'Num.cal' = Num.cal,
+# Callibration.curve.data:
       'Num.cc' = Num.cc.obs,
       'cc.obs.conc' = cc.obs.conc,
       'cc.obs' = cc.obs,
       'cc.obs.cal' = cc.obs.cal,
+      'cc.obs.Dilution.Factor' = cc.obs.df,
+# Abiotic degradation data:
       'Num.abio.obs' = Num.abio.obs,
       'abio.obs' = abio.obs,
       'abio.obs.conc' = abio.obs.conc,
       'abio.obs.time' = abio.obs.time,
-      'abio.obs.cal' = abio.obs.cal
+      'abio.obs.cal' = abio.obs.cal,
+      'abio.obs.Dilution.Factor' = abio.obs.df
       ))
   }
  
@@ -331,10 +347,11 @@ calc_clint <- function(FILENAME, good.col="Verified")
       log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
       C.thresh = runif(mydata$Num.cal, 0, 0.1),
       log.calibration = rep(0,mydata$Num.cal),
-      decreases = 1,
+      decreases = rbinom(1,1,0.5),
+      degrades = rbinom(1,1,0.5),
       bio.rate = runif(1,0,1/15),
       abio.rate = runif(1,0,1/15),
-      saturates = 0,
+      saturates = rbinom(1,1,0.5),
       saturation = runif(1,0,1)
     ))
   }
@@ -391,7 +408,7 @@ calc_clint <- function(FILENAME, good.col="Verified")
 
   # Only include the data types used:
   clint.data <- subset(clint.data,clint.data[,type.col] %in% c(
-    "Blank","Cvst"))
+    "Blank","Cvst","CC","Inactive"))
   
   # Only used verfied data:
   clint.data <- subset(clint.data, clint.data[,good.col] == "Y")
@@ -490,7 +507,8 @@ calc_clint <- function(FILENAME, good.col="Verified")
                               add.monitor = c(
                                 'slope',
                                 'decreases',
-                                'saturates'))
+                                'saturates',
+                                "degrades"))
  
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
@@ -522,10 +540,13 @@ calc_clint <- function(FILENAME, good.col="Verified")
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
         results[,"Clint.pValue"] <- sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
          
-        # Calculate a "pvalue" fror saturation probability that we observed
+        # Calculate a "pvalue" for saturation probability that we observed
         # a lower Clint at higher conc:
         results[,"Sat.pValue"] <- sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
-    
+
+        # Calculate a "pvalue" for abiotic degradation:
+        results[,"degrades.pValue"] <- sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]    
+
         # Create a row of formatted results:
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
         colnames(new.results) <- c(compound.col, dtxsid.col, lab.compound.col)
