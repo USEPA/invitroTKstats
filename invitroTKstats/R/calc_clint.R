@@ -542,14 +542,14 @@ calc_clint <- function(FILENAME,
         if (1 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 1)
-          results[,"Clint.1"] <- 1000 *
-            results[,paste("slope[",index,"]",sep="")] / hep.density / 60
+          results[,"Clint.1"] <- signif(1000 *
+            results[,paste("slope[",index,"]",sep="")] / hep.density / 60, 3)
         } else results[,"Clint.1"] <- NA
         if (10 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 10)
-          results[,"Clint.10"] <- 1000 *
-            results[,paste("slope[",index,"]",sep="")] / hep.density / 60
+          results[,"Clint.10"] <- signif(1000 *
+            results[,paste("slope[",index,"]",sep="")] / hep.density / 60, 3)
         } else results[,"Clint.10"] <- NA
     
         # Round to 3 sig figs:
@@ -571,14 +571,17 @@ calc_clint <- function(FILENAME,
         }
 
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
-        new.results[,"Clint.pValue"] <- sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
+        new.results[,"Clint.pValue"] <- signif(
+          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1], 3)
          
         # Calculate a "pvalue" for saturation probability that we observed
         # a lower Clint at higher conc:
-        new.results[,"Sat.pValue"] <- sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
+        new.results[,"Sat.pValue"] <- signif(
+          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1], 3)
 
         # Calculate a "pvalue" for abiotic degradation:
-        new.results[,"degrades.pValue"] <- sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]    
+        new.results[,"degrades.pValue"] <- signif(
+          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)    
                 
         rownames(new.results) <- this.compound
          
