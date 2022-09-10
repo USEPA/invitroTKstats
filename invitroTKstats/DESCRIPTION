@@ -19,7 +19,7 @@ Authors@R: c(
            person("Anna", "Kreutz", role = c("ctb"))
            )
 Depends: R (>= 2.10)
-Imports: runjags, parallel, gdata, coda, ggplot2, Rdpack
+Imports: runjags, parallel, readxl, coda, ggplot2, Rdpack
 RdMacros: Rdpack
 Suggests:
 License: GPL-3

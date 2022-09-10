@@ -1,0 +1,496 @@
+---
+  title: "Kreutz 2022 GC PFAS Data"
+author: "John Wambaugh"
+date: "September 10, 2022"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Kreutz 2022}
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEncoding{UTF-8}
+---
+  wambaugh.john@epa.gov
+
+# Here's the new R package for analyzing these data:
+```{r load_packages, eval = TRUE}  
+    library(invitroTKstats)
+    
+    # There are multiple packages for loading Excel files, but I've been using this
+    # one lately:
+    library(readxl)
+```
+
+    # Clear memory:
+```{r load_packages, eval = TRUE}     
+    rm(list=ls())
+```
+
+    # Change to the directory that has your Excel file 
+    # (this is where it is on my computer):
+```{r set_working_directory, eval = TRUE}   
+    setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS")
+``` 
+
+    # Assumed dilution factors:
+```{r assay_information, eval=TRUE}
+    CC.DILUTE <- 1
+    BLANK.DILUTE <- 1
+    AF.DILUTE <- 2*16
+    T5.DILUTE <- 5*16
+    T1.DILUTE <- 5*16
+    ANALYSIS.METHOD <- "GCMS"
+    ANALYSIS.INSTRUMENT <- "Mystery GC"
+    ISTD.CONC <- 1
+    UC.ASSAY.T0.CONC <- 5
+```
+
+    # list the data files:
+```{r UC_data_files, eval=TRUE}
+    files <- list("UC_474_760_3096_final.xlsx",
+              "UC_503_507_516_501_505_521_510_120721.xlsx",
+              "UC_513_268_275_812_121921.xlsx")
+```
+
+# Figure out the test chemical information:
+```{r UC_chem_info, eval=TRUE}
+    chem.start <- c(37, 37, 37)
+    cheminfo <- NULL
+    for (this.file in files)
+    {
+      these.chems <- read_excel(this.file,
+               sheet=1,
+               skip = chem.start[which(files==this.file)])
+      these.chems <- as.data.frame(subset(these.chems,
+                            regexpr("DTXSID",Analyte)!=-1))
+      this.reference <- NULL
+      for (this.row in 1:dim(these.chems)[1])
+      {
+        if (!is.na(these.chems[this.row,"Reference Compound"]))
+        {
+          this.reference <- these.chems[this.row,"Reference Compound"]
+        } else {
+          these.chems[this.row,"Reference Compound"] <- this.reference
+        }
+      }
+      these.chems$File <- this.file
+      this.date <- suppressWarnings(suppressMessages(as.data.frame(
+        read_excel(this.file,
+               sheet=1,
+               col_types="date",
+               skip = 3))))[1,2]
+      these.chems$Date <- this.date
+      cheminfo <- rbind(cheminfo,these.chems)
+    }
+
+
+
+```
+
+    # Define the info for control chemicals:
+```{r UC_control_info, eval=TRUE}
+for (this.file in files)
+{
+  this.control <-
+    data.frame(
+      Analyte = "DTXSID70160387",
+      Name = "4-nitrotoluene",
+      'Sample ID' = "4NT",
+      IS = "13C6-4-nitrotoluene",
+      "Reference Compound" = NA,
+      "Avg. MW" = NA,
+      "Flags" = NA,
+      "File" = this.file)
+    this.control$Date <- suppressWarnings(suppressMessages(
+      as.data.frame(read_excel(this.file,
+               sheet=1,
+               col_types="date",
+               skip = 3))))[1,2]
+    colnames(this.control)[3] <- "Sample ID"
+    colnames(this.control)[5] <- "Reference Compound"
+    colnames(this.control)[6] <- "Avg. MW"
+    cheminfo <- rbind(cheminfo,this.control)
+}
+```
+    # Get rid of the UTC:
+```{r fprmat_dates, eval=TRUE}
+cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
+```
+                                         
+    # Two of the data files keep all data in different columns of the "Data" sheet 
+    # for each chemical's respective file.
+
+    # Now loop over the files and annotate the data:
+```{r UC_data_sheets, eval=TRUE}
+    UC.data <- NULL
+    
+    for (this.file in files)
+      if (this.file != "UC_474_760_3096_final.xlsx")
+      {
+          these.chems <- subset(cheminfo,File==this.file)
+          for (this.chem in unique(
+            these.chems$`Sample ID`))
+          {
+          these.data <- as.data.frame(
+            suppressMessages(read_excel(this.file,
+            sheet="Data")))
+          start.col.name <- paste(this.chem,"Method") 
+          if (!(start.col.name %in% colnames(these.data)))
+          {
+           these.data <- as.data.frame(
+             suppressMessages(read_excel(this.file,
+            sheet="7bData")))
+          }
+          first.col <- which(colnames(these.data)==start.col.name)   
+          this.chem.data <- these.data[
+            ,c(first.col+4,first.col,3,7,6)]
+          colnames(this.chem.data) <- c(
+            "Area","NominConc","Lab.Sample.Name","Type","Note")
+          this.chem.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+          chem.index <- which(these.chems$`Sample ID` == this.chem)
+          this.chem.data$Compound.Name <- these.chems[chem.index,"Name"]
+          this.chem.data$Lab.Compound.Name <- this.chem
+          this.chem.data$DTXSID <- these.chems[chem.index,"Analyte"]
+          this.chem.data$ISTD.Name <- these.chems[chem.index,"IS"]
+          this.chem.data$ISTD.Conc <- ISTD.CONC
+          this.chem.data$Date <- these.chems[chem.index,"Date"]
+          this.chem.data$Cal <- this.chem.data$Date
+          this.chem.data$Analysis.Parameters <- paste(
+            "Analyte RT:",
+            signif(
+              suppressWarnings(as.numeric(
+              these.data[,first.col+3],5))),
+            "ISTD RT:",
+            signif(suppressWarnings(as.numeric(
+              these.data[,first.col+6],5)))
+            )
+        UC.data <- rbind(UC.data,this.chem.data)
+        }
+      }  
+```
+
+# Handle the data for "UC_474_760_3096_final.xlsx"
+```{r UC_final_four, eval=TRUE}
+  this.file <- "UC_474_760_3096_final.xlsx"
+  these.chems <- subset(cheminfo,File==this.file)
+  new.data <- NULL
+  this.chem <- "474"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="474Raw")))
+  these.data$Lab.Compound.Name <- this.chem
+  new.data <- rbind(new.data,these.data)
+  this.chem <- "760"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="760Raw")))
+  these.data$Lab.Compound.Name <- this.chem
+  colnames(these.data) <- colnames(new.data)
+  new.data <- rbind(new.data,these.data)
+  this.chem <- "3096"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="3096Raw")))
+  these.data$Lab.Compound.Name <- this.chem
+  colnames(these.data) <- colnames(new.data)
+  new.data <- rbind(new.data,these.data)
+  this.chem <- "4NT"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="4NTRaw")))
+  these.data$A <- NA
+  these.data$B <- NA
+  these.data$C <- NA
+  these.data$Lab.Compound.Name <- this.chem
+  colnames(these.data) <- colnames(new.data)
+  new.data <- rbind(new.data,these.data)
+  new.data <- subset(new.data,new.data[,3]!="Name")
+  
+  this.chem.data <- new.data[,
+    c(13,11,3,8,4)]
+  colnames(this.chem.data) <- c(
+    "Area","NominConc","Lab.Sample.Name","Type","Note")
+  this.chem.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+  for (this.chem in unique(new.data$Lab.Compound.Name))
+  {
+    which.rows <- new.data$Lab.Compound.Name == this.chem 
+    chem.index <- which(these.chems$`Sample ID` == this.chem)
+    this.chem.data[which.rows, "Compound.Name"] <- these.chems[
+      chem.index,"Name"]
+    this.chem.data[which.rows, "Lab.Compound.Name"] <- this.chem
+    this.chem.data[which.rows, "DTXSID"] <- these.chems[
+      chem.index,"Analyte"]
+    this.chem.data[which.rows, "ISTD.Name"] <- these.chems[
+      chem.index,"IS"]
+    this.chem.data[which.rows, "ISTD.Conc"] <- ISTD.CONC
+    this.chem.data[which.rows, "Date"] <- these.chems[
+      chem.index,"Date"]
+  }
+  this.chem.data$Cal <- this.chem.data$Date
+  this.chem.data$Analysis.Parameters <- paste(
+            "Analyte RT:",
+            signif(suppressWarnings(as.numeric(
+              new.data[,12],5))),
+            "ISTD RT:",
+            signif(suppressWarnings(as.numeric(
+              new.data[,24],5)))
+            )
+  UC.data <- rbind(UC.data,this.chem.data)  
+```
+
+```{r UC_finish, eval=TRUE}
+    UC.data$Area <- signif(suppressWarnings(as.numeric(UC.data$Area))) 
+    UC.data$Analysis.Method <- ANALYSIS.METHOD
+    UC.data$Analysis.Instrument <- ANALYSIS.INSTRUMENT
+
+    # Extract the sample type from column Sample Text:
+    UC.data[regexpr("AF",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "AF"
+    UC.data[regexpr("UF",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "AF"
+    UC.data[regexpr("T1",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "T1"
+    UC.data[regexpr("T5",unlist(UC.data[,"Sample Text"]))!=-1,"Sample.Type"] <- "T5"
+    UC.data[UC.data$Type == "Standard","Sample.Type"] <- "CC"
+    UC.data[UC.data$Type == "Blank","Sample.Type"] <- "Blank"
+       subset(UC.data,DTXSID=="DTXSID0060985")   
+       
+    # Get rid of unused samples (QC samples):
+    UC.data <- subset(UC.data,!is.na(Sample.Type))
+    dim(UC.data)
+   subset(UC.data, DTXSID=="DTXSID00379925"&Date=="2021-06-03") 
+```
+
+```
+# Convert to uM:
+    UC.data[UC.data[,"Std.Units"]=="nM","Std.Conc"] <- UC.data[UC.data[,"Std.Units"]=="nM","Std.Conc"]/1000
+    
+    UC.data[,"Std.Units"] <- "uM" 
+    UC.data[UC.data[,"Sample.Type"]!="CC","Std.Units"] <- NA 
+    UC.data[UC.data[,"Sample.Type"]!="CC","Std.Conc"] <- NA 
+
+    # No replicates:
+    UC.data$Series <- 1
+
+    # We'll need to go back and set this per sample type:
+    UC.data[UC.data[,"Sample.Type"]=="AF","Dilution.Factor"] <- AF.DILUTE
+    UC.data[UC.data[,"Sample.Type"]=="T1","Dilution.Factor"] <- T1.DILUTE
+    UC.data[UC.data[,"Sample.Type"]=="T5","Dilution.Factor"] <- T5.DILUTE
+    UC.data[UC.data[,"Sample.Type"]=="CC","Dilution.Factor"] <- CC.DILUTE
+    UC.data[UC.data[,"Sample.Type"]=="Blank","Dilution.Factor"] <- BLANK.DILUTE
+   subset(UC.data, DTXSID=="DTXSID00379925"&Date=="2021-06-03") 
+    unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
+         
+    # Treat the blanks as calibration data with concentration 0:
+    UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Conc"] <- 0
+    UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Units"] <- "uM"
+    
+    UC.data[UC.data[,"Sample.Type"]=="Blank","Sample.Type"] <- "CC"
+    dim(UC.data)
+    
+    # Get rid of CC samples that don't have a concentration:
+    UC.data <- subset(UC.data,!(Sample.Type=="CC" & is.na(Std.Conc)))
+    
+    dim(UC.data)
+    
+     subset(UC.data,Sample.Type=="CC" & is.na(Std.Conc))
+    
+    # Should update this with input from Marci:
+    UC.data$Analysis.Method <- "UPLC-MS/MS"
+    UC.data$Analysis.Instrument <- "Waters Xevo TQ-S micro (QEB0036)"
+    # Give Retention time:
+    UC.data$Analysis.Parameters <- UC.data$RT
+    
+    # ISTD cocn 1ppm:
+    UC.data$ISTD.Conc <- 1 #ppm
+    
+    # Test chemical concentration:
+    UC.data$Test.Target.Conc <- 10 # uM
+    
+    
+    # Set replicate id's:
+    UC.data[,"Replicate"] <- ""
+    UC.data[regexpr("_A",UC.data[,"Sample Text"])!=-1,"Replicate"] <- "A"
+    UC.data[regexpr("_B",UC.data[,"Sample Text"])!=-1,"Replicate"] <- "B"
+    UC.data[regexpr("_C",UC.data[,"Sample Text"])!=-1,"Replicate"] <- "C"
+    
+    
+    # Make the numeric values numeric:
+    UC.data[,"Area"] <- as.numeric(unlist(UC.data[,"Area"]))
+    UC.data[,"IS Area"] <- as.numeric(unlist(UC.data[,"IS Area"]))
+      unique(subset(UC.data,DTXSID=="DTXSID00880026")$Date)
+     
+    write.table(UC.data,file="SmeltzPFAS/SmeltzPFAS-PPB-UC-Level0.tsv",sep="\t",row.names=FALSE)
+    
+    level1 <- format_fup_uc(subset(UC.data,DTXSID!="ISTD"),
+      FILENAME="SmeltzPFAS/SmeltzPFAS",
+      sample.col="Name",
+      compound.col="Compound.Name",
+      std.conc.col="Std.Conc", 
+      lab.compound.col="Compound.Name", 
+      type.col="Sample.Type", 
+      istd.col="IS Area",
+      note.col="Replicate",
+      uc.assay.conc.col="Test.Target.Conc"
+      )
+       unique(subset(level1,DTXSID=="DTXSID00880026")$Date)
+       
+    level2 <- level1
+    # Taking all data in spreadsheet as human verfied for starters
+    level2$Verified <- "Y"
+    # From Marci:
+    # 07/23/19:
+    level2[level2$DTXSID %in% c(
+      "DTXSID1032646",
+      "DTXSID1067629",
+      "DTXSID20375106",
+      "DTXSID3037709",
+      "DTXSID40380257",
+      "DTXSID4059916",
+      "DTXSID50375114",
+      "DTXSID8031865") &
+      level2$Date == "2019-07-23", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID5030030",
+      "DTXSID8037706") &
+      level2$Date == "2019-07-23" &
+      level2$Note == "A", "Verified"] <- "Exclude"
+    # 01/02/20:
+    level2[level2$DTXSID %in% c(
+      "DTXSID0060985",
+      "DTXSID30170109",
+      "DTXSID30382104",
+      "DTXSID4059833",
+      "DTXSID3031864") &
+      level2$Date == "2020-01-02", "Verified"] <- "Exclude"
+    # 01/03/20:
+    level2[level2$DTXSID %in% c(
+      "DDTXSID504693204") &
+      level2$Date == "2020-01-03", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID3031864",
+      "DTXSID3038939",
+      "DTXSID30891564",
+      "DTXSID5030030") &
+      level2$Date == "2020-01-03" &
+      level2$Note == "A", "Verified"] <- "Exclude"
+    # 01/06/20:
+    level2[level2$DTXSID %in% c(
+      "DTXSID1037303",
+      "DTXSID3031860",
+      "DTXSID3059921",
+      "DTXSID90868151") &
+      level2$Date == "2020-01-06", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID8047553") &
+      level2$Date == "2020-01-06" &
+      level2$Note == "A", "Verified"] <- "Exclude"  
+    # 01/07/20:
+    level2[level2$DTXSID %in% c(
+      "DTXSID20375106",
+      "DTXSID3037707",
+      "DTXSID3037709",
+      "DTXSID30382063",
+      "DTXSID50375114") &
+      level2$Date == "2020-01-07", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID60500450") &
+      level2$Date == "2020-01-07" &
+      level2$Note == "B", "Verified"] <- "Exclude"    
+    # 01/08/20:
+    level2[level2$DTXSID %in% c(
+      "DDTXSID60380390",
+      "DTXSID8051419",
+      "DTXSID90315130") &
+      level2$Date == "2020-01-08", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID1032646",
+      "DTXSID20179883",
+      "DTXSID30627108") &
+      level2$Date == "2020-01-08" &
+      level2$Note == "A", "Verified"] <- "Exclude"     
+    # 11/23/20:
+    level2[level2$DTXSID %in% c(
+      "DTXSID4059833") &
+      level2$Date == "2020-11-23", "Verified"] <- "Exclude"
+    # 11/24/20:
+    level2[level2$DTXSID %in% c(
+      "DTXSID0060985",
+      "DTXSID20375106",
+      "DTXSID30382104",
+      "DTXSID90315130") &
+      level2$Date == "2020-11-24", "Verified"] <- "Exclude"
+    # 02/25/21:
+    level2[level2$DTXSID %in% c(
+      "DTXSID8059926",
+      "DTXSID8059928") &
+      level2$Date == "2021-02-25", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID40880025",
+      "DTXSID50226894",
+      "DTXSID50379814") &
+      level2$Date == "2021-02-25" &
+      level2$Note == "A", "Verified"] <- "Exclude"   
+    # 03/01/21:
+    level2[level2$DTXSID %in% c(
+      "DTXSID20861913") &
+      level2$Date == "2021-03-01", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID30382063") &
+      level2$Date == "2021-03-01" &
+      level2$Note == "A", "Verified"] <- "Exclude"        
+    level2[level2$DTXSID %in% c(
+      "DTXSID00880026") &
+      level2$Date == "2021-03-01" &
+      level2$Note == "B", "Verified"] <- "Exclude"  
+    level2[level2$DTXSID %in% c(
+      "DTXSID00880026",
+      "DTXSID30382063") &
+      level2$Date == "2021-03-01" &
+      level2$Note == "C", "Verified"] <- "Exclude"  
+    # 03/08/21:
+    level2[level2$DTXSID %in% c(
+      "DTXSID5027140") &
+      level2$Date == "2021-03-08", "Verified"] <- "Exclude"
+    # 03/11/21:
+    level2[level2$DTXSID %in% c(
+      "DTXSID00379925",
+      "DTXSID40187142",
+      "DTXSID70165670",
+      "DTXSID70379917",
+      "DTXSID80380837",
+      "DTXSID80382154") &
+      level2$Date == "2021-03-11", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID70565479",
+      "DTXSID9059915") &
+      level2$Date == "2021-03-11" &
+      level2$Note == "A", "Verified"] <- "Exclude"   
+    # 04/02/21:
+    level2[level2$DTXSID %in% c(
+      "DTXSID90315130") &
+      level2$Date == "2021-04-02", "Verified"] <- "Exclude"
+    level2[level2$DTXSID %in% c(
+      "DTXSID30382063",
+      "DTXSID40880025",
+      "DTXSID50226894",
+      "DTXSID50379814") &
+      level2$Date == "2021-04-02" &
+      level2$Note == "A", "Verified"] <- "Exclude"     
+    # 06/03/21:
+    level2[level2$DTXSID %in% c(
+      "DTXSID00880026",
+      "DTXSID70565479") &
+      level2$Date == "2021-06-03" &
+      level2$Note == "C", "Verified"] <- "Exclude"      
+                      
+    write.table(level2,
+      file="SmeltzPFAS/SmeltzPFAS-PPB-UC-Level2.tsv",
+      sep="\t",
+      row.names=F,
+      quote=F)
+       unique(subset(level2,DTXSID=="DTXSID00880026")$Date)
+   plot_fup_uc(level2,dtxsid="DTXSID00880026")
+   
+   
+   
+    level3 <- calc_fup_uc_point(FILENAME="SmeltzPFAS/SmeltzPFAS") 
+    
+    library(invitroTKstats)
+    setwd("c:/users/jwambaug/git/invitroTKstats/working/")
+    level4 <- calc_fup_uc(FILENAME="SmeltzPFAS/SmeltzPFAS") 
