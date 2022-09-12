@@ -4,7 +4,13 @@
 \alias{calc_clint}
 \title{Calculate intrinsic hepatic clearance}
 \usage{
-calc_clint(FILENAME, good.col = "Verified")
+calc_clint(
+  FILENAME,
+  good.col = "Verified",
+  decrease.prob = 0.5,
+  saturate.prob = 0.25,
+  degrade.prob = 0.05
+)
 }
 \arguments{
 \item{FILENAME}{A string used to identify the input file, whatever the
@@ -12,6 +18,15 @@ argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")}
 
 \item{good.col}{Name of a column indicating which rows have been verified for 
 analysis, indicated by a "Y" (Defaults to "Verified")}
+
+\item{decrease.prob}{Prior probability that a chemical will decrease in
+the assay (defaults to 0.5)}
+
+\item{saturate.prob}{Prior probability that a chemicals rate of metabolism
+will decrease between 1 and 10 uM (defaults to 0.25)}
+
+\item{degrade.prob}{Prior probability that a chemical will be unstable
+(that is, degrade abiotically) in the assay (defaults to 0.05)}
 }
 \value{
 \item{data.frame}{A data.frame in standardized format}

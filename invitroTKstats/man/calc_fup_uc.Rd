@@ -11,21 +11,6 @@ calc_fup_uc(
   NUM.CHAINS = 5,
   NUM.CORES = 2,
   RANDOM.SEED = 1111,
-  sample.col = "Lab.Sample.Name",
-  lab.compound.col = "Lab.Compound.Name",
-  dtxsid.col = "DTXSID",
-  date.col = "Date",
-  compound.col = "Compound.Name",
-  area.col = "Area",
-  series.col = "Series",
-  type.col = "Sample.Type",
-  compound.conc.col = "Nominal.Conc",
-  cal.col = "Cal",
-  dilution.col = "Dilution.Factor",
-  istd.col = "ISTD.Area",
-  istd.name.col = "ISTD.Name",
-  istd.conc.col = "ISTD.Conc",
-  nominal.test.conc.col = "Test.Target.Conc",
   good.col = "Verified"
 )
 }
@@ -46,6 +31,8 @@ of convergence according to Gelman and Rubin diagnostic.}
 
 \item{RANDOM.SEED}{The seed used by the random number generator 
 (default 1111)}
+
+\item{JAGS.PATH}{The file path to JAGS.}
 
 \item{sample.col}{Which column of PPB.data indicates the unique mass 
 spectrometry (MS) sample name used by the laboratory. (Defaults to 
@@ -76,7 +63,7 @@ above)(Defaults to "Sample.Type")}
 instance different machines on the same day or different days with the same
 MS analyzer (Defaults to "Cal")
 
-#param compound.conc.col Which column indictes the intended concentration 
+#param std.conc.col Which column indictes the intended concentration 
 of the test chemical for calibration curves (Defaults to "Standard.Conc")}
 
 \item{dilution.col}{Which column of PPB.data indicates how many times the
@@ -91,10 +78,8 @@ internal standard (Defaults to "ISTD.Name")}
 \item{istd.conc.col}{Which column of PPB.data indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{nominal.test.conc.col}{Which column of PPB.data indicates the intended
-test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
-
-\item{JAGS.PATH}{The file path to JAGS.}
+\item{uc.assay.conc.col}{Which column of PPB.data indicates the intended
+test chemical concentration at time zero (Defaults to "UC.Assay.Conc")}
 }
 \value{
 A data.frame containing quunantiles of the Bayesian posteriors

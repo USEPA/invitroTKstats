@@ -59,7 +59,7 @@
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
 #' 
-#' #param std.conc.col Which column indictes the intended concentration 
+#' @param std.conc.col Which column indictes the intended concentration 
 #' of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")
 #' 
 #' @param dilution If this argument is used (defaults to NULL) every 
@@ -169,7 +169,7 @@ format_fup_uc <- function(PPB.data,
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
-  note.col=NULL 
+  note.col="Note"
   )
 {  
   PPB.data <- as.data.frame(PPB.data)
@@ -275,7 +275,7 @@ format_fup_uc <- function(PPB.data,
     note.col
     )
   
-  # calculate the reponse:
+  # calculate the response:
   PPB.data[,"Response"] <- signif(as.numeric(PPB.data[,area.col]) /
      as.numeric(PPB.data[,istd.col]) * as.numeric(PPB.data[,istd.conc.col]),4)
   

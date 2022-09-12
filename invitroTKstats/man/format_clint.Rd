@@ -29,15 +29,18 @@ format_clint(
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
   istd.conc.col = "ISTD.Conc",
-  conc.col = "Conc",
-  conc = NULL,
+  std.conc = NULL,
+  std.conc.col = "Standard.Conc",
+  clint.assay.conc = NULL,
+  clint.assay.conc.col = "Clint.Assay.Conc",
   area.col = "Area",
   analysis.method = NULL,
   analysis.method.col = "Analysis.Method",
   analysis.instrument = NULL,
   analysis.instrument.col = "Analysis.Instrument",
   analysis.parameters = NULL,
-  analysis.parameters.col = "Analysis.Parameters"
+  analysis.parameters.col = "Analysis.Parameters",
+  note.col = NULL
 )
 }
 \arguments{
@@ -111,11 +114,6 @@ corresponding column in input.table (if present) is ignored.}
 \item{istd.conc.col}{Which column of input.data indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{conc.col}{Which column of clint.data indicates the intended
-test chemical concentration 
-(units if uM) of
-at time zero (Defaults to "Conc")}
-
 \item{area.col}{Which column of input.data indicates the target analyte (that 
 is, the test compound) MS peak area (Defaults to "Area")}
 
@@ -145,6 +143,11 @@ parameters used to identify the compound on the chemical analysis instrument,
 for example 
 "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 (Defaulys to "Analysis.Paramaters").}
+
+\item{conc.col}{Which column of clint.data indicates the intended
+test chemical concentration 
+(units if uM) of
+at time zero (Defaults to "Conc")}
 
 \item{input.data}{A data frame containing mass-spectrometry peak areas,
 indication of chemical identiy, and measurment type. The data frame should
@@ -183,6 +186,8 @@ of these types:
 \tabular{rrrrr}{
   Blank \tab Blank\cr
   Hepatocyte inciubation concentration \tab Cvst\cr
+  Inactivated Hepatocytes \tab Inactive\cr
+  Calibration Curve \tab CC\cr
 }
 Chemical concentration is calculated qualitatively as a response:
 

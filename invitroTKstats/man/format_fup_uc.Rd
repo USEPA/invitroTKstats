@@ -15,15 +15,24 @@ format_fup_uc(
   area.col = "Area",
   series.col = "Series",
   type.col = "Sample.Type",
-  compound.conc.col = "Nominal.Conc",
+  std.conc = NULL,
+  std.conc.col = "Standard.Conc",
+  cal = NULL,
   cal.col = "Cal",
+  dilution = NULL,
   dilution.col = "Dilution.Factor",
   istd.col = "ISTD.Area",
+  istd.name = NULL,
   istd.name.col = "ISTD.Name",
+  istd.conc = NULL,
   istd.conc.col = "ISTD.Conc",
-  nominal.test.conc.col = "Test.Target.Conc",
+  uc.assay.conc = NULL,
+  uc.assay.conc.col = "UC.Assay.Conc",
+  analysis.method = NULL,
   analysis.method.col = "Analysis.Method",
+  analysis.instrument = NULL,
   analysis.instrument.col = "Analysis.Instrument",
+  analysis.parameters = NULL,
   analysis.parameters.col = "Analysis.Parameters",
   note.col = NULL
 )
@@ -62,12 +71,20 @@ a simultaneous replicate with the same analytical chemistry
 \item{type.col}{Which column of PPB.data indicates the sample type (see table
 above)(Defaults to "Sample.Type")}
 
+\item{std.conc.col}{Which column indictes the intended concentration 
+of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")}
+
+\item{cal}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
 \item{cal.col}{Which column of PPB.data indicates the MS calibration -- for
 instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")
+MS analyzer (Defaults to "Cal")}
 
-#param compound.conc.col Which column indictes the intended concentration 
-of the test chemical for calibration curves (Defaults to "Standard.Conc")}
+\item{dilution}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
 
 \item{dilution.col}{Which column of PPB.data indicates how many times the
 sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
@@ -75,23 +92,47 @@ sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
 \item{istd.col}{Which column of PPB.data indicates the MS peak area for the
 internal standard (Defaults to "ISTD.Area")}
 
+\item{istd.name}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
 \item{istd.name.col}{Which column of PPB.data indicates identity of the 
 internal standard (Defaults to "ISTD.Name")}
 
-\item{istd.conc.col}{Which column of PPB.data indicates the concentration of
-the internal standard (Defaults to "ISTD.Conc")}
+\item{istd.conc}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
 
-\item{nominal.test.conc.col}{Which column of PPB.data indicates the intended
-test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
+\item{istd.conc.col}{Which column of PPB.data indicates the concentration of
+the internal standard in uM (Defaults to "ISTD.Conc")}
+
+\item{uc.assay.conc}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
+\item{uc.assay.conc.col}{Which column indicates the intended initial
+test chemical concentration in the UC assay in uM (Defaults to "Test.Target.Conc")}
+
+\item{analysis.method}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
 
 \item{analysis.method.col}{Which column of PPB.data indicates the analytical
 chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
 "Analysis.Method")}
 
+\item{analysis.instrument}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
+
 \item{analysis.instrument.col}{Which column of PPB.data indicates the 
 instrument used for chemical analysis, for example 
 "Agilent 6890 GC with model 5973 MS" (Defaults to 
 "Analysis.Instrument")}
+
+\item{analysis.parameters}{If this argument is used (defaults to NULL) every 
+observation in the table is assigned the value of the argument and the 
+corresponding column in input.table (if present) is ignored.}
 
 \item{analysis.parameters.col}{Which column of PPB.data indicates the 
 parameters used to identify the compound on the chemical analysis instrument,
@@ -128,7 +169,7 @@ level0 <- kreutz2020
 level1 <- format_fup_uc(level0,
   FILENAME="Kreutz2020",
   compound.col="Name",
-  compound.conc.col="Standard.Conc",
+  std.conc.col="Standard.Conc",
   area.col="Chem.Area"
   )
 

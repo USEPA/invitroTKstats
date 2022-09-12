@@ -34,12 +34,6 @@ of these types:
   Time zero plasma concentration \tab T0\cr
 }
 }
-\examples{
-
-}
-\references{
-
-}
 \author{
 John Wambaugh
 }

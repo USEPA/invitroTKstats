@@ -4,7 +4,7 @@
 \alias{plot_fup_uc}
 \title{Plot Mass Spec. Response for Measurment of Fraction Unbound in Plasma (UC)}
 \usage{
-plot_fup_uc(level2, dtxsid)
+plot_fup_uc(level2, dtxsid, good.col = "Verified")
 }
 \arguments{
 \item{level2}{A data.frame containing level2 data for fraction unbound in
@@ -33,12 +33,6 @@ of these types:
   Phosphate-buffered well concentration\tab PBS\cr
   Time zero plasma concentration \tab T0\cr
 }
-}
-\examples{
-
-}
-\references{
-
 }
 \author{
 John Wambaugh

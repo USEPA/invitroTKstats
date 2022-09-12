@@ -278,7 +278,7 @@ format_clint <- function(clint.data,
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
-  note.col=NULL
+  note.col="Note"
   )
 {
   clint.data <- as.data.frame(clint.data)
