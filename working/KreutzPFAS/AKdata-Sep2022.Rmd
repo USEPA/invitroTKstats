@@ -84,7 +84,7 @@ vignette: >
 
 ```
 # Previously made scripts to load some data:
-```{r set_working_directory, eval = TRUE}   
+```{r set_working_directory, eval = FALSE}   
   suppressMessages(source("uc-test-AK.R"))
   all.data$Analysis.Parameters <- apply(all.data,1,function(x) paste("Analyte RT",x[11],"ISTD RT:",x[15]))
 #  all.data$DTXSID <- NULL
@@ -148,19 +148,19 @@ vignette: >
               "UC_513_268_275_812_121921.xlsx",
               "UC_763_945_274_964_464_477_479_final-ak.xlsx",
               "UC_908_909_916_923_3117_final-baw.xlsx",
-              "UC_959_949_final-ak.xlsx",
-              "021220_915_965_476_267_906_273_913_899_900_analysis_090920")
+              "UC_959_949_final-ak.xlsx"
+              )
 ```
 
 # Figure out the test chemical information:
 ```{r UC_chem_info, eval=TRUE}
-    chem.start <- c(37, 37, 37)
+    chem.start <- c(37, 37, 37, 37, 38, 38)
     cheminfo <- NULL
     for (this.file in files)
     {
-      these.chems <- read_excel(this.file,
+      these.chems <- as.data.frame(read_excel(this.file,
                sheet=1,
-               skip = chem.start[which(files==this.file)])
+               skip = chem.start[which(files==this.file)]))
       these.chems <- as.data.frame(subset(these.chems,
                             regexpr("DTXSID",Analyte)!=-1))
       this.reference <- NULL
@@ -173,13 +173,26 @@ vignette: >
           these.chems[this.row,"Reference Compound"] <- this.reference
         }
       }
+      this.istd <- NULL
+      for (this.row in 1:dim(these.chems)[1])
+      {
+        if (!is.na(these.chems[this.row,"IS"]))
+        {
+          this.istd<- these.chems[this.row,"IS"]
+        } else {
+          these.chems[this.row,"IS"] <- this.istd
+        }
+      }
       these.chems$File <- this.file
       this.date <- suppressWarnings(suppressMessages(as.data.frame(
         read_excel(this.file,
                sheet=1,
                col_types="date",
                skip = 3))))[1,2]
+      if (this.file == "UC_908_909_916_923_3117_final-baw.xlsx") this.date <- "2019-09-01"
       these.chems$Date <- this.date
+      if (!("Flags" %in% colnames(these.chems))) these.chems$Flags <- NA
+      if (!is.null(cheminfo)) these.chems <- these.chems[,colnames(cheminfo)]
       cheminfo <- rbind(cheminfo,these.chems)
     }
 
@@ -225,7 +238,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
     UC.data <- NULL
     
     for (this.file in files)
-      if (this.file != "UC_474_760_3096_final.xlsx")
+      if ("Data" %in% excel_sheets(this.file))
       {
           these.chems <- subset(cheminfo,File==this.file)
           for (this.chem in unique(
@@ -431,6 +444,7 @@ write.table(UC.data,file="KreutzPFAS-PPB-UC-Level0.tsv",sep="\t",row.names=FALSE
       uc.assay.conc.col="UC.Assay.T0.Conc"
       )
 
+    level1 <- rbind(level1,level1.May2020,level1.Dec2020)
     level2 <- level1
     # Taking all data in spreadsheet as human verified for starters
     level2$Verified <- "Y"
