@@ -296,12 +296,20 @@ calc_fup_uc <- function(PPB.data,
       for (this.series in unique(MSdata[,series.col]))
         if (!is.na(this.series))
         {
-          this.series.subset <- subset(MSdata,Series==this.series)
-          if (!all(c("T1","T5","AF") %in% this.series.subset[,type.col]))
-          {
-            MSdata <- subset(MSdata,MSdata[,series.col]!=this.series)
-            print(paste("Dropped series",this.series,"for incomplete data."))
-          } 
+          this.series.subset <- subset(MSdata,MSdata[,series.col]==this.series)
+          for (this.cal in unique(this.series.subset[,cal.col]))
+            if (!is.na(this.cal))
+            {
+              this.cal.subset <- subset(this.series.subset,          
+                                      this.series.subset[,cal.col]==this.cal)            
+              if (!all(c("T1","T5","AF") %in% this.cal.subset[,type.col]))
+              {
+                MSdata <- subset(MSdata,MSdata[,series.col]!=this.series |
+                                 MSdata[,cal.col]!=this.cal)
+                print(paste("Dropped series",this.series,"from cal",
+                            this.cal,"for incomplete data."))
+              }
+            } 
         }
     
       if (any(MSdata[,type.col]=="CC") &

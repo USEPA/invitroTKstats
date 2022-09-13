@@ -778,6 +778,9 @@ dim(UC.data)
       )
 
     level1 <- rbind(level1,level1.May2020,level1.Jul2020,level1.Dec2020)
+```
+
+```{r create_level2, eval=TRUE}
     write.table(UC.data,file="KreutzPFAS-PPB-UC-Level1.tsv",sep="\t",row.names=FALSE)
     
     level2 <- level1
