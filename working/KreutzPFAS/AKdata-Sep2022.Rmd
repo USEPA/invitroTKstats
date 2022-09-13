@@ -30,6 +30,19 @@ vignette: >
     setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS")
 ``` 
 
+# Assumed dilution factors:
+```{r assay_information, eval=TRUE}
+    CC.DILUTE <- 1
+    BLANK.DILUTE <- 1
+    AF.DILUTE <- 2*4
+    T5.DILUTE <- 10*4
+    T1.DILUTE <- 10*4
+    ANALYSIS.METHOD <- "GCMS"
+    ANALYSIS.INSTRUMENT <- "Mystery GC"
+    ISTD.CONC <- 1 # uM
+    UC.ASSAY.T0.CONC <- 10 # uM
+```
+
 # Previously made scripts to load some data:
 ```{r set_working_directory, eval = TRUE}   
   suppressMessages(source("ak2.r"))
@@ -62,7 +75,7 @@ vignette: >
   AK.UCdata[AK.UCdata$Lab.Compound.Name=="913","Compound.Name"] <-
     "3-(Perfluoro-2-butyl)propane-1,2-diol"
   AK.UCdata[AK.UCdata$Lab.Compound.Name=="4NT","Compound.Name"] <- 
-    "4-Nitrotoluene"  
+    "4-nitrotoluene"  
   AK.UCdata[AK.UCdata$Lab.Compound.Name=="899","Compound.Name"] <- 
     "2-Aminohexafluoropropan-2-ol" 
   
@@ -70,6 +83,15 @@ vignette: >
   AK.UCdata[AK.UCdata$Cal=="2020-02-04","Cal"] <- "2020-02-05"
   AK.UCdata[AK.UCdata$Cal=="2020-02-24","Cal"] <- "2020-02-25"
 
+  AK.UCdata[AK.UCdata$Type=="CC","Dilution.Factor"] <- CC.DILUTE
+  AK.UCdata[AK.UCdata$Type=="AF","Dilution.Factor"] <- AF.DILUTE
+  AK.UCdata[AK.UCdata$Type=="T1","Dilution.Factor"] <- T1.DILUTE
+  AK.UCdata[AK.UCdata$Type=="T5","Dilution.Factor"] <- T5.DILUTE
+  AK.UCdata$Level0.File <- "21220_915_965_476_267_906_273_913_899_900_analysis_090920.xlsx"
+  AK.UCdata$Level0.Sheet <- "UC Data"
+  AK.UCdata[AK.UCdata$Cal=="2020-02-25","Level0.Sheet"] <- "899_Data0225"
+  AK.UCdata$Target.Conc <- AK.UCdata$Target.Conc/1000
+  
   level1.Dec2020 <- format_fup_uc(AK.UCdata,
     FILENAME="Kreutz2020",
     sample.col="Name",
@@ -84,15 +106,18 @@ vignette: >
 
 ```
 # Previously made scripts to load some data:
-```{r set_working_directory, eval = FALSE}   
+```{r set_working_directory, eval = TRUE}   
   suppressMessages(source("uc-test-AK.R"))
-  all.data$Analysis.Parameters <- apply(all.data,1,function(x) paste("Analyte RT",x[11],"ISTD RT:",x[15]))
-#  all.data$DTXSID <- NULL
-#  all.data[all.data$Name=="Heptafluorobutyramide","DTXSID"] <- "DTXSID2060965" 
-#  all.data[all.data$Name=="Nonafluoropentanamide","DTXSID"] <- "DTXSID60400587" 
-#  all.data[all.data$Name=="Perfluoropentanamide","DTXSID"] <- "DTXSID70366226" 
-#  all.data[all.data$Name=="Octafluoroadipamide","DTXSID"] <- "DTXSID80310730" 
-#  all.data[all.data$Name=="Perfluorooctanamide","DTXSID"] <- "DTXSID60195123"  
+  all.data$Analysis.Parameters <- apply(all.data,1,function(x) paste(
+    "Analyte RT",
+    signif(as.numeric(x[11]),5),
+    "ISTD RT:",
+    signif(as.numeric(x[15]),6)))
+  all.data$Level0.File <- "120619_PFAS_PPB_Amides_UC_AK_072020.xlsx"
+  all.data$Level0.Sheet <- "102919RawOutput"
+  all.data[all.data$Cal=="110119","Level0.Sheet"] <- "110119RawOutput"
+  all.data[all.data$Cal=="121019","Level0.Sheet"] <- "121019RawOutput"
+  all.data$Standard.Conc <- all.data$Standard.Conc/1000
   
   level1.Jul2020 <- format_fup_uc(all.data,
                                   uc.assay.conc = 10, 
@@ -112,13 +137,19 @@ vignette: >
   all.data[all.data$Compound.Name=="PFOS","DTXSID"] <- "DTXSID3031864"
   all.data$Compound.Name <- "Perfluorooctanoic acid"
   all.data[all.data$DTXSID == "DTXSID3031864","Compound.Name"] <- "Perfluorooctanesulfonic acid"
+  all.data$Level0.File <- "20200402_PFAS_UC_PFOA_PFOS.xlsx"
+  all.data$Level0.Sheet <- "PFOA 4-12-19"
+  all.data[all.data$Cal=="100119","Level0.Sheet"] <- "PFOA 10-1-19"
+  all.data[all.data$Cal=="072319","Level0.Sheet"] <- "PFOS 7-23-19"
+  all.data[all.data$Cal=="010720","Level0.Sheet"] <- "PFOS 1-7-2020"
+    
   level1.May2020 <- format_fup_uc(all.data,
                                   uc.assay.conc = 10, 
                                   area.col = "Area", 
                                   sample.col="Name",
                                   note.col="Sample.Text",
                                   compound.col="Compound.Name",
-                                  std.conc.col="Std..Conc",
+                                  std.conc.col="Std. Conc",
                                   analysis.parameters="RT",
                                   analysis.method="GCMS",
                                   analysis.instrument="Mystery GCMS",
@@ -128,18 +159,6 @@ vignette: >
                                   istd.conc=1)
 ```
 
-# Assumed dilution factors:
-```{r assay_information, eval=TRUE}
-    CC.DILUTE <- 1
-    BLANK.DILUTE <- 1
-    AF.DILUTE <- 2*4
-    T5.DILUTE <- 10*4
-    T1.DILUTE <- 10*4
-    ANALYSIS.METHOD <- "GCMS"
-    ANALYSIS.INSTRUMENT <- "Mystery GC"
-    ISTD.CONC <- 1 # uM
-    UC.ASSAY.T0.CONC <- 10 # uM
-```
 
     # list the data files:
 ```{r UC_data_files, eval=TRUE}
@@ -147,14 +166,14 @@ vignette: >
               "UC_503_507_516_501_505_521_510_120721.xlsx",
               "UC_513_268_275_812_121921.xlsx",
               "UC_763_945_274_964_464_477_479_final-ak.xlsx",
-              "UC_908_909_916_923_3117_final-baw.xlsx",
-              "UC_959_949_final-ak.xlsx"
+              "UC_959_949_final-ak.xlsx",
+              "UC_971_3135_941_902_956_3145_969_final_020322.xlsx"
               )
 ```
 
 # Figure out the test chemical information:
 ```{r UC_chem_info, eval=TRUE}
-    chem.start <- c(37, 37, 37, 37, 38, 38)
+    chem.start <- c(37, 37, 37, 37, 38, 37)
     cheminfo <- NULL
     for (this.file in files)
     {
@@ -206,7 +225,7 @@ for (this.file in files)
 {
   this.control <-
     data.frame(
-      Analyte = "DTXSID70160387",
+      Analyte = "DTXSID5023792",
       Name = "4-nitrotoluene",
       'Sample ID' = "4NT",
       IS = "13C6-4-nitrotoluene",
@@ -252,6 +271,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
           ISTD.OFFSET <- 7
           ANALYTE.RT.OFFSET <- 3
           ISTD.RT.OFFSET <- 6
+          this.sheet <- "Data"
           if (!(start.col.name %in% colnames(these.data)))
           {
             these.data <- as.data.frame(
@@ -261,6 +281,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
             ISTD.OFFSET <- 6
             ANALYTE.RT.OFFSET <- 2
             ISTD.RT.OFFSET <- 5
+            this.sheet <- "7bData"
           }
           first.col <- which(colnames(these.data)==start.col.name)   
           this.chem.data <- these.data[
@@ -285,13 +306,15 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
             signif(suppressWarnings(as.numeric(
               these.data[,first.col+ISTD.RT.OFFSET],5)))
             )
+          this.chem.data$Level0.File <- this.file
+          this.chem.data$Level0.Sheet <- this.sheet
         UC.data <- rbind(UC.data,this.chem.data)
         }
       }  
 ```
 
 # Handle the data for "UC_474_760_3096_final.xlsx"
-```{r UC_final_four, eval=TRUE}
+```{r UC_UC_474_760_3096_final, eval=TRUE}
   this.file <- "UC_474_760_3096_final.xlsx"
   these.chems <- subset(cheminfo,File==this.file)
   new.data <- NULL
@@ -357,7 +380,284 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
             signif(suppressWarnings(as.numeric(
               new.data[,24],5)))
             )
+  this.chem.data$Level0.File <- this.file
+  this.chem.data$Level0.Sheet <- sapply(this.chem.data$Lab.Compound.Name,
+                                        function(x)
+                                          paste(x,"Raw",sep=""))
   UC.data <- rbind(UC.data,this.chem.data)  
+  dim(UC.data)
+```
+
+# Handle the data for "763_945_274_964_464_477_479_final-ak.xlsx"
+```{r UC_763_945_274_964_464_477_479_final-ak, eval=TRUE}
+  this.file <- "UC_763_945_274_964_464_477_479_final-ak.xlsx"
+  this.file.data <- NULL
+  these.chems <- subset(cheminfo,File==this.file)
+
+# Some, but not all data are on individual sheets:
+  this.chem <- "477"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="477rerun_raw")))
+  this.chem.data <- these.data[,
+    c(14,17,10,3,7,4)]
+  colnames(this.chem.data) <- c(
+    "Area","ISTD.Area","NominConc","Lab.Sample.Name","Type","Note")
+  this.chem.data$Analysis.Parameters <- paste(
+    "Analyte RT:",
+    signif(suppressWarnings(as.numeric(
+    these.data[,13],5))),
+    "ISTD RT:",
+    signif(suppressWarnings(as.numeric(
+    these.data[,16],5)))
+    )
+  this.chem.data$Level0.Sheet <- "477rerun_raw"
+  this.chem.data$Lab.Compound.Name <- this.chem
+  this.chem.data$Note <- "477rerun"
+  this.file.data <- this.chem.data
+  
+  this.chem <- "4NT"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="4NT_raw")))
+  this.chem.data <- these.data[,c(13,20,9,3,8,5)]
+  colnames(this.chem.data) <- c(
+    "Area","ISTD.Area","NominConc","Lab.Sample.Name","Type","Note")
+  this.chem.data$Analysis.Parameters <- paste(
+    "Analyte RT:",
+    signif(suppressWarnings(as.numeric(
+    these.data[,12],5))),
+    "ISTD RT:",
+    signif(suppressWarnings(as.numeric(
+    these.data[,19],5)))
+    )
+  this.chem.data$Level0.Sheet <- "4NT_raw"
+# Need to map cal curve levels back to concentrations:
+  CC.levels <- c(5000,
+    3500,
+    2500,
+    1500,
+    800,
+    500,
+    350,
+    200,
+    125,
+    80,
+    50,
+    30,
+    20,
+    12,
+    7)
+  names(CC.levels) <- as.character(seq(15,1,-1))
+  this.chem.data[,"NominConc"] <- sapply(this.chem.data$NominConc,
+                                         function(x) CC.levels[x])
+  this.chem.data$Lab.Compound.Name <- this.chem
+
+  this.file.data <- rbind(this.file.data,this.chem.data)
+  
+  # Four chemicals on sheet G4B_raw:
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="G4B_raw")))
+
+  for (this.chem in c("964","464","477","479"))
+  {
+    start.col <- which(colnames(these.data) == paste(this.chem,"Results"))
+    this.chem.data <- these.data[,c(start.col+3,start.col+6,8,3,7,4)]
+    colnames(this.chem.data) <- c(
+    "Area","ISTD.Area","NominConc","Lab.Sample.Name","Type","Note")
+    this.chem.data[,"NominConc"] <- sapply(this.chem.data$NominConc,
+                                           function(x) CC.levels[x])
+    this.chem.data$Analysis.Parameters<-apply(these.data,1,function(x)
+      paste("Analyte RT:",
+            signif(as.numeric(x[start.col+3]),5),
+            "ISTD RT:",
+            signif(as.numeric(x[start.col+6]),5)))
+    this.chem.data$Level0.Sheet <- "G4B_raw"
+    this.chem.data$Lab.Compound.Name <- this.chem
+    this.file.data <- rbind(this.file.data,this.chem.data)
+  }
+  
+  # Three chemicals on sheet G4A_raw:
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="G4A_raw")))
+
+  for (this.chem in c("763","945","274"))
+  {
+    start.col <- which(colnames(these.data) == paste(this.chem,"Results"))
+    this.chem.data <- these.data[,c(start.col+3,start.col+6,8,3,7,4)]
+    colnames(this.chem.data) <- c(
+    "Area","ISTD.Area","NominConc","Lab.Sample.Name","Type","Note")
+    this.chem.data[,"NominConc"] <- sapply(this.chem.data$NominConc,
+                                           function(x) CC.levels[x])
+    this.chem.data$Analysis.Parameters<-apply(these.data,1,function(x)
+      paste("Analyte RT:",
+            signif(as.numeric(x[start.col+3]),5),
+            "ISTD RT:",
+            signif(as.numeric(x[start.col+6]),5)))
+    this.chem.data$Level0.Sheet <- "G4A_raw"
+    this.chem.data$Lab.Compound.Name <- this.chem
+    this.file.data <- rbind(this.file.data,this.chem.data)
+  }
+  
+  this.file.data<- subset(this.file.data,Type!="Type")
+
+  this.file.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+  for (this.chem in unique(this.file.data$Lab.Compound.Name))
+  {
+    which.rows <- this.file.data$Lab.Compound.Name == this.chem 
+    chem.index <- which(these.chems$`Sample ID` == this.chem)
+# Get rid of column header rows:
+    this.file.data[which.rows, "Compound.Name"] <- these.chems[
+      chem.index,"Name"]
+    this.file.data[which.rows, "Lab.Compound.Name"] <- this.chem
+    this.file.data[which.rows, "DTXSID"] <- these.chems[
+      chem.index,"Analyte"]
+    this.file.data[which.rows, "ISTD.Name"] <- these.chems[
+      chem.index,"IS"]
+    this.file.data[which.rows, "ISTD.Conc"] <- ISTD.CONC
+    this.file.data[which.rows, "Date"] <- these.chems[
+      chem.index,"Date"]
+  }
+  this.file.data$Cal <- this.file.data$Date
+  this.file.data$Level0.File <- this.file
+  this.file.data$Level0.Sheet <- "G4B_raw"
+  this.file.data[this.file.data$Lab.Compound.Name %in% c("763","945","274"),
+                 "Level0.Sheet"] <- "G4A_raw"
+  this.file.data[this.file.data$Lab.Compound.Name == "4NT", "Level0.Sheet"] <-
+    "4NT_raw"
+  this.file.data[is.na(this.file.data$Note),"Note"] <- ""
+  this.file.data[this.file.data$Note == "477rerun","Cal"] <- "070321"
+  this.file.data[this.file.data$Note == "477rerun","Date"] <- "070321"
+  this.file.data[this.file.data$Note == "477rerun","Level0.Sheet"] <- 
+    "477rerun_raw"
+  
+  
+  UC.data <- rbind(UC.data,this.file.data[,colnames(UC.data)])  
+  dim(UC.data)
+```
+# Handle the data for "UC_959_949_final-ak.xlsx"
+```{r UC_959_949_final-ak.xlsx, eval=TRUE}
+  this.file <- "UC_959_949_final-ak.xlsx"
+  this.file.data <- NULL
+  these.chems <- subset(cheminfo,File==this.file)
+
+  # Four chemicals on sheet G4B_raw:
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="RawData")))
+
+  for (this.chem in c("959","4NT","949"))
+  {
+    start.col <- which(colnames(these.data) == paste(this.chem,"Results"))
+    this.chem.data <- these.data[,c(start.col+1,start.col+4,4,1,3,2)]
+    colnames(this.chem.data) <- c(
+    "Area","ISTD.Area","NominConc","Lab.Sample.Name","Type","Note")
+    this.chem.data[,"NominConc"] <- sapply(this.chem.data$NominConc,
+                                           function(x) CC.levels[x])
+    this.chem.data$Analysis.Parameters<-apply(these.data,1,function(x)
+      paste("Analyte RT:",
+            signif(as.numeric(x[start.col+0]),5),
+            "ISTD RT:",
+            signif(as.numeric(x[start.col+5]),5)))
+    this.chem.data$Level0.Sheet <- "RawData"
+    this.chem.data$Lab.Compound.Name <- this.chem
+    this.file.data <- rbind(this.file.data,this.chem.data)
+  }
+
+  this.file.data<- subset(this.file.data,Type!="Type")
+
+  this.file.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+  for (this.chem in unique(this.file.data$Lab.Compound.Name))
+  {
+    which.rows <- this.file.data$Lab.Compound.Name == this.chem 
+    chem.index <- which(these.chems$`Sample ID` == this.chem)
+# Get rid of column header rows:
+    this.file.data[which.rows, "Compound.Name"] <- these.chems[
+      chem.index,"Name"]
+    this.file.data[which.rows, "Lab.Compound.Name"] <- this.chem
+    this.file.data[which.rows, "DTXSID"] <- these.chems[
+      chem.index,"Analyte"]
+    this.file.data[which.rows, "ISTD.Name"] <- these.chems[
+      chem.index,"IS"]
+    this.file.data[which.rows, "ISTD.Conc"] <- ISTD.CONC
+    this.file.data[which.rows, "Date"] <- these.chems[
+      chem.index,"Date"]
+  }
+  this.file.data$Cal <- this.file.data$Date
+
+  this.file.data$Level0.File <- this.file
+  this.file.data$Level0.Sheet <- "RawData"
+  UC.data <- rbind(UC.data,this.file.data[,colnames(UC.data)])  
+  dim(UC.data)
+```
+
+
+# Handle the data for "UC_971_3135_941_902_956_3145_969_final_020322.xlsx"
+```{r UC_971_3135_941_902_956_3145_969_final_020322, eval=TRUE}
+  this.file <- "UC_971_3135_941_902_956_3145_969_final_020322.xlsx"
+  this.file.data <- NULL
+  these.chems <- subset(cheminfo,File==this.file|"Sample ID"=="4NT")
+
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+                                skip=1,
+    sheet="All Raw data and Calcs")))
+
+  analyte.cols <- c("4NT...10","4:2FTOH...12","6:1FTOH...13","6:2FTOH...14",
+                    "4:4FTOH...15","8:2FTOH...16","7:3FTOH...17",
+                    "11:1FTOH...18")
+  chems <- c("4NT","4:2 FTOH aka 971","6:1 FTOH aka 3135",
+            "6:2 FTOH aka 941","4:4 FTOH aka 902","8:2 FTOH aka 956",
+            "7:3 FTOH aka 3145","11:1 FTOH aka 969")
+  istd.cols <- c("m4NT","m4:2 FTOH", "m6:2FTOH","m6:2FTOH","m6:2FTOH",
+            "m8:2FTOH","m8:2FTOH","m8:2FTOH")
+
+  for (chem.index in 1:8)
+  {
+    this.chem <- chems[chem.index]
+    this.chem.data <- these.data[,c(
+      which(colnames(these.data)==analyte.cols[chem.index]),
+      which(colnames(these.data)==istd.cols[chem.index]),
+                                    4, 2, 3, 1)]
+    colnames(this.chem.data) <- c(
+    "Area","ISTD.Area","NominConc","Lab.Sample.Name","Type","Note")
+    this.chem.data$Analysis.Parameters<-these.data[1,analyte.cols[chem.index]]
+    this.chem.data$Level0.Sheet <- "All Raw data and Calcs"
+    this.chem.data$Lab.Compound.Name <- this.chem
+    this.file.data <- rbind(this.file.data,this.chem.data)
+  }
+
+  this.file.data<- subset(this.file.data,!is.na(Type))
+  this.file.data<- subset(this.file.data,Type!="Sample")
+  this.file.data<- subset(this.file.data,!is.na(Lab.Sample.Name))
+  this.file.data[is.na(this.file.data$Note),"Note"]<-""
+
+  this.file.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+  for (this.chem in unique(this.file.data$Lab.Compound.Name))
+  {
+    which.rows <- this.file.data$Lab.Compound.Name == this.chem 
+    chem.index <- which(these.chems$`Sample ID` == this.chem)
+# Get rid of column header rows:
+    this.file.data[which.rows, "Compound.Name"] <- these.chems[
+      chem.index,"Name"]
+    this.file.data[which.rows, "Lab.Compound.Name"] <- this.chem
+    this.file.data[which.rows, "DTXSID"] <- these.chems[
+      chem.index,"Analyte"]
+    this.file.data[which.rows, "ISTD.Name"] <- these.chems[
+      chem.index,"IS"]
+    this.file.data[which.rows, "ISTD.Conc"] <- ISTD.CONC
+    this.file.data[which.rows, "Date"] <- these.chems[
+      chem.index,"Date"]
+  }
+  this.file.data$Cal <- this.file.data$Date
+
+  this.file.data$Analysis.Method <- "GCMS"
+  this.file.data$Analysis.Instrument <- "Mystery GCMS"
+  this.file.data$Level0.File <- this.file
+  this.file.data$Level0.Sheet <- "All Raw data and Calcs"
+  UC.data <- rbind(UC.data,this.file.data[,colnames(UC.data)])  
   dim(UC.data)
 ```
 
@@ -381,10 +681,33 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
     for (this.type in c("T1","T5","AF"))
     {
       this.string <- paste(this.type,this.replicate,sep="")
-      which.rows <- regexpr(this.string,
-                      unlist(UC.data[,"Lab.Sample.Name"]))!=-1
+      which.rows <- regexpr(tolower(this.string),
+                      tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1
+      which.rows <- which.rows | regexpr(tolower(this.string),
+                      tolower(unlist(UC.data[,"Type"])))!=-1
       UC.data[which.rows, "Sample.Type"] <- this.type
       UC.data[which.rows, "Replicate"] <- this.replicate
+      
+      for (this.series in 1:3)
+      {
+        this.string <- paste(this.type," S",this.series,this.replicate,sep="")
+        which.rows <- regexpr(tolower(this.string),
+                        tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1
+        which.rows <- which.rows | regexpr(tolower(this.string),
+                      tolower(unlist(UC.data[,"Type"])))!=-1
+        UC.data[which.rows, "Sample.Type"] <- this.type
+        UC.data[which.rows, "Replicate"] <- this.replicate
+        UC.data[which.rows, "Series"] <- this.series
+        
+        this.string <- paste(this.type,"S",this.series,this.replicate,sep="")
+        which.rows <- regexpr(tolower(this.string),
+                        tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1
+        which.rows <- which.rows | regexpr(tolower(this.string),
+                      tolower(unlist(UC.data[,"Type"])))!=-1
+        UC.data[which.rows, "Sample.Type"] <- this.type
+        UC.data[which.rows, "Replicate"] <- this.replicate
+        UC.data[which.rows, "Series"] <- this.series
+      }
     }
 
   # Annotate series:
@@ -397,7 +720,19 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
   }
     
   UC.data[UC.data$Type == "Cal","Sample.Type"] <- "CC"
+  which.rows <- regexpr("cc",
+                  tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1
+  which.rows <- which.rows | regexpr("cc",
+                  tolower(unlist(UC.data[,"Type"])))!=-1
+  UC.data[which.rows,"Sample.Type"] <- "CC"
+  
   UC.data[UC.data$Type == "MatrixBlank","Sample.Type"] <- "Blank"
+  which.rows <- regexpr("mb",
+                  tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1
+  which.rows <- which.rows | regexpr("mb",
+                  tolower(unlist(UC.data[,"Type"])))!=-1
+  UC.data[which.rows,"Sample.Type"] <-  "Blank"
+  
 
   # Get rid of unused samples (QC samples):
   UC.data <- subset(UC.data,!is.na(Sample.Type))
@@ -428,7 +763,6 @@ UC.data <- subset(UC.data,!(Sample.Type=="CC" & is.na(Std.Conc)))
     
 dim(UC.data)
     
-write.table(UC.data,file="KreutzPFAS-PPB-UC-Level0.tsv",sep="\t",row.names=FALSE)
 ```
 
 ```{r format_and_annotate, eval=TRUE}
@@ -444,7 +778,9 @@ write.table(UC.data,file="KreutzPFAS-PPB-UC-Level0.tsv",sep="\t",row.names=FALSE
       uc.assay.conc.col="UC.Assay.T0.Conc"
       )
 
-    level1 <- rbind(level1,level1.May2020,level1.Dec2020)
+    level1 <- rbind(level1,level1.May2020,level1.Jul2020,level1.Dec2020)
+    write.table(UC.data,file="KreutzPFAS-PPB-UC-Level1.tsv",sep="\t",row.names=FALSE)
+    
     level2 <- level1
     # Taking all data in spreadsheet as human verified for starters
     level2$Verified <- "Y"
@@ -462,6 +798,10 @@ write.table(UC.data,file="KreutzPFAS-PPB-UC-Level0.tsv",sep="\t",row.names=FALSE
       which.rows[is.na(which.rows)] <- FALSE
       level2[which.rows,"Verified"] <- "JFW: Excluded for no response"
     }
+    
+    # No cal curve 4NT (Nom.Conc >0, Area = 0):
+    which.rows <- level2$Lab.Sample.Name == "4NT" & level2$Area == 0
+    level2[which.rows,"Verified"] <- "JFW: likely not analyzed"
     
     write.table(level2,
       file="KreutzPFAS-PPB-UC-Level2.tsv",
