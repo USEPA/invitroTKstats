@@ -711,7 +711,6 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
     }
 
   # Annotate series:
-  UC.data$Series <- NA
   for (this.series in 1:3)
   {
     this.string <- paste("S",this.series,sep="")
@@ -791,6 +790,17 @@ dim(UC.data)
       level2$Date == "2021-10-06"
     level2[which.rows,"Verified"] <- "AK: something appears off w/ AFS2a"
 
+    # From Anna:
+    # UC_971_3135_941_902_956_3145_969_final_020322.xlsx
+    # something appears off w/ AFS1a- exclude
+    which.rows <- level2$Date=="2021-09-13" &
+      level2$DTXSID %in% c("DTXSID1062122","DTXSID5044572") &
+      level2$Sample.Type=="AF" &
+      level2$Series == 1
+
+    level2[which(which.rows)[seq(1,length(which(which.rows)),3)],"Verified"] <- 
+      "AK: something appears off w/ AFS1a"
+    
     # If not response in assay sample assume bad:
     for (this.type in c("T1","T5"))
     {
