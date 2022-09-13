@@ -147,7 +147,8 @@ calc_fup_uc <- function(PPB.data,
   NUM.CHAINS=5, 
   NUM.CORES=2,
   RANDOM.SEED=1111,
-  good.col="Verified"
+  good.col="Verified",
+  JAGS.PATH = NA
   )
 {
 
@@ -292,6 +293,17 @@ calc_fup_uc <- function(PPB.data,
         sep=""))
       MSdata <- PPB.data[PPB.data[,compound.col]==this.compound,]
     
+      for (this.series in unique(MSdata[,series.col]))
+        if (!is.na(this.series))
+        {
+          this.series.subset <- subset(MSdata,Series==this.series)
+          if (!all(c("T1","T5","AF") %in% this.series.subset[,type.col]))
+          {
+            MSdata <- subset(MSdata,MSdata[,series.col]!=this.series)
+            print(paste("Dropped series",this.series,"for incomplete data."))
+          } 
+        }
+    
       if (any(MSdata[,type.col]=="CC") &
           any(MSdata[,type.col]=="T1") &
           any(MSdata[,type.col]=="T5") &
@@ -392,7 +404,7 @@ calc_fup_uc <- function(PPB.data,
           psrf.target = 1.05,
           thin.sample=2000,
           data = mydata,
-          jags = findjags(),
+          jags = findjags(look_in=JAGS.PATH),
           monitor = c(
             'Fup',
             'C.thresh',

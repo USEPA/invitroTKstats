@@ -815,7 +815,7 @@ dim(UC.data)
     
     # Can't work without peak for ISTD:
     which.rows <- level2$ISTD.Area == 0
-    level2[which.rows,"Verified]"] <- "JFw: Excluded, no ISTD peak"
+    level2[which.rows,"Verified"] <- "JFw: Excluded, no ISTD peak"
     
     
     write.table(level2,
@@ -839,6 +839,6 @@ dim(UC.data)
 ```{r Bayes, eval=TRUE}
     
     library(invitroTKstats)
-    setwd("c:/users/jwambaug/git/invitroTKstats/working/")
-    level4 <- calc_fup_uc(FILENAME="KreutzPFAS") 
+    setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS/")
+    level4 <- calc_fup_uc(FILENAME="KreutzPFAS", NUM.CORES=12) 
 ```
