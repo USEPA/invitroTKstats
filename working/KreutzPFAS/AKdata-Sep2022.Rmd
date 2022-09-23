@@ -32,13 +32,13 @@ vignette: >
 
 # Assumed dilution factors:
 ```{r assay_information, eval=TRUE}
-    CC.DILUTE <- 1
-    BLANK.DILUTE <- 1
+    CC.DILUTE <- 1*4
+    BLANK.DILUTE <- 1*4
     AF.DILUTE <- 2*4
     T5.DILUTE <- 10*4
     T1.DILUTE <- 10*4
     ANALYSIS.METHOD <- "GCMS"
-    ANALYSIS.INSTRUMENT <- "Mystery GC"
+    ANALYSIS.INSTRUMENT <- "Agilent 8890 GC w 7010 triple quadrupole"
     ISTD.CONC <- 1 # uM
     UC.ASSAY.T0.CONC <- 10 # uM
 ```
@@ -105,6 +105,57 @@ vignette: >
     )
 
 ```
+```{r extract_899_900, eval=TRUE}
+this.file <- "021220_915_965_476_267_906_273_913_899_900_analysis_090920.xlsx"
+this.sheet <- "899&900 Data"
+analytes <- as.data.frame(read_excel(this.file, sheet=this.sheet,skip=1))
+mfoet <-as.data.frame( read_excel(this.file, sheet="ControlChart_899&900_MFOET",skip=1))
+this.data <- merge(analytes,mfoet)
+this.chem.data <- this.data[,c("Name","Type","Acq. Date-Time","Area...17","RT...16","Resp.","Level")]
+this.chem.data[regexpr("CC",this.chem.data$Name)!=-1,"Sample.Type"] <- "CC"
+this.chem.data[regexpr("Blank",this.chem.data$Name)!=-1,"Sample.Type"] <- "CC"
+this.chem.data[regexpr("AF",this.chem.data$Name)!=-1,"Sample.Type"] <- "AF"
+this.chem.data[regexpr("T5",this.chem.data$Name)!=-1,"Sample.Type"] <- "T5"
+this.chem.data[regexpr("T1",this.chem.data$Name)!=-1,"Sample.Type"] <- "T1"
+  this.chem.data[this.chem.data$Sample.Type=="CC","Dilution.Factor"] <- CC.DILUTE
+  this.chem.data[this.chem.data$Sample.Type=="AF","Dilution.Factor"] <- AF.DILUTE
+  this.chem.data[this.chem.data$Sample.Type=="T1","Dilution.Factor"] <- T1.DILUTE
+  this.chem.data[this.chem.data$Sample.Type=="T5","Dilution.Factor"] <- T5.DILUTE
+this.chem.data[regexpr("A_GC",this.chem.data$Name)!=-1,"Series"] <- "A"
+this.chem.data[regexpr("B_GC",this.chem.data$Name)!=-1,"Series"] <- "B"
+this.chem.data[regexpr("C_GC",this.chem.data$Name)!=-1,"Series"] <- "C"
+
+  
+  # Need to map cal curve levels back to concentrations:
+  CC.levels <- c(7,12,20,30,50,80,125,200,350,500,800,1500,2500,3500,5000)
+this.chem.data$Conc <- sapply(this.chem.data$Level,function(x) CC.levels[as.numeric(x)])
+this.chem.data[regexpr("Blank",this.chem.data$Name)!=-1,"Conc"] <- 0
+this.chem.data$Lab.Compound.Name <- "900"
+this.chem.data$DTXSID <- "DTXSID0059879"
+this.chem.data$Compound.Name <- "1H,1H,5H-Perfluoropentanol"
+this.chem.data$Date <-"2020-02-04"
+this.chem.data$Note <- ""
+this.chem.data$Level0.File <- this.file
+this.chem.data$Level0.Sheet <- this.sheet
+
+  level1.900 <- format_fup_uc(this.chem.data,
+    FILENAME="Kreutz2020",
+    sample.col="Name",
+    compound.col="Compound.Name", 
+    lab.compound.col="Lab.Compound.Name", 
+    type.col="Sample.Type", 
+    std.conc.col="Conc", 
+    analysis.instrument=ANALYSIS.INSTRUMENT,
+    analysis.method="GCMS",
+    cal.col="Date",
+    istd.name="MFOET",
+    istd.conc=1,
+    istd.col="Resp.",
+    area.col="Area...17",
+    analysis.parameters.col="RT...16",
+    uc.assay.conc = 10
+    )
+```
 # Previously made scripts to load some data:
 ```{r set_working_directory, eval = TRUE}   
   suppressMessages(source("uc-test-AK.R"))
@@ -126,9 +177,10 @@ vignette: >
                                   std.conc.col="Standard.Conc",
                                   note.col="Comment",
                                   analysis.method="GCMS",
-                                  analysis.instrument="Mystery GCMS")
+                                  analysis.instrument="Agilent 8890 GC w 7010 triple quadrupole")
 ``` 
-# Previously made scripts to load some data:
+# Previously made scripts to load data:
+# PFOA and PFOS:
 ```{r set_working_directory, eval = TRUE}   
   suppressMessages(source("uc-test-052920.R"))
   all.data$Lab.Compound.Name <- all.data$Compound.Name
@@ -142,6 +194,9 @@ vignette: >
   all.data[all.data$Cal=="100119","Level0.Sheet"] <- "PFOA 10-1-19"
   all.data[all.data$Cal=="072319","Level0.Sheet"] <- "PFOS 7-23-19"
   all.data[all.data$Cal=="010720","Level0.Sheet"] <- "PFOS 1-7-2020"
+  all.data[all.data$Type=="Blank", "Dilution.Factor"] <- BLANK.DILUTE
+  all.data[all.data$Type=="Blank", "Std. Conc"] <- 0
+  
     
   level1.May2020 <- format_fup_uc(all.data,
                                   uc.assay.conc = 10, 
@@ -152,7 +207,7 @@ vignette: >
                                   std.conc.col="Std. Conc",
                                   analysis.parameters="RT",
                                   analysis.method="GCMS",
-                                  analysis.instrument="Mystery GCMS",
+                                  analysis.instrument="Agilent 8890 GC w 7010 triple quadrupole",
                                   date.col="Date",
                                   istd.name="Unknown",
                                   istd.col="IS.Area",
@@ -654,9 +709,160 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
   this.file.data$Cal <- this.file.data$Date
 
   this.file.data$Analysis.Method <- "GCMS"
-  this.file.data$Analysis.Instrument <- "Mystery GCMS"
+  this.file.data$Analysis.Instrument <- "Agilent 8890 GC w 7010 triple quadrupole"
   this.file.data$Level0.File <- this.file
   this.file.data$Level0.Sheet <- "All Raw data and Calcs"
+  UC.data <- rbind(UC.data,this.file.data[,colnames(UC.data)])  
+  dim(UC.data)
+```
+
+# Handle the data for "UC_940_Athens_Mix1a__2020_Feb.xlsx"
+```{r UC_940_Athens_Mix1a__2020_Feb, eval=TRUE}
+  this.file <- "UC_940_Athens_Mix1a__2020_Feb.xlsx"
+  this.row <- data.frame(Analyte="DTXSID3047558",
+                       Name="6:2 Fluorotelomer methacrylate",
+                       "Sample ID"="940",
+                       IS="m8:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=432.181,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)
+  
+  these.chems <- subset(cheminfo,File==this.file|"Sample ID"=="4NT")
+  this.chem <- "940"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet="Data",
+    skip=4)))
+
+  # Remove averages:
+  this.chem.data <- these.data[,c(
+    "...7",
+    "...6",
+    "Sample Name",
+    "nm after crash"
+    )]
+  colnames(this.chem.data) <- c(
+    "Area","ISTD.Area","Lab.Sample.Name","NominConc")
+this.chem.data <- subset(this.chem.data, !is.na(as.numeric(Area)))
+  
+      this.chem.data$Analysis.Parameters<-""
+    this.chem.data$Level0.Sheet <- "Data"
+    this.chem.data$Lab.Compound.Name <- this.chem
+
+  
+  this.chem.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+    chem.index <- which(these.chems$`Sample ID` == this.chem)
+# Get rid of column header rows:t
+    this.chem.data[, "Compound.Name"] <- these.chems[
+      chem.index,"Name"]
+    this.chem.data[, "Lab.Compound.Name"] <- this.chem
+    this.chem.data[, "DTXSID"] <- these.chems[
+      chem.index,"Analyte"]
+    this.chem.data[, "ISTD.Name"] <- these.chems[
+      chem.index,"IS"]
+    this.chem.data[, "ISTD.Conc"] <- ISTD.CONC
+    this.chem.data[, "Date"] <- these.chems[
+      chem.index,"Date"]
+  
+  this.chem.data$Type <- this.chem.data$Lab.Sample.Name
+  this.chem.data$Note <- ""
+  this.chem.data$Cal <- this.chem.data$Date
+
+  this.chem.data$Analysis.Method <- "GCMS"
+  this.chem.data$Analysis.Instrument <- "Agilent 7890 GC w 7010 triple quadrupole"
+  this.chem.data$Level0.File <- this.file
+
+  UC.data <- rbind(UC.data,this.chem.data[,colnames(UC.data)])  
+  dim(UC.data)
+```
+
+
+# Handle the data for "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
+```{r UC_276_467_Athens_Mix 2a and b20220913, eval=TRUE}
+  this.file <- "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
+  this.row <- data.frame(Analyte="DTXSID5063235",
+                       Name="1H,1H-Perfluorooctyl methacrylate",
+                       "Sample ID"="276",
+                       IS="m6:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=468.162,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)
+  this.row <- data.frame(Analyte="DTXSID806210",
+                       Name="8:2 Fluorotelomer methacrylate",
+                       "Sample ID"="467",
+                       IS="m6:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=532.197,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)
+    
+  
+  these.chems <- subset(cheminfo,File==this.file|"Sample ID"=="4NT")
+  
+  this.sheet <- "Sheet 1_Mix 2a and b"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet=this.sheet,
+    skip=4)))
+
+  
+  this.file.data <- NULL
+  chem.names <- c("276","467")
+  chem.cols <- c("...9", "...10")
+  istd.col <- "...5"
+  conc.col <- "nm after crash"
+  sample.name.col <-"...2"
+  for (this.chem.index in 1:2)
+  {
+    this.chem <- chem.names[this.chem.index]
+    this.chem.data <- these.data[,c(
+      chem.cols[this.chem.index],
+      istd.col,
+      sample.name.col,
+      conc.col
+      )]
+    colnames(this.chem.data) <- c(
+      "Area","ISTD.Area","Lab.Sample.Name","NominConc")
+    this.chem.data <- subset(this.chem.data, !is.na(as.numeric(Area)))
+    this.chem.data$Lab.Compound.Name <- this.chem
+    chem.index <- which(these.chems$`Sample ID` == this.chem)
+# Get rid of column header rows:t
+    this.chem.data[, "Compound.Name"] <- these.chems[
+      chem.index,"Name"]
+    this.chem.data[, "Lab.Compound.Name"] <- this.chem
+    this.chem.data[, "DTXSID"] <- these.chems[
+      chem.index,"Analyte"]
+    this.chem.data[, "ISTD.Name"] <- these.chems[
+      chem.index,"IS"]
+    this.chem.data[, "ISTD.Conc"] <- ISTD.CONC
+    this.chem.data[, "Date"] <- these.chems[
+      chem.index,"Date"]
+
+    this.file.data <- rbind(this.file.data,this.chem.data)  
+  }
+
+  this.file.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+  this.file.data$Type <- this.chem.data$Lab.Sample.Name
+  this.file.data$Note <- ""
+  this.file.data$Cal <- this.file.data$Date
+  this.file.data$Analysis.Parameters<-""
+  this.file.data$Level0.Sheet <- this.sheet
+  this.file.data$Analysis.Method <- "GCMS"
+  this.file.data$Analysis.Instrument <- "Agilent 7890 GC w 7010 triple quadrupole"
+  this.file.data$Level0.File <- this.file
+
   UC.data <- rbind(UC.data,this.file.data[,colnames(UC.data)])  
   dim(UC.data)
 ```
@@ -777,7 +983,7 @@ dim(UC.data)
       uc.assay.conc.col="UC.Assay.T0.Conc"
       )
 
-    level1 <- rbind(level1,level1.May2020,level1.Jul2020,level1.Dec2020)
+    level1 <- rbind(level1,level1.May2020,level1.Jul2020,level1.Dec2020,level1.900)
 ```
 
 ```{r create_level2, eval=TRUE}
@@ -818,16 +1024,92 @@ dim(UC.data)
     
     # Can't work without peak for ISTD:
     which.rows <- level2$ISTD.Area == 0
-    level2[which.rows,"Verified]"] <- "JFw: Excluded, no ISTD peak"
-    
-    
-    write.table(level2,
+    level2[which.rows,"Verified"] <- "JFW: Excluded, no ISTD peak"
+```
+
+```{r badistd_detect, eval=TRUE}
+ISTDTHRESH <- 10
+gooddata <- level2$ISTD.Area
+gooddata[is.na(gooddata)] <- ISTDTHRESH
+  level2[gooddata < ISTDTHRESH, "Verified"] <- 
+    paste("Excluded for ISTD Peak smaller than", ISTDTHRESH)
+```
+
+```{r remove_nas, eval=TRUE}
+level2[is.na(level2$Response),"Verified"] <- "JFW: Excluded for NA Response"
+
+ccobs <- regexpr("CC",level2$Lab.Sample.Name)!=-1 
+zeroobs <- level2$Area==0
+zeroobs[is.na(zeroobs)] <- FALSE
+
+level2[ccobs & zeroobs,"Verified"] <-"JFW: Excluded cal curve no signal"
+
+```
+
+```{r outlier_detect, eval=TRUE}
+R2THRESH <- 0.9
+for (this.id in unique(level2$DTXSID))
+{
+  these.cals <- unique(subset(level2, DTXSID==this.id)$Calibration)
+  for (this.cal in these.cals)
+  {
+    this.subset <- subset(level2,
+                          DTXSID == this.id &
+                          Calibration == this.cal &
+                          Sample.Type == "CC" &
+                          Verified == "Y")
+    if (dim(this.subset)[1] > 1)
+    {
+      this.fit <- lm(Response ~ Standard.Conc, data=this.subset)
+      while (summary(this.fit)$adj.r.squared < R2THRESH  & 
+             dim(this.subset)[1] > 1 &
+             any(this.subset$Area>0))
+      {
+        cat(paste("Removing outliers for",this.id,"calibration",this.cal,"\n"))
+        bad.sample <- which(abs(this.fit$residuals) == 
+                              max(abs(this.fit$residuals)))
+        bad.name <- this.subset[bad.sample, "Lab.Sample.Name"]
+        level2[level2$DTXSID == this.id &
+               level2$Calibration == this.cal &
+               level2$Sample.Type == "CC" &
+               level2$Lab.Sample.Name == bad.name,
+               "Verified"] <- paste(
+                 "Excluded algorithmically as outlier (R2 < ",
+                 R2THRESH,")",sep="")
+        this.subset <- subset(level2,
+                              DTXSID == this.id &
+                              Calibration == this.cal &
+                              Sample.Type == "CC" &
+                              Verified == "Y")
+        
+        this.fit <- lm(Response ~ Standard.Conc, data=this.subset)     
+      }
+      if (all(this.subset$Area==0))
+      {
+        level2[
+          level2$DTXSID == this.id &
+          level2$Calibration == this.cal &
+          level2$Sample.Type == "CC" &
+          level2$Verified == "Y", "Verified"] <- 
+            "Excluded because remaining CC had area 0"
+      }
+   }
+          
+   # if (this.id== "DTXSID4059916") browser()
+  }
+
+}
+
+```
+
+```{r write_level2, eval=TRUE}    
+write.table(level2,
       file="KreutzPFAS-PPB-UC-Level2.tsv",
       sep="\t",
       row.names=F,
       quote=F)
-```
-
+    ```
+    
 # maximum likelihood analysis:
 ```{r MLE, eval=TRUE}
     level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS") 
@@ -843,5 +1125,7 @@ dim(UC.data)
     
     library(invitroTKstats) 
     setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS/")
-    level4 <- calc_fup_uc(FILENAME="KreutzPFAS",JAGS.PATH="C:/Users/jwambaug/AppData/Local/Programs/JAGS/JAGS-4.3.1/x64") 
+    level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
+                          NUM.CORES=8,
+                          JAGS.PATH="C:/Users/jwambaug/AppData/Local/Programs/JAGS/JAGS-4.3.1/x64") 
 ```

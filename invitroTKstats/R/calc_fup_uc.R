@@ -177,7 +177,11 @@ calc_fup_uc <- function(PPB.data,
       log.const.analytic.sd =runif(mydata$Num.cal,-1.5,0.5),
       log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
 # Average across all the calibrations (the sampler will vary these):
-      C.thresh = rep(min(max(0,intercept/slope),mydata$UC.Assay.Conc/10,na.rm=TRUE),mydata$Num.cal),
+      C.thresh = rep(
+                     min(
+                         max(0,intercept/slope),
+                         mydata$Test.Nominal.Conc/10,na.rm=TRUE),
+                     mydata$Num.cal),
       log.calibration = rep(max(min(-2.95,log10(max(0,slope))),1.95),mydata$Num.cal),
 # There is only one Fup per chemical:
       log.Fup = log10(runif(1,0,1)),
