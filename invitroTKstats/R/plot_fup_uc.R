@@ -25,10 +25,6 @@
 #'
 #' @author John Wambaugh
 #'
-#' @examples
-#'
-#' @references
-#'
 #' @export plot_fup_uc
 #' @import ggplot2
 plot_fup_uc <- function(level2,dtxsid, good.col="Verified")

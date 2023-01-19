@@ -11,7 +11,8 @@ calc_fup_uc(
   NUM.CHAINS = 5,
   NUM.CORES = 2,
   RANDOM.SEED = 1111,
-  good.col = "Verified"
+  good.col = "Verified",
+  JAGS.PATH = NA
 )
 }
 \arguments{

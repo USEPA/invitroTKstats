@@ -8,11 +8,12 @@ model {
     # Priors:
     log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
     log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
-    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
+    log.C.thresh[i] ~ dnorm(log(Test.Nominal.Conc[i]/10), 0.01)
     log.calibration[i] ~ dnorm(0,0.01)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
+    C.thresh[i] <- 10^log.C.thresh[i]
     calibration[i] <- 10^log.calibration[i]
     # Concentrations below this value are not detectable:
     background[i] <- calibration[i]*C.thresh[i]
@@ -81,7 +82,6 @@ model {
 #'
 #' @param RANDOM.SEED The seed used by the random number generator 
 #' (default 1111)
-
 #' @param PPB.data A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identiy, and measurment type. The data frame should
 #' contain columns with names specified by the following arguments:
@@ -177,11 +177,11 @@ calc_fup_uc <- function(PPB.data,
       log.const.analytic.sd =runif(mydata$Num.cal,-1.5,0.5),
       log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
 # Average across all the calibrations (the sampler will vary these):
-      C.thresh = rep(
+      log.C.thresh = log10(rep(
                      min(
-                         max(0,intercept/slope),
+                         max(10^-8,intercept/slope),
                          mydata$Test.Nominal.Conc/10,na.rm=TRUE),
-                     mydata$Num.cal),
+                     mydata$Num.cal)),
       log.calibration = rep(max(min(-2.95,log10(max(0,slope))),1.95),mydata$Num.cal),
 # There is only one Fup per chemical:
       log.Fup = log10(runif(1,0,1)),
@@ -419,7 +419,7 @@ calc_fup_uc <- function(PPB.data,
           jags = findjags(look_in=JAGS.PATH),
           monitor = c(
             'Fup',
-            'C.thresh',
+            'log.C.thresh',
             'log.const.analytic.sd',
             'log.hetero.analytic.slope',
             'log.calibration'

@@ -1038,12 +1038,30 @@ gooddata[is.na(gooddata)] <- ISTDTHRESH
 ```{r remove_nas, eval=TRUE}
 level2[is.na(level2$Response),"Verified"] <- "JFW: Excluded for NA Response"
 
-ccobs <- regexpr("CC",level2$Lab.Sample.Name)!=-1 
-zeroobs <- level2$Area==0
-zeroobs[is.na(zeroobs)] <- FALSE
+#ccobs <- regexpr("CC",level2$Lab.Sample.Name)!=-1 
+#zeroobs <- level2$Area==0
+#zeroobs[is.na(zeroobs)] <- FALSE
+#blanks <- level2$Standard.Conc == 0
+#blanks[is.na(blanks)] <- FALSE
 
-level2[ccobs & zeroobs,"Verified"] <-"JFW: Excluded cal curve no signal"
+#level2[ccobs & zeroobs & !blanks,"Verified"] <-"JFW: Excluded cal curve no signal"
 
+for (this.id in c(
+  "DTXSID50369896",
+  "DTXSID3059927",
+  "DTXSID1047578",
+  "DTXSID30396867",
+  "DTXSID00380798",
+  "DTXSID30395037",
+  "DTXSID30340244"  
+  ))
+{
+  obsid <- level2$DTXSID==this.id
+  obszero <- level2$Area==0
+  obszero[is.na(obszero)] <- FALSE
+  level2[obsid & obszero, "Verified"] <-
+    "JFW: Excluded for lack of signal"
+}
 ```
 
 ```{r outlier_detect, eval=TRUE}

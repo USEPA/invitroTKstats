@@ -300,7 +300,33 @@ format_fup_uc <- function(PPB.data,
     level0.file.col,
     level0.sheet.col
     )
-  
+
+  # Blanks don't always have internal standard -- add average ISTD.Area
+  # First identify the blanks (have to deal with NA standard.concs:
+  blanks <- PPB.data[,"Standard.Conc"]
+  blanks[is.na(blanks)] <- -999
+  blanks <- blanks == 0
+  for (this.chem in unique(PPB.data[,"DTXSID"]))
+  {
+    this.subset <- subset(PPB.data, DTXSID==this.chem)
+    for (this.cal in unique(PPB.data[,"Calibration"]))
+    {
+      this.cal.subset <- subset(this.subset, Calibration==this.cal)
+      if (any(is.na(this.cal.subset[,"ISTD.Area"])))
+      {
+        this.mean.ISTD <- signif(mean(this.cal.subset$ISTD.Area,na.rm=TRUE))
+        which.indices <- PPB.data[,"DTXSID"] == this.chem &
+          PPB.data[,"Calibration"] == this.cal &
+          is.na(PPB.data[,"ISTD.Area"]) & 
+          blanks
+        PPB.data[which.indices, 
+                 "ISTD.Area"] <- this.mean.ISTD
+        PPB.data[which.indices, 
+                 "Area"] <- 0
+      }
+    }
+  }
+
   # calculate the response:
   PPB.data[,"Response"] <- signif(as.numeric(PPB.data[,area.col]) /
      as.numeric(PPB.data[,istd.col]) * as.numeric(PPB.data[,istd.conc.col]),4)

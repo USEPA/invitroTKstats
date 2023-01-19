@@ -341,7 +341,7 @@ vignette: >
     
      subset(UC.data,Sample.Type=="CC" & is.na(Std.Conc))
     
-    # Should update this with input from Marci:
+    # Should update this with input from Anna:
     UC.data$Analysis.Method <- "UPLC-MS/MS"
     UC.data$Analysis.Instrument <- "Waters Xevo TQ-S micro (QEB0036)"
     # Give Retention time:

@@ -212,6 +212,20 @@
 #' observation in the table is assigned the value of the argument and the 
 #' corresponding column in input.table (if present) is ignored.
 #'
+#' @param level0.file.col Which column of PPB.data indicates the file from
+#' which the data were obtained (for example "MyWorkbook.xlsx").
+#'  
+#' @param level0.file If this argument is used (defaults to NULL) every
+#' observation in the table is assigned the value of the argument and the
+#' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param level0.sheet.col Which column of PPB.data indicates the specific 
+#' sheet containing the data if the file is an Excel workbook
+#'  
+#' @param level0.sheet If this argument is used (defaults to NULL) every
+#' observation in the table is assigned the value of the argument and the
+#' corresponding column in input.table (if present) is ignored.
+#' 
 #' @return \item{data.frame}{A data.frame in standardized "level1" format} 
 #'
 #' @author John Wambaugh
@@ -278,7 +292,11 @@ format_clint <- function(clint.data,
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
-  note.col="Note"
+  note.col="Note",
+  level0.file.col="Level0.File",
+  level0.file=NULL,
+  level0.sheet.col="Level0.Sheet",
+  level0.sheet=NULL
   )
 {
   clint.data <- as.data.frame(clint.data)
@@ -322,7 +340,9 @@ format_clint <- function(clint.data,
     analysis.instrument
   if (!is.null(analysis.parameters)) clint.data[,analysis.parameters.col] <- 
     analysis.parameters
-
+  if (!is.null(level0.file)) clint.data[,level0.file.col] <- level0.file
+  if (!is.null(level0.sheet)) clint.data[,level0.sheet.col] <- level0.sheet
+  
 # We need all these columns in clint.data
   cols <-c(
     sample.col,
@@ -344,7 +364,9 @@ format_clint <- function(clint.data,
     analysis.method.col,
     analysis.instrument.col,
     analysis.parameters.col,
-    note.col
+    note.col,
+    level0.file.col,
+    level0.sheet.col
     )
   
   if (!(all(cols %in% colnames(clint.data))))
@@ -381,7 +403,9 @@ format_clint <- function(clint.data,
   analysis.instrument.col <- "Analysis.Instrument"
   analysis.parameters.col <- "Analysis.Parameters" 
   note.col <- "Note"
-
+  level0.file.col <- "Level0.File"
+  level0.sheet.col <- "Level0.Sheet"
+    
   colnames(clint.data) <- c(
     sample.col,
     date.col,
@@ -402,7 +426,9 @@ format_clint <- function(clint.data,
     analysis.method.col,
     analysis.instrument.col,
     analysis.parameters.col,
-    note.col
+    note.col,
+    level0.file.col,
+    level0.sheet.col
     )
   
   # calculate the reponse:

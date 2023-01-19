@@ -7,7 +7,7 @@ model {
     # Priors:
     log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
     log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
-    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
+    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[1]/10)
     log.calibration[i] ~ dnorm(0,0.01)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
@@ -149,6 +149,18 @@ model {
 #' @param degrade.prob Prior probability that a chemical will be unstable
 #' (that is, degrade abiotically) in the assay (defaults to 0.05)
 #'
+#' @param TEMP.DIR An optional directory where file writing may be faster.
+#'
+#' @param JAGS.PATH The file path to JAGS.
+#'
+#' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
+#' of convergence according to Gelman and Rubin diagnostic.
+#'
+#' @param NUM.CORES The number of processors to use (default 2)
+#'
+#' @param RANDOM.SEED The seed used by the random number generator 
+#' (default 1111)
+#'
 #' @return \item{data.frame}{A data.frame in standardized format} 
 #'
 #' @author John Wambaugh
@@ -193,7 +205,12 @@ model {
 #'
 #' @export calc_clint
 calc_clint <- function(FILENAME, 
+  TEMP.DIR = NULL,
+  NUM.CHAINS=5, 
+  NUM.CORES=2,
+  RANDOM.SEED=1111,
   good.col="Verified",
+  JAGS.PATH = NA,
   decrease.prob = 0.5,
   saturate.prob = 0.25,
   degrade.prob = 0.05)
