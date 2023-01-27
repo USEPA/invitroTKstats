@@ -309,10 +309,20 @@ calc_fup_uc <- function(PPB.data,
                                       this.series.subset[,cal.col]==this.cal)            
               if (!all(c("T1","T5","AF") %in% this.cal.subset[,type.col]))
               {
-                MSdata <- subset(MSdata,MSdata[,series.col]!=this.series |
+                # Have to handle the NA series values for CC data:
+                series.values <- MSdata[,series.col]
+                # Assign a dummy value to the NA's
+                series.values[is.na(series.values)]<-"Cat"
+                # Identify the bad series from the cal and add to ignored.data:
+                ignored.data <- rbind(ignored.data, subset(MSdata,
+                                      series.values == this.series & 
+                                      MSdata[,cal.col]==this.cal))
+                # Remove the bad series:
+                MSdata <- subset(MSdata,
+                                 series.values != this.series |
                                  MSdata[,cal.col]!=this.cal)
                 print(paste("Dropped series",this.series,"from cal",
-                            this.cal,"for incomplete data."))
+                           this.cal,"for incomplete data."))
               }
             } 
         }

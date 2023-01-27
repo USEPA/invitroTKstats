@@ -252,7 +252,7 @@ format_fup_uc <- function(PPB.data,
   PPB.data.badtype <- subset(PPB.data,!(PPB.data[,type.col] %in% 
                              c("CC","T1","T5","AF")))
   # Write out a "level 0" file identifying those observations we threw out:
-  write.table(PPB.data, 
+  write.table(PPB.data.badtype, 
     file=paste(FILENAME,"-PPB-UC-Level0-badtype.tsv",sep=""),
     sep="\t",
     row.names=F,

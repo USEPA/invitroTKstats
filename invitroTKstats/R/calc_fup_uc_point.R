@@ -158,7 +158,7 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
         {
           this.cal.subset <- subset(this.subset,
             this.subset[,cal.col]==this.calibration)
-          this.row <- this.cal.subset[1,c(compound.col,dtxsid.col,cal.col)]
+          this.row <- this.cal.subset[1,c(compound.col,dtxsid.col,lab.compound.col,cal.col)]
           this.af<- subset(this.cal.subset,Sample.Type=="AF")
           this.t5 <- subset(this.cal.subset,Sample.Type=="T5")
        # Check to make sure there are data for PBS and plasma: 
