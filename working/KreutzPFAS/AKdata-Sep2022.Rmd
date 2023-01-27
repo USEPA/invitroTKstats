@@ -719,6 +719,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
 # Handle the data for "UC_940_Athens_Mix1a__2020_Feb.xlsx"
 ```{r UC_940_Athens_Mix1a__2020_Feb, eval=TRUE}
   this.file <- "UC_940_Athens_Mix1a__2020_Feb.xlsx"
+# 940
   this.row <- data.frame(Analyte="DTXSID3047558",
                        Name="6:2 Fluorotelomer methacrylate",
                        "Sample ID"="940",
@@ -730,88 +731,34 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
                        Date="2020-02-01")
   colnames(this.row) <- colnames(cheminfo)
   cheminfo <- rbind(cheminfo,this.row)
-  
-  these.chems <- subset(cheminfo,File==this.file|"Sample ID"=="4NT")
-  this.chem <- "940"
-  these.data <- as.data.frame(
-    suppressMessages(read_excel(this.file,
-    sheet="Data",
-    skip=4)))
-
-  # Remove averages:
-  this.chem.data <- these.data[,c(
-    "...7",
-    "...6",
-    "Sample Name",
-    "nm after crash"
-    )]
-  colnames(this.chem.data) <- c(
-    "Area","ISTD.Area","Lab.Sample.Name","NominConc")
-this.chem.data <- subset(this.chem.data, !is.na(as.numeric(Area)))
-  
-      this.chem.data$Analysis.Parameters<-""
-    this.chem.data$Level0.Sheet <- "Data"
-    this.chem.data$Lab.Compound.Name <- this.chem
-
-  
-  this.chem.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
-    chem.index <- which(these.chems$`Sample ID` == this.chem)
-# Get rid of column header rows:t
-    this.chem.data[, "Compound.Name"] <- these.chems[
-      chem.index,"Name"]
-    this.chem.data[, "Lab.Compound.Name"] <- this.chem
-    this.chem.data[, "DTXSID"] <- these.chems[
-      chem.index,"Analyte"]
-    this.chem.data[, "ISTD.Name"] <- these.chems[
-      chem.index,"IS"]
-    this.chem.data[, "ISTD.Conc"] <- ISTD.CONC
-    this.chem.data[, "Date"] <- these.chems[
-      chem.index,"Date"]
-  
-  this.chem.data$Type <- this.chem.data$Lab.Sample.Name
-  this.chem.data$Note <- ""
-  this.chem.data$Cal <- this.chem.data$Date
-
-  this.chem.data$Analysis.Method <- "GCMS"
-  this.chem.data$Analysis.Instrument <- "Agilent 7890 GC w 7010 triple quadrupole"
-  this.chem.data$Level0.File <- this.file
-
-  UC.data <- rbind(UC.data,this.chem.data[,colnames(UC.data)])  
-  dim(UC.data)
-```
-
-
-# Handle the data for "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
-```{r UC_276_467_Athens_Mix 2a and b20220913, eval=TRUE}
-  this.file <- "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
-  this.row <- data.frame(Analyte="DTXSID5063235",
-                       Name="1H,1H-Perfluorooctyl methacrylate",
-                       "Sample ID"="276",
-                       IS="m6:2FTOH",
+# 3203
+  this.row <- data.frame(Analyte="DTXSID3065586",
+                       Name="1H,1H-Perfluorobutyl methacrylate",
+                       "Sample ID"="3203",
+                       IS="m8:2FTOH",
                        "Reference Compound"=NA,
-                       "Avg. MW"=468.162,
-                       Flags=NA,
-                       File=this.file,
-                       Date="2020-02-01")
-  
-  colnames(this.row) <- colnames(cheminfo)
-  cheminfo <- rbind(cheminfo,this.row)
-  this.row <- data.frame(Analyte="DTXSID806210",
-                       Name="8:2 Fluorotelomer methacrylate",
-                       "Sample ID"="467",
-                       IS="m6:2FTOH",
-                       "Reference Compound"=NA,
-                       "Avg. MW"=532.197,
+                       "Avg. MW"=268.131,
                        Flags=NA,
                        File=this.file,
                        Date="2020-02-01")
   colnames(this.row) <- colnames(cheminfo)
   cheminfo <- rbind(cheminfo,this.row)
-    
-  
+# 3142
+  this.row <- data.frame(Analyte="DTXSID00194615",
+                       Name="1H,1H,9H-Perfluorononyl acrylate",
+                       "Sample ID"="3142",
+                       IS="m8:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=486.152,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)
+
   these.chems <- subset(cheminfo,File==this.file|"Sample ID"=="4NT")
   
-  this.sheet <- "Sheet 1_Mix 2a and b"
+  this.sheet <- "Data"
   these.data <- as.data.frame(
     suppressMessages(read_excel(this.file,
     sheet=this.sheet,
@@ -819,12 +766,12 @@ this.chem.data <- subset(this.chem.data, !is.na(as.numeric(Area)))
 
   
   this.file.data <- NULL
-  chem.names <- c("276","467")
-  chem.cols <- c("...9", "...10")
-  istd.col <- "...5"
+  chem.names <- c("940","3203","3142")
+  chem.cols <- colnames(these.data)[c(7,4,8)]
+  istd.col <- "...6"
   conc.col <- "nm after crash"
-  sample.name.col <-"...2"
-  for (this.chem.index in 1:2)
+  sample.name.col <-"Sample Name"
+  for (this.chem.index in 1:length(chem.names))
   {
     this.chem <- chem.names[this.chem.index]
     this.chem.data <- these.data[,c(
@@ -867,7 +814,154 @@ this.chem.data <- subset(this.chem.data, !is.na(as.numeric(Area)))
   dim(UC.data)
 ```
 
-```{r UC_finish, eval=TRUE}
+
+# Handle the data for "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
+```{r UC_276_467_Athens_Mix 2a and b20220913, eval=TRUE}
+  this.file <- "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
+# 276
+  this.row <- data.frame(Analyte="DTXSID5063235",
+                       Name="1H,1H-Perfluorooctyl methacrylate",
+                       "Sample ID"="276",
+                       IS="m6:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=468.162,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)
+# 467
+  this.row <- data.frame(Analyte="DTXSID806210",
+                       Name="8:2 Fluorotelomer methacrylate",
+                       "Sample ID"="467",
+                       IS="m6:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=532.197,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)
+# 471
+  this.row <- data.frame(Analyte="DTXSID10224331",
+                       Name="2,2,3,3-Tetrafluoropropyl acrylate",
+                       "Sample ID"="471",
+                       IS="m6:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=186.106,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)    
+# 478
+  this.row <- data.frame(Analyte="DTXSID1068772",
+                       Name="2-(Perfluorobutyl)ethyl acrylate",
+                       "Sample ID"="478",
+                       IS="m6:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=318.139,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row)
+# 468
+  this.row <- data.frame(Analyte="DTXSID5060986",
+                       Name="1H,1H,5H,5H-Perfluoro-1,5-pentanediol diacrylate",
+                       "Sample ID"="468",
+                       IS="m6:2FTOH",
+                       "Reference Compound"=NA,
+                       "Avg. MW"=320.187,
+                       Flags=NA,
+                       File=this.file,
+                       Date="2020-02-01")
+  colnames(this.row) <- colnames(cheminfo)
+  cheminfo <- rbind(cheminfo,this.row) 
+  
+  these.chems <- subset(cheminfo,File==this.file|"Sample ID"=="4NT")
+  
+  this.sheet <- "Sheet 1_Mix 2a and b"
+  these.data <- as.data.frame(
+    suppressMessages(read_excel(this.file,
+    sheet=this.sheet,
+    skip=3)))
+
+  
+  this.file.data <- NULL
+  chem.names <- c("471","478","468","276","467")
+  chem.cols <- colnames(these.data)[c(4,6,7,9,10)]
+  istd.col <- "8.4"
+  conc.col <- "nm after crash"
+  sample.name.col <-"RT"
+  for (this.chem.index in 1:length(chem.names))
+  {
+    this.chem <- chem.names[this.chem.index]
+    this.chem.data <- these.data[,c(
+      chem.cols[this.chem.index],
+      istd.col,
+      sample.name.col,
+      conc.col
+      )]
+    colnames(this.chem.data) <- c(
+      "Area","ISTD.Area","Lab.Sample.Name","NominConc")
+    this.chem.data <- subset(this.chem.data, !is.na(as.numeric(Area)))
+    this.chem.data$Lab.Compound.Name <- this.chem
+    chem.index <- which(these.chems$`Sample ID` == this.chem)
+# Get rid of column header rows:t
+    this.chem.data[, "Compound.Name"] <- these.chems[
+      chem.index,"Name"]
+    this.chem.data[, "Lab.Compound.Name"] <- this.chem
+    this.chem.data[, "DTXSID"] <- these.chems[
+      chem.index,"Analyte"]
+    this.chem.data[, "ISTD.Name"] <- these.chems[
+      chem.index,"IS"]
+    this.chem.data[, "ISTD.Conc"] <- ISTD.CONC
+    this.chem.data[, "Date"] <- these.chems[
+      chem.index,"Date"]
+
+    this.file.data <- rbind(this.file.data,this.chem.data)  
+  }
+
+  this.file.data$UC.Assay.T0.Conc <- UC.ASSAY.T0.CONC
+  this.file.data$Type <- this.chem.data$Lab.Sample.Name
+  this.file.data$Note <- ""
+  this.file.data$Cal <- this.file.data$Date
+  this.file.data$Analysis.Parameters<-""
+  this.file.data$Level0.Sheet <- this.sheet
+  this.file.data$Analysis.Method <- "GCMS"
+  this.file.data$Analysis.Instrument <- "Agilent 7890 GC w 7010 triple quadrupole"
+  this.file.data$Level0.File <- this.file
+
+  UC.data <- rbind(UC.data,this.file.data[,colnames(UC.data)])  
+  dim(UC.data)
+```
+# Load UC data collected by Lucas:
+```{r albrecht_data, eval = FALSE}   
+data.guide <- as.data.frame(read_excel("dataguide-LA-UC.xlsx"))
+new.row <- cheminfo[1,]
+new.row[1,] <- NA
+new.row[1,"Sample ID"] <- "3203"
+new.row[1,"Name"] <- "1H,1H-Perfluorobutyl methacrylate"
+cheminfo <- rbind(cheminfo,new.row)
+
+
+la.uc <- merge_level0(data.label="KreutzPFASHep",
+# describe the MS data table:
+             level0.catalog=data.guide,
+             sample.colname="Name",
+             type.colname="Type",
+             istd.col="ISTD.Name",
+             analysis.param.colname.col="Note.ColName",
+# describe the chemical ID table:
+             chem.ids=cheminfo,
+             chem.lab.id.col="Sample ID",
+             chem.name.col="Name")
+```
+
+
+```{r UC_set_sample_types, eval=TRUE}
 # Try again to get rid of column header rows:
   UC.data <- subset(UC.data,Type!="Type")
   dim(UC.data)
@@ -938,11 +1032,44 @@ this.chem.data <- subset(this.chem.data, !is.na(as.numeric(Area)))
                   tolower(unlist(UC.data[,"Type"])))!=-1
   UC.data[which.rows,"Sample.Type"] <-  "Blank"
   
+# Other Blank data:
+  which.rows <- regexpr("blank",
+                  tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1 &
+                is.na(unlist(UC.data[,"Sample.Type"]))
+  UC.data[which.rows,"Sample.Type"] <-  "CC"
+  UC.data[which.rows, "Series"] <- 1
+  UC.data[which.rows, "NominConc"] <- 0
+# Other AF data:
+  which.rows <- regexpr("aq",
+                  tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1 &
+                is.na(unlist(UC.data[,"Sample.Type"]))
+  UC.data[which.rows,"Sample.Type"] <-  "AF"
+  UC.data[which.rows, "Series"] <- 1
+  which.rows <- regexpr("a9",
+                  tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1 &
+                is.na(unlist(UC.data[,"Sample.Type"]))
+  UC.data[which.rows,"Sample.Type"] <-  "AF"
+  UC.data[which.rows, "Series"] <- 1
+# Other T1 data:
+  which.rows <- regexpr("t1",
+                  tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1 &
+                is.na(unlist(UC.data[,"Sample.Type"]))
+  UC.data[which.rows,"Sample.Type"] <-  "T1"
+  UC.data[which.rows, "Series"] <- 1
+# Other T5 data:
+  which.rows <- regexpr("t5",
+                  tolower(unlist(UC.data[,"Lab.Sample.Name"])))!=-1 &
+                is.na(unlist(UC.data[,"Sample.Type"]))
+  UC.data[which.rows,"Sample.Type"] <-  "T5"
+  UC.data[which.rows, "Series"] <- 1  
+```
 
+```{r UC_drop_missing_sample_types, eval=TRUE}
   # Get rid of unused samples (QC samples):
   UC.data <- subset(UC.data,!is.na(Sample.Type))
+```
 
-
+```{r UC_set_sample_types_metadata, eval=TRUE}
 # Convert to uM:
   UC.data[,"Std.Conc"] <- suppressWarnings(as.numeric(UC.data[,"NominConc"]))/1000
   UC.data[,"Std.Units"] <- "uM" 
@@ -962,7 +1089,9 @@ UC.data[UC.data[,"Sample.Type"]=="Blank","Std.Units"] <- "uM"
     
 UC.data[UC.data[,"Sample.Type"]=="Blank","Sample.Type"] <- "CC"
 dim(UC.data)
-    
+```
+
+```{r remove bad CC samples, eval=TRUE}
 # Get rid of CC samples that don't have a concentration:
 UC.data <- subset(UC.data,!(Sample.Type=="CC" & is.na(Std.Conc)))
     
@@ -1145,5 +1274,5 @@ write.table(level2,
     setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS/")
     level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
                           NUM.CORES=8,
-                          JAGS.PATH="C:/Users/jwambaug/AppData/Local/Programs/JAGS/JAGS-4.3.1/x64") 
+                          JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64") 
 ```

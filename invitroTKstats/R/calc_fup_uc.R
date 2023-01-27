@@ -281,6 +281,7 @@ calc_fup_uc <- function(PPB.data,
   } else CPU.cluster <-NA
   
   coda.out <- list()
+  ignored.data <- NULL
   for (this.compound in  unique(PPB.data[,compound.col]))
     if (!(this.compound %in% Results[,"Compound"]))
     {
@@ -458,7 +459,9 @@ calc_fup_uc <- function(PPB.data,
           sep="\t",
           row.names=F,
           quote=F)
-      }    
+      } else {
+        ignored.data <- rbind(ignored.data, MSdata)
+      }   
     }
   
   if (!is.null(TEMP.DIR)) 
@@ -466,6 +469,12 @@ calc_fup_uc <- function(PPB.data,
     setwd(current.dir)
   }
   stopCluster(CPU.cluster)
+
+  write.table(ignored.data, 
+    file=paste(FILENAME,"-PPB-UC-Level2-ignoredbayes.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
   
   View(Results)
   save(Results,

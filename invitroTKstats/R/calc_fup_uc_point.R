@@ -136,7 +136,7 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
   {
     this.subset <- subset(PPB.data,PPB.data[,compound.col]==this.chem)
     this.dtxsid <- this.subset$DTXSID[1]
-    this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
+    this.row <- c(this.subset[1,c(compound.col,dtxsid.col,lab.compound.col)],
       data.frame(Calibration="All Data",
         Fup=NaN))
     this.af <- subset(this.subset,Sample.Type=="AF")

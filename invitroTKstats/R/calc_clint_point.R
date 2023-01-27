@@ -205,7 +205,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   {     
     this.subset <- subset(clint.data,clint.data[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
-    this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
+    this.row <- c(this.subset[1,c(compound.col,dtxsid.col,lab.compound.col)],
       data.frame(Calibration="All Data",
         Clint=NaN,
         Clint.pValue=NaN))
