@@ -259,7 +259,13 @@ calc_fup_uc <- function(PPB.data,
     "T5",
     "AF"))   
   
-  # Only used verfied data:
+  # Only used verified data:
+  unverified.data <- subset(PPB.data, PPB.data[,good.col] != "Y")
+  write.table(unverified.data, file=paste(
+    FILENAME,"-PPB-UC-Level2-heldout.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
   PPB.data <- subset(PPB.data, PPB.data[,good.col] == "Y")
   
   PPB.data <- as.data.frame(PPB.data)

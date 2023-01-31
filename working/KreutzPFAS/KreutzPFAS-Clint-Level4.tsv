@@ -1,26 +1,26 @@
 Compound.Name	DTXSID	Lab.Compound.Name	Clint.1.Med	Clint.1.Low	Clint.1.High	Clint.10.Med	Clint.10.Low	Clint.10.High	Clint.pValue	Sat.pValue	degrades.pValue
-(Heptafluorobutanoyl)pivaloylmethane	DTXSID3066215	745	21.5	19.4	23.6	NA	NA	NA	0	0.752	0.998
-Bis(1H,1H-perfluoropropyl)amine	DTXSID50381992	959	667	667	667	NA	NA	NA	0	0.752	0
-1H,1H,8H,8H-Perfluoro-3,6-dioxaoctane-1,8-diol	DTXSID70381090	949	0	0	0	NA	NA	NA	0.988	0.746	0.95
-Ametryn	DTXSID1023869	Ametryn	0	0	3.77	NA	NA	NA	0.759	0.751	0.961
-1,6-Dibromododecafluorohexane	DTXSID20335129	30503	132	87.7	208	NA	NA	NA	0	0.75	0.98
-1H,1H,5H-Perfluoropentyl methacrylate	DTXSID90880131	30507	667	667	667	NA	NA	NA	0	0.752	0
-Perfluoro-1,4-diiodobutane	DTXSID30190948	30516	198	177	220	NA	NA	NA	0	0.748	0.964
-1,6-Diiodoperfluorohexane	DTXSID90190949	30501	62.7	22.4	77	NA	NA	NA	0	0.749	0.991
-1H,1H,5H-Perfluoropentanol	DTXSID0059879	900	15.6	14.2	16.9	NA	NA	NA	0	0.749	0.997
-Pentafluoropropionamide	DTXSID0059871	273	4.13	0	7	NA	NA	NA	0.235	0.752	0.988
-Heptafluorobutyramide	DTXSID2060965	908	7.07	4.67	9.4	NA	NA	NA	0.00086	0.747	0.998
-Nonafluoropentanamide	DTXSID60400587	909	16.1	13.9	18.2	NA	NA	NA	0	0.746	0.999
-Perfluoropentanamide	DTXSID70366226	916	0	0	2.02	NA	NA	NA	0.957	0.751	0.951
-Octafluoroadipamide	DTXSID80310730	923	8.67	6.33	10.7	NA	NA	NA	0	0.747	0.997
-N-Methyl-N-trimethylsilylheptafluorobutyramide	DTXSID40379666	476	22.3	20.7	24	NA	NA	NA	0	0.752	0.998
-Dodecafluoroheptanol	DTXSID9059832	906	35.7	34	37.3	NA	NA	NA	0	0.751	0.999
-3-(Perfluoro-2-butyl)propane-1,2-diol	DTXSID10382147	913	4.5	2.66	6.3	NA	NA	NA	0.00018	0.751	1
-3-(Perfluoropropyl)propanol	DTXSID60379269	965	38.3	36.7	40	NA	NA	NA	0	0.747	0.994
-1H,1H,7H-Perfluoroheptyl 4-methylbenzenesulfonate	DTXSID30340244	477	7.73	5.73	9.73	NA	NA	NA	0	0.75	0.999
-1H,1H,8H,8H-Perfluorooctane-1,8-diol	DTXSID30396867	479	2.83	0	5.4	NA	NA	NA	0.356	0.75	0.983
-1H,1H,11H,11H-Perfluorotetraethylene glycol	DTXSID00380798	464	5.03	3.09	6.87	NA	NA	NA	8e-05	0.751	0.999
-Hexafluoroamylene	DTXSID3059927	945	1.88	0	5.23	NA	NA	NA	0.461	0.752	0.977
-1H,1H,10H,10H-Perfluorodecane-1,10-diol	DTXSID50369896	274	85	52.7	151	NA	NA	NA	0	0.75	0.986
-1-Iodo-1H,1H,2H,2H-perfluorononane	DTXSID90880156	474	11.2	9.03	13.1	NA	NA	NA	0	0.754	0.998
-((2,2,3,3-Tetrafluoropropoxy)methyl)oxirane	DTXSID70880230	3096	317	241	567	NA	NA	NA	0	0.752	0.726
+(Heptafluorobutanoyl)pivaloylmethane	DTXSID3066215	745	0	0	0	NA	NA	NA	0.997	0.752	0
+"1H,1H,8H,8H-Perfluoro-3,6-dioxaoctane-1,8-diol"	DTXSID70381090	949	6.97	6.03	7.83	NA	NA	NA	0	0.75	1
+Ametryn	DTXSID1023869	Ametryn	13.9	10.3	17.2	NA	NA	NA	0	0.748	0.512
+"1,6-Dibromododecafluorohexane"	DTXSID20335129	30503	0	0	175	NA	NA	NA	0.655	0.751	0
+"1H,1H,5H-Perfluoropentyl methacrylate"	DTXSID90880131	30507	333	331	333	NA	NA	NA	0	0.748	0
+"Perfluoro-1,4-diiodobutane"	DTXSID30190948	30516	76	0	208	NA	NA	NA	0.412	0.75	0
+"1,6-Diiodoperfluorohexane"	DTXSID90190949	30501	0	0	55.7	NA	NA	NA	0.58	0.755	0
+Pentafluoropropionamide	DTXSID0059871	273	0	0	9.63	NA	NA	NA	0.718	0.753	0.281
+N-Methyl-N-trimethylsilylheptafluorobutyramide	DTXSID40379666	476	25.7	0	314	NA	NA	NA	0.052	0.752	0.921
+Heptafluorobutyramide	DTXSID2060965	908	14.7	11.8	16.7	NA	NA	NA	0.0162	0.751	0.982
+Nonafluoropentanamide	DTXSID60400587	909	132	0	160	NA	NA	NA	0.0546	0.752	0.924
+"1H,1H,5H-Perfluoropentanol"	DTXSID0059879	900	3.73	0	6.1	NA	NA	NA	0.122	0.749	0
+Perfluoropentanamide	DTXSID70366226	916	14.8	11.5	17.5	NA	NA	NA	0	0.75	0.997
+Octafluoroadipamide	DTXSID80310730	923	0	0	0	NA	NA	NA	0.993	0.749	0.00166
+Dodecafluoroheptanol	DTXSID9059832	906	176	167	185	NA	NA	NA	0	0.751	0
+"3-(Perfluoro-2-butyl)propane-1,2-diol"	DTXSID10382147	913	9.53	6.63	11.9	NA	NA	NA	0.00036	0.752	0.979
+3-(Perfluoropropyl)propanol	DTXSID60379269	965	0	0	76	NA	NA	NA	0.796	0.75	0
+"1H,1H,7H-Perfluoroheptyl 4-methylbenzenesulfonate"	DTXSID30340244	477	20.9	15.2	25.1	NA	NA	NA	0	0.75	0.938
+"1H,1H,8H,8H-Perfluorooctane-1,8-diol"	DTXSID30396867	479	14.7	9	19.3	NA	NA	NA	0.00082	0.75	1
+"1H,1H,11H,11H-Perfluorotetraethylene glycol"	DTXSID00380798	464	22.9	15.4	28.2	NA	NA	NA	0.00032	0.749	0.999
+Hexafluoroamylene	DTXSID3059927	945	0	0	0	NA	NA	NA	0.975	0.748	0.979
+"1H,1H,10H,10H-Perfluorodecane-1,10-diol"	DTXSID50369896	274	106	97	116	NA	NA	NA	0	0.752	0
+"1-Iodo-1H,1H,2H,2H-perfluorononane"	DTXSID90880156	474	7.33	4.7	11.4	NA	NA	NA	0	0.749	0.0214
+"((2,2,3,3-Tetrafluoropropoxy)methyl)oxirane"	DTXSID70880230	3096	327	299	333	NA	NA	NA	0	0.749	0
+4:2 Fluorotelomer alcohol	DTXSID1062122	971	299	0	332	NA	NA	NA	0.0399	0.748	0.88

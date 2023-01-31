@@ -59,20 +59,19 @@ ak.hep <- merge_level0(data.label="KreutzPFASHep",
 
 # Use invitroTKstats annotation of type:
 ak.hep <- subset(ak.hep,!is.na(Type))
-ak.hep[ak.hep$Type == "Cal", "Type"] <- "CC"
-ak.hep[ak.hep$Type == "MatrixBlank", "Type"] <- "Blank"
-
+ak.hep[ak.hep$Type == "Cal", "Sample.Type"] <- "CC"
+ak.hep[regexpr("cc",tolower(ak.hep[,"Sample"]))!=-1, "Sample.Type"] <- "CC"
+ak.hep[ak.hep$Type == "MatrixBlank", "Sample.Type"] <- "Blank"
+ak.hep[regexpr("blank",tolower(ak.hep[,"Sample"]))!=-1, "Sample.Type"] <- "Blank"
+ak.hep[regexpr("mb",tolower(ak.hep[,"Sample"]))!=-1, "Sample.Type"] <- "Blank"
+ak.hep[regexpr("spike",tolower(ak.hep[,"Sample"]))!=-1, 
+               "Sample.Type"] <- "Blank"
+               
 # Figure out from sample name whether the hepatocytes were alive:
 # Indicate whether hepatocytes have been inactivated:
 ak.hep$Active.Hep <- NA
 
-ak.hep[ak.hep[,"Type"]=="Cvst", "Active.Hep"] <- 1
-ak.hep[regexpr("HITC",tolower(ak.hep[,"Sample"]))!=-1,
-  "Active.Hep"] <- 0
-ak.hep[
-  sapply(ak.hep$Active.Hep,function(x) ifelse(is.na(x),FALSE,x==0)), 
-  "Type"] <- "Inactive"
-  
+ 
 # Add time of sample:
 ak.hep <- subset(ak.hep,!is.na(ak.hep[,"Sample"]))
 ak.hep[,"Time"] <- NA
@@ -82,7 +81,63 @@ ak.hep[regexpr("t60",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 60/60
 ak.hep[regexpr("t30",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 30/60
 ak.hep[regexpr("t15",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 15/60
 ak.hep[regexpr("t0",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 0/60
-ak.hep[!is.na(ak.hep$Time),"Type"]  <- "Cvst"
+ak.hep[ak.hep$Lab.Compound.ID=="971" & regexpr("_240",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 240/60
+ak.hep[ak.hep$Lab.Compound.ID=="971" & regexpr("_120",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 120/60
+ak.hep[ak.hep$Lab.Compound.ID=="971" & regexpr("_60",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 60/60
+ak.hep[ak.hep$Lab.Compound.ID=="971" & regexpr("_30",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 30/60
+ak.hep[ak.hep$Lab.Compound.ID=="971" & regexpr("_15",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 15/60
+ak.hep[ak.hep$Lab.Compound.ID=="971" & regexpr("_0",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 0/60
+# See platemap on sheet "Assay Summary" to extract time points:
+ak.hep[ak.hep$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") &
+       regexpr("tmid",tolower(ak.hep[,"Sample"]))!=-1 &
+       (regexpr("1_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("2_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("3_",tolower(ak.hep[,"Sample"]))!=-1), "Time"] <- 15/60 
+ak.hep[ak.hep$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") & 
+       regexpr("tmid",tolower(ak.hep[,"Sample"]))!=-1 &
+       (regexpr("4_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("5_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("6_",tolower(ak.hep[,"Sample"]))!=-1), "Time"] <- 30/60 
+ak.hep[ak.hep$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") & 
+       regexpr("tmid",tolower(ak.hep[,"Sample"]))!=-1 &
+       (regexpr("7_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("8_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("9_",tolower(ak.hep[,"Sample"]))!=-1), "Time"] <- 60/60 
+ak.hep[ak.hep$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") & 
+       regexpr("tmid",tolower(ak.hep[,"Sample"]))!=-1 &
+       (regexpr("10_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("11_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("12_",tolower(ak.hep[,"Sample"]))!=-1), "Time"] <- 120/60 
+
+# Initially mark all samples with a time as "Cvt"
+ak.hep[!is.na(ak.hep[,"Time"]),"Sample.Type"] <- "Cvst"
+              
+# Differentiate live hepatocytes from inactive:
+ak.hep[ak.hep[,"Sample.Type"] %in% "Cvst", "Active.Hep"] <- 1
+ak.hep[regexpr("hitc",tolower(ak.hep[,"Sample"]))!=-1,
+  "Active.Hep"] <- 0
+ak.hep[regexpr("inactive",tolower(ak.hep[,"Sample"]))!=-1,
+  "Active.Hep"] <- 0
+ak.hep[ak.hep$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") & 
+       regexpr("t0",tolower(ak.hep[,"Sample"]))!=-1 &
+       (regexpr("4_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("5_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("6_",tolower(ak.hep[,"Sample"]))!=-1), "Active.Hep"] <- 0
+ak.hep[ak.hep$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") & 
+       regexpr("t240",tolower(ak.hep[,"Sample"]))!=-1 &
+       (regexpr("4_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("5_",tolower(ak.hep[,"Sample"]))!=-1 |
+       regexpr("6_",tolower(ak.hep[,"Sample"]))!=-1), "Active.Hep"] <- 0
+ak.hep[
+  sapply(ak.hep$Active.Hep,function(x) ifelse(is.na(x),FALSE,x==0)), 
+  "Sample.Type"] <- "Inactive"
+
 
 # Set the dilution factors:
 # The dilution factor is indeed different across different sample types.
@@ -92,7 +147,7 @@ ak.hep[!is.na(ak.hep$Time),"Type"]  <- "Cvst"
 # -	It seems that when you asked for a pared down sheet this information was lost. We could add it to the Analytes page. I can see it in the more comprehensive sheet she#   provided to me.
 
 ak.hep$Dilution.Factor <- 480
-ak.hep[ak.hep$Type=="CC",
+ak.hep[ak.hep$Sample.Type %in% "CC",
   "Dilution.Factor"] <- 240
   
 # Make sure the areas are numeric:
@@ -119,7 +174,7 @@ level1 <- format_clint(ak.hep,
   date.col="Date",
   compound.col="Compound",
   lab.compound.col="Lab.Compound.ID",
-  type.col="Type",
+  type.col="Sample.Type",
   dilution.col="Dilution.Factor",
   cal.col="Date",
   istd.conc = 10/1000,
@@ -145,7 +200,67 @@ level2[level2[,"Level0.File"]=="G6HC_474_3096_101621_final.xlsx" &
 level2[level2[,"Level0.File"]=="G6HC_474_3096_101621_final.xlsx" &
        regexpr("3096",level2[,"Lab.Sample.Name"])!=-1 &
        level2[,"Lab.Compound.Name"]!="3096", "Verified"] <- "Not present"       
-  
+level2[regexpr("qc",tolower(level2[,"Lab.Sample.Name"]))!=-1, 
+               "Verified"] <- "Quality Control"
+level2[regexpr("media",tolower(level2[,"Lab.Sample.Name"]))!=-1, 
+               "Verified"] <- "Media Only"
+level2[tolower(level2[,"Lab.Sample.Name"])=="acn", 
+               "Verified"] <- "Acetonitrile"
+level2[level2$Lab.Sample.Name %in% c(
+                                     "899",
+                                     "900",
+                                     "906",
+                                     "476",
+                                     "267",
+                                     "913",
+                                     "965"), "Verified"] <- 
+                                     "Not sure what these are"
+for (this.chem in c("745","949","959"))
+{
+  level2[level2$Level0.File=="Hep_745_949_959_082421_final.xlsx" &
+         regexpr(this.chem,level2$Lab.Sample.Name)==-1 &
+         level2$Lab.Compound.Name==this.chem &
+         level2$Sample.Type %in% c("Cvst","Inactive"),
+         "Verified"] <- "Compound not present"
+}        
+level2[level2$Level0.File=="Hep_945_274_464_477_479_final.xlsx" &
+       level2$Level0.Sheet=="Data_B" &
+       level2$Sample.Type != "Blank" &
+       level2$Area == 0,
+       "Verified"] <- "Compound not present"
+level2[level2$Level0.File=="Hep_745_949_959_082421_final.xlsx" &
+       level2$Level0.Sheet=="Data071421" &
+       level2$Sample.Type != "Blank" &
+       level2$Area == 0,
+       "Verified"] <- "Compound not present"
+level2[level2$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") & 
+       regexpr("t0",tolower(level2[,"Lab.Sample.Name"]))!=-1 &
+       (regexpr("7_",tolower(level2[,"Lab.Sample.Name"]))!=-1 |
+       regexpr("8_",tolower(level2[,"Lab.Sample.Name"]))!=-1 |
+       regexpr("9_",tolower(level2[,"Lab.Sample.Name"]))!=-1), "Verified"] <- "Media Only"
+level2[level2$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
+       "Hep_913_AK_082421.xlsx") & 
+       regexpr("t240",tolower(level2[,"Lab.Sample.Name"]))!=-1 &
+       (regexpr("7_",tolower(level2[,"Lab.Sample.Name"]))!=-1 |
+       regexpr("8_",tolower(level2[,"Lab.Sample.Name"]))!=-1 |
+       regexpr("9_",tolower(level2[,"Lab.Sample.Name"]))!=-1), "Verified"] <- "Media Only"      
+                  	
+
+                               
+#level2[level2[,"Lab.Compound.Name"]=="745", "Verified"] <- "Unstable"
+level2[level2[,"Lab.Compound.Name"]=="959", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="30503", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="30507", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="30516", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="30501", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="900", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="476", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="905", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="965", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="474", "Verified"] <- "Unstable"
+#level2[level2[,"Lab.Compound.Name"]=="3096", "Verified"] <- "Unstable"
+
   
 write.table(level2,
   file="KreutzPFAS-Clint-Level2.tsv",
@@ -176,5 +291,5 @@ setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS")
 
 level4 <- calc_clint(FILENAME="KreutzPFAS",
                           NUM.CORES=8,
-                          JAGS.PATH="C:/Users/jwambaug/AppData/Local/Programs/JAGS/JAGS-4.3.1/x64")  
+                          JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")  
  

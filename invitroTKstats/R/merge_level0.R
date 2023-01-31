@@ -404,9 +404,16 @@ merge_level0 <- function(data.label="MYDATA",
       } 
     }
     cat(paste0(paste(this.file,this.sheet,this.chem,sep=", "),"\n"))
-    print(head(this.data))
-    print(paste("Columns needed:",paste(needed.columns,collapse=", ")))
-    this.data <- this.data[,needed.columns]
+    reordered.data <- try(this.data[,needed.columns])
+    if (is(reordered.data,"try-error")) 
+    {
+      print(paste("Columns needed:",paste(needed.columns,collapse=", ")))
+      print(head(this.data))
+      print(paste0("Missing columns: ",paste(needed.columns[!(needed.columns %in% colnames(this.data))],collapse=", ")))
+      browser()
+    }
+    this.data <- reordered.data
+    
     colnames(this.data)[1:13] <- c("Compound",
                              "DTXSID",
                              "Lab.Compound.ID",

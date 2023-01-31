@@ -268,7 +268,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
             if (this.row$Clint.pValue==1) test.AIC <- this.row$AIC.Null
             else test.AIC <- this.row$AIC
             this.row$Sat.pValue <- min(exp(-(test.AIC-AIC(this.sat.fit))),1)
-          }
+          } else browser()
         }
         out.table <- rbind(out.table, this.row)
         print(paste(
@@ -279,7 +279,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
           signif(this.row$Clint.pValue,3),
           "."
           ))
-      }
+      } else browser()
     }  
   }
 

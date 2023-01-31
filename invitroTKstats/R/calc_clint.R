@@ -60,7 +60,7 @@ model {
 # inactivated hepatocutes (Num.abio.obs > 0):
   abio.rate ~ dunif(0,10)
 # Total elimination rate is a sum of both:
-  slope[1] <- decreases * (bio.rate + degrades * abio.rate)
+  slope[1] <- decreases * bio.rate + degrades * abio.rate
 # Actual biological elimination rate:
   bio.slope[1] <- decreases * bio.rate
 # Saturates is whether the bio clearance rate decreases (1 is yes, 0 is no)
@@ -70,10 +70,10 @@ model {
 # Saturation is how much the bio clearance rate decreases at the higher conc:
   saturation ~ dunif(0,1)
 # Calculate a slope at the higher concentration:
-  slope[2] <- decreases * (degrades * abio.rate +
-    bio.rate*(1 - saturates*saturation))
+  slope[2] <- degrades * abio.rate +
+    decreases * bio.rate * (1 - saturates*saturation)
 # Actual biological elimination rate:
-  bio.slope[2] <- decreases * bio.rate*(1 - saturates*saturation)
+  bio.slope[2] <- decreases * bio.rate * (1 - saturates*saturation)
 # The observations are normally distributed (heteroskedastic error):
   for (i in 1:Num.obs)
   {
@@ -446,7 +446,13 @@ calc_clint <- function(FILENAME,
   clint.data <- subset(clint.data,clint.data[,type.col] %in% c(
     "Blank","Cvst","CC","Inactive"))
   
-  # Only used verfied data:
+  # Only used verified data:
+  unverified.data <- subset(clint.data, clint.data[,good.col] != "Y")
+  write.table(unverified.data, file=paste(
+    FILENAME,"-Clint-Level2-heldout.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
   clint.data <- subset(clint.data, clint.data[,good.col] == "Y")
 
   # Clean up data:
@@ -541,7 +547,7 @@ calc_clint <- function(FILENAME,
                              'calibration',
                              'background'), 
                               add.monitor = c(
-                                'slope',
+                                'bio.slope',
                                 'decreases',
                                 'saturates',
                                 "degrades"))
@@ -560,13 +566,13 @@ calc_clint <- function(FILENAME,
         {
           index <- which(mydata$Test.Nominal.Conc == 1)
           results[,"Clint.1"] <- signif(1000 *
-            results[,paste("slope[",index,"]",sep="")] / hep.density / 60, 3)
+            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60, 3)
         } else results[,"Clint.1"] <- NA
         if (10 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 10)
           results[,"Clint.10"] <- signif(1000 *
-            results[,paste("slope[",index,"]",sep="")] / hep.density / 60, 3)
+            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60, 3)
         } else results[,"Clint.10"] <- NA
     
         # Round to 3 sig figs:
