@@ -23,15 +23,12 @@ Perfluoro-1,4-diiodobutane	DTXSID30190948	30516	All Data	0.00533
 1-Iodo-1H,1H,2H,2H-perfluorononane	DTXSID90880156	474	All Data	0.0419
 (Perfluoro-5-methylhexyl)ethyl 2-methylprop-2-enoate	DTXSID60379901	760	All Data	0.0201
 ((2,2,3,3-Tetrafluoropropoxy)methyl)oxirane	DTXSID70880230	3096	All Data	0.289
-1H,1H,7H-Perfluoroheptyl 4-methylbenzenesulfonate	DTXSID30340244	477	All Data	0.0309
+1H,1H,7H-Perfluoroheptyl 4-methylbenzenesulfonate	DTXSID30340244	477	All Data	0.0275
 1H,1H,7H-Perfluoroheptyl 4-methylbenzenesulfonate	DTXSID30340244	477	070321	0.0296
-1H,1H,7H-Perfluoroheptyl 4-methylbenzenesulfonate	DTXSID30340244	477	2021-04-20	0.0324
+1H,1H,7H-Perfluoroheptyl 4-methylbenzenesulfonate	DTXSID30340244	477	2021-04-20	0.027
 tris(Trifluoroethoxy)methane	DTXSID30395037	964	All Data	0.0994
 1H,1H,11H,11H-Perfluorotetraethylene glycol	DTXSID00380798	464	All Data	0.0127
 1H,1H,8H,8H-Perfluorooctane-1,8-diol	DTXSID30396867	479	All Data	0.0506
-1H,1H,2H,2H-Perfluorohexyl iodide	DTXSID1047578	763	All Data	0.0538
-Hexafluoroamylene	DTXSID3059927	945	All Data	0.342
-1H,1H,10H,10H-Perfluorodecane-1,10-diol	DTXSID50369896	274	All Data	0.00496
 Bis(1H,1H-perfluoropropyl)amine	DTXSID50381992	959	All Data	0.0216
 1H,1H,8H,8H-Perfluoro-3,6-dioxaoctane-1,8-diol	DTXSID70381090	949	All Data	0.207
 4:2 Fluorotelomer alcohol	DTXSID1062122	4:2 FTOH aka 971	All Data	0.231
@@ -48,13 +45,7 @@ Methyl perfluoro(3-(1-ethenyloxypropan-2-yloxy)propanoate)	DTXSID50382621	7:3 FT
 2-(Perfluorobutyl)ethyl acrylate	DTXSID1068772	478	All Data	0.078
 1H,1H,5H,5H-Perfluoro-1,5-pentanediol diacrylate	DTXSID5060986	468	All Data	0.177
 1H,1H-Perfluorooctyl methacrylate	DTXSID5063235	276	All Data	0.0665
-8:2 Fluorotelomer methacrylate	DTXSID806210	467	All Data	0.0503
-Perfluorooctanoic acid	DTXSID8031865	PFOA	All Data	0.00181
-Perfluorooctanoic acid	DTXSID8031865	PFOA	041219	0.00218
-Perfluorooctanoic acid	DTXSID8031865	PFOA	100119	0.00154
-Perfluorooctanesulfonic acid	DTXSID3031864	PFOS	All Data	0.00771
-Perfluorooctanesulfonic acid	DTXSID3031864	PFOS	072319	0.0101
-Perfluorooctanesulfonic acid	DTXSID3031864	PFOS	010720	0.00484
+8:2 Fluorotelomer methacrylate	DTXSID8062101	467	All Data	0.0503
 Heptafluorobutyramide	DTXSID2060965	908	All Data	0.601
 Nonafluoropentanamide	DTXSID60400587	909	All Data	0.199
 Perfluoropentanamide	DTXSID70366226	916	All Data	0.516
@@ -68,13 +59,13 @@ Octafluoroadipamide	DTXSID80310730	923	121019	0.861
 Perfluorooctanamide	DTXSID60195123	3117	All Data	0.0263
 Perfluorooctanamide	DTXSID60195123	3117	102919	0.0258
 Perfluorooctanamide	DTXSID60195123	3117	121019	0.0262
-Heptafluorobutanol	DTXSID4059914	915	All Data	0.212
-3-(Perfluoropropyl)propanol	DTXSID60379269	965	All Data	0.104
-N-Methyl-N-trimethylsilylheptafluorobutyramide	DTXSID40379666	476	All Data	0.202
-3-(Perfluorooctyl)propanol	DTXSID10379991	267	All Data	0.0437
-Perfluorooctanamidine	DTXSID70381151	3125	All Data	0.0302
-Dodecafluoroheptanol	DTXSID9059832	906	All Data	0.0715
-Pentafluoropropionamide	DTXSID0059871	273	All Data	0.266
-3-(Perfluoro-2-butyl)propane-1,2-diol	DTXSID10382147	913	All Data	0.154
+Heptafluorobutanol	DTXSID4059914	915	All Data	0.497
+3-(Perfluoropropyl)propanol	DTXSID60379269	965	All Data	0.205
+N-Methyl-N-trimethylsilylheptafluorobutyramide	DTXSID40379666	476	All Data	0.545
+3-(Perfluorooctyl)propanol	DTXSID10379991	267	All Data	0.0352
+Perfluorooctanamidine	DTXSID70381151	3125	All Data	0.0261
+Dodecafluoroheptanol	DTXSID9059832	906	All Data	0.0549
+Pentafluoropropionamide	DTXSID0059871	273	All Data	0.789
+3-(Perfluoro-2-butyl)propane-1,2-diol	DTXSID10382147	913	All Data	0.369
 2-Aminohexafluoropropan-2-ol	DTXSID80382093	899	All Data	0.963
 1H,1H,5H-Perfluoropentanol	DTXSID0059879	900	All Data	0.355

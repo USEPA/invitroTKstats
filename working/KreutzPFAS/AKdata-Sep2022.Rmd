@@ -181,7 +181,7 @@ this.chem.data$Level0.Sheet <- this.sheet
 ``` 
 # Previously made scripts to load data:
 # PFOA and PFOS:
-```{r set_working_directory, eval = TRUE}   
+```{r set_working_directory, eval = FALSE}   
   suppressMessages(source("uc-test-052920.R"))
   all.data$Lab.Compound.Name <- all.data$Compound.Name
   all.data$Date <- "April2019"
@@ -514,7 +514,12 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
   these.data <- as.data.frame(
     suppressMessages(read_excel(this.file,
     sheet="G4B_raw")))
-
+  # Discard data from 4/20 and 4/22:
+  these.data <- subset(these.data, 
+    as.character(as.Date(as.numeric(these.data[,9]), origin = "1899-12-30")) ==
+      "2021-04-21")
+  
+  
   for (this.chem in c("964","464","477","479"))
   {
     start.col <- which(colnames(these.data) == paste(this.chem,"Results"))
@@ -537,7 +542,11 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
   these.data <- as.data.frame(
     suppressMessages(read_excel(this.file,
     sheet="G4A_raw")))
-
+  # Discard data from 4/21 and 4/22:
+  these.data <- subset(these.data, 
+    as.character(as.Date(as.numeric(these.data[,9]), origin = "1899-12-30")) ==
+      "2021-04-20")
+  
   for (this.chem in c("763","945","274"))
   {
     start.col <- which(colnames(these.data) == paste(this.chem,"Results"))
@@ -832,7 +841,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
   colnames(this.row) <- colnames(cheminfo)
   cheminfo <- rbind(cheminfo,this.row)
 # 467
-  this.row <- data.frame(Analyte="DTXSID806210",
+  this.row <- data.frame(Analyte="DTXSID8062101",
                        Name="8:2 Fluorotelomer methacrylate",
                        "Sample ID"="467",
                        IS="m6:2FTOH",
@@ -1112,7 +1121,7 @@ dim(UC.data)
       uc.assay.conc.col="UC.Assay.T0.Conc"
       )
 
-    level1 <- rbind(level1,level1.May2020,level1.Jul2020,level1.Dec2020,level1.900)
+    level1 <- rbind(level1,level1.Jul2020,level1.Dec2020,level1.900)
 ```
 
 ```{r create_level2, eval=TRUE}
@@ -1155,7 +1164,26 @@ dim(UC.data)
     which.rows <- level2$ISTD.Area == 0
     level2[which.rows,"Verified"] <- "JFW: Excluded, no ISTD peak"
 ```
-
+```{r bad_sample_annotate, eval=TRUE}
+# 476, 3125, 273: only in S1
+# 267, 906: only in S2
+# 915, 965, 913: only in S3
+  level2[(regexpr("s2",tolower(level2$Lab.Sample.Name))!=-1 |
+          regexpr("s3",tolower(level2$Lab.Sample.Name))!=-1) &
+          level2$Lab.Compound.Name %in% c("476","3125","273"),
+         "Verified"] <- "JFW: Seems that test substance only in S1"
+  level2[(regexpr("s1",tolower(level2$Lab.Sample.Name))!=-1 |
+          regexpr("s3",tolower(level2$Lab.Sample.Name))!=-1) &
+          level2$Lab.Compound.Name %in% c("267","906"),
+         "Verified"] <- "JFW: Seems that test substance only in S2"
+  level2[(regexpr("s1",tolower(level2$Lab.Sample.Name))!=-1 |
+          regexpr("s2",tolower(level2$Lab.Sample.Name))!=-1) &
+          level2$Lab.Compound.Name %in% c("915","965","913"),
+         "Verified"] <- "JFW: Seems that test substance only in S3"
+  level2[regexpr("2a",tolower(level2$Lab.Sample.Name))!=-1 &
+          level2$Lab.Compound.Name %in% c("276","467"),
+         "Verified"] <- "JFW: Seems that test substance only in series B"
+```
 ```{r badistd_detect, eval=TRUE}
 ISTDTHRESH <- 10
 gooddata <- level2$ISTD.Area
