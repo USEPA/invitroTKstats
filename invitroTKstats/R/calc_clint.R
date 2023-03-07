@@ -1,5 +1,6 @@
 Clint_model <- "
 model {
+
 # Measurement Model:
   # Mass-spec calibration:
   for (i in 1:Num.cal)
@@ -129,6 +130,8 @@ model {
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
 #'   Hepatocyte inciubation concentration \tab Conc\cr
+
+
 #' }
 #'
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
@@ -204,7 +207,8 @@ model {
 #' level4 <- calc_clint_point(FILENAME="Wambaugh2019")
 #'
 #' @export calc_clint
-calc_clint <- function(FILENAME, 
+calc_clint <- function(
+  FILENAME, 
   TEMP.DIR = NULL,
   NUM.CHAINS=5, 
   NUM.CORES=2,
@@ -218,6 +222,7 @@ calc_clint <- function(FILENAME,
 # Internal function for constructing data object given to JAGS:
   build_mydata <- function(this.data)
   {
+
 #
 # What concentrations were tested (1 and 10 uM typical):
 #
@@ -260,6 +265,8 @@ calc_clint <- function(FILENAME,
                                  
 #
 # Blanks (hepatocytes, no chemical):
+
+
 #
 # Identify the blanks (observation time should be NA):    
     this.blanks <- subset(this.data, Sample.Type=="Blank")
@@ -376,6 +383,7 @@ calc_clint <- function(FILENAME,
     set.seed(seed)
 
     return(list(
+# Random number seed:
       .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
@@ -383,6 +391,7 @@ calc_clint <- function(FILENAME,
       log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
       C.thresh = runif(mydata$Num.cal, 0, 0.1),
       log.calibration = rep(0,mydata$Num.cal),
+# Statisticas characterizing the measurment:
       decreases = rbinom(1,1,0.5),
       degrades = rbinom(1,1,0.5),
       bio.rate = runif(1,0,1/15),
@@ -392,10 +401,10 @@ calc_clint <- function(FILENAME,
     ))
   }
 
-  clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""), 
+  MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""), 
     sep="\t",header=T)  
-  clint.data <- subset(clint.data,!is.na(Compound.Name))
-  clint.data <- subset(clint.data,!is.na(Response))
+  MS.data <- subset(MS.data,!is.na(Compound.Name))
+  MS.data <- subset(MS.data,!is.na(Response))
 
 # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
@@ -415,7 +424,7 @@ calc_clint <- function(FILENAME,
   time.col <- "Time"
   area.col <- "Area"
 
-# We need all these columns in clint.data
+# We need all these columns in MS.data
   cols <-c(
     sample.col,
     date.col,
@@ -431,33 +440,33 @@ calc_clint <- function(FILENAME,
     density.col,
     std.conc.col,
     clint.assay.conc.col,
-    time.col,
+   time.col,
     area.col)
       
   # Check for missing columns
-  if (!(all(cols %in% colnames(clint.data))))
+  if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_clint first (level 1) then curate to (level 2).")
     stop(paste("Missing columns named:",
-      paste(cols[!(cols%in%colnames(clint.data))],collapse=", ")))
+      paste(cols[!(cols%in%colnames(MS.data))],collapse=", ")))
   }
 
   # Only include the data types used:
-  clint.data <- subset(clint.data,clint.data[,type.col] %in% c(
+  MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
     "Blank","Cvst","CC","Inactive"))
   
   # Only used verified data:
-  unverified.data <- subset(clint.data, clint.data[,good.col] != "Y")
+  unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
   write.table(unverified.data, file=paste(
     FILENAME,"-Clint-Level2-heldout.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
-  clint.data <- subset(clint.data, clint.data[,good.col] == "Y")
+  MS.data <- subset(MS.data, MS.data[,good.col] == "Y")
 
   # Clean up data:
-  clint.data <- subset(clint.data,!is.na(Response))
-  clint.data[clint.data$Response<0,"Response"] <- 0
+  MS.data <- subset(MS.data,!is.na(Response))
+  MS.data[MS.data$Response<0,"Response"] <- 0
    
   # Because of the possibility of crashes we save the results one chemical at a time:
   OUTPUT.FILE <- paste(FILENAME,"-Clint-Level4.tsv",sep="")
@@ -477,10 +486,10 @@ calc_clint <- function(FILENAME,
   } else CPU.cluster <-NA
   
   coda.out <- list()
-  for (this.compound in unique(clint.data[,compound.col]))
+  for (this.compound in unique(MS.data[,compound.col]))
     if (!(this.compound %in% Results[,compound.col]))
     {
-      this.subset <- subset(clint.data,clint.data[,compound.col]==this.compound)
+      this.subset <- subset(MS.data,MS.data[,compound.col]==this.compound)
       this.dtxsid <- this.subset$DTXSID[1]
       this.lab.name <- this.subset[1,lab.compound.col]
 
@@ -499,12 +508,11 @@ calc_clint <- function(FILENAME,
       print(paste(
         this.compound,
         " (",
-        which(unique(clint.data[,compound.col])==this.compound),
+        which(unique(MS.data[,compound.col])==this.compound),
         " of ",
-        length(unique(clint.data[,compound.col])),
+        length(unique(MS.data[,compound.col])),
         ")",
         sep=""))
-  
   
       mydata <- build_mydata(this.subset)
       if (!is.null(mydata))
@@ -514,10 +522,11 @@ calc_clint <- function(FILENAME,
         
         # write out arguments to runjags:
         save(this.compound,mydata,initfunction,
-          file=paste(FILENAME,"-Clint-PREJAGS.RData",sep=""))
+        file=paste(FILENAME,"-Clint-PREJAGS.RData",sep=""))
           
         # Run JAGS:
-        coda.out[[this.compound]] <-  autorun.jags(Clint_model, 
+        coda.out[[this.compound]] <-  autorun.jags(
+                           Clint_model, 
                            n.chains = NUM.CHAINS,
                            method="parallel", 
                            cl=CPU.cluster,
@@ -618,15 +627,15 @@ calc_clint <- function(FILENAME,
           row.names=F,
           quote=F)
       }    
-    }  
-  
+    }
+
   stopCluster(CPU.cluster)
   
   View(Results)
   save(Results,
     file=paste(FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))
 
-  return(list(Results=Results,coda=coda.out))  
+  return(list(Results=Results,coda=coda.out))
 }
 
 

@@ -86,12 +86,12 @@
 #' @export calc_fup_red_point
 calc_fup_red_point <- function(FILENAME, good.col="Verified")
 {
-  PPB.data <- read.csv(file=paste(FILENAME,"-PPB-RED-Level2.tsv",sep=""), 
+  MS.data <- read.csv(file=paste(FILENAME,"-PPB-RED-Level2.tsv",sep=""), 
     sep="\t",header=T)  
-  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
-  PPB.data <- subset(PPB.data,!is.na(Response))
+  MS.data <- subset(MS.data,!is.na(Compound.Name))
+  MS.data <- subset(MS.data,!is.na(Response))
 
-# Standardize the column names:
+  # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
   date.col <- "Date"
   compound.col <- "Compound.Name"
@@ -99,13 +99,22 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
   lab.compound.col <- "Lab.Compound.Name"
   type.col <- "Sample.Type"
   dilution.col <- "Dilution.Factor"
+  replicate.col <- "Replicate"
   cal.col <- "Calibration"
-  nominal.test.conc.col <- "Test.Target.Conc"
   istd.name.col <- "ISTD.Name"
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
-  series.col <- "Series"
+  std.conc.col <- "Std.Conc"
+  nominal.test.conc.col <- "Nominal.Test.Conc"
+  plasma.percent.col <- "Percent.Physiologic.Plasma"
+  time.col <- "Time"
   area.col <- "Area"
+  analysis.method.col <- "Analysis.Method"
+  analysis.instrument.col <- "Analysis.Instrument"
+  analysis.parameters.col <- "Analysis.Parameters" 
+  note.col <- "Note"
+  level0.file.col <- "Level0.File"
+  level0.sheet.col <- "Level0.Sheet"
 
 # For a properly formatted level 2 file we should have all these columns:
   cols <-c(
@@ -116,42 +125,58 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     lab.compound.col,
     type.col,
     dilution.col,
+    replicate.col,
     cal.col,
-    nominal.test.conc.col,
     istd.name.col,
     istd.conc.col,
     istd.col,
-    series.col,
+    std.conc.col,
+    nominal.test.conc.col,
+    plasma.percent.col,
+    time.col,
     area.col,
+    analysis.method.col,
+    analysis.instrument.col,
+    analysis.parameters.col,
+    note.col,
+    level0.file.col,
+    level0.sheet.col,
     "Response",
     good.col)
-  if (!(all(cols %in% colnames(PPB.data))))
+# Throw error if not all columns present with expected names:
+  if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")
     stop(paste("Missing columns named:",
-      paste(cols[!(cols%in%colnames(PPB.data))],collapse=", ")))
+      paste(cols[!(cols%in%colnames(MS.data))],collapse=", ")))
   }
 
   # Only include the data types used:
-  PPB.data <- subset(PPB.data,PPB.data[,type.col] %in% c(
+  MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
     "Plasma","PBS","T0","Blank"))
   
   # Only used verfied data:
-  PPB.data <- subset(PPB.data, PPB.data[,good.col] == "Y")
+  MS.data <- subset(MS.data, MS.data[,good.col] == "Y")
 
   out.table <-NULL
   num.chem <- 0
   num.cal <- 0
-  for (this.chem in unique(PPB.data[,compound.col]))
+  for (this.chem in unique(MS.data[,compound.col]))
   {
-    this.subset <- subset(PPB.data,PPB.data[,compound.col]==this.chem)
+    this.subset <- subset(MS.data,MS.data[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
       data.frame(Calibration="All Data",
         Fup=NaN))
     this.pbs <- subset(this.subset,Sample.Type=="PBS")
+    if (dim(this.pbs)[1]==0) warning(paste0(
+        "No PBS data for chemical ", this.chem))
     this.plasma <- subset(this.subset,Sample.Type=="Plasma")
+    if (dim(this.plasma)[1]==0) warning(paste0(
+        "No plasma data for chemical ", this.chem))
     this.blank <- subset(this.subset,Sample.Type=="Blank")
+    if (dim(this.blank)[1]==0) warning(paste0(
+        "No blank data for chemical ", this.chem))
     if (length(unique(this.pbs$Dilution.Factor))>1) browser()
     df.pbs <- this.pbs$Dilution.Factor[1]
     if (length(unique(this.plasma$Dilution.Factor))>1) browser()
