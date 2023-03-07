@@ -6,7 +6,12 @@
 \usage{
 calc_clint(
   FILENAME,
+  TEMP.DIR = NULL,
+  NUM.CHAINS = 5,
+  NUM.CORES = 2,
+  RANDOM.SEED = 1111,
   good.col = "Verified",
+  JAGS.PATH = NA,
   decrease.prob = 0.5,
   saturate.prob = 0.25,
   degrade.prob = 0.05
@@ -16,8 +21,20 @@ calc_clint(
 \item{FILENAME}{A string used to identify the input file, whatever the
 argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")}
 
+\item{TEMP.DIR}{An optional directory where file writing may be faster.}
+
+\item{NUM.CHAINS}{The number of Markov Chains to use. This allows evaluation
+of convergence according to Gelman and Rubin diagnostic.}
+
+\item{NUM.CORES}{The number of processors to use (default 2)}
+
+\item{RANDOM.SEED}{The seed used by the random number generator 
+(default 1111)}
+
 \item{good.col}{Name of a column indicating which rows have been verified for 
 analysis, indicated by a "Y" (Defaults to "Verified")}
+
+\item{JAGS.PATH}{The file path to JAGS.}
 
 \item{decrease.prob}{Prior probability that a chemical will decrease in
 the assay (defaults to 0.5)}

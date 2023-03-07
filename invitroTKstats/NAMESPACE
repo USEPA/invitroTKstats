@@ -3,6 +3,7 @@
 export(calc_caco2_point)
 export(calc_clint)
 export(calc_clint_point)
+export(calc_fup_red)
 export(calc_fup_red_base)
 export(calc_fup_red_point)
 export(calc_fup_uc)

@@ -28,8 +28,10 @@ merge_level0(
   conc.colname.col = "Conc.ColName",
   analysis.param.colname = NULL,
   analysis.param.colname.col = "AnalysisParam.ColName",
+  additional.colnames = NULL,
+  additional.colname.cols = NULL,
   chem.ids,
-  chem.lab.id.col = "Lab.ID",
+  chem.lab.id.col = "Chem.Lab.ID",
   chem.name.col = "Compound",
   chem.dtxsid.col = "DTXSID"
 )

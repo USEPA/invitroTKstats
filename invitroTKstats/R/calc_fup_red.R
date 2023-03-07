@@ -24,7 +24,7 @@ model {
     Blank.pred[i] <- background[i]  
     Blank.prec[i] <- (const.analytic.sd[i]+hetero.analytic.slope[i]*(Blank.pred[i]))^(-2)
   }
-  for (i in 1:Num.blank.obs) {
+  for (i in 1:Num.Blank.obs) {
     Blank.obs[i] ~ dnorm(Blank.pred[Blank.cal[i]],Blank.prec[Blank.cal[i]])
   }
   
@@ -178,7 +178,7 @@ model {
 #'
 #' @author John Wambaugh and Chantel Nicolas
 #' 
-#' @export calc_fup_red_base
+#' @export calc_fup_red
 calc_fup_red <- function(
   FILENAME, 
   TEMP.DIR = NULL,
@@ -196,7 +196,7 @@ calc_fup_red <- function(
     unique.cal <- sort(unique(this.data[,"Calibration"]))
     Num.cal <- length(unique.cal)
 #    
-    Blank.data <- subset(this.data,Type=="Blank")
+    Blank.data <- subset(this.data,Sample.Type=="Blank")
     Blank.df <- unique(Blank.data[,"Dilution.Factor"])
     if (length(Blank.df)>1) stop("Multiple blank dilution factors.") 
     Blank.obs <- Blank.data[,"Response"]
@@ -205,17 +205,17 @@ calc_fup_red <- function(
                         function(x) which(unique.cal %in% x))
     Num.Blank.obs <- length(Blank.obs)
 #
-    T0.data <- subset(this.data,Type=="T0")
-    T0.df <- T0.data[,"Dilution.Factor"]
+    T0.data <- subset(this.data,Sample.Type=="T0")
+    T0.df <- unique(T0.data[,"Dilution.Factor"])
     if (length(T0.df)>1) stop("Multiple T0 dilution factors.") 
     T0.obs <- T0.data[,"Response"]
 # Convert calibrations to sequential integers:
     T0.cal <- sapply(T0.data[,"Calibration"],
                         function(x) which(unique.cal %in% x))
-    Num.T0.obs <- legnth(T0.obs)
+    Num.T0.obs <- length(T0.obs)
 #
-    PBS.data <- subset(this.data,Type=="PBS")
-    PBS.df <- PBS.data[,"Dilution.Factor"]
+    PBS.data <- subset(this.data,Sample.Type=="PBS")
+    PBS.df <- unique(PBS.data[,"Dilution.Factor"])
     if (length(PBS.df)>1) stop("Multiple PBS dilution factors.") 
     PBS.obs <-PBS.data[,"Response"]
 # Convert calibrations to sequential integers:
@@ -223,8 +223,8 @@ calc_fup_red <- function(
                         function(x) which(unique.cal %in% x))
     Num.PBS.obs <- length(PBS.obs)
 #
-    Plasma.data <- subset(this.data,Type=="Plasma")
-    Plasma.df <- Plasma.data[,"Dilution.Factor"]
+    Plasma.data <- subset(this.data,Sample.Type=="Plasma")
+    Plasma.df <- unique(Plasma.data[,"Dilution.Factor"])
     if (length(Plasma.df)>1) stop("Multiple plasma dilution factors.") 
     Plasma.obs <- Plasma.data[,"Response"]
 # Convert calibrations to sequential integers:
@@ -234,7 +234,7 @@ calc_fup_red <- function(
 # Match the PBS and Plasma replicate measurments:
     PBS.rep <- paste0(PBS.data[,"Calibration"],PBS.data[,"Replicate"])
     Plasma.rep <- paste0(Plasma.data[,"Calibration"],Plasma.data[,"Replicate"])
-    unique.rep <- sort(unique(c(PBS.rep,plasma.rep)))
+    unique.rep <- sort(unique(c(PBS.rep,Plasma.rep)))
     Num.rep <- length(unique.rep)
 # Convert replicates to sequential integers:
     PBS.rep <- sapply(PBS.rep, function(x) which(unique.rep %in% x))
@@ -252,10 +252,10 @@ calc_fup_red <- function(
       'Test.Nominal.Conc' = Test.Nominal.Conc,
       'Num.cal' = Num.cal,
 # Blank data:
-      'Num.blank.obs' = Num.blank.obs,
+      'Num.Blank.obs' = Num.Blank.obs,
       'Blank.obs' = Blank.obs,
       'Blank.cal' = Blank.cal,
-      'Blank.df' = Blank.df,'
+      'Blank.df' = Blank.df,
 ## Callibration.curve.data:
 #      'Num.cc' = Num.cc.obs,
 #      'cc.obs.conc' = cc.obs.conc,
@@ -285,12 +285,15 @@ calc_fup_red <- function(
       'Plasma.obs' = Plasma.obs,
       'Plasma.cal' = Plasma.cal,
       'Plasma.df' = Plasma.df,
-      'Plasma.rep' = Plasma.rep,
+      'Plasma.rep' = Plasma.rep
     ))
   }
 
   initfunction <- function(chain)
   {
+    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
+    set.seed(seed)
+    
     return(list(
 # Random number seed:
       .RNG.seed=seed,
@@ -455,7 +458,7 @@ calc_fup_red <- function(
           psrf.target = 1.1,
           thin.sample=2000,
           data = mydata,
-          jags = findjags(),
+          jags = JAGS.PATH,
           monitor = c(
             'log.const.analytic.sd',
             'hetero.analytic.slope.factor',

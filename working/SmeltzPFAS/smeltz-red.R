@@ -128,6 +128,7 @@ smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "PBS" %in% x),"Dilution
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC1" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC2" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Plasma" %in% x),"Dilution.Factor"] <- 20
+smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "T0" %in% x),"Dilution.Factor"] <- 20
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Stability" %in% x),"Dilution.Factor"] <- 20
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Blank" %in% x),"Dilution.Factor"] <- 20
 
@@ -173,7 +174,10 @@ level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
    
 # repeat these bits in case a markov chain crashes and we need to restart:
 library(invitroTKstats)
-setwd("c:/users/jwambaug/git/invitroTKstats/working/")
+setwd("c:/users/jwambaug/git/invitroTKstats/working/SmeltzPFAS")
 
-level4 <- calc_fup_red(FILENAME="SmeltzPFAS")  
+level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
+                       NUM.CORES=8,
+                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")  
+ 
  
