@@ -1,6 +1,5 @@
 fup_RED_model <- "
 model {
-
 # Measurement Model:
   # Mass-spec calibration:
   for (i in 1:Num.cal)
@@ -8,7 +7,7 @@ model {
     # Priors:
     log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
     log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
-    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[1]/10)
+    C.thresh[i] ~ dunif(0,Nominal.Test.Conc[1]/10)
     log.calibration[i] ~ dnorm(0,0.01)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
@@ -21,11 +20,12 @@ model {
 # Likelihood for the blank observations:
   for (i in 1:Num.cal)
   {
-    Blank.pred[i] <- background[i]  
+    Blank.pred[i] <- background[i]/Blank.df  
     Blank.prec[i] <- (const.analytic.sd[i]+hetero.analytic.slope[i]*(Blank.pred[i]))^(-2)
   }
-  for (i in 1:Num.Blank.obs) {
-    Blank.obs[i] ~ dnorm(Blank.pred[Blank.cal[i]],Blank.prec[Blank.cal[i]])
+  for (i in 1:Num.Blank.obs) 
+  {
+    Blank.obs[i] ~ dnorm(Blank.pred[Blank.cal[i]], Blank.prec[Blank.cal[i]])
   }
   
 # Likelihood for the T0 observations:  
@@ -33,7 +33,7 @@ model {
   {
 # Mass spec response as a function of diluted concentration:  
     T0.pred[i] <- 
-      calibration[T0.cal[i]]* 
+      calibration[T0.cal[i]] * 
       (Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]) *
       step(Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]) +
       background[T0.cal[i]] 
@@ -41,7 +41,7 @@ model {
     T0.prec[i] <- (const.analytic.sd[T0.cal[i]] +
       hetero.analytic.slope[T0.cal[i]] * T0.pred[i])^(-2)
 # Model for the observation:
-    T0.obs[i] ~ dnorm(T0.pred[i],T0.prec[i]])
+    T0.obs[i] ~ dnorm(T0.pred[i], T0.prec[i])
   }
 
 # Likelihood for the RED plasma protein binding assay::
@@ -59,6 +59,7 @@ model {
 # Total concentration in plasma well:
     C.total[i] <- C.b[i] + C.u[i] 
   }
+  
 # Likelihood for the PBS observations:  
   for (i in 1:Num.PBS.obs)
   {
@@ -73,8 +74,9 @@ model {
     PBS.prec[i] <- (const.analytic.sd[PBS.cal[i]] +
       hetero.analytic.slope[PBS.cal[i]] * PBS.pred[i])^(-2)
 # Model for the observation:
-    PBS.obs[i] ~ dnorm(PBS.pred[i], PBS.prec[i]])
+    PBS.obs[i] ~ dnorm(PBS.pred[i], PBS.prec[i])
   }
+  
 # Likelihood for the Plasma observations:  
   for (i in 1:Num.Plasma.obs)
   {
@@ -82,14 +84,14 @@ model {
     Plasma.conc[i] <- C.total[Plasma.rep[i]]
     Plasma.pred[i] <- 
       calibration[Plasma.cal[i]]* 
-      (Plasma.conc[i]/Plamsa.df - C.thresh[Plasma.cal[i]]) *
+      (Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]) *
       step(Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]) +
       background[Plasma.cal[i]] 
 # Heteroskedastic precision:
     Plasma.prec[i] <- (const.analytic.sd[Plasma.cal[i]] +
       hetero.analytic.slope[Plasma.cal[i]] * Plasma.pred[i])^(-2)
 # Model for the observation:
-    Plasma.obs[i] ~ dnorm(Plasma.pred[i], Plasma.prec[i]])
+    Plasma.obs[i] ~ dnorm(Plasma.pred[i], Plasma.prec[i])
   }
 }
 "
@@ -244,12 +246,12 @@ calc_fup_red <- function(
     #g/mol -> M is g/L/MW
     #M <- uM is /1000000
     PPB100 <- 70/(66.5*1000)*1000000 # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
-    Test.Nominal.Conc <- unique(this.data$Nominal.Test.Con) # uM frank parent concentration
-    if (length(Test.Nominal.Conc)>1) stop("Multiple test concentrations.")
+    Nominal.Test.Conc <- unique(this.data$Nominal.Test.Conc) # uM frank parent concentration
+    if (length(Nominal.Test.Conc)>1) stop("Multiple test concentrations.")
 
     return(list(                
 # Describe assay:
-      'Test.Nominal.Conc' = Test.Nominal.Conc,
+      'Nominal.Test.Conc' = Nominal.Test.Conc,
       'Num.cal' = Num.cal,
 # Blank data:
       'Num.Blank.obs' = Num.Blank.obs,
@@ -263,9 +265,11 @@ calc_fup_red <- function(
 #      'cc.obs.cal' = cc.obs.cal,
 #      'cc.obs.Dilution.Factor' = cc.obs.df,
 ## Stability data:
-#      'T0.data' = T0.data[,"ISTDResponseRatio"],
-#      'Num.T0.obs' = Num.T0.obs,
-#      'Stability.data' = Stability.data[,"ISTDResponseRatio"],
+      'Num.T0.obs' = Num.T0.obs,
+      'T0.obs' = T0.obs,
+      'T0.cal' = T0.cal,
+      'T0.df' = T0.df,
+#       'Stability.data' = Stability.data[,"ISTDResponseRatio"],
 #      'Num.Stability.obs' = Num.Stability.obs,
 ## Equilibriation data:
 #      'EQ1.data' = EQ1.data[,"ISTDResponseRatio"],
@@ -305,7 +309,7 @@ calc_fup_red <- function(
       log.calibration = rep(0,mydata$Num.cal),
 # Statisticas characterizing the measurment:
       log.Fup = log10(runif(1,0,1)),
-      C.missing = runif(1,0,mydata[["Test.Nominal.Conc"]])
+      C.missing = runif(mydata$Num.rep,0,mydata[["Nominal.Test.Conc"]])
     ))
   }
   
@@ -415,10 +419,10 @@ calc_fup_red <- function(
   } else CPU.cluster <-NA
   
   coda.out <- list()
-  for (this.compound in unique(MS.data[,compound.col]))
-    if (!(this.compound %in% Results[,compound.col]))
+  for (this.compound in unique(MS.data[,"Compound.Name"]))
+    if (!(this.compound %in% Results[,"Compound.Name"]))
     {
-      this.subset <- subset(MS.data,MS.data[,compound.col]==this.compound)
+      this.subset <- subset(MS.data,MS.data[,"Compound.Name"]==this.compound)
       this.dtxsid <- this.subset$DTXSID[1]
       this.lab.name <- this.subset[1,lab.compound.col]
 
@@ -460,25 +464,27 @@ calc_fup_red <- function(
           data = mydata,
           jags = JAGS.PATH,
           monitor = c(
-            'log.const.analytic.sd',
-            'hetero.analytic.slope.factor',
-            'Fup',
+# Chemical analysis parameters:
+            'const.analytic.sd',
+            'hetero.analytic.slope',
             'C.thresh',
-            'background',
-            'calibration'))
+# Measrument parameters:
+            'C.missing',
+            'Fup'))
         
-        sim.mcmc <- coda.out[[MSdata[,"CAS"][1]]]$mcmc[[1]]
+        sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
         results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
     
-        Fup.point <- 2/5 *
-          (mean(mydata$PBS.data) - mean(mydata$Blank.data)) /
-          (mean(mydata$Plasma.data) - mean(mydata$Blank.data))
+        Fup.point <- 
+          (mean(mydata$PBS.obs)*mydata$PBS.df - 
+           mean(mydata$Blank.obs)*mydata$Blank.df) /
+          (mean(mydata$Plasma.obs)*mydata$Plasma.df - 
+           mean(mydata$Blank.obs)*mydata$Blank.df)
         
-        new.results <- data.frame(Name=MSdata[,"Name"][1],
-                                  DTXSID=MSdata[,"DTXSID"][1],
-                                  CAS=MSdata[,"CAS"][1],
-                                  CompoundName=this.compound,
+        new.results <- data.frame(Compound.Name=this.compound,
+                                  Lab.Compound.Name=this.lab.name,
+                                  DTXSID=this.dtxsid,
                                   Fup.point=Fup.point,
                                   stringsAsFactors=F)
         new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- results[c(2,1,3),"Fup"]

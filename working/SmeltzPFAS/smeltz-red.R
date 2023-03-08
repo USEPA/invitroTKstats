@@ -123,14 +123,14 @@ smeltz.red <- subset(smeltz.red, !is.na(Area) &
   !is.na(smeltz.red[,"IS Area"]))
   
 # Annotate dilution factors:
-smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 1
+smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 20
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "PBS" %in% x),"Dilution.Factor"] <- 2
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC1" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC2" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Plasma" %in% x),"Dilution.Factor"] <- 20
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "T0" %in% x),"Dilution.Factor"] <- 20
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Stability" %in% x),"Dilution.Factor"] <- 20
-smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Blank" %in% x),"Dilution.Factor"] <- 20
+smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Blank" %in% x),"Dilution.Factor"] <- 1
 
 
 
@@ -174,6 +174,7 @@ level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
    
 # repeat these bits in case a markov chain crashes and we need to restart:
 library(invitroTKstats)
+rm(list=ls())
 setwd("c:/users/jwambaug/git/invitroTKstats/working/SmeltzPFAS")
 
 level4 <- calc_fup_red(FILENAME="SmeltzPFAS",

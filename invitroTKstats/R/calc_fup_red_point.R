@@ -181,7 +181,9 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     df.pbs <- this.pbs$Dilution.Factor[1]
     if (length(unique(this.plasma$Dilution.Factor))>1) browser()
     df.plasma <- this.plasma$Dilution.Factor[1]
-    
+    if (length(unique(this.blank$Dilution.Factor))>1) browser()
+    df.blank <- this.blank$Dilution.Factor[1]
+        
   # Check to make sure there are data for PBS and plasma: 
     if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.blank)[1] > 0 )
     {
@@ -209,9 +211,9 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
           if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.blank)[1] > 0)
           {
             this.row$Fup <- max(0,df.pbs*(mean(this.pbs$Response) -
-              mean(this.blank$Response))) /
+              df.blank*mean(this.blank$Response))) /
               (df.plasma*(mean(this.plasma$Response) -
-              mean(this.blank$Response)))
+              df.blank*mean(this.blank$Response)))
             out.table <- rbind(out.table, this.row)
             num.cal <- num.cal + 1
           }
