@@ -36,7 +36,7 @@ model {
       calibration[T0.cal[i]] * 
       (Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]) *
       step(Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]) +
-      background[T0.cal[i]] 
+      background[T0.cal[i]]/T0.df 
 # Heteroskedastic precision:
     T0.prec[i] <- (const.analytic.sd[T0.cal[i]] +
       hetero.analytic.slope[T0.cal[i]] * T0.pred[i])^(-2)
@@ -68,8 +68,8 @@ model {
     PBS.pred[i] <- 
       calibration[PBS.cal[i]]* 
       (PBS.conc[i]/PBS.df - C.thresh[PBS.cal[i]]) *
-      step(PBS.conc[i]/PBS.df - C.thresh[PBS.cal[i]]) +
-      background[PBS.cal[i]] 
+      step(PBS.conc[i]/PBS.df  - C.thresh[PBS.cal[i]]) +
+      background[PBS.cal[i]]/PBS.df  
 # Heteroskedastic precision:
     PBS.prec[i] <- (const.analytic.sd[PBS.cal[i]] +
       hetero.analytic.slope[PBS.cal[i]] * PBS.pred[i])^(-2)
@@ -86,7 +86,7 @@ model {
       calibration[Plasma.cal[i]]* 
       (Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]) *
       step(Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]) +
-      background[Plasma.cal[i]] 
+      background[Plasma.cal[i]]/Plasma.df 
 # Heteroskedastic precision:
     Plasma.prec[i] <- (const.analytic.sd[Plasma.cal[i]] +
       hetero.analytic.slope[Plasma.cal[i]] * Plasma.pred[i])^(-2)
