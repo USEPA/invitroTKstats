@@ -123,7 +123,7 @@ smeltz.red <- subset(smeltz.red, !is.na(Area) &
   !is.na(smeltz.red[,"IS Area"]))
   
 # Annotate dilution factors:
-smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 20
+smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 1
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "PBS" %in% x),"Dilution.Factor"] <- 2
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC1" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC2" %in% x),"Dilution.Factor"] <- 10
@@ -132,6 +132,9 @@ smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "T0" %in% x),"Dilution.
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Stability" %in% x),"Dilution.Factor"] <- 20
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Blank" %in% x),"Dilution.Factor"] <- 1
 
+# Standard concentrations differ slightly from Protocol (CC17 = CC16, etc)
+# Units should be uM:
+smeltz.red[,"Std. Conc"] <- as.numeric(smeltz.red[,"Std. Conc"])/100
 
 
   

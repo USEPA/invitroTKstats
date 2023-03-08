@@ -34,14 +34,30 @@ model {
 # Mass spec response as a function of diluted concentration:  
     T0.pred[i] <- 
       calibration[T0.cal[i]] * 
-      (Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]) *
-      step(Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]) +
+      (Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]/T0.df) *
+      step(Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]/T0.df) +
       background[T0.cal[i]]/T0.df 
 # Heteroskedastic precision:
     T0.prec[i] <- (const.analytic.sd[T0.cal[i]] +
       hetero.analytic.slope[T0.cal[i]] * T0.pred[i])^(-2)
 # Model for the observation:
     T0.obs[i] ~ dnorm(T0.pred[i], T0.prec[i])
+  }
+
+# Likelihood for the calibration curve observations:
+  for (i in 1:Num.CC.obs)
+  {
+# Mass spec response as a function of diluted concentration:        
+    CC.pred[i] <- 
+      calibration[CC.cal[i]] * 
+      (CC.conc[i]/CC.df - C.thresh[CC.cal[i]]/CC.df) *
+      step(CC.conc[i]/CC.df - C.thresh[CC.cal[i]]/CC.df) +
+      background[CC.cal[i]]/CC.df
+# Heteroskedastic precision:
+    CC.prec[i] <- (const.analytic.sd[CC.cal[i]] +
+      hetero.analytic.slope[CC.cal[i]] * CC.pred[i])^(-2)
+# Model for the observation:
+    CC.obs[i] ~ dnorm(CC.pred[i], CC.prec[i])
   }
 
 # Likelihood for the RED plasma protein binding assay::
@@ -67,8 +83,8 @@ model {
     PBS.conc[i] <- C.u[PBS.rep[i]]
     PBS.pred[i] <- 
       calibration[PBS.cal[i]]* 
-      (PBS.conc[i]/PBS.df - C.thresh[PBS.cal[i]]) *
-      step(PBS.conc[i]/PBS.df  - C.thresh[PBS.cal[i]]) +
+      (PBS.conc[i]/PBS.df - C.thresh[PBS.cal[i]]/PBS.df) *
+      step(PBS.conc[i]/PBS.df  - C.thresh[PBS.cal[i]]/PBS.df) +
       background[PBS.cal[i]]/PBS.df  
 # Heteroskedastic precision:
     PBS.prec[i] <- (const.analytic.sd[PBS.cal[i]] +
@@ -84,8 +100,8 @@ model {
     Plasma.conc[i] <- C.total[Plasma.rep[i]]
     Plasma.pred[i] <- 
       calibration[Plasma.cal[i]]* 
-      (Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]) *
-      step(Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]) +
+      (Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) *
+      step(Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) +
       background[Plasma.cal[i]]/Plasma.df 
 # Heteroskedastic precision:
     Plasma.prec[i] <- (const.analytic.sd[Plasma.cal[i]] +
@@ -197,7 +213,7 @@ calc_fup_red <- function(
 # Each calibration could be a unique string (such as a date):
     unique.cal <- sort(unique(this.data[,"Calibration"]))
     Num.cal <- length(unique.cal)
-#    
+# BLANK  
     Blank.data <- subset(this.data,Sample.Type=="Blank")
     Blank.df <- unique(Blank.data[,"Dilution.Factor"])
     if (length(Blank.df)>1) stop("Multiple blank dilution factors.") 
@@ -206,7 +222,7 @@ calc_fup_red <- function(
     Blank.cal <- sapply(Blank.data[,"Calibration"],
                         function(x) which(unique.cal %in% x))
     Num.Blank.obs <- length(Blank.obs)
-#
+# TIME ZERO
     T0.data <- subset(this.data,Sample.Type=="T0")
     T0.df <- unique(T0.data[,"Dilution.Factor"])
     if (length(T0.df)>1) stop("Multiple T0 dilution factors.") 
@@ -215,7 +231,17 @@ calc_fup_red <- function(
     T0.cal <- sapply(T0.data[,"Calibration"],
                         function(x) which(unique.cal %in% x))
     Num.T0.obs <- length(T0.obs)
-#
+# Calibration Curve
+    CC.data <- subset(this.data,Sample.Type=="CC")
+    CC.df <- unique(CC.data[,"Dilution.Factor"])
+    if (length(CC.df)>1) stop("Multiple CC dilution factors.") 
+    CC.obs <- CC.data[,"Response"]
+# Convert calibrations to sequential integers:
+    CC.cal <- sapply(CC.data[,"Calibration"],
+                        function(x) which(unique.cal %in% x))
+    CC.conc <- CC.data[,"Std.Conc"]
+    Num.CC.obs <- length(CC.obs)
+# PBS
     PBS.data <- subset(this.data,Sample.Type=="PBS")
     PBS.df <- unique(PBS.data[,"Dilution.Factor"])
     if (length(PBS.df)>1) stop("Multiple PBS dilution factors.") 
@@ -224,7 +250,7 @@ calc_fup_red <- function(
     PBS.cal <- sapply(PBS.data[,"Calibration"],
                         function(x) which(unique.cal %in% x))
     Num.PBS.obs <- length(PBS.obs)
-#
+# PLASMA
     Plasma.data <- subset(this.data,Sample.Type=="Plasma")
     Plasma.df <- unique(Plasma.data[,"Dilution.Factor"])
     if (length(Plasma.df)>1) stop("Multiple plasma dilution factors.") 
@@ -259,11 +285,11 @@ calc_fup_red <- function(
       'Blank.cal' = Blank.cal,
       'Blank.df' = Blank.df,
 ## Callibration.curve.data:
-#      'Num.cc' = Num.cc.obs,
-#      'cc.obs.conc' = cc.obs.conc,
-#      'cc.obs' = cc.obs,
-#      'cc.obs.cal' = cc.obs.cal,
-#      'cc.obs.Dilution.Factor' = cc.obs.df,
+      'Num.CC.obs' = Num.CC.obs,
+      'CC.conc' = CC.conc,
+      'CC.obs' = CC.obs,
+      'CC.cal' = CC.cal,
+      'CC.df' = CC.df,
 ## Stability data:
       'Num.T0.obs' = Num.T0.obs,
       'T0.obs' = T0.obs,
