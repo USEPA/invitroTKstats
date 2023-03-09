@@ -1,7 +1,7 @@
 library(invitroTKstats)
 library(readxl)
 
-setwd("c:/users/jwambaug/git/invitroTKstats/working/")
+setwd("c:/users/jwambaug/git/invitroTKstats/working/SmeltzPFAS/")
 
 chem.ids <- read_excel("Hep12 Data for Uncertainty Feb2022.xlsx", sheet=1)
 chem.ids <- as.data.frame(chem.ids)
@@ -52,6 +52,7 @@ while (this.row <= dim(smeltz.hep)[1])
   smeltz.hep[this.row, "ISTD.Name"] <- this.istdname
   this.row <- this.row + 1
 }
+
 # Get rid of blank rows:
 smeltz.hep <- subset(smeltz.hep,!is.na(smeltz.hep[,"Sample Text"]))
 
@@ -130,10 +131,14 @@ smeltz.hep[,"nM"] <- as.numeric(smeltz.hep[,"nM"])/1000
 smeltz.hep[smeltz.hep[,"Type"]!="CC","nM"] <- NA
 # Concentrations calculated including dilution:
 smeltz.hep[,"nM"] <- smeltz.hep[,"nM"]*smeltz.hep$Dilution.Factor
+
+# Add file/sheet info:
+smeltz.hep$Level0.File <- "Hep12 Data for Uncertainty Feb2022.xlsx"
+smeltz.hep$Level0.Sheet <- "PFAS Data"
   
   
 level1 <- format_clint(smeltz.hep,
-  FILENAME="SmeltzPFAS/SmeltzPFAS",
+  FILENAME="SmeltzPFAS",
   sample.col ="Name",
   date.col="Acq.Date",
   compound.col="Compound",
@@ -178,7 +183,7 @@ level2[level2$Sample.Type=="CC" & is.na(level2$Std.Conc),"Verified"] <-
 
   
 write.table(level2,
-  file="SmeltzPFAS/SmeltzPFAS-Clint-Level2.tsv",
+  file="SmeltzPFAS-Clint-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
@@ -198,11 +203,13 @@ subset(this.subset,Time==0)$Response/1*subset(this.subset,Time==0)$Dilution.Fact
 
 
 
-level3 <- calc_clint_point(FILENAME="SmeltzPFAS/SmeltzPFAS")
+level3 <- calc_clint_point(FILENAME="SmeltzPFAS")  
    
 # repeat these bits in case a markov chain crashes and we need to restart:
 library(invitroTKstats)
-setwd("c:/users/jwambaug/git/invitroTKstats/working/")
+setwd("c:/users/jwambaug/git/invitroTKstats/working/SmeltzPFAS/")
 
-level4 <- calc_clint(FILENAME="SmeltzPFAS/SmeltzPFAS")  
+level4 <- calc_clint(FILENAME="SmeltzPFAS",
+                       NUM.CORES=8,
+                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")   
  

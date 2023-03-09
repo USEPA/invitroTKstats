@@ -21,7 +21,7 @@ model {
 # Likelihood for the blank observations:
   for (i in 1:Num.cal)
   {
-    Blank.pred[i] <- background[i]  
+    Blank.pred[i] <- background[i]/Blank.Dilution.Factor[i]  
     Blank.prec[i] <- (const.analytic.sd[i]+hetero.analytic.slope[i]*(Blank.pred[i]))^(-2)
   }
   for (i in 1:Num.blank.obs) {
@@ -37,9 +37,11 @@ model {
 # Mass spec response as a function of diluted concentration:        
     cc.pred[i] <- 
       cc.slope[i] * 
-      (cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) *
-      step(cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - C.thresh[cc.obs.cal[i]]) +
-      cc.intercept[i] 
+      (cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - 
+      C.thresh[cc.obs.cal[i]]/cc.obs.Dilution.Factor[i]) *
+      step(cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - 
+      C.thresh[cc.obs.cal[i]]/cc.obs.Dilution.Factor[i]) +
+      cc.intercept[i]/cc.obs.Dilution.Factor[i] 
 # Heteroskedastic precision:
     cc.prec[i] <- (const.analytic.sd[cc.obs.cal[i]] +
       hetero.analytic.slope[cc.obs.cal[i]] * cc.pred[i])^(-2)
@@ -83,9 +85,11 @@ model {
       exp(-slope[obs.conc[i]]*obs.time[i])
   # MS prediction:
     obs.pred[i] <- calibration[obs.cal[i]] *
-      (C[i]/obs.Dilution.Factor[i] - C.thresh[obs.cal[i]]) *
-      step(C[i]/obs.Dilution.Factor[i] - C.thresh[obs.cal[i]]) + 
-      background[obs.cal[i]]    
+      (C[i]/obs.Dilution.Factor[i] - 
+      C.thresh[obs.cal[i]]/obs.Dilution.Factor[i]) *
+      step(C[i]/obs.Dilution.Factor[i] - 
+      C.thresh[obs.cal[i]]/obs.Dilution.Factor[i]) + 
+      background[obs.cal[i]]/obs.Dilution.Factor[i]    
     obs.prec[i] <- (const.analytic.sd[obs.cal[i]] + 
       hetero.analytic.slope[obs.cal[i]]*obs.pred[i])^(-2)
     
@@ -102,9 +106,11 @@ model {
       exp(-abio.slope[abio.obs.conc[i]]*abio.obs.time[i])
   # MS prediction:
     abio.obs.pred[i] <- calibration[abio.obs.cal[i]] *
-      (abio.C[i]/abio.obs.Dilution.Factor[i] - C.thresh[abio.obs.cal[i]]) *
-      step(abio.C[i]/abio.obs.Dilution.Factor[i] - C.thresh[abio.obs.cal[i]]) + 
-      background[abio.obs.cal[i]]    
+      (abio.C[i]/abio.obs.Dilution.Factor[i] - 
+      C.thresh[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]) *
+      step(abio.C[i]/abio.obs.Dilution.Factor[i] - 
+      C.thresh[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]) + 
+      background[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]    
     abio.obs.prec[i] <- (const.analytic.sd[abio.obs.cal[i]] + 
       hetero.analytic.slope[abio.obs.cal[i]]*abio.obs.pred[i])^(-2)
     
@@ -130,8 +136,6 @@ model {
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
 #'   Hepatocyte inciubation concentration \tab Conc\cr
-
-
 #' }
 #'
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
@@ -222,14 +226,12 @@ calc_clint <- function(
 # Internal function for constructing data object given to JAGS:
   build_mydata <- function(this.data)
   {
-
 #
 # What concentrations were tested (1 and 10 uM typical):
 #
  # Establish a vector of unique nominal test concentrations:
     Test.conc <- sort(unique(unique(this.cvt[,"Clint.Assay.Conc"])))
     Num.conc <- length(Test.conc)
-
 #
 # How many separate mass-spec calibrations were made:
 #
@@ -238,7 +240,6 @@ calc_clint <- function(
     Cal.name <- unique(this.data$Calibration)
 # Identify the number of calibrations:
     Num.cal <- length(Cal.name)
-
 #
 # CvT Obs:
 #
@@ -262,15 +263,13 @@ calc_clint <- function(
       obs.cal[this.cvt$Calibration == this.cal] <- 
         which(Cal.name == this.cal)
     }
-                                 
 #
 # Blanks (hepatocytes, no chemical):
-
-
 #
 # Identify the blanks (observation time should be NA):    
     this.blanks <- subset(this.data, Sample.Type=="Blank")
     blank.obs <- this.blanks[,"Response"]
+    blank.df <- this.blanks[,"Dilution.Factor"]
     Num.blanks <- length(blank.obs)
     # Create a dummy vector to keep JAGS happy:
     if (Num.blanks == 0) blank.obs <- c(NA, NA)
@@ -283,7 +282,6 @@ calc_clint <- function(
       blank.cal[this.blanks$Calibration == this.cal] <- 
         which(Cal.name == this.cal)
     }
-      
 #
 # Inactivated hepatocytes
 #
@@ -316,7 +314,6 @@ calc_clint <- function(
       abio.obs.cal <- c(NA,NA)
       abio.obs.df<- c(NA,NA)
     }
-
 #
 # Calibration curve measurements
 #
@@ -356,6 +353,7 @@ calc_clint <- function(
       'Num.blank.obs' = Num.blanks,
       'Blank.obs' = blank.obs,
       'Blank.cal' = blank.cal,
+      'Blank.Dilution.Factor' = blank.df,
 # Callibration.curve.data:
       'Num.cc' = Num.cc.obs,
       'cc.obs.conc' = cc.obs.conc,

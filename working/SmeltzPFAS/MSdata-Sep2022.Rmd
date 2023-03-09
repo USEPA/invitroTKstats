@@ -614,6 +614,6 @@ for (this.id in unique(level2$DTXSID))
     setwd("c:/users/jwambaug/git/invitroTKstats/working/SmeltzPFAS")
     level4 <- calc_fup_uc(FILENAME="SmeltzPFAS",
                 NUM.CORES=8,
-                JAGS.PATH="C:/Users/jwambaug/AppData/Local/Programs/JAGS/JAGS-4.3.1/x64",
+                JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64",
                 RANDOM.SEED=2222) 
 ```

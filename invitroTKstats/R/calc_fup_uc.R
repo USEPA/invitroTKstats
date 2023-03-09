@@ -28,9 +28,9 @@ model {
 # Mass spec response as a function of diluted concentration:        
     Response.pred[i] <- 
       slope[i] * 
-      (Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) *
-      step(Conc[obs.conc[i]]/Dilution.Factor[i] - C.thresh[obs.cal[i]]) +
-      intercept[i] 
+      ((Conc[obs.conc[i]] - C.thresh[obs.cal[i]]) *
+      step(Conc[obs.conc[i]] - C.thresh[obs.cal[i]]) +
+      intercept[i])/Dilution.Factor[i] 
 # Heteroskedastic precision:
     Response.prec[i] <- (const.analytic.sd[obs.cal[i]] +
       hetero.analytic.slope[obs.cal[i]] * Response.pred[i])^(-2)
