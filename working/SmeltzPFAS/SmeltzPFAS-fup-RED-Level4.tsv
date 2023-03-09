@@ -1,3 +1,7 @@
 Compound.Name	Lab.Compound.Name	DTXSID	Fup.point	Fup.Med	Fup.Low	Fup.High
-3:3 Fluorotelomer carboxylic acid	3:3 Fluorotelomer carboxylic acid	DTXSID00379268	0.0164735916294952	0.01545815	0.011887435	0.0203543075
-Perfluoropentanoic acid	Perfluoropentanoic acid	DTXSID6062599	0.0452876221133375	0.044857	0.0314676375	0.064293315
+3:3 Fluorotelomer carboxylic acid	3:3 Fluorotelomer carboxylic acid	DTXSID00379268	0.01636	0.01548	0.01227	0.02041
+Perfluoropentanoic acid	Perfluoropentanoic acid	DTXSID6062599	0.04541	0.04481	0.03248	0.066
+Perfluorobutanesulfonic acid	Perfluorobutanesulfonic acid	DTXSID5030030	0.01127	0.01178	0.008315	0.01755
+Perfluorooctanoic acid	Perfluorooctanoic acid	DTXSID8031865	0.00426	4.142e-07	1.418e-10	0.002169
+Perfluoro-3,6,9-trioxadecanoic acid	Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	0.001008	4.3e-07	1.458e-10	0.0008975
+11-H-Perfluoroundecanoic acid	11-H-Perfluoroundecanoic acid	DTXSID5061954	0.0004545	4.323e-07	1.443e-10	0.000336

@@ -8,20 +8,22 @@
 #' should have been curated and had a column added with the value "Y" indicating
 #' that each row is verified as usable for analysis (that is, the Level2 file).
 #' 
-#' The data should be annotated according to these types:
+#' The data frame of observations should be annotated according to
+#' of these types:
 #' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
-#'   Plasma well concentration \tab Plasma\cr
-#'   Phosphate-buffered well concentration\tab PBS\cr
-#'   Time zero plasma concentration \tab T0\cr
+#'   No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+#'   Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr
+#'   Time zero chemical and plasma \tab T0\cr
+#'   Equilibrium chemical in phosphate-buffered well (no plasma) \tab PBS\cr
+#'   Equilibrium chemical in plasma well \tab Plasma\cr
 #' }
 #'
 #' F_up is calculated from MS responses as:
 #'
 #' f_up = max(0,(mean(PBS Response * Dilution.Factor) - 
-#'   mean(Blank Response * Dilution.Factor))) / (
+#'   mean(NoPlasma.Blank Response * Dilution.Factor))) / (
 #'   mean(Plasma Response * Dilution Factor) -
-#'   mean(Blank Response * Dilution.Factor))
+#'   mean(Plasma.Blank Response * Dilution.Factor))
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")
@@ -153,7 +155,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
 
   # Only include the data types used:
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
-    "Plasma","PBS","T0","Blank"))
+    "Plasma","PBS","T0","Plasma.Blank","NoPlasma.Blank"))
   
   # Only used verfied data:
   MS.data <- subset(MS.data, MS.data[,good.col] == "Y")
@@ -174,24 +176,29 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     this.plasma <- subset(this.subset,Sample.Type=="Plasma")
     if (dim(this.plasma)[1]==0) warning(paste0(
         "No plasma data for chemical ", this.chem))
-    this.blank <- subset(this.subset,Sample.Type=="Blank")
-    if (dim(this.blank)[1]==0) warning(paste0(
-        "No blank data for chemical ", this.chem))
+    this.plasma.blank <- subset(this.subset,Sample.Type=="Plasma.Blank")
+    if (dim(this.plasma.blank)[1]==0) warning(paste0(
+        "No plasma blank data for chemical ", this.chem))
+    this.noplasma.blank <- subset(this.subset,Sample.Type=="NoPlasma.Blank")
+    if (dim(this.noplasma.blank)[1]==0) warning(paste0(
+        "No non-plasma blank data for chemical ", this.chem))
     if (length(unique(this.pbs$Dilution.Factor))>1) browser()
     df.pbs <- this.pbs$Dilution.Factor[1]
     if (length(unique(this.plasma$Dilution.Factor))>1) browser()
     df.plasma <- this.plasma$Dilution.Factor[1]
-    if (length(unique(this.blank$Dilution.Factor))>1) browser()
-    df.blank <- this.blank$Dilution.Factor[1]
+    if (length(unique(this.plasma.blank$Dilution.Factor))>1) browser()
+    df.plasma.blank <- this.plasma.blank$Dilution.Factor[1]
+    if (length(unique(this.noplasma.blank$Dilution.Factor))>1) browser()
+    df.noplasma.blank <- this.noplasma.blank$Dilution.Factor[1]
         
   # Check to make sure there are data for PBS and plasma: 
-    if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.blank)[1] > 0 )
+    if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.plasma.blank)[1] > 0 & dim(this.noplasma.blank)[1] > 0 )
     {
       num.chem <- num.chem + 1
-      this.row$Fup <- max(0,df.pbs*(mean(this.pbs$Response) -
-        mean(this.blank$Response))) /
+      this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
+        df.noplasma.blank*mean(this.noplasma.blank$Response))) /
         (df.plasma*(mean(this.plasma$Response) -
-        mean(this.blank$Response)))
+        df.plasma.blank*mean(this.plasma.blank$Response))),4)
       out.table <- rbind(out.table, this.row)
       print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
   # If fup is NA something is wrong, stop and figure it out:
@@ -206,14 +213,15 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
           this.row <- this.cal.subset[1,c(compound.col,dtxsid.col,cal.col)]
           this.pbs <- subset(this.cal.subset,Sample.Type=="PBS")
           this.plasma <- subset(this.cal.subset,Sample.Type=="Plasma")
-          this.blank <- subset(this.cal.subset,Sample.Type=="Blank")
+          this.plasma.blank <- subset(this.cal.subset,Sample.Type=="Plasma.Blank")
+          this.noplasma.blank <- subset(this.cal.subset,Sample.Type=="NoPlasma.Blank")
        # Check to make sure there are data for PBS and plasma: 
           if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.blank)[1] > 0)
           {
-            this.row$Fup <- max(0,df.pbs*(mean(this.pbs$Response) -
-              df.blank*mean(this.blank$Response))) /
+            this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
+              df.noplasma.blank*mean(this.blank$Response))) /
               (df.plasma*(mean(this.plasma$Response) -
-              df.blank*mean(this.blank$Response)))
+              df.plasma.blank*mean(this.blank$Response))),4)
             out.table <- rbind(out.table, this.row)
             num.cal <- num.cal + 1
           }

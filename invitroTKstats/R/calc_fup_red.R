@@ -17,15 +17,31 @@ model {
     background[i] <- calibration[i]*C.thresh[i]
   }
   
-# Likelihood for the blank observations:
-  for (i in 1:Num.cal)
+# Likelihood for blanks without plasma observations:
+  for (i in 1:Num.NoPlasma.Blank.obs)
   {
-    Blank.pred[i] <- background[i]/Blank.df  
-    Blank.prec[i] <- (const.analytic.sd[i]+hetero.analytic.slope[i]*(Blank.pred[i]))^(-2)
+    NoPlasma.Blank.pred[i] <- 
+      background[NoPlasma.Blank.cal[i]]/NoPlasma.Blank.df  
+    NoPlasma.Blank.prec[i] <- (const.analytic.sd[NoPlasma.Blank.cal[i]] +
+                             hetero.analytic.slope[NoPlasma.Blank.cal[i]]*(NoPlasma.Blank.pred[i]))^(-2)
+# Model for the observation:
+    NoPlasma.Blank.obs[i] ~ dnorm(NoPlasma.Blank.pred[i], NoPlasma.Blank.prec[i])
   }
-  for (i in 1:Num.Blank.obs) 
+  
+# Extent of interference from plasma:
+  Plasma.Interference ~ dnorm(Nominal.Test.Conc, 1)
+# Likelihood for the plasma blank observations:
+  for (i in 1:Num.Plasma.Blank.obs)
   {
-    Blank.obs[i] ~ dnorm(Blank.pred[Blank.cal[i]], Blank.prec[Blank.cal[i]])
+    Plasma.Blank.pred[i] <- 
+      calibration[Plasma.Blank.cal[i]] * 
+      (Plasma.Interference/Plasma.Blank.df - C.thresh[Plasma.Blank.cal[i]]/Plasma.Blank.df) *
+      step(Plasma.Interference/Plasma.Blank.df - C.thresh[Plasma.Blank.cal[i]]/Plasma.Blank.df) +
+      background[Plasma.Blank.cal[i]]/Plasma.Blank.df  
+    Plasma.Blank.prec[i] <- (const.analytic.sd[Plasma.Blank.cal[i]] +
+                             hetero.analytic.slope[Plasma.Blank.cal[i]]*(Plasma.Blank.pred[i]))^(-2)
+# Model for the observation:
+    Plasma.Blank.obs[i] ~ dnorm(Plasma.Blank.pred[i], Plasma.Blank.prec[i])
   }
   
 # Likelihood for the T0 observations:  
@@ -34,8 +50,9 @@ model {
 # Mass spec response as a function of diluted concentration:  
     T0.pred[i] <- 
       calibration[T0.cal[i]] * 
-      (Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]/T0.df) *
-      step(Nominal.Test.Conc/T0.df - C.thresh[T0.cal[i]]/T0.df) +
+      (Nominal.Test.Conc/T0.df - Plasma.Interference/T0.df - C.thresh[T0.cal[i]]/T0.df) *
+      step(Nominal.Test.Conc/T0.df - Plasma.Interference/T0.df - C.thresh[T0.cal[i]]/T0.df) +
+      calibration[T0.cal[i]] * Plasma.Interference/T0.df +
       background[T0.cal[i]]/T0.df 
 # Heteroskedastic precision:
     T0.prec[i] <- (const.analytic.sd[T0.cal[i]] +
@@ -50,8 +67,9 @@ model {
 # Mass spec response as a function of diluted concentration:        
     CC.pred[i] <- 
       calibration[CC.cal[i]] * 
-      (CC.conc[i]/CC.df - C.thresh[CC.cal[i]]/CC.df) *
-      step(CC.conc[i]/CC.df - C.thresh[CC.cal[i]]/CC.df) +
+      (CC.conc[i]/CC.df - Plasma.Interference/CC.df - C.thresh[CC.cal[i]]/CC.df) *
+      step(CC.conc[i]/CC.df - Plasma.Interference/CC.df - C.thresh[CC.cal[i]]/CC.df) +
+      calibration[CC.cal[i]] * Plasma.Interference/CC.df +
       background[CC.cal[i]]/CC.df
 # Heteroskedastic precision:
     CC.prec[i] <- (const.analytic.sd[CC.cal[i]] +
@@ -82,7 +100,7 @@ model {
 # Mass spec response as a function of diluted concentration:  
     PBS.conc[i] <- C.u[PBS.rep[i]]
     PBS.pred[i] <- 
-      calibration[PBS.cal[i]]* 
+      calibration[PBS.cal[i]] * 
       (PBS.conc[i]/PBS.df - C.thresh[PBS.cal[i]]/PBS.df) *
       step(PBS.conc[i]/PBS.df  - C.thresh[PBS.cal[i]]/PBS.df) +
       background[PBS.cal[i]]/PBS.df  
@@ -99,9 +117,10 @@ model {
 # Mass spec response as a function of diluted concentration:  
     Plasma.conc[i] <- C.total[Plasma.rep[i]]
     Plasma.pred[i] <- 
-      calibration[Plasma.cal[i]]* 
-      (Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) *
-      step(Plasma.conc[i]/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) +
+      calibration[Plasma.cal[i]] * 
+      (Plasma.conc[i]/Plasma.df - Plasma.Interference/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) *
+      step(Plasma.conc[i]/Plasma.df - Plasma.Interference/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) +
+      calibration[Plasma.cal[i]] * Plasma.Interference/Plasma.df +
       background[Plasma.cal[i]]/Plasma.df 
 # Heteroskedastic precision:
     Plasma.prec[i] <- (const.analytic.sd[Plasma.cal[i]] +
@@ -117,7 +136,8 @@ model {
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
-#'   Sample Blank (no chemical, just plasma) \tab Blank\cr
+#'   No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+#'   Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr
 #'   Time zero chemical and plasma \tab T0\cr
 #'   Equilibrium chemical in phosphate-buffered well (no plasma) \tab PBS\cr
 #'   Equilibrium chemical in plasma well \tab Plasma\cr
@@ -213,15 +233,29 @@ calc_fup_red <- function(
 # Each calibration could be a unique string (such as a date):
     unique.cal <- sort(unique(this.data[,"Calibration"]))
     Num.cal <- length(unique.cal)
-# BLANK  
-    Blank.data <- subset(this.data,Sample.Type=="Blank")
-    Blank.df <- unique(Blank.data[,"Dilution.Factor"])
-    if (length(Blank.df)>1) stop("Multiple blank dilution factors.") 
-    Blank.obs <- Blank.data[,"Response"]
+# NO PLASMA BLANK  
+    NoPlasma.Blank.data <- subset(this.data, Sample.Type=="NoPlasma.Blank")
+    NoPlasma.Blank.df <- unique(NoPlasma.Blank.data[,"Dilution.Factor"])
+    if (length(NoPlasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
+    NoPlasma.Blank.obs <- NoPlasma.Blank.data[,"Response"]
 # Convert calibrations to sequential integers:
-    Blank.cal <- sapply(Blank.data[,"Calibration"],
+    NoPlasma.Blank.cal <- sapply(NoPlasma.Blank.data[,"Calibration"],
                         function(x) which(unique.cal %in% x))
-    Num.Blank.obs <- length(Blank.obs)
+    Num.NoPlasma.Blank.obs <- length(NoPlasma.Blank.obs)
+    if (Num.NoPlasma.Blank.obs == 0) {
+      NoPlasma.Blank.df <- 0
+      NoPlasma.Blank.obs <- 0
+      NoPlasma.Blank.cal <- 0
+    }
+# PLASMA BLANK  
+    Plasma.Blank.data <- subset(this.data, Sample.Type=="Plasma.Blank")
+    Plasma.Blank.df <- unique(Plasma.Blank.data[,"Dilution.Factor"])
+    if (length(Plasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
+    Plasma.Blank.obs <- Plasma.Blank.data[,"Response"]
+# Convert calibrations to sequential integers:
+    Plasma.Blank.cal <- sapply(Plasma.Blank.data[,"Calibration"],
+                        function(x) which(unique.cal %in% x))
+    Num.Plasma.Blank.obs <- length(Plasma.Blank.obs)
 # TIME ZERO
     T0.data <- subset(this.data,Sample.Type=="T0")
     T0.df <- unique(T0.data[,"Dilution.Factor"])
@@ -280,10 +314,14 @@ calc_fup_red <- function(
       'Nominal.Test.Conc' = Nominal.Test.Conc,
       'Num.cal' = Num.cal,
 # Blank data:
-      'Num.Blank.obs' = Num.Blank.obs,
-      'Blank.obs' = Blank.obs,
-      'Blank.cal' = Blank.cal,
-      'Blank.df' = Blank.df,
+      'Num.Plasma.Blank.obs' = Num.Plasma.Blank.obs,
+      'Plasma.Blank.obs' = Plasma.Blank.obs,
+      'Plasma.Blank.cal' = Plasma.Blank.cal,
+      'Plasma.Blank.df' = Plasma.Blank.df,
+      'Num.NoPlasma.Blank.obs' = Num.NoPlasma.Blank.obs,
+      'NoPlasma.Blank.obs' = NoPlasma.Blank.obs,
+      'NoPlasma.Blank.cal' = NoPlasma.Blank.cal,
+      'NoPlasma.Blank.df' = NoPlasma.Blank.df,
 ## Callibration.curve.data:
       'Num.CC.obs' = Num.CC.obs,
       'CC.conc' = CC.conc,
@@ -412,7 +450,7 @@ calc_fup_red <- function(
 
   # Only include the data types used:
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
-    "Blank","PBS","Plasma","T0","Stability","EQ1","EQ2","CC"))
+    "Plasma.Blank","NoPlasma.Blank","PBS","Plasma","T0","Stability","EQ1","EQ2","CC"))
   
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
@@ -502,18 +540,21 @@ calc_fup_red <- function(
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
         results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
     
-        Fup.point <- 
+        Fup.point <- signif( 
           (mean(mydata$PBS.obs)*mydata$PBS.df - 
-           mean(mydata$Blank.obs)*mydata$Blank.df) /
+           mean(mydata$NoPlasma.Blank.obs)*mydata$NoPlasma.Blank.df) /
           (mean(mydata$Plasma.obs)*mydata$Plasma.df - 
-           mean(mydata$Blank.obs)*mydata$Blank.df)
+           mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df),
+           4)
         
         new.results <- data.frame(Compound.Name=this.compound,
                                   Lab.Compound.Name=this.lab.name,
                                   DTXSID=this.dtxsid,
                                   Fup.point=Fup.point,
                                   stringsAsFactors=F)
-        new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- results[c(2,1,3),"Fup"]
+        new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- 
+          sapply(results[c(2,1,3),"Fup"],
+          function(x) signif(x,4))
     
         print(new.results)
     
