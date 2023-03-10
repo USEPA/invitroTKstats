@@ -34,10 +34,13 @@ model {
   for (i in 1:Num.Plasma.Blank.obs)
   {
     Plasma.Blank.pred[i] <- 
-      calibration[Plasma.Blank.cal[i]] * 
-      (Plasma.Interference/Plasma.Blank.df - C.thresh[Plasma.Blank.cal[i]]/Plasma.Blank.df) *
-      step(Plasma.Interference/Plasma.Blank.df - C.thresh[Plasma.Blank.cal[i]]/Plasma.Blank.df) +
-      background[Plasma.Blank.cal[i]]/Plasma.Blank.df  
+      (calibration[Plasma.Blank.cal[i]] * 
+      (Plasma.Interference*Assay.Protein.Percent[Plasma.Blank.rep[i]]/100 - 
+      C.thresh[Plasma.Blank.cal[i]]) *
+      step(Plasma.Interference*Assay.Protein.Percent[Plasma.Blank.rep[i]]/100 - 
+      C.thresh[Plasma.Blank.cal[i]]) +
+      background[Plasma.Blank.cal[i]]) / 
+      Plasma.Blank.df  
     Plasma.Blank.prec[i] <- (const.analytic.sd[Plasma.Blank.cal[i]] +
                              hetero.analytic.slope[Plasma.Blank.cal[i]]*(Plasma.Blank.pred[i]))^(-2)
 # Model for the observation:
@@ -49,11 +52,12 @@ model {
   {
 # Mass spec response as a function of diluted concentration:  
     T0.pred[i] <- 
-      calibration[T0.cal[i]] * 
-      (Nominal.Test.Conc/T0.df - Plasma.Interference/T0.df - C.thresh[T0.cal[i]]/T0.df) *
-      step(Nominal.Test.Conc/T0.df - Plasma.Interference/T0.df - C.thresh[T0.cal[i]]/T0.df) +
-      calibration[T0.cal[i]] * Plasma.Interference/T0.df +
-      background[T0.cal[i]]/T0.df 
+      (calibration[T0.cal[i]] * 
+      (Nominal.Test.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) *
+      step(Nominal.Test.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) +
+      calibration[T0.cal[i]] * Plasma.Interference +
+      background[T0.cal[i]]) /
+      T0.df 
 # Heteroskedastic precision:
     T0.prec[i] <- (const.analytic.sd[T0.cal[i]] +
       hetero.analytic.slope[T0.cal[i]] * T0.pred[i])^(-2)
@@ -66,11 +70,12 @@ model {
   {
 # Mass spec response as a function of diluted concentration:        
     CC.pred[i] <- 
-      calibration[CC.cal[i]] * 
-      (CC.conc[i]/CC.df - Plasma.Interference/CC.df - C.thresh[CC.cal[i]]/CC.df) *
-      step(CC.conc[i]/CC.df - Plasma.Interference/CC.df - C.thresh[CC.cal[i]]/CC.df) +
-      calibration[CC.cal[i]] * Plasma.Interference/CC.df +
-      background[CC.cal[i]]/CC.df
+      (calibration[CC.cal[i]] * 
+      (CC.conc[i] - Plasma.Interference - C.thresh[CC.cal[i]]) *
+      step(CC.conc[i] - Plasma.Interference - C.thresh[CC.cal[i]]) +
+      calibration[CC.cal[i]] * Plasma.Interference +
+      background[CC.cal[i]]) / 
+      CC.df
 # Heteroskedastic precision:
     CC.prec[i] <- (const.analytic.sd[CC.cal[i]] +
       hetero.analytic.slope[CC.cal[i]] * CC.pred[i])^(-2)
@@ -79,19 +84,25 @@ model {
   }
 
 # Likelihood for the RED plasma protein binding assay::
-  log.Fup ~ dunif(-10,0)
-  Fup <- 10^log.Fup
+  log.Kd ~ dunif(-10,5)
+  Kd <- 10^log.Kd
+  Fup <- Kd / 
+         (Kd +
+         Physiological.Protein.Conc) 
+  
 # Concentrtion in each replicate:
   for (i in 1:Num.rep) 
   {
+# Calculate protein concentration for observation:
+    C.protein[i] <- Physiological.Protein.Conc * Assay.Protein.Percent[i] / 100
 # Missing (bound to walls/membrane) chemical:
     C.missing[i] ~ dunif(0, Nominal.Test.Conc)
 # Unbound concentration in both wells:
-    C.u[i] <- Fup/(Fup+1)*(Nominal.Test.Conc-C.missing[i])
+    C.u[i] <- (Nominal.Test.Conc-C.missing[i])*(Kd/(2*Kd+C.protein[i]))
 # Bound concentration in plasma well:
-    C.b[i] <- (1-Fup)/Fup*C.u[i]
-# Total concentration in plasma well:
-    C.total[i] <- C.b[i] + C.u[i] 
+    C.b[i] <- (Nominal.Test.Conc-C.missing[i])*C.protein[i]/(2*Kd+C.protein[i])
+# Toal concentration in plasma well:
+    C.total[i] <- C.b[i] + C.u[i]
   }
   
 # Likelihood for the PBS observations:  
@@ -100,10 +111,11 @@ model {
 # Mass spec response as a function of diluted concentration:  
     PBS.conc[i] <- C.u[PBS.rep[i]]
     PBS.pred[i] <- 
-      calibration[PBS.cal[i]] * 
-      (PBS.conc[i]/PBS.df - C.thresh[PBS.cal[i]]/PBS.df) *
-      step(PBS.conc[i]/PBS.df  - C.thresh[PBS.cal[i]]/PBS.df) +
-      background[PBS.cal[i]]/PBS.df  
+      (calibration[PBS.cal[i]] * 
+      (PBS.conc[i] - C.thresh[PBS.cal[i]]) *
+      step(PBS.conc[i]  - C.thresh[PBS.cal[i]]) +
+      background[PBS.cal[i]]) /
+      PBS.df  
 # Heteroskedastic precision:
     PBS.prec[i] <- (const.analytic.sd[PBS.cal[i]] +
       hetero.analytic.slope[PBS.cal[i]] * PBS.pred[i])^(-2)
@@ -117,11 +129,17 @@ model {
 # Mass spec response as a function of diluted concentration:  
     Plasma.conc[i] <- C.total[Plasma.rep[i]]
     Plasma.pred[i] <- 
+      (calibration[Plasma.cal[i]] * 
+      (Plasma.conc[i] - 
+      Plasma.Interference*Assay.Protein.Percent[Plasma.rep[i]]/100 -
+      C.thresh[Plasma.cal[i]]) *
+      step(Plasma.conc[i] - 
+      Plasma.Interference*Assay.Protein.Percent[Plasma.rep[i]]/100 - 
+      C.thresh[Plasma.cal[i]]) +
       calibration[Plasma.cal[i]] * 
-      (Plasma.conc[i]/Plasma.df - Plasma.Interference/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) *
-      step(Plasma.conc[i]/Plasma.df - Plasma.Interference/Plasma.df - C.thresh[Plasma.cal[i]]/Plasma.df) +
-      calibration[Plasma.cal[i]] * Plasma.Interference/Plasma.df +
-      background[Plasma.cal[i]]/Plasma.df 
+      Plasma.Interference * Assay.Protein.Percent[Plasma.rep[i]]/100 +
+      background[Plasma.cal[i]]) /
+      Plasma.df 
 # Heteroskedastic precision:
     Plasma.prec[i] <- (const.analytic.sd[Plasma.cal[i]] +
       hetero.analytic.slope[Plasma.cal[i]] * Plasma.pred[i])^(-2)
@@ -224,38 +242,22 @@ calc_fup_red <- function(
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
-  JAGS.PATH = NA
+  JAGS.PATH = NA,
+  Physiological.Protein.Conc = 70/(66.5*1000)*1000000 # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
   )
 {
 # Internal function for constructing data object given to JAGS:
   build_mydata <- function(this.data)
   {
+    #mg/mL -> g/L is 1:1
+    #kDa -> g/mol is *1000
+    #g/mol -> M is g/L/MW
+    #M <- uM is /1000000
+    Nominal.Test.Conc <- unique(this.data$Nominal.Test.Conc) # uM frank parent concentration
+    if (length(Nominal.Test.Conc)>1) stop("Multiple test concentrations.")
 # Each calibration could be a unique string (such as a date):
     unique.cal <- sort(unique(this.data[,"Calibration"]))
     Num.cal <- length(unique.cal)
-# NO PLASMA BLANK  
-    NoPlasma.Blank.data <- subset(this.data, Sample.Type=="NoPlasma.Blank")
-    NoPlasma.Blank.df <- unique(NoPlasma.Blank.data[,"Dilution.Factor"])
-    if (length(NoPlasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
-    NoPlasma.Blank.obs <- NoPlasma.Blank.data[,"Response"]
-# Convert calibrations to sequential integers:
-    NoPlasma.Blank.cal <- sapply(NoPlasma.Blank.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.NoPlasma.Blank.obs <- length(NoPlasma.Blank.obs)
-    if (Num.NoPlasma.Blank.obs == 0) {
-      NoPlasma.Blank.df <- 0
-      NoPlasma.Blank.obs <- 0
-      NoPlasma.Blank.cal <- 0
-    }
-# PLASMA BLANK  
-    Plasma.Blank.data <- subset(this.data, Sample.Type=="Plasma.Blank")
-    Plasma.Blank.df <- unique(Plasma.Blank.data[,"Dilution.Factor"])
-    if (length(Plasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
-    Plasma.Blank.obs <- Plasma.Blank.data[,"Response"]
-# Convert calibrations to sequential integers:
-    Plasma.Blank.cal <- sapply(Plasma.Blank.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.Plasma.Blank.obs <- length(Plasma.Blank.obs)
 # TIME ZERO
     T0.data <- subset(this.data,Sample.Type=="T0")
     T0.df <- unique(T0.data[,"Dilution.Factor"])
@@ -301,23 +303,55 @@ calc_fup_red <- function(
 # Convert replicates to sequential integers:
     PBS.rep <- sapply(PBS.rep, function(x) which(unique.rep %in% x))
     Plasma.rep <- sapply(Plasma.rep, function(x) which(unique.rep %in% x))
-    #mg/mL -> g/L is 1:1
-    #kDa -> g/mol is *1000
-    #g/mol -> M is g/L/MW
-    #M <- uM is /1000000
-    PPB100 <- 70/(66.5*1000)*1000000 # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
-    Nominal.Test.Conc <- unique(this.data$Nominal.Test.Conc) # uM frank parent concentration
-    if (length(Nominal.Test.Conc)>1) stop("Multiple test concentrations.")
+    Assay.Protein.Percent <- Plasma.data[!duplicated(Plasma.data$Replicate),
+                              "Percent.Physiologic.Plasma"]
+# NO PLASMA BLANK  
+    NoPlasma.Blank.data <- subset(this.data, Sample.Type=="NoPlasma.Blank")
+    NoPlasma.Blank.df <- unique(NoPlasma.Blank.data[,"Dilution.Factor"])
+    if (length(NoPlasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
+    NoPlasma.Blank.obs <- NoPlasma.Blank.data[,"Response"]
+# Convert calibrations to sequential integers:
+    NoPlasma.Blank.cal <- sapply(NoPlasma.Blank.data[,"Calibration"],
+                        function(x) which(unique.cal %in% x))
+    Num.NoPlasma.Blank.obs <- length(NoPlasma.Blank.obs)
+    if (Num.NoPlasma.Blank.obs == 0) {
+      NoPlasma.Blank.df <- 0
+      NoPlasma.Blank.obs <- 0
+      NoPlasma.Blank.cal <- 0
+    }
+# PLASMA BLANK  
+    Plasma.Blank.data <- subset(this.data, Sample.Type=="Plasma.Blank")
+    Plasma.Blank.df <- unique(Plasma.Blank.data[,"Dilution.Factor"])
+    if (length(Plasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
+    Plasma.Blank.obs <- Plasma.Blank.data[,"Response"]
+# Convert calibrations to sequential integers:
+    Plasma.Blank.cal <- sapply(Plasma.Blank.data[,"Calibration"],
+                        function(x) which(unique.cal %in% x))
+    Num.Plasma.Blank.obs <- length(Plasma.Blank.obs)
+    if (!any(is.na(Plasma.Blank.data[,"Replicate"])))
+    {
+      Plasma.Blank.rep <- paste0(Plasma.Blank.data[,"Calibration"],
+                                 Plasma.Blank.data[,"Replicate"])
+# Convert replicates to sequential integers:
+      Plasma.Blank.rep <- sapply(Plasma.Blank.rep, function(x) 
+                               which(unique.rep %in% x))                               
+    } else if(length(unique(Plasma.Blank.data[,"Percent.Physiologic.Plasma"]))==1)
+    {
+      Plasma.Blank.rep <- rep(1, Num.Plasma.Blank.obs)
+    } else browser()
 
     return(list(                
 # Describe assay:
       'Nominal.Test.Conc' = Nominal.Test.Conc,
       'Num.cal' = Num.cal,
+      'Physiological.Protein.Conc' = Physiological.Protein.Conc,
+      'Assay.Protein.Percent' = Assay.Protein.Percent,
 # Blank data:
       'Num.Plasma.Blank.obs' = Num.Plasma.Blank.obs,
       'Plasma.Blank.obs' = Plasma.Blank.obs,
       'Plasma.Blank.cal' = Plasma.Blank.cal,
       'Plasma.Blank.df' = Plasma.Blank.df,
+      'Plasma.Blank.rep' = Plasma.Blank.rep,
       'Num.NoPlasma.Blank.obs' = Num.NoPlasma.Blank.obs,
       'NoPlasma.Blank.obs' = NoPlasma.Blank.obs,
       'NoPlasma.Blank.cal' = NoPlasma.Blank.cal,
@@ -372,7 +406,7 @@ calc_fup_red <- function(
       C.thresh = runif(mydata$Num.cal, 0, 0.1),
       log.calibration = rep(0,mydata$Num.cal),
 # Statisticas characterizing the measurment:
-      log.Fup = log10(runif(1,0,1)),
+      log.Kd= runif(1,-8,4),
       C.missing = runif(mydata$Num.rep,0,mydata[["Nominal.Test.Conc"]])
     ))
   }
@@ -534,6 +568,7 @@ calc_fup_red <- function(
             'C.thresh',
 # Measrument parameters:
             'C.missing',
+            'Kd',
             'Fup'))
         
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]

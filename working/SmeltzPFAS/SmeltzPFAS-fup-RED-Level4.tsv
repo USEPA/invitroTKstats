@@ -1,23 +1,11 @@
 Compound.Name	Lab.Compound.Name	DTXSID	Fup.point	Fup.Med	Fup.Low	Fup.High
-3:3 Fluorotelomer carboxylic acid	3:3 Fluorotelomer carboxylic acid	DTXSID00379268	0.01636	0.01548	0.01227	0.02041
-Perfluoropentanoic acid	Perfluoropentanoic acid	DTXSID6062599	0.04541	0.04481	0.03248	0.066
-Perfluorobutanesulfonic acid	Perfluorobutanesulfonic acid	DTXSID5030030	0.01127	0.01178	0.008315	0.01755
-Perfluorooctanoic acid	Perfluorooctanoic acid	DTXSID8031865	0.00426	4.142e-07	1.418e-10	0.002169
-Perfluoro-3,6,9-trioxadecanoic acid	Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	0.001008	4.3e-07	1.458e-10	0.0008975
-11-H-Perfluoroundecanoic acid	11-H-Perfluoroundecanoic acid	DTXSID5061954	0.0004545	4.323e-07	1.443e-10	0.000336
-n-Butylparaben	n-Butylparaben	DTXSID3020209	0.02011	0.01955	0.01585	0.02379
-N-Methylperfluorooctanesulfonamide	N-Methylperfluorooctanesulfonamide	DTXSID1067629	7.671e-05	2.141e-07	1.535e-10	9.314e-05
-Perfluorobutanoic acid	Perfluorobutanoic acid	DTXSID4059916	0.124	0.131	0.08803	0.1937
-Perfluoroheptanesulfonic acid	Perfluoroheptanesulfonic acid	DTXSID8059920	0.0002986	7.506e-07	1.573e-10	0.000306
-Perfluorooctanesulfonamide	Perfluorooctanesulfonamide	DTXSID3038939	0.0009038	3.371e-07	1.674e-10	0.0006997
-N-Methyl-N-(2-hydroxyethyl) perfluorooctanesulfonamide	N-Methyl-N-(2-hydroxyethyl) perfluorooctanesulfonamide	DTXSID7027831	0.001591	2.742e-07	1.496e-10	0.0008637
-Perfluorohexanoic acid	Perfluorohexanoic acid	DTXSID3031862	0.01034	0.011	0.007557	0.01638
-Perfluoroheptanoic acid	Perfluoroheptanoic acid	DTXSID1037303	0.001146	5.099e-07	1.529e-10	0.001524
-8:2 Fluorotelomer sulfonic acid	8:2 Fluorotelomer sulfonic acid	DTXSID00192353	0.0009253	0.001659	5.087e-10	0.005768
-Perfluoroundecanoic acid	Perfluoroundecanoic acid	DTXSID8047553	0.0001638	1.222e-07	1.437e-10	0.0001458
-N-Ethylperfluorooctanesulfonamide	N-Ethylperfluorooctanesulfonamide	DTXSID1032646	3.976e-05	1.227e-06	1.572e-10	6.438e-05
-Perfluorohexanesulfonic acid	Perfluorohexanesulfonic acid	DTXSID7040150	0.002755	4.121e-07	1.497e-10	0.0009466
-Perfluorononanoic acid	Perfluorononanoic acid	DTXSID8031863	-0.0001985	3.159e-07	1.561e-10	0.0006781
-Perfluorooctanesulfonic acid	Perfluorooctanesulfonic acid	DTXSID3031864	0.001316	6.202e-07	1.434e-10	0.002355
-Perfluorodecanoic acid	Perfluorodecanoic acid	DTXSID3031860	0.0004572	1.252e-06	1.544e-10	0.0004373
-Perfluoro-3,6,9-trioxatridecanoic acid	Perfluoro-3,6,9-trioxatridecanoic acid	DTXSID50375114	0.0001311	6.969e-05	2.656e-10	0.0003596
+3:3 Fluorotelomer carboxylic acid	3:3 Fluorotelomer carboxylic acid	DTXSID00379268	0.01636	0.01549	0.01218	0.02057
+Perfluoropentanoic acid	Perfluoropentanoic acid	DTXSID6062599	0.04541	0.04525	0.03214	0.06686
+Perfluorobutanesulfonic acid	Perfluorobutanesulfonic acid	DTXSID5030030	0.01127	0.01186	0.008315	0.01733
+Perfluorooctanoic acid	Perfluorooctanoic acid	DTXSID8031865	0.00426	1.738e-08	1.664e-13	0.002068
+Perfluoro-3,6,9-trioxadecanoic acid	Perfluoro-3,6,9-trioxadecanoic acid	DTXSID80380837	0.001008	1.115e-08	1.841e-13	0.0008309
+11-H-Perfluoroundecanoic acid	11-H-Perfluoroundecanoic acid	DTXSID5061954	0.0004545	1.307e-08	1.711e-13	0.0003392
+n-Butylparaben	n-Butylparaben	DTXSID3020209	0.02011	0.01947	0.01578	0.02387
+N-Methylperfluorooctanesulfonamide	N-Methylperfluorooctanesulfonamide	DTXSID1067629	7.671e-05	8.337e-09	1.84e-13	9.061e-05
+Perfluorobutanoic acid	Perfluorobutanoic acid	DTXSID4059916	0.124	0.1309	0.0881	0.2
+Perfluoroheptanesulfonic acid	Perfluoroheptanesulfonic acid	DTXSID8059920	0.0002986	2.751e-08	1.852e-13	0.0002926
