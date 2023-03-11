@@ -30,7 +30,7 @@ Wambaugh et al. (2019)
 wambaugh2019.red
 }
 \description{
-Wambaugh et al. (2019) includes chemical-specific measurments of plasma
+Wambaugh et al. (2019) includes chemical-specific measurements of plasma
 protein binding using the method of rapid equilibriuim dialysis (RED, 
 Waters et al. 2008)
 }

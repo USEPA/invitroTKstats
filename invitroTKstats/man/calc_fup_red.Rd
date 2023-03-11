@@ -11,7 +11,8 @@ calc_fup_red(
   NUM.CORES = 2,
   RANDOM.SEED = 1111,
   good.col = "Verified",
-  JAGS.PATH = NA
+  JAGS.PATH = NA,
+  Physiological.Protein.Conc = 70/(66.5 * 1000) * 1e+06
 )
 }
 \arguments{
@@ -87,7 +88,8 @@ A data.frame containing quunantiles of the Bayesian posteriors
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
-  Sample Blank (no chemical, just plasma) \tab Blank\cr
+  No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+  Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr
   Time zero chemical and plasma \tab T0\cr
   Equilibrium chemical in phosphate-buffered well (no plasma) \tab PBS\cr
   Equilibrium chemical in plasma well \tab Plasma\cr

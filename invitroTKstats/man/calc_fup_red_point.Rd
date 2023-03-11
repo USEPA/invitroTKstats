@@ -26,20 +26,22 @@ should have been curated and had a column added with the value "Y" indicating
 that each row is verified as usable for analysis (that is, the Level2 file).
 }
 \details{
-The data should be annotated according to these types:
+The data frame of observations should be annotated according to
+of these types:
 \tabular{rrrrr}{
-  Blank (ignored) \tab Blank\cr
-  Plasma well concentration \tab Plasma\cr
-  Phosphate-buffered well concentration\tab PBS\cr
-  Time zero plasma concentration \tab T0\cr
+  No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+  Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr
+  Time zero chemical and plasma \tab T0\cr
+  Equilibrium chemical in phosphate-buffered well (no plasma) \tab PBS\cr
+  Equilibrium chemical in plasma well \tab Plasma\cr
 }
 
 F_up is calculated from MS responses as:
 
 f_up = max(0,(mean(PBS Response * Dilution.Factor) - 
-  mean(Blank Response * Dilution.Factor))) / (
+  mean(NoPlasma.Blank Response * Dilution.Factor))) / (
   mean(Plasma Response * Dilution Factor) -
-  mean(Blank Response * Dilution.Factor))
+  mean(Plasma.Blank Response * Dilution.Factor))
 }
 \examples{
 red <- subset(wambaugh2019.red, Protein==100)

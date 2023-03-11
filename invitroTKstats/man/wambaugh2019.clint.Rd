@@ -30,7 +30,7 @@ Wambaugh et al. (2019)
 wambaugh2019.clint
 }
 \description{
-Wambaugh et al. (2019) includes measurments for intrinsic hepatic clearance
+Wambaugh et al. (2019) includes measurements for intrinsic hepatic clearance
 Clint measured using in vitro suspoensions of pooled primary human hepatocytes
 (Shibata, et al. 2002).)
 }

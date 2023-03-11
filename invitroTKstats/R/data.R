@@ -3,7 +3,7 @@
 
 #' Mass Spectrometry for Wambaugh et al. (2019) Hepatocyte Incubations
 #' 
-#' Wambaugh et al. (2019) includes measurments for intrinsic hepatic clearance
+#' Wambaugh et al. (2019) includes measurements for intrinsic hepatic clearance
 #' Clint measured using in vitro suspoensions of pooled primary human hepatocytes
 #' (Shibata, et al. 2002).)
 #' 
@@ -73,7 +73,7 @@
 
 #' Mass Spectrometry for Wambaugh et al. (2019) Protein Binding
 #' 
-#' Wambaugh et al. (2019) includes chemical-specific measurments of plasma
+#' Wambaugh et al. (2019) includes chemical-specific measurements of plasma
 #' protein binding using the method of rapid equilibriuim dialysis (RED, 
 #' Waters et al. 2008)
 #' 
@@ -104,107 +104,210 @@
 #' @keywords data
 "wambaugh2019.red"  
 
-#' Smeltz 2020 Ultracentrifucation Data Set 
+#' Smeltz 2023 Ultracentrifucation Data Set 
 #' 
-#' 
-#' Mass Spectrometry measurments of plasma protein binding measured by 
+#' Mass Spectrometry measurements of plasma protein binding measured by 
 #' ultracentrifucation for per- and poly-fluorinated alkyl subtance
-#' (PFAS) samples from experiments conducted by Dr. Marci Smeltz
+#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 #' 
-#' @name smeltz2020
-#' @aliases Smeltz2020
+#' @name smeltz2023.uc
+#' @aliases Smeltz2023.uc
 #' @docType data
-#' @format A data.frame with 289 rows and 19 variables: \describe{
-#' \item{\code{Lab.Sample.Name}}{}
-#' \item{\code{Date}}{}
-#' \item{\code{Compound.Name}}{}
-#' \item{\code{DTXSID}}{}
-#' \item{\code{Lab.Compound.Name}}{}
-#' \item{\code{Sample.Type}}{}
-#' \item{\code{Dilution.Factor}}{}
-#' \item{\code{Cal}}{}
-#' \item{\code{Standard.Conc}}{}
-#' \item{\code{Test.Target.Conc}}{}
-#' \item{\code{ISTD.Name}}{}
-#' \item{\code{ISTD.Conc}}{}
-#' \item{\code{IS.Area}}{}
-#' \item{\code{Series}}{}
-#' \item{\code{Area}}{}
-#' \item{\code{Response}}{}
-#' \item{\code{Analysis.Method}}{}
-#' \item{\code{Analysis.Instrument}}{}
-#' \item{\code{Analysis.Parameters}}{}
+#' @format A level 2 data.frame with 10133 rows 23 variables: \describe{
+#' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{TC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Series}}{Identier for replicate series of UC measurements}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Note}}{Any laboratory notes about sample)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
 #' }
 #'
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}
 #' @keywords data
-"smeltz2020"   
+"smeltz2023.uc"   
 
-#' Kreutz 2020 Ultracentrifucation Data Set 
+#' Smeltz 2023 rapid equlibriation dialysis dat set 
 #' 
-#' Mass Spectrometry measurments of plasma protein binding measured by 
-#' ultracentrifucation for per- and poly-fluorinated alkyl subtance
-#' (PFAS) samples from experiments conducted by Dr. Anna Kreutz
+#' Mass Spectrometry measurements of plasma protein binding measured by 
+#' rapid equlibriation dialysis for per- and poly-fluorinated alkyl subtance
+#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 #' 
-#' @name kreutz2020
-#' @aliases Kreutz2020
+#' @name smeltz2023.red
+#' @aliases Smeltz2023.red
 #' @docType data
-#' @format A data.frame with 228 rows and 19 variables: \describe{
-#' \item{\code{Lab.Sample.Name}}{}
-#' \item{\code{Date}}{}
-#' \item{\code{Compound.Name}}{}
-#' \item{\code{DTXSID}}{}
-#' \item{\code{Lab.Compound.Name}}{}
-#' \item{\code{Sample.Type}}{}
-#' \item{\code{Dilution.Factor}}{}
-#' \item{\code{Cal}}{}
-#' \item{\code{Standard.Conc}}{}
-#' \item{\code{Test.Target.Conc}}{}
-#' \item{\code{ISTD.Name}}{}
-#' \item{\code{ISTD.Conc}}{}
-#' \item{\code{IS.Area}}{}
-#' \item{\code{Series}}{}
-#' \item{\code{Area}}{}
-#' \item{\code{Response}}{}
-#' \item{\code{Analysis.Method}}{}
-#' \item{\code{Analysis.Instrument}}{}
-#' \item{\code{Analysis.Parameters}}{}
-#'   }
+#' @format A level 2 data.frame with 3897 rows 25 variables: \describe{
+#' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Nominal.Test.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
+#' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
+#' \item{\code{Time}}{Time of sample measurment (h)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Series}}{Identier for replicate series of UC measurements}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Note}}{Any laboratory notes about sample)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+#' }
+#'
+#' @references
+#' \insertRef{waters2008validation}{invitroTKstats}
+#' @keywords data
+"smeltz2023.red"   
+
+#' Smeltz 2023 Intinsic hepatic clearnace data set
+#' 
+#' Mass Spectrometry measurements of intrinsic hepatic clearance for
+#' cryopreserved pooled human hepatocytes. Chemicals were per- and 
+#' 'poly-fluorinated alkyl subtance
+#' (PFAS) samples. The experiments were 
+#' led by Dr.s Marci Smeltz and Barbara Wetmore.
+#' 
+#' @name smeltz2023.clint
+#' @aliases Smeltz2023.clint
+#' @docType data
+#' @format A level 2 data.frame with 625 rows 24 variables: \describe{
+#' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
+#' \item{\code{Time}}{Time point sample measured (h)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Series}}{Identier for replicate series of UC measurements}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Note}}{Any laboratory notes about sample)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+#' }
+#'
+#' @references
+#' \insertRef{shibata2002prediction}{invitroTKstats}
+#' @keywords data
+"smeltz2023.clint"   
+
+
+#' Kreutz 2023 Ultracentrifucation Data Set 
+#' 
+#' Mass Spectrometry measurements of plasma protein binding measured by 
+#' ultracentrifucation for per- and poly-fluorinated alkyl subtance
+#' (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
+#' 
+#' @name kreutz2023
+#' @aliases Kreutz2023
+#' @docType data
+#' @format A data.frame with 2928 rows and 23 variables: \describe{
+#' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{TC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Series}}{Identier for replicate series of UC measurements}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Note}}{Any laboratory notes about sample)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+#' }
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}
 #' @keywords data
-"kreutz2020"   
+"kreutz2023.uc"   
 
-#' Cyprotex 2021 Caco2 Data Set 
+#' Kreutz 2023 intrinsic hepatic clearance data set
 #' 
-#' Mass Spectrometry measurments of Caco2 membrane permeability as measured by
-#' Cyprotex, a contractor to the U.S. EPA.
+#' Mass Spectrometry measurements of intrinsic hepatic clearance for
+#' cryopreserved pooled human hepatocytes. Chemicals were per- and 
+#' 'poly-fluorinated alkyl subtance
+#' (PFAS) samples. The experiments were 
+#' led by Dr.s Anna Kreutz and Barbara Wetmore.
 #' 
-#' @name TO1caco2
-#' @aliases to1caco2
+#' @name kreutz2023.clint
+#' @aliases Kreutz2023.clint
 #' @docType data
-#' @format A data.table with 3110 rows 18 variables: \describe{
-#' \item{\code{SampleName}}{}
-#' \item{\code{CompoundName}}{}
-#' \item{\code{Feature}}{}          
-#' \item{\code{Area}}{}
-#' \item{\code{ISTD.Area}}{}
-#' \item{\code{ISTDResponseRatio}}{}
-#' \item{\code{TO}}{}
-#' \item{\code{FileName}}{}
-#' \item{\code{SheetName}}{}        
-#' \item{\code{Type}}{}
-#' \item{\code{Dilution.Factor}}{}
-#' \item{\code{Direction}}{}       
-#' \item{\code{Vol.Receiver}}{}
-#' \item{\code{Vol.Donor}}{}
-#' \item{\code{Date}}{}            
-#' \item{\code{ISTD.Name}}{}
-#' \item{\code{ISTD.Conc}}{}
-#' \item{\code{Test.Target.Conc}}{} 
-#'   }
+#' @format A level 2 data.frame with 5800 rows 24 variables: \describe{
+#' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
+#' \item{\code{Time}}{Time point sample measured (h)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Series}}{Identier for replicate series of UC measurements}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Note}}{Any laboratory notes about sample)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+#' }
+#'
 #' @references
-#' \insertRef{hubatsch2007determination}{invitroTKstats}
-#' @keywords data
-"TO1caco2"   
+#' \insertRef{shibata2002prediction}{invitroTKstats}
+kreutz2023.clint
+
