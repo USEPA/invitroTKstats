@@ -233,6 +233,19 @@ model {
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
 #'
 #' @author John Wambaugh and Chantel Nicolas
+#'                                          
+#' @examples
+#' write.table(smeltz2023.red,
+#'   file="SmeltzPFAS-PPB-RED-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F)
+#' 
+#' 
+#' level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
+#' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
+#'                        NUM.CORES=8,
+#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")  
 #' 
 #' @export calc_fup_red
 calc_fup_red <- function(
