@@ -238,6 +238,8 @@ format_fup_red <- function(data.in,
   # Only include the data types used:
   data.out <- subset(data.in,data.in[,type.col] %in% c(
     "Plasma","PBS","T0","Plasma.Blank","NoPlasma.Blank","CC","Stability","EQ1","EQ2"))
+  # Force code to throw error if data.in accessed after this point:
+  rm(data.in)
   
   # Organize the columns:
   data.out <- data.out[,cols]
@@ -293,6 +295,9 @@ format_fup_red <- function(data.in,
     level0.sheet.col
     )
 
+  # Set reasonable sig figs:
+  for (this.col in c("Area", "ISTD.Area"))
+    data.out[,this.col] <- signif(data.out[,this.col], 5)
   
   # calculate the reponse:
   data.out[,"Response"] <- signif(data.out[,area.col] /

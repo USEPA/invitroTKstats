@@ -205,7 +205,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   {     
     this.subset <- subset(clint.data,clint.data[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
-    this.row <- c(this.subset[1,c(compound.col,dtxsid.col,lab.compound.col)],
+    this.row <- cbind(this.subset[1,c(compound.col,dtxsid.col,lab.compound.col)],
       data.frame(Calibration="All Data",
         Clint=NaN,
         Clint.pValue=NaN))
@@ -283,8 +283,9 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     }  
   }
 
+  out.table <- as.data.frame(out.table)
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table <- apply(out.table,2,unlist) 
+  #out.table <- apply(out.table,2,unlist) 
   out.table[,"Clint"] <- signif(as.numeric(out.table[,"Clint"]),3) 
   out.table[,"Clint.1"] <- signif(as.numeric(out.table[,"Clint.1"]),3) 
   out.table[,"Clint.10"] <- signif(as.numeric(out.table[,"Clint.10"]),3) 
@@ -293,11 +294,6 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table[,"AIC.Null"] <- signif(as.numeric(out.table[,"AIC.Null"]),3)
   out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
   out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3) 
-   
-  
-  out.table <- as.data.frame(out.table)
-  out.table$Clint <- as.numeric(out.table$Clint)
-  out.table$Clint.pValue <- as.numeric(out.table$Clint.pValue)
     
 # Write out a "level 3" file (data organized into a standard format):  
   write.table(out.table, 

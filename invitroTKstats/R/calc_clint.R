@@ -133,9 +133,11 @@ model {
 #' 
 #' The data frame of observations should be annotated according to
 #' of these types:
-#' \tabular{rrrrr}{
-#'   Blank \tab Blank\cr
-#'   Hepatocyte inciubation concentration \tab Conc\cr
+#' \tabular{rl}{
+#'   Blank \tab Cell free blank with media\cr
+#'   CC \tab Cell and media free calibration curve \cr
+#'   Cvst \tab Hepatocyte inciubation concentration vs. time \cr
+#'   Inactive \tab Concentration vs. time data with inactivated hepatocytes \cr
 #' }
 #'
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
