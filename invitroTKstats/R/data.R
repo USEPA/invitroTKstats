@@ -309,5 +309,5 @@
 #'
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
-kreutz2023.clint
+"kreutz2023.clint"
 

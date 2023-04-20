@@ -22,62 +22,62 @@
 #' @param FILENAME A string used to identify outputs of the function call.
 #' (defaults to "MYDATA")
 #' 
-#' @param clint.data A data frame containing mass-spectrometry peak areas,
+#' @param data.in A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identiy, and measurment type. The data frame should
 #' contain columns with names specified by the following arguments:
 #' 
-#' @param sample.col Which column of clint.data indicates the unique mass 
+#' @param sample.col Which column of data.in indicates the unique mass 
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to 
 #' "Lab.Sample.Name")
 #' 
-#' @param lab.compound.col Which column of clint.data indicates The test compound 
+#' @param lab.compound.col Which column of data.in indicates The test compound 
 #' name used by the laboratory (Defaults to "Lab.Compound.Name")
 #' 
-#' @param dtxsid.col Which column of clint.data indicates EPA's DSSTox Structure 
+#' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure 
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
 #' 
-#' @param date.col Which column of clint.data indicates the laboratory measurment
+#' @param date.col Which column of data.in indicates the laboratory measurment
 #' date (Defaults to "Date")
 #' 
-#' @param compound.col Which column of clint.data indicates the test compound
+#' @param compound.col Which column of data.in indicates the test compound
 #' (Defaults to "Compound.Name")
 #' 
-#' @param area.col Which column of clint.data indicates the target analyte (that 
+#' @param area.col Which column of data.in indicates the target analyte (that 
 #' is, the test compound) MS peak area (Defaults to "Area")
 #' 
-#' @param series.col Which column of clint.data indicates the "series", that is
+#' @param series.col Which column of data.in indicates the "series", that is
 #' a simultaneous replicate (Defaults to "Series")
 #' 
-#' @param type.col Which column of clint.data indicates the sample type (see table
+#' @param type.col Which column of data.in indicates the sample type (see table
 #' above)(Defaults to "Sample.Type")
 #' 
-#' @param cal.col Which column of clint.data indicates the MS calibration -- for
+#' @param cal.col Which column of data.in indicates the MS calibration -- for
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
 #' 
-#' @param dilution.col Which column of clint.data indicates how many times the
+#' @param dilution.col Which column of data.in indicates how many times the
 #' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
 #'
-#' @param density.col Which column of clint.data indicates the density (units of
+#' @param density.col Which column of data.in indicates the density (units of
 #' millions of hepatocytes per mL) hepatocytes in the in vitro incubation 
 #' (Defaults to "Hep.Density" )
 #' 
-#' @param istd.col Which column of clint.data indicates the MS peak area for the
+#' @param istd.col Which column of data.in indicates the MS peak area for the
 #' internal standard (Defaults to "ISTD.Area")
 #' 
-#' @param istd.name.col Which column of clint.data indicates identity of the 
+#' @param istd.name.col Which column of data.in indicates identity of the 
 #' internal standard (Defaults to "ISTD.Name")
 #' 
-#' @param istd.conc.col Which column of clint.data indicates the concentration 
+#' @param istd.conc.col Which column of data.in indicates the concentration 
 #' (units if uM) of
 #' the internal standard (Defaults to "ISTD.Conc")
 #' 
-#' @param conc.col Which column of clint.data indicates the intended
+#' @param conc.col Which column of data.in indicates the intended
 #' test chemical concentration 
 #' (units if uM) of
 #' at time zero (Defaults to "Conc") 
 #'
-#' @param time.col Which column of clint.data indicates the intended
+#' @param time.col Which column of data.in indicates the intended
 #' time of the measurment (in minutes) since the test chemical was introduced
 #' into the hepatocyte incubation (Defaults to "Time") 
 #'
@@ -257,7 +257,7 @@
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @export format_clint
-format_clint <- function(clint.data,
+format_clint <- function(data.in,
   FILENAME = "MYDATA",
   sample.col="Lab.Sample.Name",
   date=NULL,
@@ -299,10 +299,10 @@ format_clint <- function(clint.data,
   level0.sheet=NULL
   )
 {
-  clint.data <- as.data.frame(clint.data)
+  data.in <- as.data.frame(data.in)
   
   # Write out a "level 0" file (data as the function received it):  
-  write.table(clint.data, 
+  write.table(data.in, 
     file=paste(FILENAME,"-Clint-Level0.tsv",sep=""),
     sep="\t",
     row.names=F,
@@ -310,40 +310,40 @@ format_clint <- function(clint.data,
     
   if (is.null(note.col)) 
   {
-    clint.data[,"Note"] <- ""
+    data.in[,"Note"] <- ""
     note.col <- "Note"
   }
   
-  if (!(std.conc.col %in% colnames(clint.data)))
+  if (!(std.conc.col %in% colnames(data.in)))
   {
     if (is.null(std.conc))
     {
-      clint.data[,std.conc.col] <- NA
+      data.in[,std.conc.col] <- NA
     } else {
-      clint.data[,std.conc.col] <- std.conc
+      data.in[,std.conc.col] <- std.conc
     }
   }
   
 # These arguments allow the user to specify a single value for every obseration 
 # in the table:  
-  if (!is.null(cal)) clint.data[,cal.col] <- cal
-  if (!is.null(dilution)) clint.data[,dilution.col] <- dilution
-  if (!is.null(density)) clint.data[,density.col] <- density
-  if (!is.null(istd.name)) clint.data[,istd.name.col] <- istd.name
-  if (!is.null(istd.conc)) clint.data[,istd.conc.col] <- istd.conc
-  if (!is.null(std.conc)) clint.data[,std.conc.col] <- 
+  if (!is.null(cal)) data.in[,cal.col] <- cal
+  if (!is.null(dilution)) data.in[,dilution.col] <- dilution
+  if (!is.null(density)) data.in[,density.col] <- density
+  if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
+  if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
+  if (!is.null(std.conc)) data.in[,std.conc.col] <- 
     std.conc
-  if (!is.null(clint.assay.conc)) clint.data[,clint.assay.conc.col] <- 
+  if (!is.null(clint.assay.conc)) data.in[,clint.assay.conc.col] <- 
     clint.assay.conc
-  if (!is.null(analysis.method)) clint.data[,analysis.method.col]<- analysis.method
-  if (!is.null(analysis.instrument)) clint.data[,analysis.instrument.col] <- 
+  if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
+  if (!is.null(analysis.instrument)) data.in[,analysis.instrument.col] <- 
     analysis.instrument
-  if (!is.null(analysis.parameters)) clint.data[,analysis.parameters.col] <- 
+  if (!is.null(analysis.parameters)) data.in[,analysis.parameters.col] <- 
     analysis.parameters
-  if (!is.null(level0.file)) clint.data[,level0.file.col] <- level0.file
-  if (!is.null(level0.sheet)) clint.data[,level0.sheet.col] <- level0.sheet
+  if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
+  if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
   
-# We need all these columns in clint.data
+# We need all these columns in data.in
   cols <-c(
     sample.col,
     date.col,
@@ -369,18 +369,20 @@ format_clint <- function(clint.data,
     level0.sheet.col
     )
   
-  if (!(all(cols %in% colnames(clint.data))))
+  if (!(all(cols %in% colnames(data.in))))
   {
     stop(paste("Missing columns named:",
-      paste(cols[!(cols%in%colnames(clint.data))],collapse=", ")))
+      paste(cols[!(cols%in%colnames(data.in))],collapse=", ")))
   }
 
   # Only include the data types used:
-  clint.data <- subset(clint.data,clint.data[,type.col] %in% c(
+  data.out <- subset(data.in,data.in[,type.col] %in% c(
     "Blank","Cvst","CC","Inactive"))
+  # Force code to throw error if data.in accessed after this point:
+  rm(data.in)
   
   # Organize the columns:
-  clint.data <- clint.data[,cols]
+  data.out <- data.out[,cols]
     
 # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
@@ -406,7 +408,7 @@ format_clint <- function(clint.data,
   level0.file.col <- "Level0.File"
   level0.sheet.col <- "Level0.Sheet"
     
-  colnames(clint.data) <- c(
+  colnames(data.out) <- c(
     sample.col,
     date.col,
     compound.col,
@@ -430,22 +432,26 @@ format_clint <- function(clint.data,
     level0.file.col,
     level0.sheet.col
     )
+    
+  # Set reasonable sig figs:
+  for (this.col in c("Area", "ISTD.Area"))
+    data.out[,this.col] <- signif(data.out[,this.col], 5)
   
   # calculate the reponse:
-  clint.data[,"Response"] <- signif(clint.data[,area.col] /
-     clint.data[,istd.col] * clint.data[,istd.conc.col],4)
+  data.out[,"Response"] <- signif(data.out[,area.col] /
+     data.out[,istd.col] * data.out[,istd.conc.col], 4)
   
 # Write out a "level 1" file (data organized into a standard format):  
-  write.table(clint.data, 
+  write.table(data.out, 
     file=paste(FILENAME,"-Clint-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
 
-  summarize_table(clint.data,
+  summarize_table(data.out,
     req.types=c("Blank","Cvst"))
 
-  return(clint.data)  
+  return(data.out)  
 }
 
 

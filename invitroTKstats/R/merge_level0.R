@@ -307,6 +307,9 @@ merge_level0 <- function(data.label="MYDATA",
     analysis.param.colname.col
     )
   
+  if (!is.null(additional.colname.cols)) cols <- c(cols,
+      additional.colname.cols)
+
   if (!(all(cols %in% colnames(level0.catalog))))
   {
     stop(paste("Missing columns named:",
@@ -330,7 +333,7 @@ merge_level0 <- function(data.label="MYDATA",
   conc.colname.col <- "Conc.ColName"
   analysis.param.colname.col <- "AnalysisParam.ColName"
   
-  colnames(level0.catalog) <- c(
+  std.colnames <- c(
     file.col,
     sheet.col,
     skip.rows.col,
@@ -344,6 +347,11 @@ merge_level0 <- function(data.label="MYDATA",
     conc.colname.col,
     analysis.param.colname.col
     )
+
+  if (!is.null(additional.colname.cols)) std.colnames <- c(std.colnames,
+    additional.colname.cols)
+      
+  colnames(level0.catalog) <- std.colnames
 
   out.data <- NULL
   for (this.row in 1:dim(level0.catalog)[1])

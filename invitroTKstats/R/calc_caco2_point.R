@@ -173,7 +173,7 @@ calc_caco2_point <- function(FILENAME, good.col="Verified")
   {
     this.subset <- subset(input.table, input.table[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
-    this.row <- c(this.subset[1,
+    this.row <- cbind(this.subset[1,
       c(compound.col, dtxsid.col, meas.time.col, membrane.area.col)],
       data.frame(Calibration="All Data",
         C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN, 
@@ -235,7 +235,6 @@ calc_caco2_point <- function(FILENAME, good.col="Verified")
   }
 
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table <- apply(out.table,2,unlist) 
   out.table[,"C0_A2B"] <- signif(as.numeric(out.table[,"C0_A2B"]),3) 
   out.table[,"C0_B2A"] <- signif(as.numeric(out.table[,"C0_B2A"]),3) 
   out.table[,"dQdt_A2B"] <- signif(as.numeric(out.table[,"dQdt_A2B"]),3) 

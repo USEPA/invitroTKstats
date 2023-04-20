@@ -167,7 +167,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
   {
     this.subset <- subset(MS.data,MS.data[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
-    this.row <- c(this.subset[1,c(compound.col,dtxsid.col)],
+    this.row <- cbind(this.subset[1,c(compound.col,dtxsid.col)],
       data.frame(Calibration="All Data",
         Fup=NaN))
     this.pbs <- subset(this.subset,Sample.Type=="PBS")
@@ -231,7 +231,6 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
   }
 
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table <- apply(out.table,2,unlist) 
   out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3) 
   out.table <- as.data.frame(out.table)
   out.table$Fup <- as.numeric(out.table$Fup)
