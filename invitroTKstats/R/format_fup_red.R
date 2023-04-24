@@ -237,7 +237,15 @@ format_fup_red <- function(data.in,
 
   # Only include the data types used:
   data.out <- subset(data.in,data.in[,type.col] %in% c(
-    "Plasma","PBS","T0","Plasma.Blank","NoPlasma.Blank","CC","Stability","EQ1","EQ2"))
+    "Plasma",
+    "PBS",
+    "T0",
+    "Plasma.Blank",
+    "NoPlasma.Blank",
+    "CC",
+    "Stability",
+    "EQ1",
+    "EQ2"))
   # Force code to throw error if data.in accessed after this point:
   rm(data.in)
   
@@ -311,7 +319,7 @@ format_fup_red <- function(data.in,
     quote=F)
 
   summarize_table(data.out,
-    req.types=c("Plasma","PBS","T0","Blank"))
+    req.types=c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank"))
 
   return(data.out)  
 }

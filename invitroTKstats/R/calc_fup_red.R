@@ -547,75 +547,79 @@ calc_fup_red <- function(
         ")",
         sep=""))
   
-      mydata <- build_mydata(this.subset)
-      if (!is.null(mydata))
+      REQUIRED.DATA.TYPES <- c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank")
+      if (all(REQUIRED.DATA.TYPES %in% this.subset[,type.col]))
       {
-        # Use random number seed for reproducibility
-        set.seed(RANDOM.SEED)
-        
-        # write out arguments to runjags:
-        save(this.compound, mydata ,initfunction,
-          file=paste(FILENAME,"-fup-RED-PREJAGS.RData",sep=""))
+        mydata <- build_mydata(this.subset)
+        if (!is.null(mydata))
+        {
+          # Use random number seed for reproducibility
+          set.seed(RANDOM.SEED)
           
-        # Run JAGS:
-        coda.out[[this.compound]] <- autorun.jags(
-          fup_RED_model, 
-          n.chains = NUM.CHAINS,
-          method="parallel", 
-          cl=CPU.cluster,
-          summarise=T,
-          inits = initfunction,
-          startburnin = 25000, 
-          startsample = 25000, 
-          max.time="5m",
-          crash.retry=2,
-          adapt=10000,
-          psrf.target = 1.1,
-          thin.sample=2000,
-          data = mydata,
-          jags = JAGS.PATH,
-          monitor = c(
-# Chemical analysis parameters:
-            'const.analytic.sd',
-            'hetero.analytic.slope',
-            'C.thresh',
-# Measrument parameters:
-            'C.missing',
-            'Kd',
-            'Fup'))
-        
-        sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
-        for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
-        results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
-    
-        Fup.point <- signif( 
-          (mean(mydata$PBS.obs)*mydata$PBS.df - 
-           mean(mydata$NoPlasma.Blank.obs)*mydata$NoPlasma.Blank.df) /
-          (mean(mydata$Plasma.obs)*mydata$Plasma.df - 
-           mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df),
-           4)
-        
-        new.results <- data.frame(Compound.Name=this.compound,
-                                  Lab.Compound.Name=this.lab.name,
-                                  DTXSID=this.dtxsid,
-                                  Fup.point=Fup.point,
-                                  stringsAsFactors=F)
-        new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- 
-          sapply(results[c(2,1,3),"Fup"],
-          function(x) signif(x,4))
-    
-        print(new.results)
-    
-        Results <- rbind(Results,new.results)
-    
-        write.table(Results, 
-          file=paste(OUTPUT.FILE,sep=""),
-          sep="\t",
-          row.names=F,
-          quote=F)
-      }    
+          # write out arguments to runjags:
+          save(this.compound, mydata ,initfunction,
+            file=paste(FILENAME,"-fup-RED-PREJAGS.RData",sep=""))
+            
+          # Run JAGS:
+          coda.out[[this.compound]] <- autorun.jags(
+            fup_RED_model, 
+            n.chains = NUM.CHAINS,
+            method="parallel", 
+            cl=CPU.cluster,
+            summarise=T,
+            inits = initfunction,
+            startburnin = 25000, 
+            startsample = 25000, 
+            max.time="5m",
+            crash.retry=2,
+            adapt=10000,
+            psrf.target = 1.1,
+            thin.sample=2000,
+            data = mydata,
+            jags = JAGS.PATH,
+            monitor = c(
+  # Chemical analysis parameters:
+              'const.analytic.sd',
+              'hetero.analytic.slope',
+              'C.thresh',
+  # Measrument parameters:
+              'C.missing',
+              'Kd',
+              'Fup'))
+          
+          sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
+          for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
+          results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
+      
+          Fup.point <- signif( 
+            (mean(mydata$PBS.obs)*mydata$PBS.df - 
+             mean(mydata$NoPlasma.Blank.obs)*mydata$NoPlasma.Blank.df) /
+            (mean(mydata$Plasma.obs)*mydata$Plasma.df - 
+             mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df),
+             4)
+          
+          new.results <- data.frame(Compound.Name=this.compound,
+                                    Lab.Compound.Name=this.lab.name,
+                                    DTXSID=this.dtxsid,
+                                    Fup.point=Fup.point,
+                                    stringsAsFactors=F)
+          new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- 
+            sapply(results[c(2,1,3),"Fup"],
+            function(x) signif(x,4))
+      
+          print(new.results)
+      
+          Results <- rbind(Results,new.results)
+      
+          write.table(Results, 
+            file=paste(OUTPUT.FILE,sep=""),
+            sep="\t",
+            row.names=F,
+            quote=F)
+        }    
+      }
     }
-  
+    
   if (!is.null(TEMP.DIR)) 
   {
     setwd(current.dir)

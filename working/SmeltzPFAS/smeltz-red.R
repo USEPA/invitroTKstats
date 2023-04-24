@@ -112,11 +112,14 @@ smeltz.red[regexpr("/T1",smeltz.red[,"Sample Text"])!=-1,
                    "Time"] <- 1
 smeltz.red[regexpr("/T5",smeltz.red[,"Sample Text"])!=-1,
                    "Time"] <- 5
-smeltz.red[sapply(smeltz.red[,"Sample Text"],
-                  function(x) "Matrix Blank" %in% x),
+smeltz.red[regexpr("Crash Blank",smeltz.red[,"Sample Text"])!=-1,
                   "Sample.Type"] <- "NoPlasma.Blank"
-smeltz.red[smeltz.red[,"Sample Text"]=="CC1",
-                   "Sample.Type"] <- "Plasma.Blank"
+smeltz.red[regexpr("Matrix Blank",smeltz.red[,"Sample Text"])!=-1,
+                  "Sample.Type"] <- "Plasma.Blank"
+                                     
+# Smeltz Crash Blanks weren't analyzed in MS, set to zero:
+smeltz.red[smeltz.red[,"Sample.Type"]%in%"NoPlasma.Blank","Area"] <- 0
+smeltz.red[smeltz.red[,"Sample.Type"]%in%"NoPlasma.Blank","IS Area"] <- 1
                                      
 # Restrict to samples with peak areas for analyte ans internal standard
 smeltz.red[,"Std. Conc"] <- as.numeric(smeltz.red[,"Std. Conc"])
@@ -129,8 +132,8 @@ smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "PBS" %in% x),"Dilution
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC1" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "EC2" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Plasma" %in% x),"Dilution.Factor"] <- 20
-smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "T0" %in% x),"Dilution.Factor"] <- 20
-smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Stability" %in% x),"Dilution.Factor"] <- 20
+smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "T0" %in% x),"Dilution.Factor"] <- 10
+smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Stability" %in% x),"Dilution.Factor"] <- 10
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "Plasma.Blank" %in% x),"Dilution.Factor"] <- 1
 smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "NoPlasma.Blank" %in% x),"Dilution.Factor"] <- 1
 
@@ -156,7 +159,7 @@ level1 <- format_fup_red(smeltz.red,
   std.conc.col = "Std. Conc", 
   level0.file.col = "File", 
   level0.sheet.col = "Sheet",
-  nominal.test.conc = 1,
+  nominal.test.conc = 10,
   plasma.percent = 100,
   time.col = "Time",
   analysis.method = "LCMS",
@@ -164,10 +167,13 @@ level1 <- format_fup_red(smeltz.red,
   analysis.parameters = "RT",
   note.col=NULL
   )
+# Produce errors if smeltz.red acccessed:
+rm(smeltz.red)
 
 level2 <- level1
 level2$Verified <- "Y"
   
+
 write.table(level2,
   file="SmeltzPFAS-PPB-RED-Level2.tsv",
   sep="\t",

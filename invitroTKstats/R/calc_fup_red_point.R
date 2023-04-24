@@ -192,7 +192,9 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     df.noplasma.blank <- this.noplasma.blank$Dilution.Factor[1]
         
   # Check to make sure there are data for PBS and plasma: 
-    if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.plasma.blank)[1] > 0 & dim(this.noplasma.blank)[1] > 0 )
+    if (dim(this.pbs)[1]> 0 & 
+        dim(this.plasma)[1] > 0 & 
+        dim(this.plasma.blank)[1] > 0)
     {
       num.chem <- num.chem + 1
       this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
@@ -216,12 +218,15 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
           this.plasma.blank <- subset(this.cal.subset,Sample.Type=="Plasma.Blank")
           this.noplasma.blank <- subset(this.cal.subset,Sample.Type=="NoPlasma.Blank")
        # Check to make sure there are data for PBS and plasma: 
-          if (dim(this.pbs)[1]> 0 & dim(this.plasma)[1] > 0 & dim(this.blank)[1] > 0)
+          if (dim(this.pbs)[1]> 0 & 
+              dim(this.plasma)[1] > 0 & 
+              dim(this.plasma.blank)[1] > 0 & 
+              dim(this.noplasma.blank)[1] > 0)
           {
             this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
-              df.noplasma.blank*mean(this.blank$Response))) /
+              df.noplasma.blank*mean(this.noplasma.blank$Response))) /
               (df.plasma*(mean(this.plasma$Response) -
-              df.plasma.blank*mean(this.blank$Response))),4)
+              df.plasma.blank*mean(this.plasma.blank$Response))),4)
             out.table <- rbind(out.table, this.row)
             num.cal <- num.cal + 1
           }
@@ -230,10 +235,13 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     }
   }
 
-  rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3) 
-  out.table <- as.data.frame(out.table)
-  out.table$Fup <- as.numeric(out.table$Fup)
+  if (!is.null(out.table))
+  {
+    rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
+    out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3) 
+    out.table <- as.data.frame(out.table)
+    out.table$Fup <- as.numeric(out.table$Fup)
+  }
   
 # Write out a "level 3" file (data organized into a standard format):  
   write.table(out.table, 
