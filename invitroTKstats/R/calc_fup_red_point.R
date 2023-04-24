@@ -245,7 +245,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
   
 # Write out a "level 3" file (data organized into a standard format):  
   write.table(out.table, 
-    file=paste(FILENAME,"-PPB-RED-Level3.tsv",sep=""),
+    file=paste(FILENAME,"-fup-RED-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)

@@ -194,7 +194,7 @@ format_fup_uc <- function(data.in,
 
 # Write out a "level 0" file (data the function received it):  
   write.table(data.in, 
-    file=paste(FILENAME,"-PPB-UC-Level0.tsv",sep=""),
+    file=paste(FILENAME,"-fup-UC-Level0.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
@@ -253,7 +253,7 @@ format_fup_uc <- function(data.in,
                              c("CC","T1","T5","AF")))
   # Write out a "level 0" file identifying those observations we threw out:
   write.table(data.in.badtype, 
-    file=paste(FILENAME,"-PPB-UC-Level0-badtype.tsv",sep=""),
+    file=paste(FILENAME,"-fup-UC-Level0-badtype.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
@@ -348,7 +348,7 @@ format_fup_uc <- function(data.in,
   
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(data.out, 
-    file=paste(FILENAME,"-PPB-UC-Level1.tsv",sep=""),
+    file=paste(FILENAME,"-fup-UC-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)

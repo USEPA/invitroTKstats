@@ -196,7 +196,7 @@ calc_fup_uc <- function(PPB.data,
     setwd(TEMP.DIR)
   }
   
-  PPB.data <- read.csv(file=paste(FILENAME,"-PPB-UC-Level2.tsv",sep=""), 
+  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
     sep="\t",header=T)  
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
@@ -262,7 +262,7 @@ calc_fup_uc <- function(PPB.data,
   # Only used verified data:
   unverified.data <- subset(PPB.data, PPB.data[,good.col] != "Y")
   write.table(unverified.data, file=paste(
-    FILENAME,"-PPB-UC-Level2-heldout.tsv",sep=""),
+    FILENAME,"-fup-UC-Level2-heldout.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
@@ -271,7 +271,7 @@ calc_fup_uc <- function(PPB.data,
   PPB.data <- as.data.frame(PPB.data)
   all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
   
-  OUTPUT.FILE <- paste(FILENAME,"-PPB-UC-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste(FILENAME,"-fup-UC-Level4.tsv",sep="")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
@@ -487,14 +487,14 @@ calc_fup_uc <- function(PPB.data,
   stopCluster(CPU.cluster)
 
   write.table(ignored.data, 
-    file=paste(FILENAME,"-PPB-UC-Level2-ignoredbayes.tsv",sep=""),
+    file=paste(FILENAME,"-fup-UC-Level2-ignoredbayes.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
   
   View(Results)
   save(Results,
-    file=paste(FILENAME,"-UC-Fup-Level4Analysis-",Sys.Date(),".RData",sep=""))
+    file=paste(FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
 
   return(list(Results=Results,coda=coda.out))  
 }

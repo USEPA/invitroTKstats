@@ -530,6 +530,7 @@ calc_fup_red <- function(
   } else CPU.cluster <-NA
   
   coda.out <- list()
+  ignored.data <- NULL
   for (this.compound in unique(MS.data[,"Compound.Name"]))
     if (!(this.compound %in% Results[,"Compound.Name"]))
     {
@@ -617,7 +618,9 @@ calc_fup_red <- function(
             row.names=F,
             quote=F)
         }    
-      }
+      } else {
+        ignored.data <- rbind(ignored.data, MSdata)
+      } 
     }
     
   if (!is.null(TEMP.DIR)) 
@@ -625,6 +628,12 @@ calc_fup_red <- function(
     setwd(current.dir)
   }
   stopCluster(CPU.cluster)
+
+  write.table(ignored.data, 
+    file=paste(FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
+    sep="\t",
+    row.names=F,
+    quote=F)
   
   View(Results)
   save(Results,
