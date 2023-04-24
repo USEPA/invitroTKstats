@@ -21,7 +21,7 @@
 #' MS response as a function of time.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")
+#' argument given, "-Clint-Level3.tsv" is appended (defaults to "MYDATA")
 #' 
 #' @param good.col Name of a column indicating which rows have been verified for 
 #' analysis, indicated by a "Y" (Defaults to "Verified")
