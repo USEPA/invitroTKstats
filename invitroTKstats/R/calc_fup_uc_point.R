@@ -22,7 +22,7 @@
 #' f_up = mean(AF Response * Dilution.Factor) / mean(T5 Response * Dilution Factor)
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")
+#' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
 #' 
 #' @param good.col Name of a column indicating which rows have been verified for 
 #' analysis, indicated by a "Y" (Defaults to "Verified")

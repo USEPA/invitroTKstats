@@ -26,7 +26,7 @@
 #'   mean(Plasma.Blank Response * Dilution.Factor))
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")
+#' argument given, "-fup-RED-Level2.tsv" is appended (defaults to "MYDATA")
 #' 
 #' @param good.col Name of a column indicating which rows have been verified for 
 #' analysis, indicated by a "Y" (Defaults to "Verified")
@@ -73,7 +73,7 @@
 #' level2$Verified <- "Y"
 #' 
 #' write.table(level2,
-#'   file="Wambaugh2019-PPB-RED-Level2.tsv",
+#'   file="Wambaugh2019-fup-RED-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
@@ -88,7 +88,7 @@
 #' @export calc_fup_red_point
 calc_fup_red_point <- function(FILENAME, good.col="Verified")
 {
-  MS.data <- read.csv(file=paste(FILENAME,"-PPB-RED-Level2.tsv",sep=""), 
+  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""), 
     sep="\t",header=T)  
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))

@@ -170,7 +170,7 @@ format_fup_red <- function(data.in,
 
   # Write out a "level 0" file (data as the function received it):  
   write.table(data.in, 
-    file=paste(FILENAME,"-PPB-RED-Level0.tsv",sep=""),
+    file=paste(FILENAME,"-fup-RED-Level0.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
@@ -313,7 +313,7 @@ format_fup_red <- function(data.in,
   
 # Write out a "level 1" file (data organized into a standard format):  
   write.table(data.out, 
-    file=paste(FILENAME,"-PPB-RED-Level1.tsv",sep=""),
+    file=paste(FILENAME,"-fup-RED-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)

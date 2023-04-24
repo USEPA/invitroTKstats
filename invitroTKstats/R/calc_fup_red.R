@@ -236,7 +236,7 @@ model {
 #'                                          
 #' @examples
 #' write.table(smeltz2023.red,
-#'   file="SmeltzPFAS-PPB-RED-Level2.tsv",
+#'   file="SmeltzPFAS-fup-RED-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
@@ -430,7 +430,7 @@ calc_fup_red <- function(
     setwd(TEMP.DIR)
   }
 
-  MS.data <- read.csv(file=paste(FILENAME,"-PPB-RED-Level2.tsv",sep=""), 
+  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""), 
     sep="\t",header=T)  
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
