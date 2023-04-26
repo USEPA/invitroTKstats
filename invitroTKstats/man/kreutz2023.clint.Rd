@@ -33,6 +33,9 @@ A level 2 data.frame with 5800 rows 24 variables: \describe{
 \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
 }
 }
+\usage{
+kreutz2023.clint
+}
 \description{
 Mass Spectrometry measurements of intrinsic hepatic clearance for
 cryopreserved pooled human hepatocytes. Chemicals were per- and 
@@ -43,3 +46,4 @@ led by Dr.s Anna Kreutz and Barbara Wetmore.
 \references{
 \insertRef{shibata2002prediction}{invitroTKstats}
 }
+\keyword{datasets}

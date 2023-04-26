@@ -1,10 +1,10 @@
 ---
-  title: "Kreutz 2022 GC PFAS Data"
+  title: "Kreutz 2022 GC PFAS Ultracentrifugation Data"
 author: "John Wambaugh"
 date: "September 10, 2022"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Kreutz 2022}
+  %\VignetteIndexEntry{Kreutz 2023 UC Data}
 %\VignetteEngine{knitr::rmarkdown}
 %\VignetteEncoding{UTF-8}
 ---
@@ -20,7 +20,7 @@ vignette: >
 ```
 
     # Clear memory:
-```{r load_packages, eval = TRUE}     
+```{r clear_memory, eval = TRUE}     
     rm(list=ls())
 ```
 
@@ -93,7 +93,7 @@ vignette: >
   AK.UCdata$Target.Conc <- AK.UCdata$Target.Conc/1000
   
   level1.Dec2020 <- format_fup_uc(AK.UCdata,
-    FILENAME="Kreutz2020",
+    FILENAME="KreutzDec2020",
     sample.col="Name",
     compound.col="Compound.Name", 
     lab.compound.col="Lab.Compound.Name", 
@@ -139,7 +139,7 @@ this.chem.data$Level0.File <- this.file
 this.chem.data$Level0.Sheet <- this.sheet
 
   level1.900 <- format_fup_uc(this.chem.data,
-    FILENAME="Kreutz2020",
+    FILENAME="Kreutz9002020",
     sample.col="Name",
     compound.col="Compound.Name", 
     lab.compound.col="Lab.Compound.Name", 
@@ -171,6 +171,7 @@ this.chem.data$Level0.Sheet <- this.sheet
   all.data$Standard.Conc <- all.data$Standard.Conc/1000
   
   level1.Jul2020 <- format_fup_uc(all.data,
+                                  FILENAME="KreutzJul2020",
                                   uc.assay.conc = 10, 
                                   area.col = "Chem.Area", 
                                   compound.col="Name",
@@ -199,6 +200,7 @@ this.chem.data$Level0.Sheet <- this.sheet
   
     
   level1.May2020 <- format_fup_uc(all.data,
+                                  FILENAME="KreutzMay2020",
                                   uc.assay.conc = 10, 
                                   area.col = "Area", 
                                   sample.col="Name",
@@ -542,10 +544,8 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
   these.data <- as.data.frame(
     suppressMessages(read_excel(this.file,
     sheet="G4A_raw")))
-  # Discard data from 4/21 and 4/22:
-  these.data <- subset(these.data, 
-    as.character(as.Date(as.numeric(these.data[,9]), origin = "1899-12-30")) ==
-      "2021-04-20")
+  # Discard data from second run:
+  these.data <- these.data[1:36,]
   
   for (this.chem in c("763","945","274"))
   {
@@ -1125,7 +1125,7 @@ dim(UC.data)
 ```
 
 ```{r create_level2, eval=TRUE}
-    write.table(UC.data,file="KreutzPFAS-PPB-UC-Level1.tsv",sep="\t",row.names=FALSE)
+    write.table(UC.data,file="KreutzPFAS-fup-UC-Level1.tsv",sep="\t",row.names=FALSE)
     
     level2 <- level1
     # Taking all data in spreadsheet as human verified for starters
@@ -1276,10 +1276,20 @@ for (this.id in unique(level2$DTXSID))
 }
 
 ```
+Somethings weird with this chemicals data, clean up the odder samples:
+```{r cleanup_DTXSID20335129, eval=TRUE}    
+which.rows <- which(level2$DTXSID=="DTXSID20335129")
+# Overule outlier detection:
+level2[which.rows,"Verified"] <- "Y"
+# Get rid of spike:
+level2[level2$DTXSID=="DTXSID20335129" &
+       level2$Lab.Sample.Name=="UCCC spike", "Verified"] <- "Spike"
+level2[which.rows[24:29], "Verified"] <- "Extra CC"
+```
 
 ```{r write_level2, eval=TRUE}    
 write.table(level2,
-      file="KreutzPFAS-PPB-UC-Level2.tsv",
+      file="KreutzPFAS-fup-UC-Level2.tsv",
       sep="\t",
       row.names=F,
       quote=F)
@@ -1288,11 +1298,6 @@ write.table(level2,
 # maximum likelihood analysis:
 ```{r MLE, eval=TRUE}
     level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS") 
-    write.table(level3,
-      file="KreutzPFAS-PPB-UC-Level3.tsv",
-      sep="\t",
-      row.names=F,
-      quote=F)
 ```
 
 # Bayesian analysis:

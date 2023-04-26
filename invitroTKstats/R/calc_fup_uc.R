@@ -6,17 +6,17 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
-    log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
-    log.C.thresh[i] ~ dnorm(log(Test.Nominal.Conc[i]/10), 0.01)
+    # (Note that a uniform prior on the log variable is weighted toward lower
+    # values)
+    log.const.analytic.sd[i] ~ dunif(-6, 1)
+    log.hetero.analytic.slope[i] ~ dunif(-6, 1)
+    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
     log.calibration[i] ~ dnorm(0,0.01)
+    background[i] ~ dexp(100)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
-    C.thresh[i] <- 10^log.C.thresh[i]
     calibration[i] <- 10^log.calibration[i]
-    # Concentrations below this value are not detectable:
-    background[i] <- calibration[i]*C.thresh[i]
   }
   
   # Mass-spec observations:  
@@ -43,15 +43,20 @@ model {
   log.Fup ~ dunif(-15, 0)
   # Scale conversion:
   Fup <- 10^log.Fup
-
-# The conc's we don't know are for the AF and T5 samples
+  # Prior on Fstable:
+  log.Floss ~ dunif(-6, 0)
+  Fstable <- 1 - 10^log.Floss
+    
+# The conc's we don't know are for the T1, T5, and AF
   for (i in (Num.cc.obs +1):(Num.cc.obs + Num.series)) 
   {
-  # Priors for whole samples for ultra centrigugation UC):
+  # Priors for T1 samples for ultra centrigugation UC):
     Conc[i] ~ dnorm(Test.Nominal.Conc[obs.cal[i]],
       100)
-  # Aqueous fraction concentrations for UC samples:
-    Conc[i+Num.series] <- Fup * Conc[i]
+  # The T5 samples after potential breakdown:
+    Conc[i + Num.series] <- Fstable * Conc[i]
+  # Aqueous fraction concentrations for stable chemical at T5:
+    Conc[i + 2*Num.series] <- Fup * Conc[i + Num.series]
   }   
 }
 "
@@ -164,27 +169,38 @@ calc_fup_uc <- function(PPB.data,
     intercept <- as.numeric(cal.coeff[1])
     
 # We need a vector with NA's for all the values that are not sampled, but 
-# initial values for the concentrations that are inferred (the T5's):
-    init.Conc <- rep(NA,mydata$Num.cc.obs+mydata$Num.series*2)
-    init.Conc[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)] <- 
-      mydata$Test.Nominal.Conc[
-        mydata$obs.cal[(mydata$Num.cc.obs+1):(mydata$Num.cc.obs+mydata$Num.series)]]
+# initial values for the concentrations that are inferred (the T1's):
+    init.Conc <- rep(NA,mydata$Num.cc.obs+mydata$Num.series*3)
+    # Set initial values for the T1's:
+    init.Conc[(mydata$Num.cc.obs+1):
+               (mydata$Num.cc.obs+mydata$Num.series)] <- 
+      mydata$Test.Nominal.Conc
       
     return(list(
       .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
-      log.const.analytic.sd =runif(mydata$Num.cal,-1.5,0.5),
-      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
+#      log.const.analytic.sd =runif(mydata$Num.cal,0.5,1),
+#      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-3),
+      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
+      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
 # Average across all the calibrations (the sampler will vary these):
-      log.C.thresh = log10(rep(
+      C.thresh = rep(
                      min(
-                         max(10^-8,intercept/slope),
+                         max(10^-8,abs(intercept)/slope),
                          mydata$Test.Nominal.Conc/10,na.rm=TRUE),
-                     mydata$Num.cal)),
-      log.calibration = rep(max(min(-2.95,log10(max(0,slope))),1.95),mydata$Num.cal),
+                     mydata$Num.cal),
+      background = rep(0,mydata$Num.cal),
+      log.calibration = rep(max(
+                                min(-2.95,
+                                    log10(max(0,
+                                              slope))),
+                                              1.95),
+                                              mydata$Num.cal),
 # There is only one Fup per chemical:
       log.Fup = log10(runif(1,0,1)),
+# There is only one Fstable per chemical:
+      log.Floss = runif(1,-4,-2),
 # Set the initial concentrations:
       Conc = init.Conc
     ))
@@ -302,12 +318,12 @@ calc_fup_uc <- function(PPB.data,
         length(unique(PPB.data[,compound.col])),
         ")",
         sep=""))
-      MSdata <- PPB.data[PPB.data[,compound.col]==this.compound,]
+      MS.data <- PPB.data[PPB.data[,compound.col]==this.compound,]
     
-      for (this.series in unique(MSdata[,series.col]))
+      for (this.series in unique(MS.data[,series.col]))
         if (!is.na(this.series))
         {
-          this.series.subset <- subset(MSdata,MSdata[,series.col]==this.series)
+          this.series.subset <- subset(MS.data,MS.data[,series.col]==this.series)
           for (this.cal in unique(this.series.subset[,cal.col]))
             if (!is.na(this.cal))
             {
@@ -316,44 +332,47 @@ calc_fup_uc <- function(PPB.data,
               if (!all(c("T1","T5","AF") %in% this.cal.subset[,type.col]))
               {
                 # Have to handle the NA series values for CC data:
-                series.values <- MSdata[,series.col]
+                series.values <- MS.data[,series.col]
                 # Assign a dummy value to the NA's
                 series.values[is.na(series.values)]<-"Cat"
                 # Identify the bad series from the cal and add to ignored.data:
-                ignored.data <- rbind(ignored.data, subset(MSdata,
+                ignored.data <- rbind(ignored.data, subset(MS.data,
                                       series.values == this.series & 
-                                      MSdata[,cal.col]==this.cal))
+                                      MS.data[,cal.col]==this.cal))
                 # Remove the bad series:
-                MSdata <- subset(MSdata,
+                MS.data <- subset(MS.data,
                                  series.values != this.series |
-                                 MSdata[,cal.col]!=this.cal)
+                                 MS.data[,cal.col]!=this.cal)
                 print(paste("Dropped series",this.series,"from cal",
                            this.cal,"for incomplete data."))
               }
             } 
         }
     
-      if (any(MSdata[,type.col]=="CC") &
-          any(MSdata[,type.col]=="T1") &
-          any(MSdata[,type.col]=="T5") &
-          any(MSdata[,type.col]=="AF"))
+      if (any(MS.data[,type.col]=="CC") &
+          any(MS.data[,type.col]=="T1") &
+          any(MS.data[,type.col]=="T5") &
+          any(MS.data[,type.col]=="AF"))
       {
-        all.cal <- unique(MSdata[,cal.col])
+        all.cal <- unique(MS.data[,cal.col])
         Num.cal <- length(all.cal)        
   #
   #
   #
-        CC.data <- MSdata[MSdata[,type.col]=="CC",]
+        CC.data <- MS.data[MS.data[,type.col]=="CC",]
         Num.cc.obs <- dim(CC.data)[1]
         CC.data$Obs.Conc <- seq(1,Num.cc.obs)
         Conc <- CC.data[,std.conc.col]
         Dilution.Factor <- CC.data[,dilution.col]
   #
   #
-  #  Each series (currently) contains T5 and AF data
-        T1.data <- MSdata[MSdata[,type.col]=="T1",]
-        T5.data <- MSdata[MSdata[,type.col]=="T5",]
-        AF.data <- MSdata[MSdata[,type.col]=="AF",]
+  #  Each series contains T1, T5, and AF data
+        T1.data <- MS.data[MS.data[,type.col]=="T1",]
+        Num.T1.obs <- dim(T1.data)[1]
+        T5.data <- MS.data[MS.data[,type.col]=="T5",]
+        Num.T5.obs <- dim(T5.data)[1]
+        AF.data <- MS.data[MS.data[,type.col]=="AF",]
+        Num.AF.obs <- dim(AF.data)[1]
         Num.series <- 0
         all.series <- NULL
         Test.Nominal.Conc <- NULL
@@ -363,9 +382,16 @@ calc_fup_uc <- function(PPB.data,
             T5.data[,cal.col]==all.cal[i],
             series.col])
           Num.series <- Num.series + length(these.series) 
+          T1.data[
+            T1.data[,cal.col]==all.cal[i],
+            series.col] <- paste(all.cal[i],
+             T1.data[                          
+               T1.data[,cal.col]==all.cal[i],
+               series.col],
+             sep="-")
           T5.data[
             T5.data[,cal.col]==all.cal[i],
-            "Series"] <- paste(all.cal[i],
+            series.col] <- paste(all.cal[i],
              T5.data[                          
                T5.data[,cal.col]==all.cal[i],
                series.col],
@@ -382,19 +408,23 @@ calc_fup_uc <- function(PPB.data,
             T1.data[,cal.col]==all.cal[i],
             uc.assay.conc.col],na.rm=T)
         }
+        # There is one initial concentration per series, even if there are
+        # multiple observations of that series:
         for (i in 1:Num.series)
         {
-          T5.data[T5.data$Series==all.series[i],"Obs.Conc"] <- Num.cc.obs + i
-          AF.data[AF.data$Series==all.series[i],"Obs.Conc"] <- Num.cc.obs + Num.series + i
+          T1.data[T1.data$Series==all.series[i],"Obs.Conc"] <- 
+            Num.cc.obs + i
+          T5.data[T5.data$Series==all.series[i],"Obs.Conc"] <- 
+            Num.cc.obs + 1*Num.series + i
+          AF.data[AF.data$Series==all.series[i],"Obs.Conc"] <-   
+            Num.cc.obs + 2*Num.series + i
         }
-        Conc <- c(Conc,rep(NA,2*Num.series))
-        Dilution.Factor <- c(Dilution.Factor,
-          T5.data[,dilution.col],
-          AF.data[,dilution.col])
+        # There are three total concentrations per series (T1, T5, and AF):
+        Conc <- c(Conc,rep(NA,3*Num.series))
   #
   #
   #
-        UC.obs <- rbind(CC.data,T5.data,AF.data)
+        UC.obs <- rbind(CC.data,T1.data,T5.data,AF.data)
         Num.obs <- dim(UC.obs)[1]
         for (i in 1:Num.cal)
         {
@@ -412,12 +442,12 @@ calc_fup_uc <- function(PPB.data,
           "Conc" = Conc,
           "Num.cc.obs" = Num.cc.obs,
           "Num.series" = Num.series,
-          "Dilution.Factor" = Dilution.Factor,
+          "Dilution.Factor" = UC.obs[,"Dilution.Factor"],
           "Test.Nominal.Conc" = Test.Nominal.Conc
         )
       
         save(this.compound,mydata,UC_PPB_model,initfunction,
-          file=paste(FILENAME,"-FupUC-PREJAGS.RData",sep=""))  
+          file=paste(FILENAME,"-Fup-UC-PREJAGS.RData",sep=""))  
         coda.out[[this.compound]] <- autorun.jags(
           UC_PPB_model, 
           n.chains = NUM.CHAINS,
@@ -435,15 +465,16 @@ calc_fup_uc <- function(PPB.data,
           data = mydata,
           jags = findjags(look_in=JAGS.PATH),
           monitor = c(
+          # Chemical analysis parameters:
+            'const.analytic.sd',
+            'hetero.analytic.slope',
+            'C.thresh',
+            'log.calibration',
+            'background',
+          # Measurement parameters:
             'Fup',
-            'log.C.thresh',
-            'log.const.analytic.sd',
-            'log.hetero.analytic.slope',
-            'log.calibration'
+            "Fstable"
             ))
-            #,
-            #"Response.pred",
-            #"Conc"))
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
@@ -451,9 +482,15 @@ calc_fup_uc <- function(PPB.data,
     
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
         colnames(new.results) <- c("Compound","DTXSID","Lab.Compound.Name")
+         new.results <- cbind.data.frame(new.results,
+        t(as.data.frame(as.numeric(results[c(2,1,3),"Fstable"]))))
+        colnames(new.results)[4:6] <- c(
+          "Fstable.Med",
+          "Fstable.Low",
+          "Fstable.High")
         new.results <- cbind.data.frame(new.results,
           t(as.data.frame(as.numeric(results[c(2,1,3),"Fup"]))))
-        colnames(new.results)[4:6] <- c(
+        colnames(new.results)[7:9] <- c(
           "Fup.Med",
           "Fup.Low",
           "Fup.High")
@@ -462,11 +499,16 @@ calc_fup_uc <- function(PPB.data,
           T5.data[,"Dilution.Factor"]),3)
         rownames(new.results) <- this.compound
     
-        print(mydata$Num.obs)
-        print(mydata$Response.obs)
+        print(paste("Final results for ",
+          this.compound,
+          " (",
+          which(unique(MS.data[,compound.col])==this.compound),
+          " of ",
+          length(unique(MS.data[,compound.col])),
+          ")",
+          sep=""))       
         print(results)
-     
- #       if (results[1,"Fup"]<1e-8) browser()
+        print(new.results)
     
         Results <- rbind(Results,new.results)
     
@@ -476,7 +518,7 @@ calc_fup_uc <- function(PPB.data,
           row.names=F,
           quote=F)
       } else {
-        ignored.data <- rbind(ignored.data, MSdata)
+        ignored.data <- rbind(ignored.data, MS.data)
       }   
     }
   

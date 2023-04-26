@@ -8,7 +8,7 @@ calc_fup_red_point(FILENAME, good.col = "Verified")
 }
 \arguments{
 \item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")}
+argument given, "-fup-RED-Level2.tsv" is appended (defaults to "MYDATA")}
 
 \item{good.col}{Name of a column indicating which rows have been verified for 
 analysis, indicated by a "Y" (Defaults to "Verified")}
@@ -81,7 +81,7 @@ level2 <- level1
 level2$Verified <- "Y"
 
 write.table(level2,
-  file="Wambaugh2019-PPB-RED-Level2.tsv",
+  file="Wambaugh2019-fup-RED-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)

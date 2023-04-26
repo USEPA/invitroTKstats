@@ -120,6 +120,10 @@ smeltz.red[regexpr("Matrix Blank",smeltz.red[,"Sample Text"])!=-1,
 # Smeltz Crash Blanks weren't analyzed in MS, set to zero:
 smeltz.red[smeltz.red[,"Sample.Type"]%in%"NoPlasma.Blank","Area"] <- 0
 smeltz.red[smeltz.red[,"Sample.Type"]%in%"NoPlasma.Blank","IS Area"] <- 1
+
+# Blank analyte cells for matrix blanks for 8:2FTSA were zeros:
+smeltz.red[smeltz.red[,"Sample.Type"]%in%"Plasma.Blank" &
+           smeltz.red$DTXSID=="DTXSID00192353", "Area"] <- 0
                                      
 # Restrict to samples with peak areas for analyte ans internal standard
 smeltz.red[,"Std. Conc"] <- as.numeric(smeltz.red[,"Std. Conc"])
@@ -142,6 +146,10 @@ smeltz.red[sapply(smeltz.red[,"Sample.Type"],function(x) "NoPlasma.Blank" %in% x
 smeltz.red[,"Std. Conc"] <- as.numeric(smeltz.red[,"Std. Conc"])/100
 
 
+# 8:2 Fluorotelomer sulfonic acid:
+bad.samples <-which(smeltz.red$DTXSID=="DTXSID00192353")
+# Set them all to the same date (therefore the same calibration):
+smeltz.red[bad.samples,"Acq.Date"] <- smeltz.red[bad.samples[1],"Acq.Date"]
   
 level1 <- format_fup_red(smeltz.red,
   FILENAME="SmeltzPFAS",
@@ -173,9 +181,15 @@ rm(smeltz.red)
 level2 <- level1
 level2$Verified <- "Y"
   
+# Extra data for 8:2 Fluorotelomer sulfonic acid needs to be ignored
+# (first 54 sampes are okay):
+# 8:2 Fluorotelomer sulfonic acid:
+bad.samples <-which(level2$DTXSID=="DTXSID00192353")
+bad.samples <- bad.samples[44:length(bad.samples)]
+level2[bad.samples,"Verified"] <- "Ignored"
 
 write.table(level2,
-  file="SmeltzPFAS-PPB-RED-Level2.tsv",
+  file="SmeltzPFAS-fup-RED-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
@@ -190,6 +204,6 @@ setwd("c:/users/jwambaug/git/invitroTKstats/working/SmeltzPFAS")
 
 level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
                        NUM.CORES=8,
-                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")  
+                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64/bin/")  
  
  

@@ -70,7 +70,7 @@
 #' @param istd.conc.col Which column of data.in indicates the concentration of
 #' the internal standard (Defaults to "ISTD.Conc")
 #' 
-#' @param nominal.test.conc.col Which column of data.in indicates the intended
+#' @param Test.Nominal.Conc.col Which column of data.in indicates the intended
 #' test chemical concentration at time zero (Defaults to "Test.Target.Conc") 
 #'
 #' @param analysis.method.col Which column of data.in indicates the analytical
@@ -146,8 +146,8 @@ format_fup_red <- function(data.in,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  nominal.test.conc=NULL,
-  nominal.test.conc.col="Test.Target.Conc",
+  test.nominal.conc=NULL,
+  test.nominal.conc.col="Test.Target.Conc",
   plasma.percent=NULL,
   plasma.percent.col="Plasma.Percent",
   std.conc=NULL,
@@ -190,8 +190,8 @@ format_fup_red <- function(data.in,
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
   if (!is.null(std.conc)) data.in[,std.conc.col] <- 
     std.conc
-  if (!is.null(nominal.test.conc)) data.in[,nominal.test.conc.col] <- 
-    nominal.test.conc
+  if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <- 
+    test.nominal.conc
   if (!is.null(plasma.percent)) data.in[,plasma.percent.col] <- 
     plasma.percent
   if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
@@ -217,7 +217,7 @@ format_fup_red <- function(data.in,
     istd.conc.col,
     istd.col,
     std.conc.col,
-    nominal.test.conc.col,
+    test.nominal.conc.col,
     plasma.percent.col,
     time.col,
     area.col,
@@ -266,7 +266,7 @@ format_fup_red <- function(data.in,
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   std.conc.col <- "Std.Conc"
-  nominal.test.conc.col <- "Nominal.Test.Conc"
+  test.nominal.conc.col <- "Test.Nominal.Conc"
   plasma.percent.col <- "Percent.Physiologic.Plasma"
   time.col <- "Time"
   area.col <- "Area"
@@ -291,7 +291,7 @@ format_fup_red <- function(data.in,
     istd.conc.col,
     istd.col,
     std.conc.col,
-    nominal.test.conc.col,
+    test.nominal.conc.col,
     plasma.percent.col,
     time.col,
     area.col,
