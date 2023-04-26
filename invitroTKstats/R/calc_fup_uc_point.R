@@ -22,7 +22,7 @@
 #' f_up = mean(AF Response * Dilution.Factor) / mean(T5 Response * Dilution Factor)
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")
+#' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
 #' 
 #' @param good.col Name of a column indicating which rows have been verified for 
 #' analysis, indicated by a "Y" (Defaults to "Verified")
@@ -46,7 +46,7 @@
 #' level2$Verified <- "Y"
 #' 
 #' write.table(level2,
-#'   file="Kreutz2020-PPB-UC-Level2.tsv",
+#'   file="Kreutz2020-fup-UC-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
@@ -61,7 +61,7 @@
 #' @export calc_fup_uc_point
 calc_fup_uc_point <- function(FILENAME, good.col="Verified")
 {
-  PPB.data <- read.csv(file=paste(FILENAME,"-PPB-UC-Level2.tsv",sep=""), 
+  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
     sep="\t",header=T)  
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
@@ -181,7 +181,7 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
  
 # Write out a "level 3" file (data organized into a standard format):  
   write.table(out.table, 
-    file=paste(FILENAME,"-PPB-UC-Level3.tsv",sep=""),
+    file=paste(FILENAME,"-fup-UC-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
