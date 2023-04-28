@@ -19,7 +19,7 @@ calc_clint(
 }
 \arguments{
 \item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")}
+argument given, "-Clint-Level4Analysis.tsv" is appended (defaults to "MYDATA")}
 
 \item{TEMP.DIR}{An optional directory where file writing may be faster.}
 
@@ -62,9 +62,11 @@ that each row is verified as usable for analysis (that is, the Level2 file).
 
 The data frame of observations should be annotated according to
 of these types:
-\tabular{rrrrr}{
-  Blank \tab Blank\cr
-  Hepatocyte inciubation concentration \tab Conc\cr
+\tabular{rl}{
+  Blank \tab Cell free blank with media\cr
+  CC \tab Cell and media free calibration curve \cr
+  Cvst \tab Hepatocyte inciubation concentration vs. time \cr
+  Inactive \tab Concentration vs. time data with inactivated hepatocytes \cr
 }
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of

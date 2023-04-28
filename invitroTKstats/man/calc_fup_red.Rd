@@ -97,7 +97,7 @@ of these types:
 }
 \examples{
 write.table(smeltz2023.red,
-  file="SmeltzPFAS-PPB-RED-Level2.tsv",
+  file="SmeltzPFAS-fup-RED-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)

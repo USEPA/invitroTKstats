@@ -5,16 +5,17 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
-    log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
-    C.thresh[i] ~ dunif(0,Nominal.Test.Conc[1]/10)
+    # (Note that a uniform prior on the log variable is weighted toward lower
+    # values)
+    log.const.analytic.sd[i] ~ dunif(-6, 1)
+    log.hetero.analytic.slope[i] ~ dunif(-6, 1)
+    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
     log.calibration[i] ~ dnorm(0,0.01)
+    background[i] ~ dexp(100)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
-    # Concentrations below this value are not detectable:
-    background[i] <- calibration[i]*C.thresh[i]
   }
   
 # Likelihood for blanks without plasma observations:
@@ -29,7 +30,8 @@ model {
   }
   
 # Extent of interference from plasma:
-  Plasma.Interference ~ dnorm(Nominal.Test.Conc, 1)
+  log.Plasma.Interference ~ dunif(-6, log(10/Test.Nominal.Conc)/log(10))
+  Plasma.Interference <- 10^log.Plasma.Interference
 # Likelihood for the plasma blank observations:
   for (i in 1:Num.Plasma.Blank.obs)
   {
@@ -53,8 +55,8 @@ model {
 # Mass spec response as a function of diluted concentration:  
     T0.pred[i] <- 
       (calibration[T0.cal[i]] * 
-      (Nominal.Test.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) *
-      step(Nominal.Test.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) +
+      (Test.Nominal.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) *
+      step(Test.Nominal.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) +
       calibration[T0.cal[i]] * Plasma.Interference +
       background[T0.cal[i]]) /
       T0.df 
@@ -96,11 +98,11 @@ model {
 # Calculate protein concentration for observation:
     C.protein[i] <- Physiological.Protein.Conc * Assay.Protein.Percent[i] / 100
 # Missing (bound to walls/membrane) chemical:
-    C.missing[i] ~ dunif(0, Nominal.Test.Conc)
+    C.missing[i] ~ dunif(0, Test.Nominal.Conc)
 # Unbound concentration in both wells:
-    C.u[i] <- (Nominal.Test.Conc-C.missing[i])*(Kd/(2*Kd+C.protein[i]))
+    C.u[i] <- (Test.Nominal.Conc-C.missing[i])*(Kd/(2*Kd+C.protein[i]))
 # Bound concentration in plasma well:
-    C.b[i] <- (Nominal.Test.Conc-C.missing[i])*C.protein[i]/(2*Kd+C.protein[i])
+    C.b[i] <- (Test.Nominal.Conc-C.missing[i])*C.protein[i]/(2*Kd+C.protein[i])
 # Toal concentration in plasma well:
     C.total[i] <- C.b[i] + C.u[i]
   }
@@ -223,7 +225,7 @@ model {
 #' @param istd.conc.col Which column of MS.data indicates the concentration of
 #' the internal standard (Defaults to "ISTD.Conc")
 #' 
-#' @param nominal.test.conc.col Which column of MS.data indicates the intended
+#' @param Test.Nominal.Conc.col Which column of MS.data indicates the intended
 #' test chemical concentration at time zero (Defaults to "Test.Target.Conc")       
 #'
 #' @return A data.frame containing quunantiles of the Bayesian posteriors 
@@ -266,8 +268,8 @@ calc_fup_red <- function(
     #kDa -> g/mol is *1000
     #g/mol -> M is g/L/MW
     #M <- uM is /1000000
-    Nominal.Test.Conc <- unique(this.data$Nominal.Test.Conc) # uM frank parent concentration
-    if (length(Nominal.Test.Conc)>1) stop("Multiple test concentrations.")
+    Test.Nominal.Conc <- unique(this.data$Test.Nominal.Conc) # uM frank parent concentration
+    if (length(Test.Nominal.Conc)>1) stop("Multiple test concentrations.")
 # Each calibration could be a unique string (such as a date):
     unique.cal <- sort(unique(this.data[,"Calibration"]))
     Num.cal <- length(unique.cal)
@@ -355,7 +357,7 @@ calc_fup_red <- function(
 
     return(list(                
 # Describe assay:
-      'Nominal.Test.Conc' = Nominal.Test.Conc,
+      'Test.Nominal.Conc' = Test.Nominal.Conc,
       'Num.cal' = Num.cal,
       'Physiological.Protein.Conc' = Physiological.Protein.Conc,
       'Assay.Protein.Percent' = Assay.Protein.Percent,
@@ -414,13 +416,17 @@ calc_fup_red <- function(
       .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
-      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
-      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
+#      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
+#      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
+      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
+      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
+      background = rep(0,mydata$Num.cal),
       C.thresh = runif(mydata$Num.cal, 0, 0.1),
       log.calibration = rep(0,mydata$Num.cal),
-# Statisticas characterizing the measurment:
+      log.Plasma.Interference = log10(runif(mydata$Num.cal,0,0.1)),
+# Statistics characterizing the measurement:
       log.Kd= runif(1,-8,4),
-      C.missing = runif(mydata$Num.rep,0,mydata[["Nominal.Test.Conc"]])
+      C.missing = runif(mydata$Num.rep,0,mydata[["Test.Nominal.Conc"]])
     ))
   }
   
@@ -449,7 +455,7 @@ calc_fup_red <- function(
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   std.conc.col <- "Std.Conc"
-  nominal.test.conc.col <- "Nominal.Test.Conc"
+  Test.Nominal.Conc.col <- "Test.Nominal.Conc"
   plasma.percent.col <- "Percent.Physiologic.Plasma"
   time.col <- "Time"
   area.col <- "Area"
@@ -475,7 +481,7 @@ calc_fup_red <- function(
     istd.conc.col,
     istd.col,
     std.conc.col,
-    nominal.test.conc.col,
+    Test.Nominal.Conc.col,
     plasma.percent.col,
     time.col,
     area.col,
@@ -583,7 +589,10 @@ calc_fup_red <- function(
               'const.analytic.sd',
               'hetero.analytic.slope',
               'C.thresh',
-  # Measrument parameters:
+              'log.calibration',
+              'background',
+              'Plasma.Interference',
+  # Measurement parameters:
               'C.missing',
               'Kd',
               'Fup'))
@@ -608,8 +617,17 @@ calc_fup_red <- function(
             sapply(results[c(2,1,3),"Fup"],
             function(x) signif(x,4))
       
+          print(paste("Final results for ",
+            this.compound,
+            " (",
+            which(unique(MS.data[,compound.col])==this.compound),
+            " of ",
+            length(unique(MS.data[,compound.col])),
+            ")",
+            sep=""))       
+          print(results)
           print(new.results)
-      
+          
           Results <- rbind(Results,new.results)
       
           write.table(Results, 

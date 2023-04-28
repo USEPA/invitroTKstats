@@ -8,7 +8,7 @@ calc_clint_point(FILENAME, good.col = "Verified")
 }
 \arguments{
 \item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-PPB-RED-Level2.tsv" is appended (defaults to "MYDATA")}
+argument given, "-Clint-Level3.tsv" is appended (defaults to "MYDATA")}
 
 \item{good.col}{Name of a column indicating which rows have been verified for 
 analysis, indicated by a "Y" (Defaults to "Verified")}

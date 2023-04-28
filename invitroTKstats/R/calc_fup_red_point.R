@@ -107,7 +107,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   std.conc.col <- "Std.Conc"
-  nominal.test.conc.col <- "Nominal.Test.Conc"
+  test.nominal.conc.col <- "Test.Nominal.Conc"
   plasma.percent.col <- "Percent.Physiologic.Plasma"
   time.col <- "Time"
   area.col <- "Area"
@@ -133,7 +133,7 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     istd.conc.col,
     istd.col,
     std.conc.col,
-    nominal.test.conc.col,
+    test.nominal.conc.col,
     plasma.percent.col,
     time.col,
     area.col,

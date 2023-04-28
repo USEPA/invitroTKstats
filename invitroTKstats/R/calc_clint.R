@@ -6,16 +6,17 @@ model {
   for (i in 1:Num.cal)
   {
     # Priors:
-    log.const.analytic.sd[i] ~ dnorm(-0.1,0.01)
-    log.hetero.analytic.slope[i] ~ dnorm(-2,0.01)
-    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[1]/10)
+    # (Note that a uniform prior on the log variable is weighted toward lower
+    # values)
+    log.const.analytic.sd[i] ~ dunif(-6, 1)
+    log.hetero.analytic.slope[i] ~ dunif(-6, 1)
+    C.thresh[i] ~ dunif(0,Test.Nominal.Conc/10)
     log.calibration[i] ~ dnorm(0,0.01)
+    background[i] ~ dexp(100)
     # Scale conversions:
     const.analytic.sd[i] <- 10^log.const.analytic.sd[i]
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
-    # Concentrations below this value are not detectable:
-    background[i] <- calibration[i]*C.thresh[i]
   }
   
 # Likelihood for the blank observations:
@@ -387,11 +388,12 @@ calc_clint <- function(
       .RNG.seed=seed,
       .RNG.name="base::Super-Duper",
 # Parameters that may vary between calibrations:
-      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
-      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
+      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
+      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
       C.thresh = runif(mydata$Num.cal, 0, 0.1),
       log.calibration = rep(0,mydata$Num.cal),
-# Statisticas characterizing the measurment:
+      background = rep(0,mydata$Num.cal),
+# Statistics characterizing the measurment:
       decreases = rbinom(1,1,0.5),
       degrades = rbinom(1,1,0.5),
       bio.rate = runif(1,0,1/15),
@@ -542,20 +544,25 @@ calc_clint <- function(
                            data = mydata,
                            jags = JAGS.PATH,
                            monitor = c(
-                             'log.const.analytic.sd',
-                             'hetero.analytic.slope',
-                             'C.thresh',
-                             'calibration',
-                             'background'))
+                           # Chemical analysis parameters:
+                            'const.analytic.sd',
+                            'hetero.analytic.slope',
+                            'C.thresh',
+                            'log.calibration',
+                            'background'))
         
+  # We don't follow the measurment parameters for convergence becasue they
+  # are discrete and the convergence diagnostics don't work:
         coda.out[[this.compound]] <-extend.jags(coda.out[[this.compound]],
                               drop.monitor = c(
-                             'log.const.analytic.sd',
-                             'hetero.analytic.slope',
-                             'C.thresh',
-                             'calibration',
-                             'background'), 
+                              # Chemical analysis parameters:
+                                'const.analytic.sd',
+                                'hetero.analytic.slope',
+                                'C.thresh',
+                                'calibration',
+                                'background'), 
                               add.monitor = c(
+                              # Measurement parameters
                                 'bio.slope',
                                 'decreases',
                                 'saturates',
@@ -616,8 +623,17 @@ calc_clint <- function(
           sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)    
                 
         rownames(new.results) <- this.compound
-         
+        
+        print(paste("Final results for ",
+          this.compound,
+          " (",
+          which(unique(MS.data[,compound.col])==this.compound),
+          " of ",
+          length(unique(MS.data[,compound.col])),
+          ")",
+          sep=""))       
         print(results)
+        print(new.results)
     
         Results <- rbind(Results,new.results)
     

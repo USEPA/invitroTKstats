@@ -5,7 +5,7 @@
 \title{Creates a standardized data table reporting hepatocye clearance data}
 \usage{
 format_clint(
-  clint.data,
+  data.in,
   FILENAME = "MYDATA",
   sample.col = "Lab.Sample.Name",
   date = NULL,
@@ -48,7 +48,7 @@ format_clint(
 )
 }
 \arguments{
-\item{clint.data}{A data frame containing mass-spectrometry peak areas,
+\item{data.in}{A data frame containing mass-spectrometry peak areas,
 indication of chemical identiy, and measurment type. The data frame should
 contain columns with names specified by the following arguments:}
 
@@ -94,10 +94,10 @@ MS analyzer (Defaults to "Cal")}
 observation in the table is assigned the value of the argument and the 
 corresponding column in input.table (if present) is ignored.}
 
-\item{dilution.col}{Which column of clint.data indicates how many times the
+\item{dilution.col}{Which column of data.in indicates how many times the
 sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
 
-\item{time.col}{Which column of clint.data indicates the intended
+\item{time.col}{Which column of data.in indicates the intended
 time of the measurment (in minutes) since the test chemical was introduced
 into the hepatocyte incubation (Defaults to "Time")}
 
@@ -162,7 +162,7 @@ sheet containing the data if the file is an Excel workbook}
 observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{conc.col}{Which column of clint.data indicates the intended
+\item{conc.col}{Which column of data.in indicates the intended
 test chemical concentration 
 (units if uM) of
 at time zero (Defaults to "Conc")}
