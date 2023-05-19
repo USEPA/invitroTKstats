@@ -216,8 +216,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     if (length(unique(this.cvt$Hep.Density))>1) browser()
     hep.density <- this.cvt$Hep.Density[1]
     
-  # Check to make sure there are data for PBS and plasma: 
-    if (dim(this.cvt)[1] > 1 & dim(this.blank)[1] > 1)
+    if (dim(this.cvt)[1] > 1)
     {
       this.data <- rbind(this.blank,this.cvt)
       this.data[this.data$Sample.Type=="Blank","Clint.Assay.Conc"] <- 0
@@ -230,7 +229,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       this.data[this.data$Response==0,"Response"] <- min.response/2
 
       num.chem <- num.chem + 1
-      num.cal <- length(unique(this.data[,"Calibration"]))
+      num.cal <- num.cal + length(unique(this.data[,"Calibration"]))
       
       this.fit <- try(mle(lldecay,
         start=list(cal=1,k_elim=0.1,sigma=1),
@@ -270,7 +269,6 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
             this.row$Sat.pValue <- min(exp(-(test.AIC-AIC(this.sat.fit))),1)
           } else browser()
         }
-        out.table <- rbind(out.table, this.row)
         print(paste(
           this.row$Compound.Name,
           "Cl_int =",
@@ -279,14 +277,24 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
           signif(this.row$Clint.pValue,3),
           "."
           ))
-      } else browser()
+      } else {
+        for (col in c("Fit","AIC","AIC.Null","Clint.1","Clint.10","AIC.Sat","Sat.pValue"))
+          this.row[,col] <- NA
+        this.row$Clint <- "Linear Regression Failed"
+        print("Linear regression failed.")
+        plot(this.data$Time, this.data$Response)
+        browser()
+      }
+      out.table <- rbind(out.table, this.row)
     }  
   }
 
   out.table <- as.data.frame(out.table)
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
   #out.table <- apply(out.table,2,unlist) 
-  out.table[,"Clint"] <- signif(as.numeric(out.table[,"Clint"]),3) 
+  out.table[!(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <- 
+    signif(as.numeric(out.table[
+    !(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"]),3) 
   out.table[,"Clint.1"] <- signif(as.numeric(out.table[,"Clint.1"]),3) 
   out.table[,"Clint.10"] <- signif(as.numeric(out.table[,"Clint.10"]),3) 
   out.table[,"Clint.pValue"] <- signif(as.numeric(out.table[,"Clint.pValue"]),3) 

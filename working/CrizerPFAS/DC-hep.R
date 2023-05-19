@@ -6,8 +6,7 @@ rm(list=ls())
 
 setwd("c:/users/jwambaug/git/invitroTKstats/working/CrizerPFAS")
 
-chem.ids <- data.frame(Chem="2H,2H,3H,3H-Perfluorooctanoic_Acid",
-                       DTXSID="DTXSID20874028")
+chem.ids <- as.data.frame(read_excel("CrizerChemIDs.xlsx"))
 
 data.guide <- as.data.frame(read_excel("dataguide-DC-hep.xlsx"))
 
@@ -20,8 +19,8 @@ dc.hep <- merge_level0(data.label="CrizerPFASHep",
              additional.colname.cols="Note.ColName",
 # describe the chemical ID table:
              chem.ids=chem.ids,
-             chem.lab.id.col="Chem",
-             chem.name.col="Chem")
+             chem.lab.id.col="Chemical",
+             chem.name.col="Chemical")
 
 # Set reasonable sig figs on retention time:
 dc.hep$Analysis.Params <- signif(as.numeric(dc.hep$Analysis.Params), 6)
@@ -66,8 +65,10 @@ dc.hep[dc.hep[,"Sample.Type"] %in% "Inactive", "Active.Hep"] <- 0
 # -	PFAS marked as WAX2 are diluted 720x
 # -	It seems that when you asked for a pared down sheet this information was lost. We could add it to the Analytes page. I can see it in the more comprehensive sheet she#   provided to me.
 
+# Se the dilution facor for the various samples:
 dc.hep$Dilution.Factor <- 1
-  
+dc.hep[dc.hep[,"Sample.Type"] %in% c("Cvst","Inactive"), "Dilution.Factor"] <- 4
+
 # Make sure the areas are numeric:
 dc.hep$Peak.Area <- as.numeric(dc.hep$Peak.Area)
 dc.hep[,"Compound.Conc"] <- as.numeric(dc.hep[,"Compound.Conc"])
@@ -106,7 +107,6 @@ level2$Verified <- "Y"
 level2[sapply(level2[,"Note"], function(x) "Excluded" %in% x), 
               "Verified"] <- "Excluded"
 
-  
 write.table(level2,
   file="CrizerPFAS-Clint-Level2.tsv",
   sep="\t",

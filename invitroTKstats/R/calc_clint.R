@@ -275,11 +275,16 @@ calc_clint <- function(
     blank.df <- this.blanks[,"Dilution.Factor"]
     Num.blanks <- length(blank.obs)
     # Create a dummy vector to keep JAGS happy:
-    if (Num.blanks == 0) blank.obs <- c(NA, NA)
-    if (Num.blanks == 1) blank.obs <- c(blank.obs, NA)
+    if (Num.blanks == 0) {
+      blank.obs <- c(-99,-99)
+      blank.df <- c(-99,-99)
+    } else if (Num.blanks == 1) {
+      blank.obs <- c(blank.obs, -99)
+      blank.df <- c(blank.df, -99)
+    }
 # Match the blanks to correct calibration curve:
     if (Num.blanks > 0) blank.cal <- rep(NA, Num.blanks)
-    else blank.cal <- c(NA, NA)
+    else blank.cal <- c(-99,-99)
     for (this.cal in unique(this.blanks$Calibration))
     {
       blank.cal[this.blanks$Calibration == this.cal] <- 
@@ -311,11 +316,11 @@ calc_clint <- function(
           which(Cal.name == this.cal)
       }
     } else {
-      abio.obs <- c(NA,NA)
-      abio.obs.conc <- c(NA,NA)
-      abio.obs.time <- c(NA,NA)
-      abio.obs.cal <- c(NA,NA)
-      abio.obs.df<- c(NA,NA)
+      abio.obs <- c(-99,-99)
+      abio.obs.conc <- c(-99,-99)
+      abio.obs.time <- c(-99,-99)
+      abio.obs.cal <- c(-99,-99)
+      abio.obs.df<- c(-99,-99)
     }
 #
 # Calibration curve measurements
@@ -336,10 +341,10 @@ calc_clint <- function(
           which(Cal.name == this.cal)
       }
     } else {
-      cc.obs <- c(NA,NA)
-      cc.obs.conc <- c(NA,NA)
-      cc.obs.cal <- c(NA,NA)
-      cc.obs.df <- c(NA,NA)
+      cc.obs <- c(-99,-99)
+      cc.obs.conc <- c(-99,-99)
+      cc.obs.cal <- c(-99,-99)
+      cc.obs.df <- c(-99,-99)
     }
     
     return(mydata <- list('obs' = obs,
