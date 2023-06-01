@@ -1,14 +1,14 @@
 ---
-  title: "Kreutz 2023 GC PFAS Ultracentrifugation Data"
+title: "Kreutz 2023 GC PFAS Ultracentrifugation Data"
 author: "John Wambaugh"
 date: "April 26, 2023"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Kreutz 2023 UC Data}
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-  wambaugh.john@epa.gov
+wambaugh.john@epa.gov
 
 # Here's the new R package for analyzing these data:
 ```{r load_packages, eval = TRUE}  
@@ -24,14 +24,19 @@ vignette: >
     rm(list=ls())
 ```
 
+Note that the following code chunks describe how the data.frame kreutz2023.clint
+was created. Since we have already created this "level1" file we can just load
+it from the invitroTKstats package. Any chunk that includes the statement 
+"eval = FALSE" is not evaluated when the vignette is created.
+
     # Change to the directory that has your Excel file 
     # (this is where it is on my computer):
-```{r set_working_directory, eval = TRUE}   
+```{r set_working_directory, eval = FALSE}   
     setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS")
 ``` 
 
 # Assumed dilution factors:
-```{r assay_information, eval=TRUE}
+```{r assay_information, eval=FALSE}
     CC.DILUTE <- 240
     BLANK.DILUTE <- 480
     CVST.DILUTE <- 480
@@ -43,7 +48,7 @@ vignette: >
 ```
 
 # Describe chemical tested:
-```{r test_Chemicals, eval=TRUE}
+```{r test_Chemicals, eval=FALSE}
 chem.ids <- read_excel("GCMS-PFAS_Data_Summary-toJFW.xlsx", sheet=1)
 chem.ids <- as.data.frame(chem.ids)
 # Deal with "or" statements in chemical ids:
@@ -83,7 +88,7 @@ chem.ids <- rbind(chem.ids,new.row)
 ```
 
 # Compild data from various level 0 spreadsheets:
-```{r compile_data, eval=TRUE}
+```{r compile_data, eval=FALSE}
 data.guide <- as.data.frame(read_excel("dataguide-AK-hep.xlsx"))
 
 ak.hep <- merge_level0(data.label="KreutzPFASHep",
@@ -102,7 +107,7 @@ ak.hep <- merge_level0(data.label="KreutzPFASHep",
 
 
 # Use invitroTKstats annotation of type:
-```{r annotate_sample_type, eval=TRUE}
+```{r annotate_sample_type, eval=FALSE}
 ak.hep <- subset(ak.hep,!is.na(Type))
 ak.hep[ak.hep$Type == "Cal", "Sample.Type"] <- "CC"
 ak.hep[regexpr("cc",tolower(ak.hep[,"Sample"]))!=-1, "Sample.Type"] <- "CC"
@@ -118,7 +123,7 @@ ak.hep$Active.Hep <- NA
 ```
  
 # Add time of sample:
-```{r annotate_sample_time, eval=TRUE}
+```{r annotate_sample_time, eval=FALSE}
 ak.hep <- subset(ak.hep,!is.na(ak.hep[,"Sample"]))
 ak.hep[,"Time"] <- NA
 ak.hep[regexpr("t240",tolower(ak.hep[,"Sample"]))!=-1,"Time"] <- 240/60
@@ -161,7 +166,7 @@ ak.hep[ak.hep$Level0.File %in% c("Hep_908_909_916_923_final.xlsx",
 ```
 
 # Identify Cvst and Inactive (heat-treated hepatocyte) samples
-```{r annotate_cvst_inactive, eval=TRUE}
+```{r annotate_cvst_inactive, eval=FALSE}
 # Initially mark all samples with a time as "Cvt"
 ak.hep[!is.na(ak.hep[,"Time"]),"Sample.Type"] <- "Cvst"
               
@@ -194,7 +199,7 @@ ak.hep[
 # -	The ref cmpds (may have label “HLB”) and PFAS labeled as “WAX1” are diluted 480x
 # -	PFAS marked as WAX2 are diluted 720x
 # -	It seems that when you asked for a pared down sheet this information was lost. We could add it to the Analytes page. I can see it in the more comprehensive sheet she#   provided to me.
-```{r annotate_dilution_facor, eval=TRUE}
+```{r annotate_dilution_facor, eval=FALSE}
 ak.hep$Dilution.Factor <- NA
 ak.hep[ak.hep$Sample.Type %in% "Blank",
   "Dilution.Factor"] <- BLANK.DILUTE
@@ -207,7 +212,7 @@ ak.hep[ak.hep$Sample.Type %in% "Inactive",
 ```
 
 # Make sure the areas are numeric:
-```{r cleanup_analyte_peaks, eval=TRUE}
+```{r cleanup_analyte_peaks, eval=FALSE}
 ak.hep$Peak.Area <- as.numeric(ak.hep$Peak.Area)
 ak.hep[,"ISTD.Peak.Area"] <- as.numeric(ak.hep[,"ISTD.Peak.Area"])
 ak.hep[,"Compound.Conc"] <- as.numeric(ak.hep[,"Compound.Conc"])
@@ -216,26 +221,26 @@ ak.hep <- subset(ak.hep, !is.na(Peak.Area) &
 ```
 
 # Convert nM standard concs to uM:
-```{r convert_units_for_standard, eval=TRUE}
+```{r convert_units_for_standard, eval=FALSE}
 ak.hep[,"Compound.Conc"] <- as.numeric(ak.hep[,"Compound.Conc"])/1000
 ```
 
-```{r annotate_sample_notes, eval=TRUE}
+```{r annotate_sample_notes, eval=FALSE}
 ak.hep$Note <-NA
 ```
 
 # Get rid of samples with no ISTD measured:
-```{r remove_missing_istd, eval=TRUE}
+```{r remove_missing_istd, eval=FALSE}
 ak.hep <- subset(ak.hep, ISTD.Peak.Area>0)
 ```
 
 # Set reasonable precision:
-```{r set_precision, eval = TRUE}  
+```{r set_precision, eval = FALSE}  
 for (this.col in c("Peak.Area", "ISTD.Peak.Area", "Analysis.Params"))
   ak.hep[,this.col] <- signif(as.numeric(ak.hep[,this.col]),6)
 ```
 
-```{r format_and_annotate, eval=TRUE}
+```{r format_and_annotate, eval=FALSE}
 level1 <- format_clint(ak.hep,
   FILENAME="KreutzPFASHep",
   sample.col ="Sample",
@@ -258,7 +263,7 @@ level1 <- format_clint(ak.hep,
   )
 ```
 
-```{r create_level2, eval=TRUE}
+```{r create_level2, eval=FALSE}
 level2 <- level1
 level2$Verified <- "Y"
   
@@ -333,7 +338,7 @@ level2[level2[,"Lab.Compound.Name"]=="959", "Verified"] <- "Unstable"
 ```
 
 Barbara determined that only the following chemicals have reliable data:
-```{r manual_curation, eval=TRUE}
+```{r manual_curation, eval=FALSE}
 level2[level2$Verified=="Y","Verifed"] <- "Manually omitted BAW"
 level2[level2$DTXSID %in% c(
   "DTXSID0059871",
@@ -350,6 +355,10 @@ level2[level2$DTXSID %in% c(
   "DTXSID1062122",
   "DTXSID50369896"), "Verified"] <- "Y"
 
+```
+
+```{r load_preprocessed_data_from_package, eval=TRUE}
+level2 <- invitroTKstats::kreutz2023.clint
 ```
 
 ```{r write_level2, eval=TRUE}  
@@ -382,7 +391,9 @@ level3 <- calc_clint_point(FILENAME="KreutzPFAS")
 
 # Bayesian analysis:
 # repeat these bits in case a markov chain crashes and we need to restart:
-```{r Bayes, eval=TRUE}
+The following code can take a long time to run and so "eval = FALSE" is set
+by default. You must manually run this code or change to "eval = TRUE".
+```{r Bayes, eval=FALSE}
 library(invitroTKstats)
 setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS")
 

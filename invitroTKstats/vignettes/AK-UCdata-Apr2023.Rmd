@@ -1,12 +1,12 @@
 ---
-  title: "Kreutz 2023 GC PFAS Ultracentrifugation Data"
+title: "Kreutz 2023 GC PFAS Ultracentrifugation Data"
 author: "John Wambaugh"
 date: "April 26, 2023"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Kreutz 2023 UC Data}
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
   wambaugh.john@epa.gov
 
@@ -24,14 +24,19 @@ vignette: >
     rm(list=ls())
 ```
 
+Note that the following code chunks describe how the data.frame kreutz2023.uc
+was created. Since we have already created this "level1" file we can just load
+it from the invitroTKstats package. Any chunk that includes the statement 
+"eval = FALSE" is not evaluated when the vignette is created.
+
     # Change to the directory that has your Excel file 
     # (this is where it is on my computer):
-```{r set_working_directory, eval = TRUE}   
+```{r set_working_directory, eval = FALSE}   
     setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS")
 ``` 
 
 # Assumed dilution factors:
-```{r assay_information, eval=TRUE}
+```{r assay_information, eval=FALSE}
     CC.DILUTE <- 1*4
     BLANK.DILUTE <- 1*4
     AF.DILUTE <- 2*4
@@ -44,7 +49,7 @@ vignette: >
 ```
 
 # Previously made scripts to load some data:
-```{r set_working_directory, eval = TRUE}   
+```{r old_UC_scripts, eval = FALSE}   
   suppressMessages(source("ak2.r"))
   AK.UCdata$DTXSID <- NA
   AK.UCdata[AK.UCdata$Lab.Compound.Name=="915","DTXSID"] <- "DTXSID4059914"
@@ -105,7 +110,8 @@ vignette: >
     )
 
 ```
-```{r extract_899_900, eval=TRUE}
+
+```{r extract_899_900, eval=FALSE}
 this.file <- "021220_915_965_476_267_906_273_913_899_900_analysis_090920.xlsx"
 this.sheet <- "899&900 Data"
 analytes <- as.data.frame(read_excel(this.file, sheet=this.sheet,skip=1))
@@ -157,7 +163,7 @@ this.chem.data$Level0.Sheet <- this.sheet
     )
 ```
 # Previously made scripts to load some data:
-```{r set_working_directory, eval = TRUE}   
+```{r old_uc_scripts2, eval = FALSE}   
   suppressMessages(source("uc-test-AK.R"))
   all.data$Analysis.Parameters <- apply(all.data,1,function(x) paste(
     "Analyte RT",
@@ -180,9 +186,10 @@ this.chem.data$Level0.Sheet <- this.sheet
                                   analysis.method="GCMS",
                                   analysis.instrument="Agilent 8890 GC w 7010 triple quadrupole")
 ``` 
+
 # Previously made scripts to load data:
 # PFOA and PFOS:
-```{r set_working_directory, eval = FALSE}   
+```{r old_pfoa_pfos_scripts, eval = FALSE}   
   suppressMessages(source("uc-test-052920.R"))
   all.data$Lab.Compound.Name <- all.data$Compound.Name
   all.data$Date <- "April2019"
@@ -218,7 +225,7 @@ this.chem.data$Level0.Sheet <- this.sheet
 
 
     # list the data files:
-```{r UC_data_files, eval=TRUE}
+```{r UC_data_files, eval=FALSE}
     files <- list("UC_474_760_3096_final.xlsx",
               "UC_503_507_516_501_505_521_510_120721.xlsx",
               "UC_513_268_275_812_121921.xlsx",
@@ -229,7 +236,7 @@ this.chem.data$Level0.Sheet <- this.sheet
 ```
 
 # Figure out the test chemical information:
-```{r UC_chem_info, eval=TRUE}
+```{r UC_chem_info, eval=FALSE}
     chem.start <- c(37, 37, 37, 37, 38, 37)
     cheminfo <- NULL
     for (this.file in files)
@@ -277,7 +284,7 @@ this.chem.data$Level0.Sheet <- this.sheet
 ```
 
     # Define the info for control chemicals:
-```{r UC_control_info, eval=TRUE}
+```{r UC_control_info, eval=FALSE}
 for (this.file in files)
 {
   this.control <-
@@ -302,7 +309,7 @@ for (this.file in files)
 }
 ```
     # Get rid of the UTC:
-```{r fprmat_dates, eval=TRUE}
+```{r fprmat_dates, eval=FALSE}
 cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
 ```
                                          
@@ -310,7 +317,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
     # for each chemical's respective file.
 
     # Now loop over the files and annotate the data:
-```{r UC_data_sheets, eval=TRUE}
+```{r UC_data_sheets, eval=FALSE}
     UC.data <- NULL
     
     for (this.file in files)
@@ -371,7 +378,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
 ```
 
 # Handle the data for "UC_474_760_3096_final.xlsx"
-```{r UC_UC_474_760_3096_final, eval=TRUE}
+```{r UC_UC_474_760_3096_final, eval=FALSE}
   this.file <- "UC_474_760_3096_final.xlsx"
   these.chems <- subset(cheminfo,File==this.file)
   new.data <- NULL
@@ -446,7 +453,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
 ```
 
 # Handle the data for "763_945_274_964_464_477_479_final-ak.xlsx"
-```{r UC_763_945_274_964_464_477_479_final-ak, eval=TRUE}
+```{r UC_763_945_274_964_464_477_479_final-ak, eval=FALSE}
   this.file <- "UC_763_945_274_964_464_477_479_final-ak.xlsx"
   this.file.data <- NULL
   these.chems <- subset(cheminfo,File==this.file)
@@ -602,7 +609,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
   dim(UC.data)
 ```
 # Handle the data for "UC_959_949_final-ak.xlsx"
-```{r UC_959_949_final-ak.xlsx, eval=TRUE}
+```{r UC_959_949_final-ak.xlsx, eval=FALSE}
   this.file <- "UC_959_949_final-ak.xlsx"
   this.file.data <- NULL
   these.chems <- subset(cheminfo,File==this.file)
@@ -659,7 +666,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
 
 
 # Handle the data for "UC_971_3135_941_902_956_3145_969_final_020322.xlsx"
-```{r UC_971_3135_941_902_956_3145_969_final_020322, eval=TRUE}
+```{r UC_971_3135_941_902_956_3145_969_final_020322, eval=FALSE}
   this.file <- "UC_971_3135_941_902_956_3145_969_final_020322.xlsx"
   this.file.data <- NULL
   these.chems <- subset(cheminfo,File==this.file|"Sample ID"=="4NT")
@@ -726,7 +733,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
 ```
 
 # Handle the data for "UC_940_Athens_Mix1a__2020_Feb.xlsx"
-```{r UC_940_Athens_Mix1a__2020_Feb, eval=TRUE}
+```{r UC_940_Athens_Mix1a__2020_Feb, eval=FALSE}
   this.file <- "UC_940_Athens_Mix1a__2020_Feb.xlsx"
 # 940
   this.row <- data.frame(Analyte="DTXSID3047558",
@@ -825,7 +832,7 @@ cheminfo[,"Date"] <- sapply(cheminfo[,"Date"],function(x) gsub("  UTC","",x))
 
 
 # Handle the data for "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
-```{r UC_276_467_Athens_Mix 2a and b20220913, eval=TRUE}
+```{r UC_276_467_Athens_Mix 2a and b20220913, eval=FALSE}
   this.file <- "UC_276_467_Athens_Mix 2a and b20220913.xlsx"
 # 276
   this.row <- data.frame(Analyte="DTXSID5063235",
@@ -969,7 +976,7 @@ la.uc <- merge_level0(data.label="KreutzPFASHep",
              chem.name.col="Name")
 ```
 
-```{r UC_set_sample_types, eval=TRUE}
+```{r UC_set_sample_types, eval=FALSE}
 # Try again to get rid of column header rows:
   UC.data <- subset(UC.data,Type!="Type")
   dim(UC.data)
@@ -1072,12 +1079,12 @@ la.uc <- merge_level0(data.label="KreutzPFASHep",
   UC.data[which.rows, "Series"] <- 1  
 ```
 
-```{r UC_drop_missing_sample_types, eval=TRUE}
+```{r UC_drop_missing_sample_types, eval=FALSE}
   # Get rid of unused samples (QC samples):
   UC.data <- subset(UC.data,!is.na(Sample.Type))
 ```
 
-```{r UC_set_sample_types_metadata, eval=TRUE}
+```{r UC_set_sample_types_metadata, eval=FALSE}
 # Convert to uM:
   UC.data[,"Std.Conc"] <- suppressWarnings(as.numeric(UC.data[,"NominConc"]))/1000
   UC.data[,"Std.Units"] <- "uM" 
@@ -1099,7 +1106,7 @@ UC.data[UC.data[,"Sample.Type"]=="Blank","Sample.Type"] <- "CC"
 dim(UC.data)
 ```
 
-```{r remove bad CC samples, eval=TRUE}
+```{r remove bad CC samples, eval=FALSE}
 # Get rid of CC samples that don't have a concentration:
 UC.data <- subset(UC.data,!(Sample.Type=="CC" & is.na(Std.Conc)))
     
@@ -1107,12 +1114,12 @@ dim(UC.data)
     
 ```
 # Set reasonable precision:
-```{r set_precision, eval = TRUE}  
+```{r set_precision, eval = FALSE}  
 for (this.col in c("Area", "ISTD.Area"))
   UC.data[,this.col] <- signif(as.numeric(UC.data[,this.col]),6)
 ```
 
-```{r format_and_annotate, eval=TRUE}
+```{r format_and_annotate, eval=FALSE}
     level1 <- format_fup_uc(UC.data,
       FILENAME="KreutzPFAS",
       sample.col="Lab.Sample.Name",
@@ -1128,7 +1135,7 @@ for (this.col in c("Area", "ISTD.Area"))
     level1 <- rbind(level1,level1.Jul2020,level1.Dec2020,level1.900)
 ```
 
-```{r create_level2, eval=TRUE}
+```{r create_level2, eval=FALSE}
 #    write.table(UC.data,file="KreutzPFAS-fup-UC-Level1.tsv",sep="\t",row.names=FALSE)
     
     level2 <- level1
@@ -1168,7 +1175,8 @@ for (this.col in c("Area", "ISTD.Area"))
     which.rows <- level2$ISTD.Area == 0
     level2[which.rows,"Verified"] <- "JFW: Excluded, no ISTD peak"
 ```
-```{r bad_sample_annotate, eval=TRUE}
+
+```{r bad_sample_annotate, eval=FALSE}
 # 476, 3125, 273: only in S1
 # 267, 906: only in S2
 # 915, 965, 913: only in S3
@@ -1188,7 +1196,8 @@ for (this.col in c("Area", "ISTD.Area"))
           level2$Lab.Compound.Name %in% c("276","467"),
          "Verified"] <- "JFW: Seems that test substance only in series B"
 ```
-```{r badistd_detect, eval=TRUE}
+
+```{r badistd_detect, eval=FALSE}
 ISTDTHRESH <- 10
 gooddata <- level2$ISTD.Area
 gooddata[is.na(gooddata)] <- ISTDTHRESH
@@ -1196,7 +1205,7 @@ gooddata[is.na(gooddata)] <- ISTDTHRESH
     paste("Excluded for ISTD Peak smaller than", ISTDTHRESH)
 ```
 
-```{r remove_nas, eval=TRUE}
+```{r remove_nas, eval=FALSE}
 level2[is.na(level2$Response),"Verified"] <- "JFW: Excluded for NA Response"
 
 #ccobs <- regexpr("CC",level2$Lab.Sample.Name)!=-1 
@@ -1225,7 +1234,7 @@ for (this.id in c(
 }
 ```
 
-```{r outlier_detect, eval=TRUE}
+```{r outlier_detect, eval=FALSE}
 R2THRESH <- 0.9
 for (this.id in unique(level2$DTXSID))
 {
@@ -1280,8 +1289,9 @@ for (this.id in unique(level2$DTXSID))
 }
 
 ```
-Somethings weird with this chemicals data, clean up the odder samples:
-```{r cleanup_DTXSID20335129, eval=TRUE}    
+
+Somethings weird with this chemical's data, clean up the odder samples:
+```{r cleanup_DTXSID20335129, eval=FALSE}    
 which.rows <- which(level2$DTXSID=="DTXSID20335129")
 # Overule outlier detection:
 level2[which.rows,"Verified"] <- "Y"
@@ -1291,6 +1301,10 @@ level2[level2$DTXSID=="DTXSID20335129" &
 level2[which.rows[24:29], "Verified"] <- "Extra CC"
 ```
 
+```{r load_preprocessed_data_from_package, eval=TRUE}
+level2 <- invitroTKstats::kreutz2023.uc
+```
+
 ```{r write_level2, eval=TRUE}    
 write.table(level2,
       file="KreutzPFAS-fup-UC-Level2.tsv",
@@ -1298,14 +1312,16 @@ write.table(level2,
       row.names=F,
       quote=F)
     ```
-    
+
 # maximum likelihood analysis:
 ```{r MLE, eval=TRUE}
     level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS") 
 ```
 
 # Bayesian analysis:
-```{r Bayes, eval=TRUE}
+The following code can take a long time to run and so "eval = FALSE" is set
+by default. You must manually run this code or change to "eval = TRUE".
+```{r Bayes, eval=FALSE}
 rm(list=ls())
 library(invitroTKstats) 
 setwd("c:/users/jwambaug/git/invitroTKstats/working/KreutzPFAS/")
