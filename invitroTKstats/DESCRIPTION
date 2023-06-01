@@ -6,9 +6,9 @@ Description: These functions were developed for performing Bayesian
              statistical analysis of in vitro measurements to characterize
              chemical toxicokinetics. Currently they focus on measurement of
              chemical fraction unbound in the presence of plasma (f_up) as 
-             measured using Rapid Equilibrium Dialysis () and measurment of
+             measured using Rapid Equilibrium Dialysis (RED) and measurment of
              intrinsic hepatic clearance (Clint, uL/min/million hepatocytes)
-             as measured using primary hepatocytes (). The methods provided
+             as measured using primary hepatocytes. The methods provided
              by the package were described in Wambaugh et al. (2019).
 Authors@R: c(
            person("John", "Wambaugh", email = "wambaugh.john@epa.gov", 
