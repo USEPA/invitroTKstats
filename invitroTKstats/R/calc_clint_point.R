@@ -167,13 +167,13 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table <-NULL
   num.chem <- 0
   num.cal <- 0
-  decay <- function(time.min,conc,cal,k_elim) cal*conc*exp(-k_elim*time.min)
+  decay <- function(time.hours,conc,cal,k_elim) cal*conc*exp(-k_elim*time.hours)
   lldecay <- function(cal,k_elim,sigma)
   {
     if (sigma < 0.0001) sigma <- 0.0001
     N <- dim(this.data)[1]
     pred <- decay(
-      time.min=this.data$Time,
+      time.hours=this.data$Time,
       conc=this.data$Clint.Assay.Conc,
       cal=cal,
       k_elim=k_elim)
@@ -183,13 +183,13 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     if (is.na(ll)) browser()
     return(-ll)
   }
-  satdecay <- function(time.min,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.min)
+  satdecay <- function(time.hours,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.hours)
   llsatdecay <- function(cal,k_elim,sigma,sat)
   {
     if (sigma < 0.0001) sigma <- 0.0001
     N <- dim(this.data)[1]
     pred <- satdecay(
-      time.min=this.data$Time,
+      time.hours=this.data$Time,
       conc=this.data$Clint.Assay.Conc,
       cal=cal,
       k_elim=k_elim,
@@ -231,12 +231,14 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       num.chem <- num.chem + 1
       num.cal <- num.cal + length(unique(this.data[,"Calibration"]))
       
+      this.data$Response <- this.data$Response /
+        mean(subset(this.data,Time==0)$Response)
       this.fit <- try(mle(lldecay,
-        start=list(cal=1,k_elim=0.1,sigma=1),
+        start=list(cal=1, k_elim=0.1, sigma=0.1),
         lower=list(cal=0,k_elim=0,sigma = 0.0001)))
       this.null <- try(mle(lldecay,
-        start=list(cal=1,sigma=1),
-        lower=list(cal=0,sigma = 0.0001),
+        start=list(cal=1, sigma=0.1),
+        lower=list(cal=0, sigma = 0.0001),
         fixed=list(k_elim=0)))      
       
       if (class(this.fit)!="try-error" & class(this.null)!="try-error")
@@ -255,8 +257,8 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
         if (all(c(1,10)%in%unique(this.data$Clint.Assay.Conc)))
         {
           this.sat.fit <- try(mle(llsatdecay,
-            start=list(cal=1,k_elim=0.1,sigma=1,sat=1),
-            lower=list(cal=0,k_elim=0,sigma = 0.0001,sat=0),
+            start=list(cal=1, k_elim=0.1, sigma=0.1, sat=0.5),
+            lower=list(cal=0, k_elim=0, sigma = 0.0001, sat=0),
             upper=list(sat=1)))
           if (class(this.sat.fit)!="try-error")
           {

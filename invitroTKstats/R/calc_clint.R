@@ -58,11 +58,11 @@ model {
 # (1 is yes, 0 is no), p=0.05 assumes 5 percent of chemicals degrade:
   degrades ~ dbern(DEGRADE.PROB) 
 # Slope is the clearance rate at the lower concentration:
-  bio.rate ~ dunif(0,10)
+  bio.rate ~ dunif(0.01,10)
 # In addition to biological elimination, we also check for abiotic elimination
 # (for example, degradation) which we can distinguish if we have data from
 # inactivated hepatocutes (Num.abio.obs > 0):
-  abio.rate ~ dunif(0,10)
+  abio.rate ~ dunif(0.01,10)
 # Total elimination rate is a sum of both:
   slope[1] <- decreases * bio.rate + degrades * abio.rate
 # Actual biological elimination rate:
@@ -401,8 +401,8 @@ calc_clint <- function(
 # Statistics characterizing the measurment:
       decreases = rbinom(1,1,0.5),
       degrades = rbinom(1,1,0.5),
-      bio.rate = runif(1,0,1/15),
-      abio.rate = runif(1,0,1/15),
+      bio.rate = runif(1,0.05,0.25),
+      abio.rate = runif(1,0.05,0.25),
       saturates = rbinom(1,1,0.5),
       saturation = runif(1,0,1)
     ))

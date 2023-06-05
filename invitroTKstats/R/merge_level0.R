@@ -376,7 +376,6 @@ merge_level0 <- function(data.label="MYDATA",
     this.istd.peak.col <- as.character(level0.catalog[this.row, "ISTD.Peak.ColName"])
     this.conc.col <- as.character(level0.catalog[this.row, "Conc.ColName"])
     this.type.col <- as.character(level0.catalog[this.row, "Type.ColName"])
-    this.note.col <- as.character(level0.catalog[this.row, "Note.ColName"])
     this.analysis.param.col <- as.character(level0.catalog[this.row, "AnalysisParam.ColName"])
 # Read the data:
     this.data <- as.data.frame(read_excel(this.file, sheet=this.sheet, skip=this.skip))
@@ -401,8 +400,7 @@ merge_level0 <- function(data.label="MYDATA",
                               this.analysis.param.col,
                               "Level0.File",
                               "level0.Sheet")
-    if (!is.null(additional.colnames)) needed.columns <- c(needed.columns,
-        additional.colnames)
+
     if (!is.null(additional.colname.cols))
     {
       for (this.col in additional.colname.cols)
@@ -436,8 +434,13 @@ merge_level0 <- function(data.label="MYDATA",
                              "Level0.File",
                              "Level0.Sheet"
                              )
+    if (!is.null(additional.colname.cols))
+    {
+      colnames(this.data)[14:(13+length(additional.colname.cols))] <- 
+        additional.colnames
+    }
  
-    out.data <- rbind(out.data, this.data)  
+    out.data <- rbind(out.data, this.data[,1:(13+length(additional.colname.cols))])  
   }
 
 # Write out a "Catalog" file that explains how level 0 data were mapped to level 1
