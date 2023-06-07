@@ -15,3 +15,6 @@ DTXSID6067331 should be called unstable -- inactive cell sample lower than with 
 
 what is going on with DTXSID8047553? no cell controls higher again
 
+
+change "degrades" stability effect
+

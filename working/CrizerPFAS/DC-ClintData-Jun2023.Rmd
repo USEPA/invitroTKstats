@@ -53,7 +53,8 @@ dc.hep <- merge_level0(data.label="CrizerPFASHep",
 # describe the chemical ID table:
              chem.ids=chem.ids,
              chem.lab.id.col="Chemical",
-             chem.name.col="Chemical")
+             chem.name.col="Chemical",
+             num.rows.col="Num.Rows")
 ```
 
 ```{r annotate_data}
@@ -93,6 +94,8 @@ dc.hep[regexpr("t240-",tolower(dc.hep[,"Note"]))!=-1,
                "Sample.Type"] <- "Cvst"
 dc.hep[regexpr("inactive",tolower(dc.hep[,"Note"]))!=-1, 
                "Sample.Type"] <- "Inactive"
+dc.hep[regexpr("wem",tolower(dc.hep[,"Note"]))!=-1, 
+               "Sample.Type"] <- NA
 
 # Figure out from sample name whether the hepatocytes were alive:
 # Indicate whether hepatocytes have been inactivated:
@@ -149,6 +152,13 @@ dc.hep[dc.hep$Level0.File %in% wetmore.files &
   "DTXSID00880026"
   ),
   "Dilution.Factor"] <- 720
+
+dc.hep[dc.hep$Level0.File %in% wetmore.files & 
+       dc.hep$Sample.Type %in% c(
+  "CC",
+  "Blank"
+  ),
+  "Dilution.Factor"] <- 240
 ```
 
 
@@ -163,6 +173,12 @@ dc.hep[,"Compound.Conc"] <- as.numeric(dc.hep[,"Compound.Conc"])
 # No ISTD for Crizer samples:
 ```{r no.istd}
 dc.hep[!(dc.hep$Level0.File %in% wetmore.files),"ISTD.Peak.Area"] <- 1
+```
+
+# Second runs not used for Wetmore:
+```{r not.really.blanks}
+dc.hep[dc.hep$Type=="Blank" & 
+       regexpr("blank",tolower(dc.hep$Note))==-1,"Sample.Type"] <- NA
 ```
 
 # Convert nM standard concs to uM:
@@ -205,10 +221,42 @@ level2 <- level1
 level2[!(level2$Level0.File %in% wetmore.files), "Verified"] <- "Y"
 level2[(level2$Level0.File %in% wetmore.files), "Verified"] <- "Y"
 
+level2[level2$Level0.File %in% wetmore.files &
+       level2$DTXSID %in% c(
+         "DTXSID50226894",
+         "DTXSID50379814",
+         "DTXSID00880026",
+         "DTXSID70565479") &
+       regexpr("WAX1",level2$Note)!=-1, "Verified"] <- "Not in WAX1"
+
+level2[level2$Level0.File %in% wetmore.files &
+       level2$DTXSID %in% c(
+         "DTXSID90382620",
+         "DTXSID1032646",
+         "DTXSID80382154",
+         "DTXSID40187142") &
+       regexpr("WAX2",level2$Note)!=-1, "Verified"] <- "Not in WAX2"
+
+level2[level2$Level0.File %in% wetmore.files &
+       regexpr("Mobile Phase Blank",level2$Note)!=-1, "Verified"] <- "Ignored"
+
+level2[level2$Level0.File %in% wetmore.files &
+       regexpr("WAX SPE Matrix Blank",level2$Note)!=-1, "Verified"] <- "Ignored"
+
+level2[level2$Level0.File %in% wetmore.files &
+       regexpr("WAX SPE Blank",level2$Note)!=-1, "Verified"] <- "Ignored"
+
+level2[level2$Level0.File %in% wetmore.files &
+       regexpr("WAX QC-A",level2$Note)!=-1, "Verified"] <- "Ignored"
+
+level2[level2$Level0.File %in% wetmore.files &
+       regexpr("WAX QC-B",level2$Note)!=-1, "Verified"] <- "Ignored"
+
 level2[sapply(level2[,"Note"], function(x) "Excluded" %in% x), 
               "Verified"] <- "Excluded"
 level2[sapply(level2[,"Note"], function(x) "Response Low" %in% x), 
               "Verified"] <- "Excluded"
+
 
 level2[level2$Lab.Sample.Name %in% c(
   "20220428_PFAS_Clint_Hep14_WAX_Sample005",

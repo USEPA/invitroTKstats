@@ -247,6 +247,8 @@ merge_level0 <- function(data.label="MYDATA",
   sheet.col="Sheet",
   skip.rows=NULL,
   skip.rows.col="Skip.Rows",
+  num.rows=NULL,
+  num.rows.col=NULL,
   date=NULL,
   date.col="Date",
   compound.col="Chemical.ID",
@@ -277,6 +279,7 @@ merge_level0 <- function(data.label="MYDATA",
 # in the table:  
   if (!is.null(sheet)) level0.catalog[,sheet.col] <- sheet
   if (!is.null(skip.rows)) level0.catalog[,skip.rows.col] <- skip.rows
+  if (!is.null(num.rows)) level0.catalog[,num.rows.col] <- num.rows
   if (!is.null(date)) level0.catalog[,date.col] <- date
   if (!is.null(sample.colname)) level0.catalog[,sample.colname.col] <- 
     sample.colname
@@ -306,6 +309,8 @@ merge_level0 <- function(data.label="MYDATA",
     conc.colname.col,
     analysis.param.colname.col
     )
+  
+  if (!is.null(num.rows.col)) cols <- c(cols, num.rows.col)
   
   if (!is.null(additional.colname.cols)) cols <- c(cols,
       additional.colname.cols)
@@ -348,6 +353,8 @@ merge_level0 <- function(data.label="MYDATA",
     analysis.param.colname.col
     )
 
+  if (!is.null(num.rows.col)) std.colnames <- c(std.colnames, num.rows.col)
+  
   if (!is.null(additional.colname.cols)) std.colnames <- c(std.colnames,
     additional.colname.cols)
       
@@ -379,6 +386,12 @@ merge_level0 <- function(data.label="MYDATA",
     this.analysis.param.col <- as.character(level0.catalog[this.row, "AnalysisParam.ColName"])
 # Read the data:
     this.data <- as.data.frame(read_excel(this.file, sheet=this.sheet, skip=this.skip))
+# Trim the data if num.rows.col specified:
+    if (!is.null(num.rows.col))
+    {
+      this.rows <- suppressWarnings(as.numeric(level0.catalog[this.row,num.rows.col]))
+      if (!is.na(this.rows)) this.data <- this.data[1:this.rows,]
+    }
 # Annotate the data:
     this.data$Compound <- this.name
     this.data$DTXSID <- this.dtxsid

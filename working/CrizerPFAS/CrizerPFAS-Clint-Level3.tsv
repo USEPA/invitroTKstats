@@ -42,13 +42,13 @@ Perfluoroheptanesulfonic_acid	DTXSID8059920	Perfluoroheptanesulfonic_acid	All Da
 Perfluoropropanoic_acid	DTXSID8059970	Perfluoropropanoic_acid	All Data	0.611	0.23	1 uM	-73.9	-72.4	NA	NA	NA	NA
 Perfluoro-1-octanesulfonyl_chloride	DTXSID90315130	Perfluoro-1-octanesulfonyl_chloride	All Data	0	1	1 uM	-8.16	-10.2	NA	NA	NA	NA
 Perfluorotridecanoic_acid	DTXSID90868151	Perfluorotridecanoic_acid	All Data	5.26	1	1 uM	119	117	NA	NA	NA	NA
-Perfluorononanoyl chloride	DTXSID00379925	Perfluorononanoyl chloride	All Data	1.87	1	0, 1 uM	230	229	NA	NA	NA	NA
-6:3 Fluorotelomer carboxylic acid	DTXSID70379917	6:3 Fluorotelomer carboxylic acid	All Data	1.87	0.958	1 uM	15.1	15.1	NA	NA	NA	NA
-8H-Perfluorooctanoic acid	DTXSID70565479	8H-Perfluorooctanoic acid	All Data	0	1	0, 1 uM	2240	2240	NA	NA	NA	NA
-Pentadecafluorooctanoyl chloride	DTXSID40187142	Pentadecafluorooctanoyl chloride	All Data	0	1	0, 1 uM	1050	1050	NA	NA	NA	NA
-Perfluoroheptanoyl chloride	DTXSID80382154	Perfluoroheptanoyl chloride	All Data	0	1	0, 1 uM	1670	1670	NA	NA	NA	NA
-3-Perfluoroheptylpropanoic acid (7:3 FTCA)	DTXSID90382620	3-Perfluoroheptylpropanoic acid (7:3 FTCA)	All Data	13.8	0.0643	0, 1 uM	284	287	NA	NA	NA	NA
-N-Ethylperfluorooctanesulfonamide (NEtFOSA)	DTXSID1032646	N-Ethylperfluorooctanesulfonamide (NEtFOSA)	All Data	31.5	0.000141	0, 1 uM	152	161	NA	NA	NA	NA
-9-H-Perfluorononanoic acid (9H-PFNA)	DTXSID50226894	9-H-Perfluorononanoic acid (9H-PFNA)	All Data	3.94	1	0, 1 uM	833	832	NA	NA	NA	NA
-Perfluoro(2-ethoxyethane)sulfonic acid	DTXSID50379814	Perfluoro(2-ethoxyethane)sulfonic acid	All Data	4.14	1	0, 1 uM	966	965	NA	NA	NA	NA
-Potassium perfluorooctanoate (KPFOA)	DTXSID00880026	Potassium perfluorooctanoate (KPFOA)	All Data	3.15	1	0, 1 uM	590	588	NA	NA	NA	NA
+Perfluorononanoyl chloride	DTXSID00379925	Perfluorononanoyl chloride	All Data	4.67	1	1 uM	18.7	18	NA	NA	NA	NA
+6:3 Fluorotelomer carboxylic acid	DTXSID70379917	6:3 Fluorotelomer carboxylic acid	All Data	7.45	1.56e-10	1 uM	-11.1	11.5	NA	NA	NA	NA
+8H-Perfluorooctanoic acid	DTXSID70565479	8H-Perfluorooctanoic acid	All Data	0	1	1 uM	3.99	1.99	NA	NA	NA	NA
+Pentadecafluorooctanoyl chloride	DTXSID40187142	Pentadecafluorooctanoyl chloride	All Data	0	1	1 uM	17.5	15.5	NA	NA	NA	NA
+Perfluoroheptanoyl chloride	DTXSID80382154	Perfluoroheptanoyl chloride	All Data	0	1	1 uM	19.9	17.9	NA	NA	NA	NA
+3-Perfluoroheptylpropanoic acid (7:3 FTCA)	DTXSID90382620	3-Perfluoroheptylpropanoic acid (7:3 FTCA)	All Data	26.2	1.57e-05	1 uM	28.6	39.7	NA	NA	NA	NA
+N-Ethylperfluorooctanesulfonamide (NEtFOSA)	DTXSID1032646	N-Ethylperfluorooctanesulfonamide (NEtFOSA)	All Data	31.9	4.56e-05	1 uM	36.8	46.8	NA	NA	NA	NA
+9-H-Perfluorononanoic acid (9H-PFNA)	DTXSID50226894	9-H-Perfluorononanoic acid (9H-PFNA)	All Data	32.3	2.12e-10	1 uM	-3.04	19.2	NA	NA	NA	NA
+Perfluoro(2-ethoxyethane)sulfonic acid	DTXSID50379814	Perfluoro(2-ethoxyethane)sulfonic acid	All Data	9.18	0.000632	1 uM	5.99	13.4	NA	NA	NA	NA
+Potassium perfluorooctanoate (KPFOA)	DTXSID00880026	Potassium perfluorooctanoate (KPFOA)	All Data	13.1	7.03e-05	1 uM	7.05	16.6	NA	NA	NA	NA

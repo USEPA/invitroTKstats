@@ -58,11 +58,11 @@ model {
 # (1 is yes, 0 is no), p=0.05 assumes 5 percent of chemicals degrade:
   degrades ~ dbern(DEGRADE.PROB) 
 # Slope is the clearance rate at the lower concentration:
-  bio.rate ~ dunif(0.01,10)
+  bio.rate ~ dunif(0,-log(C.thresh[1]/Test.Nominal.Conc[1]))
 # In addition to biological elimination, we also check for abiotic elimination
 # (for example, degradation) which we can distinguish if we have data from
 # inactivated hepatocutes (Num.abio.obs > 0):
-  abio.rate ~ dunif(0.01,10)
+  abio.rate ~ dunif(0,-log(C.thresh[1]/Test.Nominal.Conc[1]))
 # Total elimination rate is a sum of both:
   slope[1] <- decreases * bio.rate + degrades * abio.rate
 # Actual biological elimination rate:
@@ -104,7 +104,7 @@ model {
   {
   # Exponential decay:
     abio.C[i] <- Test.Nominal.Conc[abio.obs.conc[i]] *
-      exp(-abio.slope[abio.obs.conc[i]]*abio.obs.time[i])
+      exp(-abio.slope*abio.obs.time[i])
   # MS prediction:
     abio.obs.pred[i] <- calibration[abio.obs.cal[i]] *
       (abio.C[i]/abio.obs.Dilution.Factor[i] - 
