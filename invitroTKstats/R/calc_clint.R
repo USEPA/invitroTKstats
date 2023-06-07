@@ -506,8 +506,8 @@ calc_clint <- function(
           Clint.pValue=NaN))
       this.cvt <- subset(this.subset,Sample.Type=="Cvst")
       this.blank <- subset(this.subset,Sample.Type=="Blank")
-      if (length(unique(this.cvt$Dilution.Factor))>1) browser()
-      df.cvt <- this.cvt$Dilution.Factor[1]
+    #  if (length(unique(this.cvt$Dilution.Factor))>1) browser()
+    #  df.cvt <- this.cvt$Dilution.Factor[1]
       if (length(unique(this.cvt$Hep.Density))>1) browser()
       hep.density <- this.cvt$Hep.Density[1]
     
