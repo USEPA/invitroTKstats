@@ -4,7 +4,7 @@
 #' Mass Spectrometry for Wambaugh et al. (2019) Hepatocyte Incubations
 #' 
 #' Wambaugh et al. (2019) includes measurements for intrinsic hepatic clearance
-#' Clint measured using in vitro suspoensions of pooled primary human hepatocytes
+#' Clint measured using in vitro suspensions of pooled primary human hepatocytes
 #' (Shibata, et al. 2002).)
 #' 
 #' @name wambaugh2019.clint
@@ -39,7 +39,7 @@
 #' 
 #' As reported in Wambaugh et al. (2019), contractor Cyprotex performed in vitro
 #' toxicokinetic experiments requiring the development of analytical chemistry
-#' methods to quantitate concentration. 
+#' methods to quantitative concentration. 
 #' Liquid chromatography/mass spectrometry (LC/MS) was faster and 
 #' attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
 #' when LC/MS failed. For some chemicals the attempts to develop an 
@@ -104,10 +104,10 @@
 #' @keywords data
 "wambaugh2019.red"  
 
-#' Smeltz 2023 Ultracentrifucation Data Set 
+#' Smeltz 2023 Ultracentrifugation Data Set 
 #' 
 #' Mass Spectrometry measurements of plasma protein binding measured by 
-#' ultracentrifucation for per- and poly-fluorinated alkyl subtance
+#' ultracentrifugation for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 #' 
 #' @name smeltz2023.uc
@@ -147,7 +147,7 @@
 #' Smeltz 2023 rapid equlibriation dialysis dat set 
 #' 
 #' Mass Spectrometry measurements of plasma protein binding measured by 
-#' rapid equlibriation dialysis for per- and poly-fluorinated alkyl subtance
+#' rapid equlibriation dialysis for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 #' 
 #' @name smeltz2023.red
@@ -186,11 +186,11 @@
 #' @keywords data
 "smeltz2023.red"   
 
-#' Smeltz 2023 Intinsic hepatic clearnace data set
+#' Smeltz 2023 Intrinsic hepatic clearance data set
 #' 
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
 #' cryopreserved pooled human hepatocytes. Chemicals were per- and 
-#' 'poly-fluorinated alkyl subtance
+#' 'poly-fluorinated alkyl substance
 #' (PFAS) samples. The experiments were 
 #' led by Dr.s Marci Smeltz and Barbara Wetmore.
 #' 
@@ -230,10 +230,10 @@
 "smeltz2023.clint"   
 
 
-#' Kreutz 2023 Ultracentrifucation Data Set 
+#' Kreutz 2023 Ultracentrifugation Data Set 
 #' 
 #' Mass Spectrometry measurements of plasma protein binding measured by 
-#' ultracentrifucation for per- and poly-fluorinated alkyl subtance
+#' ultracentrifugation for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
 #' 
 #' @name kreutz2023
@@ -273,7 +273,7 @@
 #' 
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
 #' cryopreserved pooled human hepatocytes. Chemicals were per- and 
-#' 'poly-fluorinated alkyl subtance
+#' 'poly-fluorinated alkyl substance
 #' (PFAS) samples. The experiments were 
 #' led by Dr.s Anna Kreutz and Barbara Wetmore.
 #' 

@@ -3,14 +3,14 @@
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using ultracentrifugation (Redgrave 1975?).
-#' An input dataframe is organized into a standard set of columns and is written
+#' An input data frame is organized into a standard set of columns and is written
 #' to a tab-separated text file. 
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultra-centrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
@@ -22,7 +22,7 @@
 #' (defaults to "MYDATA")
 #' 
 #' @param input.table A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
+#' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #' 
 #' @param dtxsid.col Which column of input.table indicates EPA's DSSTox Structure 
@@ -38,8 +38,8 @@
 #' @param type.col Which column of input.table indicates the sample type (see table
 #' above)(Defaults to "Sample.Type")
 #'
-#' @param req.types If set (defaults to NULL) all of the measurment types 
-#' included in this vecotor of character strings must
+#' @param req.types If set (defaults to NULL) all of the measurement types 
+#' included in this vector of character strings must
 #' be available for each chemical-calibration pair to make an estimate.
 #'
 #' @return \item{list}{A list containing the summary counts from the table} 

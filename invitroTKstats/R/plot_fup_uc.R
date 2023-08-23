@@ -1,4 +1,4 @@
-#' Plot Mass Spec. Response for Measurment of Fraction Unbound in Plasma (UC)
+#' Plot Mass Spec. Response for Measurement of Fraction Unbound in Plasma (UC)
 #'
 #' This function use describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
@@ -17,7 +17,7 @@
 #'   Time zero plasma concentration \tab T0\cr
 #' }
 #' @param level2 A data.frame containing level2 data for fraction unbound in
-#' plasma measured by ultracentrifucation.
+#' plasma measured by ultracentrifugation.
 #' 
 #' @param dtxsid Which chemical to be plotted.
 #'

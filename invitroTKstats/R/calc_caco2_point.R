@@ -11,7 +11,7 @@
 #' 
 #' The data frame of observations should be annotated according to direction 
 #' (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
-#' of concentrtion measured:
+#' of concentration measured:
 #' \tabular{rr}{
 #'   Blank with no chemical added \tab Blank \cr
 #'   Dosing vehicle (C0) at target concentration \tab D0\cr

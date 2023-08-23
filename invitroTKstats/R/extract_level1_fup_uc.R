@@ -7,7 +7,7 @@
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultra-centrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
@@ -19,7 +19,7 @@
 #' @param   area.col.num An integer indicating which column of data.set contains
 #' the MS feature area for the chemical
 #'
-#' @param   ISTD.name A string indicating the internatal standard used
+#' @param   ISTD.name A string indicating the internal standard used
 #'
 #' @param   ISTD.offset An integer indicating how many columns difference there
 #' is between the chemical of study MS area and the ISTD MS area (defaults to 2)
@@ -27,7 +27,7 @@
 #' @param   analysis.method A string describing the chemical analysis method 
 #' (Defaults to "GC", that is gas chromatography)
 #'
-#' @param   instrument A string descriving the instrument used for chemical 
+#' @param   instrument A string describing the instrument used for chemical 
 #' analysis (Defaults to "Something or Other 3000", 
 #'
 #' @param   inst.param.offset An integer indicating the difference in the number 

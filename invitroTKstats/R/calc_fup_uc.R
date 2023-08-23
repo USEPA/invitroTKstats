@@ -67,7 +67,7 @@ model {
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultra-centrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
@@ -88,7 +88,7 @@ model {
 #' @param RANDOM.SEED The seed used by the random number generator 
 #' (default 1111)
 #' @param PPB.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
+#' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #' 
 #' @param sample.col Which column of PPB.data indicates the unique mass 
@@ -101,7 +101,7 @@ model {
 #' @param dtxsid.col Which column of PPB.data indicates EPA's DSSTox Structure 
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
 #' 
-#' @param date.col Which column of PPB.data indicates the laboratory measurment
+#' @param date.col Which column of PPB.data indicates the laboratory measurement
 #' date (Defaults to "Date")
 #' 
 #' @param compound.col Which column of PPB.data indicates the test compound
@@ -120,7 +120,7 @@ model {
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
 #'
-#' #param std.conc.col Which column indictes the intended concentration 
+#' #param std.conc.col Which column indicates the intended concentration 
 #' of the test chemical for calibration curves (Defaults to "Standard.Conc")
 #' 
 #' @param dilution.col Which column of PPB.data indicates how many times the

@@ -2,13 +2,13 @@
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of membrane 
-#' permeability using Caco-2 cells (Hubatsch, 2007). The input dataframe is 
+#' permeability using Caco-2 cells (Hubatsch, 2007). The input data frame is 
 #' organized into a standard set of columns and is written to a tab-separated 
 #' text file. 
 #' 
 #' In this experiment an 
 #' in vitro well is separated into two by a membrane composed of a monolayer of
-#' Caco-2 cells. A test chemical is added to eithe the apical or basal side of
+#' Caco-2 cells. A test chemical is added to either the apical or basal side of
 #' of the monolayer at time 0, and after a set time samples are taken from both
 #' the "donor" (side where the test chemical was added) and the "receiver side.
 #' Depending on the direction of the test the donor side can be either apical or
@@ -16,7 +16,7 @@
 #'
 #' The data frame of observations should be annotated according to direction 
 #' (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
-#' of concentrtion measured:
+#' of concentration measured:
 #' \tabular{rr}{
 #'   Blank with no chemical added \tab Blank \cr
 #'   Dosing vehicle (C0) at target concentration \tab D0\cr
@@ -32,7 +32,7 @@
 #' (defaults to "MYDATA")
 #' 
 #' @param data.in A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
+#' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #' 
 #' @param sample.col Which column of data.in indicates the unique mass 
@@ -77,7 +77,7 @@
 #' the table is assigned the value of the argument and the corresponding
 #' column in input.table (if present) is ignored.
 #' 
-#' #param compound.conc.col Which column indictes the intended concentration 
+#' #param compound.conc.col Which column indicates the intended concentration 
 #' of the test chemical for calibration curves (Defaults to "Standard.Conc")
 #'
 #' @param dilution.col Which column of data.in indicates how many times the

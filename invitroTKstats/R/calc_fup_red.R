@@ -164,7 +164,7 @@ model {
 #' }
 #'
 #' @param MS.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type.
+#' indication of chemical identity, and measurement type.
 #'
 #' @param this.conc The plasma protein concentration relative to physiologic
 #' levels (default 100\%)

@@ -3,14 +3,14 @@
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using ultracentrifugation (Redgrave 1975?).
-#' An input dataframe is organized into a standard set of columns and is written
+#' An input data frame is organized into a standard set of columns and is written
 #' to a tab-separated text file. 
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultra-centrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
@@ -22,7 +22,7 @@
 #' (defaults to "MYDATA")
 #' 
 #' @param data.in A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
+#' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #' 
 #' @param sample.col Which column of data.in indicates the unique mass 
@@ -59,7 +59,7 @@
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
 #' 
-#' @param std.conc.col Which column indictes the intended concentration 
+#' @param std.conc.col Which column indicates the intended concentration 
 #' of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")
 #' 
 #' @param dilution If this argument is used (defaults to NULL) every 
