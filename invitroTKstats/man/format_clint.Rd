@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_clint.R
 \name{format_clint}
 \alias{format_clint}
-\title{Creates a standardized data table reporting hepatocye clearance data}
+\title{Creates a standardized data table reporting hepatocyte clearance data}
 \usage{
 format_clint(
   data.in,
@@ -49,7 +49,7 @@ format_clint(
 }
 \arguments{
 \item{data.in}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type. The data frame should
+indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
 \item{FILENAME}{A string used to identify outputs of the function call.
@@ -59,7 +59,7 @@ contain columns with names specified by the following arguments:}
 spectrometry (MS) sample name used by the laboratory. (Defaults to 
 "Lab.Sample.Name")}
 
-\item{date.col}{Which column of input.data indicates the laboratory measurment
+\item{date.col}{Which column of input.data indicates the laboratory measurement
 date (Defaults to "Date")}
 
 \item{compound.col}{Which column of input.data indicates the test compound
@@ -83,7 +83,7 @@ the density of hepatocytes in suspension (10^6 hepatocytes / mL)
 the table is assigned the value of the argument and the corresponding
 column in input.table (if present) is ignored.
 
-#param compound.conc.col Which column indictes the intended concentration 
+#param compound.conc.col Which column indicates the intended concentration 
 of the test chemical for calibration curves (Defaults to "Standard.Conc")}
 
 \item{cal.col}{Which column of input.data indicates the MS calibration -- for
@@ -168,7 +168,7 @@ test chemical concentration
 at time zero (Defaults to "Conc")}
 
 \item{input.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type. The data frame should
+indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
 \item{series.col}{Which column of PPB.data indicates the "series", that is
@@ -193,9 +193,9 @@ corresponding column in input.table (if present) is ignored.}
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical stability
-when incubated with suspended hepatocytes (Shibata, 2000). Disappareance of 
+when incubated with suspended hepatocytes (Shibata, 2000). Disappearance of 
 the chemical over time is assumed to be due to metabolism by the hepatocytes.
-An input dataframe is organized into a standard set of columns and is written
+An input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }
 \details{
@@ -203,7 +203,7 @@ The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Blank \tab Blank\cr
-  Hepatocyte inciubation concentration \tab Cvst\cr
+  Hepatocyte incubation concentration \tab Cvst\cr
   Inactivated Hepatocytes \tab Inactive\cr
   Calibration Curve \tab CC\cr
 }

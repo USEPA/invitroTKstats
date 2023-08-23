@@ -4,7 +4,7 @@
 \name{smeltz2023.uc}
 \alias{smeltz2023.uc}
 \alias{Smeltz2023.uc}
-\title{Smeltz 2023 Ultracentrifucation Data Set}
+\title{Smeltz 2023 Ultracentrifugation Data Set}
 \format{
 A level 2 data.frame with 10133 rows 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -37,7 +37,7 @@ smeltz2023.uc
 }
 \description{
 Mass Spectrometry measurements of plasma protein binding measured by 
-ultracentrifucation for per- and poly-fluorinated alkyl subtance
+ultracentrifugation for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 }
 \references{

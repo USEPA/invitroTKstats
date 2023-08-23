@@ -5,7 +5,7 @@
 \alias{kreutz2023}
 \alias{kreutz2023.uc}
 \alias{Kreutz2023}
-\title{Kreutz 2023 Ultracentrifucation Data Set}
+\title{Kreutz 2023 Ultracentrifugation Data Set}
 \format{
 A data.frame with 2928 rows and 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -38,7 +38,7 @@ kreutz2023.uc
 }
 \description{
 Mass Spectrometry measurements of plasma protein binding measured by 
-ultracentrifucation for per- and poly-fluorinated alkyl subtance
+ultracentrifugation for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
 }
 \references{

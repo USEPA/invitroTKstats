@@ -2,13 +2,13 @@
 % Please edit documentation in R/plot_fup_uc.R
 \name{plot_fup_uc}
 \alias{plot_fup_uc}
-\title{Plot Mass Spec. Response for Measurment of Fraction Unbound in Plasma (UC)}
+\title{Plot Mass Spec. Response for Measurement of Fraction Unbound in Plasma (UC)}
 \usage{
 plot_fup_uc(level2, dtxsid, good.col = "Verified")
 }
 \arguments{
 \item{level2}{A data.frame containing level2 data for fraction unbound in
-plasma measured by ultracentrifucation.}
+plasma measured by ultracentrifugation.}
 
 \item{dtxsid}{Which chemical to be plotted.}
 }

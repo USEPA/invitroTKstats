@@ -17,7 +17,7 @@ calc_fup_uc(
 }
 \arguments{
 \item{PPB.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type. The data frame should
+indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
 \item{FILENAME}{A string used to identify outputs of the function call.
@@ -45,7 +45,7 @@ name used by the laboratory (Defaults to "Lab.Compound.Name")}
 \item{dtxsid.col}{Which column of PPB.data indicates EPA's DSSTox Structure 
 ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
-\item{date.col}{Which column of PPB.data indicates the laboratory measurment
+\item{date.col}{Which column of PPB.data indicates the laboratory measurement
 date (Defaults to "Date")}
 
 \item{compound.col}{Which column of PPB.data indicates the test compound
@@ -64,7 +64,7 @@ above)(Defaults to "Sample.Type")}
 instance different machines on the same day or different days with the same
 MS analyzer (Defaults to "Cal")
 
-#param std.conc.col Which column indictes the intended concentration 
+#param std.conc.col Which column indicates the intended concentration 
 of the test chemical for calibration curves (Defaults to "Standard.Conc")}
 
 \item{dilution.col}{Which column of PPB.data indicates how many times the
@@ -90,7 +90,7 @@ The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
-  Ultra-centrifugation Aqueous Fraction \tab UC\cr
+  Ultracentrifugation Aqueous Fraction \tab UC\cr
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }
