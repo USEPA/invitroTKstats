@@ -3,11 +3,11 @@
 #' This function use describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using ultracentrifugation (Redgrave 1975?).
-#' Data are read from a "Level2" text file that should have been formatted and created 
+#' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating
 #' that each row is verified as usable for analysis (that is, the Level2 file).
-#' 
+#'
 #' The should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
@@ -23,17 +23,17 @@
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
-#' 
-#' @param good.col Name of a column indicating which rows have been verified for 
+#'
+#' @param good.col Name of a column indicating which rows have been verified for
 #' analysis, indicated by a "Y" (Defaults to "Verified")
 #'
-#' @return \item{data.frame}{A data.frame in standardized format} 
+#' @return \item{data.frame}{A data.frame in standardized format}
 #'
 #' @author John Wambaugh
 #'
 #' @examples
 #' level0 <- kreutz2020
-#' level0$Analysis.Method <- "GC" 
+#' level0$Analysis.Method <- "GC"
 #' level0$Analysis.Instrument <- "No Idea"
 #' level0$Analysis.Parameters <- "None"
 #' level1 <- format_fup_uc(level0,
@@ -44,25 +44,23 @@
 #'   )
 #' level2 <- level1
 #' level2$Verified <- "Y"
-#' 
+#'
 #' write.table(level2,
 #'   file="Kreutz2020-fup-UC-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
 #'
-#' level3 <- calc_fup_uc_point(FILENAME="Kreutz2020") 
+#' level3 <- calc_fup_uc_point(FILENAME="Kreutz2020")
 #'
 #' @references
-#' Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
-#' lipoproteins by density-gradient ultracentrifugation." Analytical 
-#' Biochemistry 65.1-2 (1975): 42-49.#' 
+#' \insertRef{redgrave1975separation}{invitroTKstats}
 #'
 #' @export calc_fup_uc_point
 calc_fup_uc_point <- function(FILENAME, good.col="Verified")
 {
-  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
-    sep="\t",header=T)  
+  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""),
+    sep="\t",header=T)
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
 
@@ -84,9 +82,9 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
     area.col <- "Area"
     analysis.method.col <- "Analysis.Method"
     analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters" 
+    analysis.parameters.col <- "Analysis.Parameters"
     note.col <- "Note"
-    
+
 
 # For a properly formatted level 2 file we should have all these columns:
 # We need all these columns in PPB.data
@@ -124,8 +122,8 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
     "CC",
     "T1",
     "T5",
-    "AF"))   
-  
+    "AF"))
+
   # Only used verfied data:
   PPB.data <- subset(PPB.data, PPB.data[,good.col] == "Y")
 
@@ -141,7 +139,7 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
         Fup=NaN))
     this.af <- subset(this.subset,Sample.Type=="AF")
     this.t5 <- subset(this.subset,Sample.Type=="T5")
- # Check to make sure there are data for PBS and plasma: 
+ # Check to make sure there are data for PBS and plasma:
     if (dim(this.af)[1]> 0 & dim(this.t5)[1] > 0 )
     {
       num.chem <- num.chem + 1
@@ -161,7 +159,7 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
           this.row <- this.cal.subset[1,c(compound.col,dtxsid.col,lab.compound.col,cal.col)]
           this.af<- subset(this.cal.subset,Sample.Type=="AF")
           this.t5 <- subset(this.cal.subset,Sample.Type=="T5")
-       # Check to make sure there are data for PBS and plasma: 
+       # Check to make sure there are data for PBS and plasma:
           if (dim(this.af)[1]> 0 & dim(this.t5)[1] > 0 )
           {
             this.row$Fup <- mean(this.af$Response*this.af$Dilution.Factor) /
@@ -175,21 +173,21 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
   }
 
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3) 
+  out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3)
   out.table <- as.data.frame(out.table)
   out.table$Fup <- as.numeric(out.table$Fup)
- 
-# Write out a "level 3" file (data organized into a standard format):  
-  write.table(out.table, 
+
+# Write out a "level 3" file (data organized into a standard format):
+  write.table(out.table,
     file=paste(FILENAME,"-fup-UC-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
- 
+
   print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))
   print(paste("Fraction unbound values calculated for",num.cal,"measurements."))
 
-  return(out.table)  
+  return(out.table)
 }
 
 
