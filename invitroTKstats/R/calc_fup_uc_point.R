@@ -2,7 +2,8 @@
 #'
 #' This function use describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation (Redgrave 1975?).
+#' unbound in plasma using ultracentrifugation
+#' \insertCite{redgrave1975separation}{invitroTKstats}.
 #' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating

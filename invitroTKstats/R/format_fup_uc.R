@@ -2,7 +2,8 @@
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation (Redgrave 1975?).
+#' unbound in plasma using ultracentrifugation
+#' \insertCite{redgrave1975separation}{invitroTKstats}.
 #' An input dataframe is organized into a standard set of columns and is written
 #' to a tab-separated text file.
 #'

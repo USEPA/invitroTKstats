@@ -2,7 +2,8 @@
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
+#' unbound in plasma using rapid equilibrium dialysis
+#' \insertCite{waters2008validation}{invitroTKstats}.
 #' An input dataframe is organized into a standard set of columns and is written
 #' to a tab-separated text file.
 #'

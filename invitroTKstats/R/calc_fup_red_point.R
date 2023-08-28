@@ -2,7 +2,8 @@
 #'
 #' This function uses mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
+#' unbound in plasma using rapid equilibrium dialysis
+#' \insertCite{waters2008validation}{invitroTKstats}.
 #' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating
