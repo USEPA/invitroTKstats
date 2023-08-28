@@ -1,12 +1,12 @@
 #This file is used by roxygen2 to generate man files (documentation) for data
 #sets included in the package.
 
-#' Mass Spectrometry for Wambaugh et al. (2019) Hepatocyte Incubations
-#' 
-#' Wambaugh et al. (2019) includes measurements for intrinsic hepatic clearance
+#' Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Hepatocyte Incubations
+#'
+#' \insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes measurements for intrinsic hepatic clearance
 #' Clint measured using in vitro suspoensions of pooled primary human hepatocytes
-#' (Shibata, et al. 2002).)
-#' 
+#' \insertCite{shibata2002prediction}{invitroTKstats}.
+#'
 #' @name wambaugh2019.clint
 #' @aliases wambaugh2019.clint
 #' @docType data
@@ -25,27 +25,27 @@
 #' \item{\code{Conc}}{}
 #' \item{\code{TaskOrder}}{}
 #' \item{\code{FileName}}{}
-#' \item{\code{X}}{} 
-#' } 
+#' \item{\code{X}}{}
+#' }
 #'
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
 #' @source Wambaugh et al. (2019)
 #' @keywords data
-"wambaugh2019.clint"   
+"wambaugh2019.clint"
 
-#' Mass Spectrometry Methods for Wambaugh et al. (2019) Chemicals
-#' 
-#' As reported in Wambaugh et al. (2019), contractor Cyprotex performed in vitro
+#' Mass Spectrometry Methods for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Chemicals
+#'
+#' As reported in \insertCite{wambaugh2019assessing;textual}{invitroTKstats}, contractor Cyprotex performed in vitro
 #' toxicokinetic experiments requiring the development of analytical chemistry
-#' methods to quantitate concentration. 
-#' Liquid chromatography/mass spectrometry (LC/MS) was faster and 
+#' methods to quantitate concentration.
+#' Liquid chromatography/mass spectrometry (LC/MS) was faster and
 #' attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
-#' when LC/MS failed. For some chemicals the attempts to develop an 
+#' when LC/MS failed. For some chemicals the attempts to develop an
 #' analysis method failed for both LC/MS and GC/MS and no
 #' in vitro experiments were conducted.
-#' 
+#'
 #' @name wambaugh2019.methods
 #' @aliases Wambaugh2019.methods
 #' @docType data
@@ -69,30 +69,30 @@
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
 #' @source Wambaugh et al. (2019)
 #' @keywords data
-"wambaugh2019.methods" 
+"wambaugh2019.methods"
 
-#' Mass Spectrometry for Wambaugh et al. (2019) Protein Binding
-#' 
-#' Wambaugh et al. (2019) includes chemical-specific measurements of plasma
-#' protein binding using the method of rapid equilibriuim dialysis (RED, 
-#' Waters et al. 2008)
-#' 
+#' Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Protein Binding
+#'
+#' \insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes chemical-specific measurements of plasma
+#' protein binding using the method of rapid equilibriuim dialysis
+#' \insertCite{waters2008validation}{invitroTKstats}.
+#'
 #' @name wambaugh2019.red
 #' @aliases Wambaugh2019.red
 #' @docType data
 #' @format A data.frame 17,689 rows and 14 variables: \describe{
 #' \item{\code{Preferred.Name}}{}
 #' \item{\code{CAS}}{}
-#' \item{\code{DTXSID}}{}             
+#' \item{\code{DTXSID}}{}
 #' \item{\code{SampleName}}{}
 #' \item{\code{CompoundName}}{}
-#' \item{\code{Transition}}{}          
+#' \item{\code{Transition}}{}
 #' \item{\code{Area}}{}
 #' \item{\code{ISTD.Area}}{}
-#' \item{\code{ISTDResponseRatio}}{}  
+#' \item{\code{ISTDResponseRatio}}{}
 #' \item{\code{Dilution.Factor}}{}
 #' \item{\code{Protein}}{}
-#' \item{\code{Task.Order}}{}         
+#' \item{\code{Task.Order}}{}
 #' \item{\code{RawDataSet}}{}
 #' \item{\code{CyprotexEPASetNumber}}{}
 #' }
@@ -102,14 +102,14 @@
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
 #' @source Wambaugh et al. (2019)
 #' @keywords data
-"wambaugh2019.red"  
+"wambaugh2019.red"
 
-#' Smeltz 2023 Ultracentrifucation Data Set 
-#' 
-#' Mass Spectrometry measurements of plasma protein binding measured by 
+#' Smeltz 2023 Ultracentrifucation Data Set
+#'
+#' Mass Spectrometry measurements of plasma protein binding measured by
 #' ultracentrifucation for per- and poly-fluorinated alkyl subtance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
-#' 
+#'
 #' @name smeltz2023.uc
 #' @aliases Smeltz2023.uc
 #' @docType data
@@ -142,14 +142,14 @@
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}
 #' @keywords data
-"smeltz2023.uc"   
+"smeltz2023.uc"
 
-#' Smeltz 2023 rapid equlibriation dialysis dat set 
-#' 
-#' Mass Spectrometry measurements of plasma protein binding measured by 
+#' Smeltz 2023 rapid equlibriation dialysis dat set
+#'
+#' Mass Spectrometry measurements of plasma protein binding measured by
 #' rapid equlibriation dialysis for per- and poly-fluorinated alkyl subtance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
-#' 
+#'
 #' @name smeltz2023.red
 #' @aliases Smeltz2023.red
 #' @docType data
@@ -184,16 +184,16 @@
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
 #' @keywords data
-"smeltz2023.red"   
+"smeltz2023.red"
 
 #' Smeltz 2023 Intinsic hepatic clearnace data set
-#' 
+#'
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
-#' cryopreserved pooled human hepatocytes. Chemicals were per- and 
+#' cryopreserved pooled human hepatocytes. Chemicals were per- and
 #' 'poly-fluorinated alkyl subtance
-#' (PFAS) samples. The experiments were 
+#' (PFAS) samples. The experiments were
 #' led by Dr.s Marci Smeltz and Barbara Wetmore.
-#' 
+#'
 #' @name smeltz2023.clint
 #' @aliases Smeltz2023.clint
 #' @docType data
@@ -227,15 +227,15 @@
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #' @keywords data
-"smeltz2023.clint"   
+"smeltz2023.clint"
 
 
-#' Kreutz 2023 Ultracentrifucation Data Set 
-#' 
-#' Mass Spectrometry measurements of plasma protein binding measured by 
+#' Kreutz 2023 Ultracentrifucation Data Set
+#'
+#' Mass Spectrometry measurements of plasma protein binding measured by
 #' ultracentrifucation for per- and poly-fluorinated alkyl subtance
 #' (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
-#' 
+#'
 #' @name kreutz2023
 #' @aliases Kreutz2023
 #' @docType data
@@ -267,16 +267,16 @@
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}
 #' @keywords data
-"kreutz2023.uc"   
+"kreutz2023.uc"
 
 #' Kreutz 2023 intrinsic hepatic clearance data set
-#' 
+#'
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
-#' cryopreserved pooled human hepatocytes. Chemicals were per- and 
+#' cryopreserved pooled human hepatocytes. Chemicals were per- and
 #' 'poly-fluorinated alkyl subtance
-#' (PFAS) samples. The experiments were 
+#' (PFAS) samples. The experiments were
 #' led by Dr.s Anna Kreutz and Barbara Wetmore.
-#' 
+#'
 #' @name kreutz2023.clint
 #' @aliases Kreutz2023.clint
 #' @docType data
