@@ -30,6 +30,7 @@
 #'
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
+#'
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
 #' @source Wambaugh et al. (2019)
 #' @keywords data
@@ -99,12 +100,13 @@
 #'
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
+#'
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
 #' @source Wambaugh et al. (2019)
 #' @keywords data
 "wambaugh2019.red"
 
-#' Smeltz 2023 Ultracentrifucation Data Set
+#' \insertCite{smeltz2023plasma;textual}{invitroTKstats} Ultracentrifucation Data Set
 #'
 #' Mass Spectrometry measurements of plasma protein binding measured by
 #' ultracentrifucation for per- and poly-fluorinated alkyl subtance
@@ -141,10 +143,12 @@
 #'
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}
+#'
+#' \insertRef{smeltz2023plasma}{invitroTKstats}
 #' @keywords data
 "smeltz2023.uc"
 
-#' Smeltz 2023 rapid equlibriation dialysis dat set
+#' \insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equlibriation dialysis dat set
 #'
 #' Mass Spectrometry measurements of plasma protein binding measured by
 #' rapid equlibriation dialysis for per- and poly-fluorinated alkyl subtance
@@ -183,10 +187,12 @@
 #'
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
+#'
+#' \insertRef{smeltz2023plasma}{invitroTKstats}
 #' @keywords data
 "smeltz2023.red"
 
-#' Smeltz 2023 Intinsic hepatic clearnace data set
+#' \insertCite{smeltz2023plasma;textual}{invitroTKstats} Intinsic hepatic clearnace data set
 #'
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
 #' cryopreserved pooled human hepatocytes. Chemicals were per- and
@@ -226,11 +232,13 @@
 #'
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
+#'
+#' \insertRef{smeltz2023plasma}{invitroTKstats}
 #' @keywords data
 "smeltz2023.clint"
 
 
-#' Kreutz 2023 Ultracentrifucation Data Set
+#' \insertCite{kreutz2023category;textual}{invitroTKstats} Ultracentrifucation Data Set
 #'
 #' Mass Spectrometry measurements of plasma protein binding measured by
 #' ultracentrifucation for per- and poly-fluorinated alkyl subtance
@@ -266,10 +274,12 @@
 #' }
 #' @references
 #' \insertRef{howard2010plasma}{invitroTKstats}
+#'
+#' \insertRef{kreutz2023category}{invitroTKstats}
 #' @keywords data
 "kreutz2023.uc"
 
-#' Kreutz 2023 intrinsic hepatic clearance data set
+#' \insertCite{kreutz2023category;textual}{invitroTKstats} intrinsic hepatic clearance data set
 #'
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
 #' cryopreserved pooled human hepatocytes. Chemicals were per- and
@@ -309,5 +319,7 @@
 #'
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
+#'
+#' \insertRef{kreutz2023category}{invitroTKstats}
 "kreutz2023.clint"
 
