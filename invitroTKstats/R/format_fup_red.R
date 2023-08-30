@@ -2,9 +2,10 @@
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
+#' unbound in plasma using rapid equilibrium dialysis
+#' \insertCite{waters2008validation}{invitroTKstats}.
 #' An input dataframe is organized into a standard set of columns and is written
-#' to a tab-separated text file. 
+#' to a tab-separated text file.
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
@@ -24,74 +25,74 @@
 #'
 #' @param FILENAME A string used to identify outputs of the function call.
 #' (defaults to "MYDATA")
-#' 
+#'
 #' @param data.in A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identiy, and measurment type. The data frame should
 #' contain columns with names specified by the following arguments:
-#' 
-#' @param sample.col Which column of data.in indicates the unique mass 
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
+#'
+#' @param sample.col Which column of data.in indicates the unique mass
+#' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name")
-#' 
-#' @param lab.compound.col Which column of data.in indicates The test compound 
+#'
+#' @param lab.compound.col Which column of data.in indicates The test compound
 #' name used by the laboratory (Defaults to "Lab.Compound.Name")
-#' 
-#' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure 
+#'
+#' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#' 
+#'
 #' @param date.col Which column of data.in indicates the laboratory measurment
 #' date (Defaults to "Date")
-#' 
+#'
 #' @param compound.col Which column of data.in indicates the test compound
 #' (Defaults to "Compound.Name")
-#' 
-#' @param area.col Which column of data.in indicates the target analyte (that 
+#'
+#' @param area.col Which column of data.in indicates the target analyte (that
 #' is, the test compound) MS peak area (Defaults to "Area")
-#' 
+#'
 #' @param series.col Which column of data.in indicates the "series", that is
 #' a simultaneous replicate (Defaults to "Series")
-#' 
+#'
 #' @param type.col Which column of data.in indicates the sample type (see table
 #' above)(Defaults to "Sample.Type")
-#' 
+#'
 #' @param cal.col Which column of data.in indicates the MS calibration -- for
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
-#' 
+#'
 #' @param dilution.col Which column of data.in indicates how many times the
 #' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#' 
+#'
 #' @param istd.col Which column of data.in indicates the MS peak area for the
 #' internal standard (Defaults to "ISTD.Area")
-#' 
-#' @param istd.name.col Which column of data.in indicates identity of the 
+#'
+#' @param istd.name.col Which column of data.in indicates identity of the
 #' internal standard (Defaults to "ISTD.Name")
-#' 
+#'
 #' @param istd.conc.col Which column of data.in indicates the concentration of
 #' the internal standard (Defaults to "ISTD.Conc")
-#' 
+#'
 #' @param Test.Nominal.Conc.col Which column of data.in indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc") 
+#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")
 #'
 #' @param analysis.method.col Which column of data.in indicates the analytical
-#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
 #' "Analysis.Method")
 #'
-#' @param analysis.instrument.col Which column of data.in indicates the 
-#' instrument used for chemical analysis, for example 
-#' "Agilent 6890 GC with model 5973 MS" (Defaults to 
+#' @param analysis.instrument.col Which column of data.in indicates the
+#' instrument used for chemical analysis, for example
+#' "Agilent 6890 GC with model 5973 MS" (Defaults to
 #' "Analysis.Instrument")
 #'
-#' @param analysis.parameters.col Which column of data.in indicates the 
+#' @param analysis.parameters.col Which column of data.in indicates the
 #' parameters used to identify the compound on the chemical analysis instrument,
-#' for example 
+#' for example
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaulys to "Analysis.Paramaters"). 
+#' (Defaulys to "Analysis.Paramaters").
 #'
-#' @return \item{data.frame}{A data.frame in standardized "level1" format} 
+#' @return \item{data.frame}{A data.frame in standardized "level1" format}
 #'
 #' @author John Wambaugh
-#' 
+#'
 #' @examples
 #' library(invitroTKstats)
 #'red <- wambaugh2019.red
@@ -119,9 +120,7 @@
 #'  cal.col="RawDataSet")
 #'
 #' @references
-#' Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
-#' approach for the measurement of plasma protein binding." Journal of 
-#' Pharmaceutical Sciences 97.10 (2008): 4586-4595.
+#' \insertRef{waters2008validation}{invitroTKstats}
 #'
 #' @export format_fup_red
 format_fup_red <- function(data.in,
@@ -168,40 +167,40 @@ format_fup_red <- function(data.in,
 {
   data.in <- as.data.frame(data.in)
 
-  # Write out a "level 0" file (data as the function received it):  
-  write.table(data.in, 
+  # Write out a "level 0" file (data as the function received it):
+  write.table(data.in,
     file=paste(FILENAME,"-fup-RED-Level0.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
-    
-  if (is.null(note.col)) 
+
+  if (is.null(note.col))
   {
     data.in[,"Note"] <- ""
     note.col <- "Note"
   }
 
-# These arguments allow the user to specify a single value for every obseration 
-# in the table:  
+# These arguments allow the user to specify a single value for every obseration
+# in the table:
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(replicate)) data.in[,replicate.col] <- replicate
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
-  if (!is.null(std.conc)) data.in[,std.conc.col] <- 
+  if (!is.null(std.conc)) data.in[,std.conc.col] <-
     std.conc
-  if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <- 
+  if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <-
     test.nominal.conc
-  if (!is.null(plasma.percent)) data.in[,plasma.percent.col] <- 
+  if (!is.null(plasma.percent)) data.in[,plasma.percent.col] <-
     plasma.percent
   if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
-  if (!is.null(analysis.instrument)) data.in[,analysis.instrument.col] <- 
+  if (!is.null(analysis.instrument)) data.in[,analysis.instrument.col] <-
     analysis.instrument
-  if (!is.null(analysis.parameters)) data.in[,analysis.parameters.col] <- 
+  if (!is.null(analysis.parameters)) data.in[,analysis.parameters.col] <-
     analysis.parameters
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
-  
+
 # We need all these columns in data.in
   cols <-c(
     sample.col,
@@ -228,7 +227,7 @@ format_fup_red <- function(data.in,
     level0.file.col,
     level0.sheet.col
     )
-  
+
   if (!(all(cols %in% colnames(data.in))))
   {
     stop(paste("Missing columns named:",
@@ -248,10 +247,10 @@ format_fup_red <- function(data.in,
     "EQ2"))
   # Force code to throw error if data.in accessed after this point:
   rm(data.in)
-  
+
   # Organize the columns:
   data.out <- data.out[,cols]
-    
+
   # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
   date.col <- "Date"
@@ -272,7 +271,7 @@ format_fup_red <- function(data.in,
   area.col <- "Area"
   analysis.method.col <- "Analysis.Method"
   analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters" 
+  analysis.parameters.col <- "Analysis.Parameters"
   note.col <- "Note"
   level0.file.col <- "Level0.File"
   level0.sheet.col <- "Level0.Sheet"
@@ -306,13 +305,13 @@ format_fup_red <- function(data.in,
   # Set reasonable sig figs:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
-  
+
   # calculate the reponse:
   data.out[,"Response"] <- signif(data.out[,area.col] /
      data.out[,istd.col] * data.out[,istd.conc.col], 4)
-  
-# Write out a "level 1" file (data organized into a standard format):  
-  write.table(data.out, 
+
+# Write out a "level 1" file (data organized into a standard format):
+  write.table(data.out,
     file=paste(FILENAME,"-fup-RED-Level1.tsv",sep=""),
     sep="\t",
     row.names=F,
@@ -321,7 +320,7 @@ format_fup_red <- function(data.in,
   summarize_table(data.out,
     req.types=c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank"))
 
-  return(data.out)  
+  return(data.out)
 }
 
 
