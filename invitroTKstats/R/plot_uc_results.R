@@ -1,19 +1,22 @@
-#' Plot Mass Spec. Response from MCMC for Ultracentrifugation Data
+#' Plot Measurements of Fraction Unbound in Plasma (UC) of a Compound
 #'
-#' This function plots the responses from MCMC with calibration curves.
-#' Data are read from a Level X file and should contains XXX.
+#' This function plots the measurements of a compound with calibration curves
+#' from ultracentrifugation data. Users can use the returned plots for a reality
+#' check on the data collected and the Bayesian results, see if they are as expected.
+#' Data are read from a "Level2" text file.
 #'
-#' @param dat level X data set
+#' @param dat level 2 data set
 #'
 #' @param bayes MCMC results
 #'
-#' @param compound name of the compound
+#' @param compound name of a compound
 #'
-#' @param cal TBD, calibration?
+#' @param cal Calibration Identifier
 #'
 #' @param MW molecular weight
 #'
-#' @param quad.cal TBD, calibration?
+#' @param quad.cal Quadratic Calibration curve results from Mass Spec
+#' (Defaults to NULL)
 #'
 #' @param cal.col Which column of data indicates the calibration
 #' (Defaults to "Cal")
@@ -23,9 +26,9 @@
 #'
 #' @param uc.dilute ultracentrifugation dilution factor
 #'
-#' @param af.dilute XX dilution factor
+#' @param af.dilute aqueous fraction dilution factor
 #'
-#' @return A list of two plots, one in original unit and one in log-scale
+#' @return A list of two plots, one with axes in original unit and one's axes in log10-scale
 #'
 #' @author John Wambaugh
 #'
