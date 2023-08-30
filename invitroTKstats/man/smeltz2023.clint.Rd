@@ -4,7 +4,7 @@
 \name{smeltz2023.clint}
 \alias{smeltz2023.clint}
 \alias{Smeltz2023.clint}
-\title{Smeltz 2023 Intinsic hepatic clearnace data set}
+\title{Smeltz 2023 Intrinsic hepatic clearance data set}
 \format{
 A level 2 data.frame with 625 rows 24 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -39,7 +39,7 @@ smeltz2023.clint
 \description{
 Mass Spectrometry measurements of intrinsic hepatic clearance for
 cryopreserved pooled human hepatocytes. Chemicals were per- and 
-'poly-fluorinated alkyl subtance
+'poly-fluorinated alkyl substance
 (PFAS) samples. The experiments were 
 led by Dr.s Marci Smeltz and Barbara Wetmore.
 }

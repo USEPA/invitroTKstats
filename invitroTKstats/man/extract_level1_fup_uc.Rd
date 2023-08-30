@@ -33,7 +33,7 @@ extract_level1_fup_uc(
 \item{area.col.num}{An integer indicating which column of data.set contains
 the MS feature area for the chemical}
 
-\item{ISTD.name}{A string indicating the internatal standard used}
+\item{ISTD.name}{A string indicating the internal standard used}
 
 \item{ISTD.offset}{An integer indicating how many columns difference there
 is between the chemical of study MS area and the ISTD MS area (defaults to 2)}
@@ -41,7 +41,7 @@ is between the chemical of study MS area and the ISTD MS area (defaults to 2)}
 \item{analysis.method}{A string describing the chemical analysis method 
 (Defaults to "GC", that is gas chromatography)}
 
-\item{instrument}{A string descriving the instrument used for chemical 
+\item{instrument}{A string describing the instrument used for chemical 
 analysis (Defaults to "Something or Other 3000",}
 
 \item{inst.param.offset}{An integer indicating the difference in the number 
@@ -78,7 +78,7 @@ The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
-  Ultra-centrifugation Aqueous Fraction \tab UC\cr
+  Ultracentrifugation Aqueous Fraction \tab UC\cr
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }

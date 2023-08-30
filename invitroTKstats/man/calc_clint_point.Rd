@@ -32,7 +32,7 @@ The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Blank \tab Blank\cr
-  Hepatocyte inciubation concentration \tab Conc\cr
+  Hepatocyte incubation concentration \tab Conc\cr
 }
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of

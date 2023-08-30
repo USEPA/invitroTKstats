@@ -4,7 +4,7 @@
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using rapid equilibrium dialysis
 #' \insertCite{waters2008validation}{invitroTKstats}.
-#' An input dataframe is organized into a standard set of columns and is written
+#' An input data frame is organized into a standard set of columns and is written
 #' to a tab-separated text file.
 #'
 #' The data frame of observations should be annotated according to
@@ -27,7 +27,7 @@
 #' (defaults to "MYDATA")
 #'
 #' @param data.in A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
+#' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
 #' @param sample.col Which column of data.in indicates the unique mass
@@ -39,8 +39,8 @@
 #'
 #' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#'
-#' @param date.col Which column of data.in indicates the laboratory measurment
+#' 
+#' @param date.col Which column of data.in indicates the laboratory measurement
 #' date (Defaults to "Date")
 #'
 #' @param compound.col Which column of data.in indicates the test compound
@@ -305,8 +305,8 @@ format_fup_red <- function(data.in,
   # Set reasonable sig figs:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
-
-  # calculate the reponse:
+  
+  # calculate the response:
   data.out[,"Response"] <- signif(data.out[,area.col] /
      data.out[,istd.col] * data.out[,istd.conc.col], 4)
 

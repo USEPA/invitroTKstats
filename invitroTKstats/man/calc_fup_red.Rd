@@ -32,7 +32,7 @@ of convergence according to Gelman and Rubin diagnostic.}
 \item{JAGS.PATH}{The file path to JAGS.}
 
 \item{MS.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type.}
+indication of chemical identity, and measurement type.}
 
 \item{this.conc}{The plasma protein concentration relative to physiologic
 levels (default 100\%)}
@@ -78,7 +78,7 @@ internal standard (Defaults to "ISTD.Name")}
 \item{istd.conc.col}{Which column of MS.data indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{nominal.test.conc.col}{Which column of MS.data indicates the intended
+\item{Test.Nominal.Conc.col}{Which column of MS.data indicates the intended
 test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
 }
 \value{

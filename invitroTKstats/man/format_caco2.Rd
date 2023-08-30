@@ -46,7 +46,7 @@ format_caco2(
 }
 \arguments{
 \item{data.in}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type. The data frame should
+indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
 \item{FILENAME}{A string used to identify outputs of the function call.
@@ -110,7 +110,7 @@ test chemical is added
 the table is assigned the value of the argument and the corresponding
 column in input.table (if present) is ignored.
 
-#param compound.conc.col Which column indictes the intended concentration 
+#param compound.conc.col Which column indicates the intended concentration 
 of the test chemical for calibration curves (Defaults to "Standard.Conc")}
 
 \item{cal.col}{Which column of data.in indicates the MS calibration -- for
@@ -186,14 +186,14 @@ data.frame A data.frame in standardized "level1" format
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of membrane 
-permeability using Caco-2 cells (Hubatsch, 2007). The input dataframe is 
+permeability using Caco-2 cells (Hubatsch, 2007). The input data frame is 
 organized into a standard set of columns and is written to a tab-separated 
 text file.
 }
 \details{
 In this experiment an 
 in vitro well is separated into two by a membrane composed of a monolayer of
-Caco-2 cells. A test chemical is added to eithe the apical or basal side of
+Caco-2 cells. A test chemical is added to either the apical or basal side of
 of the monolayer at time 0, and after a set time samples are taken from both
 the "donor" (side where the test chemical was added) and the "receiver side.
 Depending on the direction of the test the donor side can be either apical or
@@ -201,7 +201,7 @@ basal.
 
 The data frame of observations should be annotated according to direction 
 (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
-of concentrtion measured:
+of concentration measured:
 \tabular{rr}{
   Blank with no chemical added \tab Blank \cr
   Dosing vehicle (C0) at target concentration \tab D0\cr

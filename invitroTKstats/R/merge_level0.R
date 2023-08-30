@@ -1,7 +1,7 @@
 #' Merge multiple level0 files into a single table for processing
 #'
 #' This function reads multiple Excel files containing mass-spectrometry (MS) data
-#' and extracts the chemcial sample data from the specified
+#' and extracts the chemical sample data from the specified
 #' sheets. The argument level0.catalog is a table that
 #' provides the necessary information to find the data for each chemical. The
 #' primary data of interest are the analyte peak area, the internal standard
@@ -45,7 +45,7 @@
 #' @param dtxsid.col Which column of clint.data indicates EPA's DSSTox Structure 
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
 #' 
-#' @param date.col Which column of clint.data indicates the laboratory measurment
+#' @param date.col Which column of clint.data indicates the laboratory measurement
 #' date (Defaults to "Date")
 #' 
 #' @param compound.col Which column of clint.data indicates the test compound
@@ -87,7 +87,7 @@
 #' at time zero (Defaults to "Conc") 
 #'
 #' @param time.col Which column of clint.data indicates the intended
-#' time of the measurment (in minutes) since the test chemical was introduced
+#' time of the measurement (in minutes) since the test chemical was introduced
 #' into the hepatocyte incubation (Defaults to "Time") 
 #'
 #' @param analysis.method.col Which column of PPB.data indicates the analytical
@@ -109,7 +109,7 @@
 #' (defaults to "MYDATA")
 #' 
 #' @param input.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
+#' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #' 
 #' @param sample.col Which column of input.data indicates the unique mass 
@@ -129,7 +129,7 @@
 #' @param dtxsid.col Which column of input.data indicates EPA's DSSTox Structure 
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
 #' 
-#' @param date.col Which column of input.data indicates the laboratory measurment
+#' @param date.col Which column of input.data indicates the laboratory measurement
 #' date (Defaults to "Date")
 #' 
 #' @param series.col Which column of PPB.data indicates the "series", that is
@@ -161,7 +161,7 @@
 #' the table is assigned the value of the argument and the corresponding
 #' column in input.table (if present) is ignored.
 #' 
-#' #param compound.conc.col Which column indictes the intended concentration 
+#' #param compound.conc.col Which column indicates the intended concentration 
 #' of the test chemical for calibration curves (Defaults to "Standard.Conc")
 #'
 #' @param dilution If this argument is used (defaults to NULL) every 
@@ -215,7 +215,7 @@
 #' parameters used to identify the compound on the chemical analysis instrument,
 #' for example 
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaulys to "Analysis.Paramaters"). 
+#' (Defaults to "Analysis.Parameters"). 
 #' 
 #' @param analysis.parameters If this argument is used (defaults to NULL) every 
 #' observation in the table is assigned the value of the argument and the 
@@ -275,7 +275,7 @@ merge_level0 <- function(data.label="MYDATA",
 {
   level0.catalog <- as.data.frame(level0.catalog)
   
-# These arguments allow the user to specify a single value for every obseration 
+# These arguments allow the user to specify a single value for every observation 
 # in the table:  
   if (!is.null(sheet)) level0.catalog[,sheet.col] <- sheet
   if (!is.null(skip.rows)) level0.catalog[,skip.rows.col] <- skip.rows

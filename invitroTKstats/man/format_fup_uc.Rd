@@ -43,7 +43,7 @@ format_fup_uc(
 }
 \arguments{
 \item{data.in}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type. The data frame should
+indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
 \item{FILENAME}{A string used to identify outputs of the function call.
@@ -75,7 +75,7 @@ a simultaneous replicate with the same analytical chemistry
 \item{type.col}{Which column of data.in indicates the sample type (see table
 above)(Defaults to "Sample.Type")}
 
-\item{std.conc.col}{Which column indictes the intended concentration 
+\item{std.conc.col}{Which column indicates the intended concentration 
 of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")}
 
 \item{cal}{If this argument is used (defaults to NULL) every 
@@ -165,7 +165,7 @@ data.frame A data.frame in standardized "level1" format
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
 unbound in plasma using ultracentrifugation (Redgrave 1975?).
-An input dataframe is organized into a standard set of columns and is written
+An input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }
 \details{
@@ -173,7 +173,7 @@ The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
-  Ultra-centrifugation Aqueous Fraction \tab UC\cr
+  Ultracentrifugation Aqueous Fraction \tab UC\cr
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }
