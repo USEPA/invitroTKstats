@@ -18,11 +18,11 @@ model {
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
   }
-  
+
 # Likelihood for the blank observations:
   for (i in 1:Num.cal)
   {
-    Blank.pred[i] <- background[i]/Blank.Dilution.Factor[i]  
+    Blank.pred[i] <- background[i]/Blank.Dilution.Factor[i]
     Blank.prec[i] <- (const.analytic.sd[i]+hetero.analytic.slope[i]*(Blank.pred[i]))^(-2)
   }
   for (i in 1:Num.blank.obs) {
@@ -35,14 +35,14 @@ model {
 # The parameters for calibration curve
     cc.slope[i] <- calibration[cc.obs.cal[i]]
     cc.intercept[i] <- background[cc.obs.cal[i]]
-# Mass spec response as a function of diluted concentration:        
-    cc.pred[i] <- 
-      cc.slope[i] * 
-      (cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - 
+# Mass spec response as a function of diluted concentration:
+    cc.pred[i] <-
+      cc.slope[i] *
+      (cc.obs.conc[i]/cc.obs.Dilution.Factor[i] -
       C.thresh[cc.obs.cal[i]]/cc.obs.Dilution.Factor[i]) *
-      step(cc.obs.conc[i]/cc.obs.Dilution.Factor[i] - 
+      step(cc.obs.conc[i]/cc.obs.Dilution.Factor[i] -
       C.thresh[cc.obs.cal[i]]/cc.obs.Dilution.Factor[i]) +
-      cc.intercept[i]/cc.obs.Dilution.Factor[i] 
+      cc.intercept[i]/cc.obs.Dilution.Factor[i]
 # Heteroskedastic precision:
     cc.prec[i] <- (const.analytic.sd[cc.obs.cal[i]] +
       hetero.analytic.slope[cc.obs.cal[i]] * cc.pred[i])^(-2)
@@ -53,10 +53,10 @@ model {
 # Clearance model:
 
 # Decreases indicates whether the concentration decreases (1 is yes, 0 is no):
-  decreases ~ dbern(DECREASE.PROB) 
+  decreases ~ dbern(DECREASE.PROB)
 # Degrades indicates whether we think abiotic degradation is a factor
 # (1 is yes, 0 is no), p=0.05 assumes 5 percent of chemicals degrade:
-  degrades ~ dbern(DEGRADE.PROB) 
+  degrades ~ dbern(DEGRADE.PROB)
 # Slope is the clearance rate at the lower concentration:
   bio.rate ~ dunif(0,-log(C.thresh[1]/Test.Nominal.Conc[1]))
 # In addition to biological elimination, we also check for abiotic elimination
@@ -70,7 +70,7 @@ model {
 # Saturates is whether the bio clearance rate decreases (1 is yes, 0 is no)
 # p=0.25 assumes 25 percent of chemicals show some metabolic saturation between
 # 1 and 10 uM:
-  saturates ~ dbern(SATURATE.PROB) 
+  saturates ~ dbern(SATURATE.PROB)
 # Saturation is how much the bio clearance rate decreases at the higher conc:
   saturation ~ dunif(0,1)
 # Calculate a slope at the higher concentration:
@@ -86,17 +86,17 @@ model {
       exp(-slope[obs.conc[i]]*obs.time[i])
   # MS prediction:
     obs.pred[i] <- calibration[obs.cal[i]] *
-      (C[i]/obs.Dilution.Factor[i] - 
+      (C[i]/obs.Dilution.Factor[i] -
       C.thresh[obs.cal[i]]/obs.Dilution.Factor[i]) *
-      step(C[i]/obs.Dilution.Factor[i] - 
-      C.thresh[obs.cal[i]]/obs.Dilution.Factor[i]) + 
-      background[obs.cal[i]]/obs.Dilution.Factor[i]    
-    obs.prec[i] <- (const.analytic.sd[obs.cal[i]] + 
+      step(C[i]/obs.Dilution.Factor[i] -
+      C.thresh[obs.cal[i]]/obs.Dilution.Factor[i]) +
+      background[obs.cal[i]]/obs.Dilution.Factor[i]
+    obs.prec[i] <- (const.analytic.sd[obs.cal[i]] +
       hetero.analytic.slope[obs.cal[i]]*obs.pred[i])^(-2)
-    
+
     obs[i] ~ dnorm(obs.pred[i], obs.prec[i])
   }
-  
+
 # non-biological clearance model:
   abio.slope <- degrades * abio.rate
 # The observations are normally distributed (heteroskedastic error):
@@ -107,14 +107,14 @@ model {
       exp(-abio.slope*abio.obs.time[i])
   # MS prediction:
     abio.obs.pred[i] <- calibration[abio.obs.cal[i]] *
-      (abio.C[i]/abio.obs.Dilution.Factor[i] - 
+      (abio.C[i]/abio.obs.Dilution.Factor[i] -
       C.thresh[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]) *
-      step(abio.C[i]/abio.obs.Dilution.Factor[i] - 
-      C.thresh[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]) + 
-      background[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]    
-    abio.obs.prec[i] <- (const.analytic.sd[abio.obs.cal[i]] + 
+      step(abio.C[i]/abio.obs.Dilution.Factor[i] -
+      C.thresh[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]) +
+      background[abio.obs.cal[i]]/abio.obs.Dilution.Factor[i]
+    abio.obs.prec[i] <- (const.analytic.sd[abio.obs.cal[i]] +
       hetero.analytic.slope[abio.obs.cal[i]]*abio.obs.pred[i])^(-2)
-    
+
     abio.obs[i] ~ dnorm(abio.obs.pred[i], abio.obs.prec[i])
   }
 }
@@ -125,19 +125,19 @@ model {
 #' This function use describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical clearance
 #' as characterized by disappearance of parent compound over time when incubated
-#' with primary hepatocytes (Shibata et al., 2000)
+#' with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 #'
-#' Data are read from a "Level2" text file that should have been formatted and created 
+#' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating
 #' that each row is verified as usable for analysis (that is, the Level2 file).
-#' 
+#'
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rl}{
 #'   Blank \tab Cell free blank with media\cr
 #'   CC \tab Cell and media free calibration curve \cr
-#'   Cvst \tab Hepatocyte inciubation concentration vs. time \cr
+#'   Cvst \tab Hepatocyte incubation concentration vs. time \cr
 #'   Inactive \tab Concentration vs. time data with inactivated hepatocytes \cr
 #' }
 #'
@@ -146,8 +146,8 @@ model {
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-Clint-Level4Analysis.tsv" is appended (defaults to "MYDATA")
-#' 
-#' @param good.col Name of a column indicating which rows have been verified for 
+#'
+#' @param good.col Name of a column indicating which rows have been verified for
 #' analysis, indicated by a "Y" (Defaults to "Verified")
 #'
 #' @param decrease.prob Prior probability that a chemical will decrease in
@@ -168,17 +168,17 @@ model {
 #'
 #' @param NUM.CORES The number of processors to use (default 2)
 #'
-#' @param RANDOM.SEED The seed used by the random number generator 
+#' @param RANDOM.SEED The seed used by the random number generator
 #' (default 1111)
 #'
-#' @return \item{data.frame}{A data.frame in standardized format} 
+#' @return \item{data.frame}{A data.frame in standardized format}
 #'
 #' @author John Wambaugh
-#' 
+#'
 #' @examples
-#' 
+#'
 #' library(invitroTKstats)
-#' 
+#'
 #' clint <- wambaugh2019.clint
 #' clint$Date <- "2019"
 #' clint$Sample.Type <- "Blank"
@@ -189,10 +189,10 @@ model {
 #' clint$Dilution.Factor <- 1
 #' clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
 #' clint$Hep.Density <- 0.5
-#' clint$Analysis.Method <- "LC or GC" 
+#' clint$Analysis.Method <- "LC or GC"
 #' clint$Analysis.Instrument <- "No Idea"
 #' clint$Analysis.Parameters <- "None"
-#' 
+#'
 #' level1 <- format_clint(clint,
 #'   FILENAME="Wambaugh2019",
 #'   sample.col="Sample.Name",
@@ -203,21 +203,21 @@ model {
 #'
 #' level2 <- level1
 #' level2$Verified <- "Y"
-#' 
+#'
 #' # All data (allows test for saturation):
 #' write.table(level2,
 #'   file="Wambaugh2019-Clint-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
-#' 
+#'
 #' level4 <- calc_clint_point(FILENAME="Wambaugh2019")
 #'
 #' @export calc_clint
 calc_clint <- function(
-  FILENAME, 
+  FILENAME,
   TEMP.DIR = NULL,
-  NUM.CHAINS=5, 
+  NUM.CHAINS=5,
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
@@ -263,13 +263,13 @@ calc_clint <- function(
     obs.cal <- rep(NA, Num.obs)
     for (this.cal in unique(this.cvt$Calibration))
     {
-      obs.cal[this.cvt$Calibration == this.cal] <- 
+      obs.cal[this.cvt$Calibration == this.cal] <-
         which(Cal.name == this.cal)
     }
 #
 # Blanks (hepatocytes, no chemical):
 #
-# Identify the blanks (observation time should be NA):    
+# Identify the blanks (observation time should be NA):
     this.blanks <- subset(this.data, Sample.Type=="Blank")
     blank.obs <- this.blanks[,"Response"]
     blank.df <- this.blanks[,"Dilution.Factor"]
@@ -287,7 +287,7 @@ calc_clint <- function(
     else blank.cal <- c(-99,-99)
     for (this.cal in unique(this.blanks$Calibration))
     {
-      blank.cal[this.blanks$Calibration == this.cal] <- 
+      blank.cal[this.blanks$Calibration == this.cal] <-
         which(Cal.name == this.cal)
     }
 #
@@ -312,7 +312,7 @@ calc_clint <- function(
       abio.obs.cal <- rep(NA, Num.abio.obs)
       for (this.cal in unique(this.abio$Calibration))
       {
-        abio.obs.cal[this.abio$Calibration == this.cal] <- 
+        abio.obs.cal[this.abio$Calibration == this.cal] <-
           which(Cal.name == this.cal)
       }
     } else {
@@ -329,7 +329,7 @@ calc_clint <- function(
     this.cc <- subset(this.data, Sample.Type=="CC" &
       !is.na(Std.Conc))
     Num.cc.obs <- dim(this.cc)[1]
-    if (Num.cc.obs > 0) 
+    if (Num.cc.obs > 0)
     {
       cc.obs <- this.cc[, "Response"]
       cc.obs.conc <- this.cc[, "Std.Conc"]
@@ -337,7 +337,7 @@ calc_clint <- function(
       cc.obs.cal <- rep(NA, Num.cc.obs)
       for (this.cal in unique(this.cc[,"Calibration"]))
       {
-        cc.obs.cal[this.cc[,"Calibration"] == this.cal] <- 
+        cc.obs.cal[this.cc[,"Calibration"] == this.cal] <-
           which(Cal.name == this.cal)
       }
     } else {
@@ -346,7 +346,7 @@ calc_clint <- function(
       cc.obs.cal <- c(-99,-99)
       cc.obs.df <- c(-99,-99)
     }
-    
+
     return(mydata <- list('obs' = obs,
 # Describe assay:
       'Test.Nominal.Conc' = Test.conc,
@@ -381,7 +381,7 @@ calc_clint <- function(
       'DEGRADE.PROB' = degrade.prob
       ))
   }
- 
+
   # function to initialize a Markov chain:
   initfunction <- function(chain)
   {
@@ -408,8 +408,8 @@ calc_clint <- function(
     ))
   }
 
-  MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""), 
-    sep="\t",header=T)  
+  MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+    sep="\t",header=T)
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
 
@@ -449,7 +449,7 @@ calc_clint <- function(
     clint.assay.conc.col,
    time.col,
     area.col)
-      
+
   # Check for missing columns
   if (!(all(cols %in% colnames(MS.data))))
   {
@@ -461,7 +461,7 @@ calc_clint <- function(
   # Only include the data types used:
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
     "Blank","Cvst","CC","Inactive"))
-  
+
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
   write.table(unverified.data, file=paste(
@@ -474,7 +474,7 @@ calc_clint <- function(
   # Clean up data:
   MS.data <- subset(MS.data,!is.na(Response))
   MS.data[MS.data$Response<0,"Response"] <- 0
-   
+
   # Because of the possibility of crashes we save the results one chemical at a time:
   OUTPUT.FILE <- paste(FILENAME,"-Clint-Level4.tsv",sep="")
 
@@ -491,7 +491,7 @@ calc_clint <- function(
   {
     CPU.cluster <- makeCluster(min(NUM.CORES,NUM.CHAINS))
   } else CPU.cluster <-NA
-  
+
   coda.out <- list()
   for (this.compound in unique(MS.data[,compound.col]))
     if (!(this.compound %in% Results[,compound.col]))
@@ -510,7 +510,7 @@ calc_clint <- function(
     #  df.cvt <- this.cvt$Dilution.Factor[1]
       if (length(unique(this.cvt$Hep.Density))>1) browser()
       hep.density <- this.cvt$Hep.Density[1]
-    
+
       # provide running output of where we are in the list:
       print(paste(
         this.compound,
@@ -520,22 +520,22 @@ calc_clint <- function(
         length(unique(MS.data[,compound.col])),
         ")",
         sep=""))
-  
+
       mydata <- build_mydata(this.subset)
       if (!is.null(mydata))
       {
         # Use random number seed for reproducibility
         set.seed(RANDOM.SEED)
-        
+
         # write out arguments to runjags:
         save(this.compound,mydata,initfunction,
         file=paste(FILENAME,"-Clint-PREJAGS.RData",sep=""))
-          
+
         # Run JAGS:
         coda.out[[this.compound]] <-  autorun.jags(
-                           Clint_model, 
+                           Clint_model,
                            n.chains = NUM.CHAINS,
-                           method="parallel", 
+                           method="parallel",
                            cl=CPU.cluster,
                            summarise=T,
                            inits = initfunction,
@@ -555,7 +555,7 @@ calc_clint <- function(
                             'C.thresh',
                             'log.calibration',
                             'background'))
-        
+
   # We don't follow the measurment parameters for convergence becasue they
   # are discrete and the convergence diagnostics don't work:
         coda.out[[this.compound]] <-extend.jags(coda.out[[this.compound]],
@@ -565,23 +565,23 @@ calc_clint <- function(
                                 'hetero.analytic.slope',
                                 'C.thresh',
                                 'calibration',
-                                'background'), 
+                                'background'),
                               add.monitor = c(
                               # Measurement parameters
                                 'bio.slope',
                                 'decreases',
                                 'saturates',
                                 "degrades"))
- 
+
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
         results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
         results <- as.data.frame(results)
-        
-        # Convert disappareance rates (1/h)to 
+
+        # Convert disappareance rates (1/h)to
         # heaptic clearance (uL/min/10^6 hepatocytes)):
         hep.density <- this.subset[1,density.col]
-        
+
         # Calculate a Clint only for 1 and 10 uM (if tested)
         if (1 %in% mydata$Test.Nominal.Conc)
         {
@@ -595,7 +595,7 @@ calc_clint <- function(
           results[,"Clint.10"] <- signif(1000 *
             results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60, 3)
         } else results[,"Clint.10"] <- NA
-    
+
         # Round to 3 sig figs:
         for (i in dim(results)[2])
           results[,i] <- signif(results[,i],3)
@@ -617,7 +617,7 @@ calc_clint <- function(
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
         new.results[,"Clint.pValue"] <- signif(
           sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1], 3)
-         
+
         # Calculate a "pvalue" for saturation probability that we observed
         # a lower Clint at higher conc:
         new.results[,"Sat.pValue"] <- signif(
@@ -625,10 +625,10 @@ calc_clint <- function(
 
         # Calculate a "pvalue" for abiotic degradation:
         new.results[,"degrades.pValue"] <- signif(
-          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)    
-                
+          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)
+
         rownames(new.results) <- this.compound
-        
+
         print(paste("Final results for ",
           this.compound,
           " (",
@@ -636,22 +636,22 @@ calc_clint <- function(
           " of ",
           length(unique(MS.data[,compound.col])),
           ")",
-          sep=""))       
+          sep=""))
         print(results)
         print(new.results)
-    
+
         Results <- rbind(Results,new.results)
-    
-        write.table(Results, 
+
+        write.table(Results,
           file=paste(OUTPUT.FILE,sep=""),
           sep="\t",
           row.names=F,
           quote=F)
-      }    
+      }
     }
 
   stopCluster(CPU.cluster)
-  
+
   View(Results)
   save(Results,
     file=paste(FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))

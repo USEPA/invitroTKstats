@@ -2,15 +2,15 @@
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation (Redgrave 1975?).
-#' An input dataframe is organized into a standard set of columns and is written
-#' to a tab-separated text file. 
+#' unbound in plasma using ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats}.
+#' An input data frame is organized into a standard set of columns and is written
+#' to a tab-separated text file.
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultra-centrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
@@ -20,17 +20,17 @@
 #'
 #' @param FILENAME A string used to identify outputs of the function call.
 #' (defaults to "MYDATA")
-#' 
+#'
 #' @param input.table A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type. The data frame should
+#' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
-#' 
-#' @param dtxsid.col Which column of input.table indicates EPA's DSSTox Structure 
+#'
+#' @param dtxsid.col Which column of input.table indicates EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#' 
+#'
 #' @param compound.col Which column of input.table indicates the test compound
 #' (Defaults to "Compound.Name")
-#' 
+#'
 #' @param cal.col Which column of input.table indicates the MS calibration -- for
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Calibration")
@@ -38,11 +38,11 @@
 #' @param type.col Which column of input.table indicates the sample type (see table
 #' above)(Defaults to "Sample.Type")
 #'
-#' @param req.types If set (defaults to NULL) all of the measurment types 
-#' included in this vecotor of character strings must
+#' @param req.types If set (defaults to NULL) all of the measurement types 
+#' included in this vector of character strings must
 #' be available for each chemical-calibration pair to make an estimate.
 #'
-#' @return \item{list}{A list containing the summary counts from the table} 
+#' @return \item{list}{A list containing the summary counts from the table}
 #'
 #' @author John Wambaugh
 #' @export summarize_table
@@ -56,9 +56,9 @@ summarize_table <- function(input.table,
   N.chems <- length(unique(input.table[,dtxsid.col]))
   N.obs <- dim(input.table)[1]
   N.meas <- length(unique(paste(input.table[,dtxsid.col],input.table[,cal.col])))
-  
+
   cat(paste(N.obs,"observations of",N.chems,"chemicals based on",N.meas,"separate measurements (calibrations).\n"))
-  
+
   repeat.chems <- NULL
   N.complete <- 0
   incomplete.chems <- NULL
@@ -93,7 +93,7 @@ summarize_table <- function(input.table,
       }
     }
   }
-  
+
   if (!is.null(repeat.chems))
   {
     cat(paste("The following",
@@ -102,7 +102,7 @@ summarize_table <- function(input.table,
     print(strwrap(paste(repeat.chems,collapse=", ")))
     cat("\n")
   }
-  
+
   if (!is.null(incomplete.chems))
   {
     cat("The following",
@@ -110,8 +110,8 @@ summarize_table <- function(input.table,
       "chemicals have incomplete data sets:\n")
     print(strwrap(paste(incomplete.chems,collapse=", ")))
     cat("\n")
-  }  
-  
+  }
+
   return(list(
     N.chems=N.chems,
     N.obs=N.obs,

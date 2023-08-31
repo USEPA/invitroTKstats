@@ -65,7 +65,7 @@ of these types:
 \tabular{rl}{
   Blank \tab Cell free blank with media\cr
   CC \tab Cell and media free calibration curve \cr
-  Cvst \tab Hepatocyte inciubation concentration vs. time \cr
+  Cvst \tab Hepatocyte incubation concentration vs. time \cr
   Inactive \tab Concentration vs. time data with inactivated hepatocytes \cr
 }
 

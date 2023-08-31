@@ -2,7 +2,11 @@
 #'
 #' This function uses mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of membrane
+<<<<<<< HEAD
 #' permeability using Caco-2 cells (Hubatsch, 2007).
+=======
+#' permeability using Caco-2 cells \insertCite{hubatsch2007determination}{invitroTKstats}.
+>>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #' Data are read from a "Level2" text file that should have been formatted and
 #' created
 #' by \code{\link{format_caco2}} (this is the "Level1" file). The Level1 file
@@ -11,7 +15,7 @@
 #'
 #' The data frame of observations should be annotated according to direction
 #' (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
-#' of concentrtion measured:
+#' of concentration measured:
 #' \tabular{rr}{
 #'   Blank with no chemical added \tab Blank \cr
 #'   Dosing vehicle (C0) at target concentration \tab D0\cr

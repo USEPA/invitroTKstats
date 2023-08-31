@@ -17,49 +17,49 @@ model {
     hetero.analytic.slope[i] <- 10^log.hetero.analytic.slope[i]
     calibration[i] <- 10^log.calibration[i]
   }
-  
+
 # Likelihood for blanks without plasma observations:
   for (i in 1:Num.NoPlasma.Blank.obs)
   {
-    NoPlasma.Blank.pred[i] <- 
-      background[NoPlasma.Blank.cal[i]]/NoPlasma.Blank.df  
+    NoPlasma.Blank.pred[i] <-
+      background[NoPlasma.Blank.cal[i]]/NoPlasma.Blank.df
     NoPlasma.Blank.prec[i] <- (const.analytic.sd[NoPlasma.Blank.cal[i]] +
                              hetero.analytic.slope[NoPlasma.Blank.cal[i]]*(NoPlasma.Blank.pred[i]))^(-2)
 # Model for the observation:
     NoPlasma.Blank.obs[i] ~ dnorm(NoPlasma.Blank.pred[i], NoPlasma.Blank.prec[i])
   }
-  
+
 # Extent of interference from plasma:
   log.Plasma.Interference ~ dunif(-6, log(10/Test.Nominal.Conc)/log(10))
   Plasma.Interference <- 10^log.Plasma.Interference
 # Likelihood for the plasma blank observations:
   for (i in 1:Num.Plasma.Blank.obs)
   {
-    Plasma.Blank.pred[i] <- 
-      (calibration[Plasma.Blank.cal[i]] * 
-      (Plasma.Interference*Assay.Protein.Percent[Plasma.Blank.rep[i]]/100 - 
+    Plasma.Blank.pred[i] <-
+      (calibration[Plasma.Blank.cal[i]] *
+      (Plasma.Interference*Assay.Protein.Percent[Plasma.Blank.rep[i]]/100 -
       C.thresh[Plasma.Blank.cal[i]]) *
-      step(Plasma.Interference*Assay.Protein.Percent[Plasma.Blank.rep[i]]/100 - 
+      step(Plasma.Interference*Assay.Protein.Percent[Plasma.Blank.rep[i]]/100 -
       C.thresh[Plasma.Blank.cal[i]]) +
-      background[Plasma.Blank.cal[i]]) / 
-      Plasma.Blank.df  
+      background[Plasma.Blank.cal[i]]) /
+      Plasma.Blank.df
     Plasma.Blank.prec[i] <- (const.analytic.sd[Plasma.Blank.cal[i]] +
                              hetero.analytic.slope[Plasma.Blank.cal[i]]*(Plasma.Blank.pred[i]))^(-2)
 # Model for the observation:
     Plasma.Blank.obs[i] ~ dnorm(Plasma.Blank.pred[i], Plasma.Blank.prec[i])
   }
-  
-# Likelihood for the T0 observations:  
+
+# Likelihood for the T0 observations:
   for (i in 1:Num.T0.obs)
   {
-# Mass spec response as a function of diluted concentration:  
-    T0.pred[i] <- 
-      (calibration[T0.cal[i]] * 
+# Mass spec response as a function of diluted concentration:
+    T0.pred[i] <-
+      (calibration[T0.cal[i]] *
       (Test.Nominal.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) *
       step(Test.Nominal.Conc - Plasma.Interference - C.thresh[T0.cal[i]]) +
       calibration[T0.cal[i]] * Plasma.Interference +
       background[T0.cal[i]]) /
-      T0.df 
+      T0.df
 # Heteroskedastic precision:
     T0.prec[i] <- (const.analytic.sd[T0.cal[i]] +
       hetero.analytic.slope[T0.cal[i]] * T0.pred[i])^(-2)
@@ -70,13 +70,13 @@ model {
 # Likelihood for the calibration curve observations:
   for (i in 1:Num.CC.obs)
   {
-# Mass spec response as a function of diluted concentration:        
-    CC.pred[i] <- 
-      (calibration[CC.cal[i]] * 
+# Mass spec response as a function of diluted concentration:
+    CC.pred[i] <-
+      (calibration[CC.cal[i]] *
       (CC.conc[i] - Plasma.Interference - C.thresh[CC.cal[i]]) *
       step(CC.conc[i] - Plasma.Interference - C.thresh[CC.cal[i]]) +
       calibration[CC.cal[i]] * Plasma.Interference +
-      background[CC.cal[i]]) / 
+      background[CC.cal[i]]) /
       CC.df
 # Heteroskedastic precision:
     CC.prec[i] <- (const.analytic.sd[CC.cal[i]] +
@@ -88,12 +88,12 @@ model {
 # Likelihood for the RED plasma protein binding assay::
   log.Kd ~ dunif(-10,5)
   Kd <- 10^log.Kd
-  Fup <- Kd / 
+  Fup <- Kd /
          (Kd +
-         Physiological.Protein.Conc) 
-  
+         Physiological.Protein.Conc)
+
 # Concentrtion in each replicate:
-  for (i in 1:Num.rep) 
+  for (i in 1:Num.rep)
   {
 # Calculate protein concentration for observation:
     C.protein[i] <- Physiological.Protein.Conc * Assay.Protein.Percent[i] / 100
@@ -106,42 +106,42 @@ model {
 # Toal concentration in plasma well:
     C.total[i] <- C.b[i] + C.u[i]
   }
-  
-# Likelihood for the PBS observations:  
+
+# Likelihood for the PBS observations:
   for (i in 1:Num.PBS.obs)
   {
-# Mass spec response as a function of diluted concentration:  
+# Mass spec response as a function of diluted concentration:
     PBS.conc[i] <- C.u[PBS.rep[i]]
-    PBS.pred[i] <- 
-      (calibration[PBS.cal[i]] * 
+    PBS.pred[i] <-
+      (calibration[PBS.cal[i]] *
       (PBS.conc[i] - C.thresh[PBS.cal[i]]) *
       step(PBS.conc[i]  - C.thresh[PBS.cal[i]]) +
       background[PBS.cal[i]]) /
-      PBS.df  
+      PBS.df
 # Heteroskedastic precision:
     PBS.prec[i] <- (const.analytic.sd[PBS.cal[i]] +
       hetero.analytic.slope[PBS.cal[i]] * PBS.pred[i])^(-2)
 # Model for the observation:
     PBS.obs[i] ~ dnorm(PBS.pred[i], PBS.prec[i])
   }
-  
-# Likelihood for the Plasma observations:  
+
+# Likelihood for the Plasma observations:
   for (i in 1:Num.Plasma.obs)
   {
-# Mass spec response as a function of diluted concentration:  
+# Mass spec response as a function of diluted concentration:
     Plasma.conc[i] <- C.total[Plasma.rep[i]]
-    Plasma.pred[i] <- 
-      (calibration[Plasma.cal[i]] * 
-      (Plasma.conc[i] - 
+    Plasma.pred[i] <-
+      (calibration[Plasma.cal[i]] *
+      (Plasma.conc[i] -
       Plasma.Interference*Assay.Protein.Percent[Plasma.rep[i]]/100 -
       C.thresh[Plasma.cal[i]]) *
-      step(Plasma.conc[i] - 
-      Plasma.Interference*Assay.Protein.Percent[Plasma.rep[i]]/100 - 
+      step(Plasma.conc[i] -
+      Plasma.Interference*Assay.Protein.Percent[Plasma.rep[i]]/100 -
       C.thresh[Plasma.cal[i]]) +
-      calibration[Plasma.cal[i]] * 
+      calibration[Plasma.cal[i]] *
       Plasma.Interference * Assay.Protein.Percent[Plasma.rep[i]]/100 +
       background[Plasma.cal[i]]) /
-      Plasma.df 
+      Plasma.df
 # Heteroskedastic precision:
     Plasma.prec[i] <- (const.analytic.sd[Plasma.cal[i]] +
       hetero.analytic.slope[Plasma.cal[i]] * Plasma.pred[i])^(-2)
@@ -152,7 +152,7 @@ model {
 "
 
 #' Calculate fraction unbound in plasma from rapid equilibruim dialysis data
-#' 
+#'
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
@@ -164,7 +164,7 @@ model {
 #' }
 #'
 #' @param MS.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and measurment type.
+#' indication of chemical identity, and measurement type.
 #'
 #' @param this.conc The plasma protein concentration relative to physiologic
 #' levels (default 100\%)
@@ -181,79 +181,80 @@ model {
 #'
 #' @param NUM.CORES The number of processors to use (default 2)
 #'
-#' @param RANDOM.SEED The seed used by the random number generator 
-#' (default 1111) 
+#' @param RANDOM.SEED The seed used by the random number generator
+#' (default 1111)
 #'
-#' @param sample.col Which column of MS.data indicates the unique mass 
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
+#' @param sample.col Which column of MS.data indicates the unique mass
+#' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name")
-#' 
-#' @param lab.compound.col Which column of MS.data indicates The test compound 
+#'
+#' @param lab.compound.col Which column of MS.data indicates The test compound
 #' name used by the laboratory (Defaults to "Lab.Compound.Name")
-#' 
-#' @param dtxsid.col Which column of MS.data indicates EPA's DSSTox Structure 
+#'
+#' @param dtxsid.col Which column of MS.data indicates EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#' 
+#'
 #' @param date.col Which column of MS.data indicates the laboratory measurment
 #' date (Defaults to "Date")
-#' 
+#'
 #' @param compound.col Which column of MS.data indicates the test compound
 #' (Defaults to "Compound.Name")
-#' 
-#' @param area.col Which column of MS.data indicates the target analyte (that 
+#'
+#' @param area.col Which column of MS.data indicates the target analyte (that
 #' is, the test compound) MS peak area (Defaults to "Area")
-#' 
+#'
 #' @param series.col Which column of MS.data indicates the "series", that is
 #' a simultaneous replicate (Defaults to "Series")
-#' 
+#'
 #' @param type.col Which column of MS.data indicates the sample type (see table
 #' above)(Defaults to "Sample.Type")
-#' 
+#'
 #' @param cal.col Which column of MS.data indicates the MS calibration -- for
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
-#' 
+#'
 #' @param dilution.col Which column of MS.data indicates how many times the
 #' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#' 
+#'
 #' @param istd.col Which column of MS.data indicates the MS peak area for the
 #' internal standard (Defaults to "ISTD.Area")
-#' 
-#' @param istd.name.col Which column of MS.data indicates identity of the 
+#'
+#' @param istd.name.col Which column of MS.data indicates identity of the
 #' internal standard (Defaults to "ISTD.Name")
-#' 
+#'
 #' @param istd.conc.col Which column of MS.data indicates the concentration of
 #' the internal standard (Defaults to "ISTD.Conc")
-#' 
-#' @param Test.Nominal.Conc.col Which column of MS.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")       
 #'
-#' @return A data.frame containing quunantiles of the Bayesian posteriors 
+#' @param Test.Nominal.Conc.col Which column of MS.data indicates the intended
+#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")
+#'
+#' @return A data.frame containing quunantiles of the Bayesian posteriors
 #'
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
+#'
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
 #'
 #' @author John Wambaugh and Chantel Nicolas
-#'                                          
+#'
 #' @examples
 #' write.table(smeltz2023.red,
 #'   file="SmeltzPFAS-fup-RED-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
-#' 
-#' 
+#'
+#'
 #' level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
 #'                        NUM.CORES=8,
-#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")  
-#' 
+#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+#'
 #' @export calc_fup_red
 calc_fup_red <- function(
-  FILENAME, 
+  FILENAME,
   TEMP.DIR = NULL,
-  NUM.CHAINS=5, 
+  NUM.CHAINS=5,
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
@@ -276,7 +277,7 @@ calc_fup_red <- function(
 # TIME ZERO
     T0.data <- subset(this.data,Sample.Type=="T0")
     T0.df <- unique(T0.data[,"Dilution.Factor"])
-    if (length(T0.df)>1) stop("Multiple T0 dilution factors.") 
+    if (length(T0.df)>1) stop("Multiple T0 dilution factors.")
     T0.obs <- T0.data[,"Response"]
 # Convert calibrations to sequential integers:
     T0.cal <- sapply(T0.data[,"Calibration"],
@@ -285,7 +286,7 @@ calc_fup_red <- function(
 # Calibration Curve
     CC.data <- subset(this.data,Sample.Type=="CC")
     CC.df <- unique(CC.data[,"Dilution.Factor"])
-    if (length(CC.df)>1) stop("Multiple CC dilution factors.") 
+    if (length(CC.df)>1) stop("Multiple CC dilution factors.")
     CC.obs <- CC.data[,"Response"]
 # Convert calibrations to sequential integers:
     CC.cal <- sapply(CC.data[,"Calibration"],
@@ -295,7 +296,7 @@ calc_fup_red <- function(
 # PBS
     PBS.data <- subset(this.data,Sample.Type=="PBS")
     PBS.df <- unique(PBS.data[,"Dilution.Factor"])
-    if (length(PBS.df)>1) stop("Multiple PBS dilution factors.") 
+    if (length(PBS.df)>1) stop("Multiple PBS dilution factors.")
     PBS.obs <-PBS.data[,"Response"]
 # Convert calibrations to sequential integers:
     PBS.cal <- sapply(PBS.data[,"Calibration"],
@@ -304,7 +305,7 @@ calc_fup_red <- function(
 # PLASMA
     Plasma.data <- subset(this.data,Sample.Type=="Plasma")
     Plasma.df <- unique(Plasma.data[,"Dilution.Factor"])
-    if (length(Plasma.df)>1) stop("Multiple plasma dilution factors.") 
+    if (length(Plasma.df)>1) stop("Multiple plasma dilution factors.")
     Plasma.obs <- Plasma.data[,"Response"]
 # Convert calibrations to sequential integers:
     Plasma.cal <- sapply(Plasma.data[,"Calibration"],
@@ -320,10 +321,10 @@ calc_fup_red <- function(
     Plasma.rep <- sapply(Plasma.rep, function(x) which(unique.rep %in% x))
     Assay.Protein.Percent <- Plasma.data[!duplicated(Plasma.data$Replicate),
                               "Percent.Physiologic.Plasma"]
-# NO PLASMA BLANK  
+# NO PLASMA BLANK
     NoPlasma.Blank.data <- subset(this.data, Sample.Type=="NoPlasma.Blank")
     NoPlasma.Blank.df <- unique(NoPlasma.Blank.data[,"Dilution.Factor"])
-    if (length(NoPlasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
+    if (length(NoPlasma.Blank.df)>1) stop("Multiple blank dilution factors.")
     NoPlasma.Blank.obs <- NoPlasma.Blank.data[,"Response"]
 # Convert calibrations to sequential integers:
     NoPlasma.Blank.cal <- sapply(NoPlasma.Blank.data[,"Calibration"],
@@ -334,10 +335,10 @@ calc_fup_red <- function(
       NoPlasma.Blank.obs <- 0
       NoPlasma.Blank.cal <- 0
     }
-# PLASMA BLANK  
+# PLASMA BLANK
     Plasma.Blank.data <- subset(this.data, Sample.Type=="Plasma.Blank")
     Plasma.Blank.df <- unique(Plasma.Blank.data[,"Dilution.Factor"])
-    if (length(Plasma.Blank.df)>1) stop("Multiple blank dilution factors.") 
+    if (length(Plasma.Blank.df)>1) stop("Multiple blank dilution factors.")
     Plasma.Blank.obs <- Plasma.Blank.data[,"Response"]
 # Convert calibrations to sequential integers:
     Plasma.Blank.cal <- sapply(Plasma.Blank.data[,"Calibration"],
@@ -348,14 +349,14 @@ calc_fup_red <- function(
       Plasma.Blank.rep <- paste0(Plasma.Blank.data[,"Calibration"],
                                  Plasma.Blank.data[,"Replicate"])
 # Convert replicates to sequential integers:
-      Plasma.Blank.rep <- sapply(Plasma.Blank.rep, function(x) 
-                               which(unique.rep %in% x))                               
+      Plasma.Blank.rep <- sapply(Plasma.Blank.rep, function(x)
+                               which(unique.rep %in% x))
     } else if(length(unique(Plasma.Blank.data[,"Percent.Physiologic.Plasma"]))==1)
     {
       Plasma.Blank.rep <- rep(1, Num.Plasma.Blank.obs)
     } else browser()
 
-    return(list(                
+    return(list(
 # Describe assay:
       'Test.Nominal.Conc' = Test.Nominal.Conc,
       'Num.cal' = Num.cal,
@@ -410,7 +411,7 @@ calc_fup_red <- function(
   {
     seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
     set.seed(seed)
-    
+
     return(list(
 # Random number seed:
       .RNG.seed=seed,
@@ -429,15 +430,15 @@ calc_fup_red <- function(
       C.missing = runif(mydata$Num.rep,0,mydata[["Test.Nominal.Conc"]])
     ))
   }
-  
-  if (!is.null(TEMP.DIR)) 
+
+  if (!is.null(TEMP.DIR))
   {
     current.dir <- getwd()
     setwd(TEMP.DIR)
   }
 
-  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""), 
-    sep="\t",header=T)  
+  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
+    sep="\t",header=T)
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
 
@@ -461,7 +462,7 @@ calc_fup_red <- function(
   area.col <- "Area"
   analysis.method.col <- "Analysis.Method"
   analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters" 
+  analysis.parameters.col <- "Analysis.Parameters"
   note.col <- "Note"
   level0.file.col <- "Level0.File"
   level0.sheet.col <- "Level0.Sheet"
@@ -504,7 +505,7 @@ calc_fup_red <- function(
   # Only include the data types used:
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
     "Plasma.Blank","NoPlasma.Blank","PBS","Plasma","T0","Stability","EQ1","EQ2","CC"))
-  
+
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
   write.table(unverified.data, file=paste(
@@ -517,7 +518,7 @@ calc_fup_red <- function(
   # Clean up data:
   MS.data <- subset(MS.data,!is.na(Response))
   MS.data[MS.data$Response<0,"Response"] <- 0
-   
+
   # Because of the possibility of crashes we save the results one chemical at a time:
   OUTPUT.FILE <- paste(FILENAME,"-fup-RED-Level4.tsv",sep="")
 
@@ -534,7 +535,7 @@ calc_fup_red <- function(
   {
     CPU.cluster <- makeCluster(min(NUM.CORES,NUM.CHAINS))
   } else CPU.cluster <-NA
-  
+
   coda.out <- list()
   ignored.data <- NULL
   for (this.compound in unique(MS.data[,"Compound.Name"]))
@@ -553,7 +554,7 @@ calc_fup_red <- function(
         length(unique(MS.data[,compound.col])),
         ")",
         sep=""))
-  
+
       REQUIRED.DATA.TYPES <- c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank")
       if (all(REQUIRED.DATA.TYPES %in% this.subset[,type.col]))
       {
@@ -562,21 +563,21 @@ calc_fup_red <- function(
         {
           # Use random number seed for reproducibility
           set.seed(RANDOM.SEED)
-          
+
           # write out arguments to runjags:
           save(this.compound, mydata ,initfunction,
             file=paste(FILENAME,"-fup-RED-PREJAGS.RData",sep=""))
-            
+
           # Run JAGS:
           coda.out[[this.compound]] <- autorun.jags(
-            fup_RED_model, 
+            fup_RED_model,
             n.chains = NUM.CHAINS,
-            method="parallel", 
+            method="parallel",
             cl=CPU.cluster,
             summarise=T,
             inits = initfunction,
-            startburnin = 25000, 
-            startsample = 25000, 
+            startburnin = 25000,
+            startsample = 25000,
             max.time="5m",
             crash.retry=2,
             adapt=10000,
@@ -596,27 +597,27 @@ calc_fup_red <- function(
               'C.missing',
               'Kd',
               'Fup'))
-          
+
           sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
           for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
           results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
-      
-          Fup.point <- signif( 
-            (mean(mydata$PBS.obs)*mydata$PBS.df - 
+
+          Fup.point <- signif(
+            (mean(mydata$PBS.obs)*mydata$PBS.df -
              mean(mydata$NoPlasma.Blank.obs)*mydata$NoPlasma.Blank.df) /
-            (mean(mydata$Plasma.obs)*mydata$Plasma.df - 
+            (mean(mydata$Plasma.obs)*mydata$Plasma.df -
              mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df),
              4)
-          
+
           new.results <- data.frame(Compound.Name=this.compound,
                                     Lab.Compound.Name=this.lab.name,
                                     DTXSID=this.dtxsid,
                                     Fup.point=Fup.point,
                                     stringsAsFactors=F)
-          new.results[,c("Fup.Med","Fup.Low","Fup.High")] <- 
+          new.results[,c("Fup.Med","Fup.Low","Fup.High")] <-
             sapply(results[c(2,1,3),"Fup"],
             function(x) signif(x,4))
-      
+
           print(paste("Final results for ",
             this.compound,
             " (",
@@ -624,35 +625,35 @@ calc_fup_red <- function(
             " of ",
             length(unique(MS.data[,compound.col])),
             ")",
-            sep=""))       
+            sep=""))
           print(results)
           print(new.results)
-          
+
           Results <- rbind(Results,new.results)
-      
-          write.table(Results, 
+
+          write.table(Results,
             file=paste(OUTPUT.FILE,sep=""),
             sep="\t",
             row.names=F,
             quote=F)
-        }    
+        }
       } else {
         ignored.data <- rbind(ignored.data, MSdata)
-      } 
+      }
     }
-    
-  if (!is.null(TEMP.DIR)) 
+
+  if (!is.null(TEMP.DIR))
   {
     setwd(current.dir)
   }
   stopCluster(CPU.cluster)
 
-  write.table(ignored.data, 
+  write.table(ignored.data,
     file=paste(FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
-  
+
   View(Results)
   save(Results,
     file=paste(FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData",sep=""))

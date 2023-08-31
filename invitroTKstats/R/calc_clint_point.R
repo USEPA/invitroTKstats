@@ -3,18 +3,18 @@
 #' This function use describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical clearance
 #' as characterized by disappearance of parent compound over time when incubated
-#' with primary hepatocytes (Shibata et al., 2000)
+#' with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 #'
-#' Data are read from a "Level2" text file that should have been formatted and created 
+#' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating
 #' that each row is verified as usable for analysis (that is, the Level2 file).
-#' 
+#'
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
-#'   Hepatocyte inciubation concentration \tab Conc\cr
+#'   Hepatocyte incubation concentration \tab Conc\cr
 #' }
 #'
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
@@ -22,18 +22,18 @@
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-Clint-Level3.tsv" is appended (defaults to "MYDATA")
-#' 
-#' @param good.col Name of a column indicating which rows have been verified for 
+#'
+#' @param good.col Name of a column indicating which rows have been verified for
 #' analysis, indicated by a "Y" (Defaults to "Verified")
 #'
-#' @return \item{data.frame}{A data.frame in standardized format} 
+#' @return \item{data.frame}{A data.frame in standardized format}
 #'
 #' @author John Wambaugh
-#' 
+#'
 #' @examples
-#' 
+#'
 #' library(invitroTKstats)
-#' 
+#'
 #' clint <- wambaugh2019.clint
 #' clint$Date <- "2019"
 #' clint$Sample.Type <- "Blank"
@@ -44,10 +44,10 @@
 #' clint$Dilution.Factor <- 1
 #' clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
 #' clint$Hep.Density <- 0.5
-#' clint$Analysis.Method <- "LC or GC" 
+#' clint$Analysis.Method <- "LC or GC"
 #' clint$Analysis.Instrument <- "No Idea"
 #' clint$Analysis.Parameters <- "None"
-#' 
+#'
 #' level1 <- format_clint(clint,
 #'   FILENAME="Wambaugh2019",
 #'   sample.col="Sample.Name",
@@ -58,32 +58,32 @@
 #'
 #' level2 <- level1
 #' level2$Verified <- "Y"
-#' 
+#'
 #' # All data (allows test for saturation):
 #' write.table(level2,
 #'   file="Wambaugh2019-Clint-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
-#' 
+#'
 #' level3 <- calc_clint_point(FILENAME="Wambaugh2019")
-#'  
+#'
 #' # Just 1 uM data:
 #' write.table(subset(level2,Conc==1),
 #'   file="Wambaugh2019-1-Clint-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
-#' 
+#'
 #' level3.1 <- calc_clint_point(FILENAME="Wambaugh2019-1")
-#' 
+#'
 #' # Just 10 uM data:
 #' write.table(subset(level2,Conc==10),
 #'   file="Wambaugh2019-10-Clint-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
-#'   quote=F) 
-#' 
+#'   quote=F)
+#'
 #' level3.10 <- calc_clint_point(FILENAME="Wambaugh2019-10")
 #'
 #' @references
@@ -94,8 +94,8 @@
 #' @export calc_clint_point
 calc_clint_point <- function(FILENAME, good.col="Verified")
 {
-  clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""), 
-    sep="\t",header=T)  
+  clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+    sep="\t",header=T)
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
 
@@ -118,7 +118,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   area.col <- "Area"
   analysis.method.col <- "Analysis.Method"
   analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters" 
+  analysis.parameters.col <- "Analysis.Parameters"
   note.col <- "Note"
 
 # We need all these columns in clint.data
@@ -144,7 +144,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     analysis.parameters.col,
     note.col
     )
-      
+
   if (!(all(cols %in% colnames(clint.data))))
   {
     warning("Run format_clint first (level 1) then curate to (level 2).")
@@ -155,7 +155,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   # Only include the data types used:
   clint.data <- subset(clint.data,clint.data[,type.col] %in% c(
     "Blank","Cvst"))
-  
+
   # Only used verfied data:
   clint.data <- subset(clint.data, clint.data[,good.col] == "Y")
 
@@ -163,7 +163,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   clint.data <- subset(clint.data,!is.na(Response))
   clint.data[clint.data$Response<0,"Response"] <- 0
   clint.data[clint.data$Sample.Type=="Blank" & is.na(clint.data$Time),"Time"] <- 0
-                  
+
   out.table <-NULL
   num.chem <- 0
   num.cal <- 0
@@ -202,7 +202,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   }
 
   for (this.chem in unique(clint.data[,compound.col]))
-  {     
+  {
     this.subset <- subset(clint.data,clint.data[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- cbind(this.subset[1,c(compound.col,dtxsid.col,lab.compound.col)],
@@ -215,7 +215,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     df.cvt <- this.cvt$Dilution.Factor[1]
     if (length(unique(this.cvt$Hep.Density))>1) browser()
     hep.density <- this.cvt$Hep.Density[1]
-    
+
     if (dim(this.cvt)[1] > 1)
     {
       this.data <- rbind(this.blank,this.cvt)
@@ -230,7 +230,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
 
       num.chem <- num.chem + 1
       num.cal <- num.cal + length(unique(this.data[,"Calibration"]))
-      
+
       this.data$Response <- this.data$Response /
         mean(subset(this.data,Time==0)$Response)
       this.fit <- try(mle(lldecay,
@@ -239,8 +239,8 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       this.null <- try(mle(lldecay,
         start=list(cal=1, sigma=0.1),
         lower=list(cal=0, sigma = 0.0001),
-        fixed=list(k_elim=0)))      
-      
+        fixed=list(k_elim=0)))
+
       if (class(this.fit)!="try-error" & class(this.null)!="try-error")
       {
         # k_elim has units 1/h, convert to uL/min/10^6 hepatocytes
@@ -288,34 +288,34 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
         browser()
       }
       out.table <- rbind(out.table, this.row)
-    }  
+    }
   }
 
   out.table <- as.data.frame(out.table)
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  #out.table <- apply(out.table,2,unlist) 
-  out.table[!(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <- 
+  #out.table <- apply(out.table,2,unlist)
+  out.table[!(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <-
     signif(as.numeric(out.table[
-    !(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"]),3) 
-  out.table[,"Clint.1"] <- signif(as.numeric(out.table[,"Clint.1"]),3) 
-  out.table[,"Clint.10"] <- signif(as.numeric(out.table[,"Clint.10"]),3) 
-  out.table[,"Clint.pValue"] <- signif(as.numeric(out.table[,"Clint.pValue"]),3) 
+    !(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"]),3)
+  out.table[,"Clint.1"] <- signif(as.numeric(out.table[,"Clint.1"]),3)
+  out.table[,"Clint.10"] <- signif(as.numeric(out.table[,"Clint.10"]),3)
+  out.table[,"Clint.pValue"] <- signif(as.numeric(out.table[,"Clint.pValue"]),3)
   out.table[,"AIC"] <- signif(as.numeric(out.table[,"AIC"]),3)
   out.table[,"AIC.Null"] <- signif(as.numeric(out.table[,"AIC.Null"]),3)
   out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
-  out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3) 
-    
-# Write out a "level 3" file (data organized into a standard format):  
-  write.table(out.table, 
+  out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
+
+# Write out a "level 3" file (data organized into a standard format):
+  write.table(out.table,
     file=paste(FILENAME,"-Clint-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
- 
+
   print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))
   print(paste("Intrinsic clearance (Clint) calculated for",num.cal,"measurements."))
 
-  return(out.table)  
+  return(out.table)
 }
 
 

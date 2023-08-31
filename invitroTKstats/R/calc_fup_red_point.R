@@ -2,7 +2,12 @@
 #'
 #' This function uses mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
+<<<<<<< HEAD
 #' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
+=======
+#' unbound in plasma using rapid equilibrium dialysis
+#' \insertCite{waters2008validation}{invitroTKstats}.
+>>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating
@@ -80,9 +85,13 @@
 #' level3 <- calc_fup_red_point(FILENAME="Wambaugh2019")
 #'
 #' @references
+<<<<<<< HEAD
 #' Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis
 #' approach for the measurement of plasma protein binding." Journal of
 #' Pharmaceutical Sciences 97.10 (2008): 4586-4595.
+=======
+#'  \insertRef{waters2008validation}{invitroTKstats}
+>>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #'
 #' @export calc_fup_red_point
 calc_fup_red_point <- function(FILENAME, good.col="Verified")

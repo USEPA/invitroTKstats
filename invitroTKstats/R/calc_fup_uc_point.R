@@ -2,7 +2,8 @@
 #'
 #' This function use describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation (Redgrave 1975?).
+#' unbound in plasma using ultracentrifugation
+#' \insertCite{redgrave1975separation}{invitroTKstats}.
 #' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating
@@ -55,9 +56,13 @@
 #' level3 <- calc_fup_uc_point(FILENAME="Kreutz2020")
 #'
 #' @references
+<<<<<<< HEAD
 #' Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma
 #' lipoproteins by density-gradient ultracentrifugation." Analytical
 #' Biochemistry 65.1-2 (1975): 42-49.#'
+=======
+#' \insertRef{redgrave1975separation}{invitroTKstats}
+>>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #'
 #' @export calc_fup_uc_point
 calc_fup_uc_point <- function(FILENAME, good.col="Verified")

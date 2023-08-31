@@ -27,8 +27,8 @@ format_fup_red(
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
   istd.conc.col = "ISTD.Conc",
-  nominal.test.conc = NULL,
-  nominal.test.conc.col = "Test.Target.Conc",
+  test.nominal.conc = NULL,
+  test.nominal.conc.col = "Test.Target.Conc",
   plasma.percent = NULL,
   plasma.percent.col = "Plasma.Percent",
   std.conc = NULL,
@@ -49,7 +49,7 @@ format_fup_red(
 }
 \arguments{
 \item{data.in}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identiy, and measurment type. The data frame should
+indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
 \item{FILENAME}{A string used to identify outputs of the function call.
@@ -59,7 +59,7 @@ contain columns with names specified by the following arguments:}
 spectrometry (MS) sample name used by the laboratory. (Defaults to 
 "Lab.Sample.Name")}
 
-\item{date.col}{Which column of data.in indicates the laboratory measurment
+\item{date.col}{Which column of data.in indicates the laboratory measurement
 date (Defaults to "Date")}
 
 \item{compound.col}{Which column of data.in indicates the test compound
@@ -90,9 +90,6 @@ internal standard (Defaults to "ISTD.Name")}
 \item{istd.conc.col}{Which column of data.in indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{nominal.test.conc.col}{Which column of data.in indicates the intended
-test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
-
 \item{area.col}{Which column of data.in indicates the target analyte (that 
 is, the test compound) MS peak area (Defaults to "Area")}
 
@@ -113,6 +110,9 @@ for example
 
 \item{series.col}{Which column of data.in indicates the "series", that is
 a simultaneous replicate (Defaults to "Series")}
+
+\item{Test.Nominal.Conc.col}{Which column of data.in indicates the intended
+test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
 }
 \value{
 \item{data.frame}{A data.frame in standardized "level1" format}
@@ -121,7 +121,7 @@ a simultaneous replicate (Defaults to "Series")}
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
 unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
-An input dataframe is organized into a standard set of columns and is written
+An input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }
 \details{

@@ -32,7 +32,7 @@ wambaugh2019.methods
 \description{
 As reported in Wambaugh et al. (2019), contractor Cyprotex performed in vitro
 toxicokinetic experiments requiring the development of analytical chemistry
-methods to quantitate concentration. 
+methods to quantitative concentration. 
 Liquid chromatography/mass spectrometry (LC/MS) was faster and 
 attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
 when LC/MS failed. For some chemicals the attempts to develop an 

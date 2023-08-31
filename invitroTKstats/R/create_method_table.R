@@ -3,7 +3,7 @@
 #' This function extracts the chemical analysis methods from a set of MS data.
 #'
 #' @param input.table A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identiy, and analytical chemistry methods.
+#' indication of chemical identity, and analytical chemistry methods.
 #' It should contain columns with names specified by the following arguments:
 #' 
 #' @param dtxsid.col Which column of input.table indicates EPA's DSSTox Structure 

@@ -18,29 +18,70 @@ internal standard peak areas. Data are formatted for loading into databases.
 ### Dependencies
 
 * Users will need the freely available R statistical computing language: <https://www.r-project.org/>
+* Users will need the freely available "Just Another Gibbs Sampler" (JAGS):
+<https://mcmc-jags.sourceforge.io/>
+* Users will need to have the following package installed in addition to
+`invitroTKstats`:
+  * `ggplot2`
+  * `parallel`
+  * `runjags`
+  * `stats4`
 * Users will likely want a development environment like RStudio: <https://www.rstudio.com/products/rstudio/download/>
 
 ### Installing
 
-* Getting Started with R Package bayesmarker from the R command line
+Getting Started with R Package `invitroTKstats`.
+
+* Installing directly from the GitHub repo from the R console
 ```
-library(devtools)
-install_github("HumanExposure/bayesmarker")
+devtools::install_git(
+  "https://github.com/jfwambaugh/invitroTKstats.git",
+  subdir = "invitroTKstats",
+  ref = "main"
+)
 ```
-* RStudio provides a menu ‘Install Packages’ under ‘Tools’ tab
-* Load the bayesmarker data and functions
+
+* Installing a local clone of the GitHub repo.
+  
+  1. Go to the GitHub repo for
+  [`invitroTKstats`](https://github.com/jfwambaugh/invitroTKstats)
+  2. Choose the "Code" button and copy the repo URL.
+  3. In your local command line terminal and navigate to the directory location
+  you wish to store your local copy of the repo.
+  4. In your terminal type
+  `git clone <https://github.com/jfwambaugh/invitroTKstats>`
+  4. After cloning completes then open an R session.
+  5. In the R console use the following commands.
+  
 ```
-library(bayesmarker)
+devtools::install_local(
+  "<file_path_to_invitroTKstats_repo>/invitroTKstats"
+)
 ```
-* Check what version you are using 
+
+* Installation may also be done via the RStudio provided ‘Install Packages’ menu
+under the ‘Tools’ tab
+
+
+## Loading the Package
+
+To load the `invitroTKstats` data and functions into your local R session in
+the R console 
+
 ```
-packageVersion(bayesmarker)
+library(invitroTKstats)
+```
+
+Check the package version installed and in use 
+
+```
+packageVersion(invitroTKstats)
 ```
 
 ## Authors
 
 lead package developer John Wambaugh
-[@stanfield.zach@epa.gov]
+[@wambaugh.john@epa.gov]
 
 Anna Kreutz
 [@kreutz.anna@epa.gov]
@@ -51,7 +92,11 @@ Marci Smeltz
 Barbara Wetmore
 [@wetmore.barbara@epa.gov]
 
+Caroline Ring
+[@ring.caroline@epa.gov]
 
+Sarah Davidson-Fritz
+[@davidsonfritz.sarah@epa.gov]
 
 ## License
 

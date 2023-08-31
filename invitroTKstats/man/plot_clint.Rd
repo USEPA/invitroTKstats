@@ -2,13 +2,13 @@
 % Please edit documentation in R/plot_clint.R
 \name{plot_clint}
 \alias{plot_clint}
-\title{Plot Mass Spec. Response for Measurment of Fraction Unbound in Plasma (UC)}
+\title{Plot Mass Spec. Response for Measurement of Fraction Unbound in Plasma (UC)}
 \usage{
 plot_clint(level2, dtxsid)
 }
 \arguments{
 \item{level2}{A data.frame containing level2 data for fraction unbound in
-plasma measured by ultracentrifucation.}
+plasma measured by ultracentrifugation.}
 
 \item{dtxsid}{Which chemical to be plotted.}
 }
