@@ -1,0 +1,141 @@
+---
+title: "plotting-invitroTKstats"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{plotting-invitroTKstats}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(invitroTKstats)
+library(ggplot2)
+library(parallel)
+library(runjags)
+```
+
+## plot_clint.R
+
+Data taken by this function should be a "Level2" data that have been formatted by `format_clint` (this is the "Level1" file) and have been curated, and should have a column added with the value "Y" indicating that each row is verified as usable for analysis (that is, the Level2 file).
+
+`plot_clint` will return a time v.s. response plot for one chemical. The data set used in this example is `kreutz2023.clint`. 
+
+```{r example clint, warning=FALSE, fig.height=4.5, fig.width=7}
+# Load data in 
+level2.clint <- invitroTKstats::kreutz2023.clint
+
+# manually correct conc column name 
+colnames(level2.clint)[which(names(level2.clint) == "Std.Conc")] <- "Conc"
+
+# In the Clintdata vignette, it states
+# Barbara determined that only the following chemicals have reliable data:
+subset <- level2.clint[level2.clint$DTXSID %in% c(
+  "DTXSID0059871",
+  "DTXSID3059927",
+  "DTXSID80310730",
+  "DTXSID70381090",
+  "DTXSID10382147",
+  "DTXSID70366226",
+  "DTXSID2060965",
+  "DTXSID30396867",
+  "DTXSID00380798",
+  "DTXSID30340244",
+  "DTXSID60400587",
+  "DTXSID1062122",
+  "DTXSID50369896"), ]
+
+# set up 2x2 grid for figures 
+par(mfrow=c(2,2),mar=c(4,4,2,2))
+
+# plot the data for four chemicals 
+for (id in unique(subset$DTXSID)[1:4]) {
+  plot_clint(subset, id)
+}
+```
+
+
+## plot_fup_uc.R
+
+Data taken by this function should be a "Level2" data that have been formatted by `format_fup_uc` (this is the "Level1" file) and have been curated, and should have a column added with the value "Y" indicating that each row is verified as usable for analysis (that is, the Level2 file).
+
+The function will plot the time vs response for a given DTXSID. The data set used in this example is `kreutz2023.uc`. 
+
+```{r example fup_uc, warning=FALSE}
+# load in data
+level2.uc <- invitroTKstats::kreutz2023.uc
+
+# input the Level 2 data and a selected DTXSID
+# is returning two plots because the code do both print AND return
+DTXSID <- unique(level2.uc$DTXSID)[2]
+plot_fup_uc(level2.uc, DTXSID)
+```
+
+
+## plot_uc_results.R
+
+This function takes in a Level 2 data and MCMC results. 
+
+```{r example3-set-up, eval=FALSE}
+# Path to JAGs
+# this is specific to my computer, one will need to change to their own path
+JAGS.PATH = "C:/Users/zzhao/AppData/Local/Programs/JAGS/JAGS-4.3.1/x64"
+
+# load pre-jags data
+# load the compound name, initial function, model, and compound data into the environment
+load("~/invitrotkstats/working/KreutzPFAS/KreutzPFAS-Fup-UC-PREJAGS.RData")
+
+# set up JAGS
+NUM.CORES <- 2
+NUM.CHAINS <- 5
+CPU.cluster <- makeCluster(min(NUM.CORES,NUM.CHAINS))
+```
+
+```{r example3-JAGS, eval=FALSE}
+# run MCMC
+coda.out <- list()
+coda.out[[this.compound]] <- autorun.jags(
+  UC_PPB_model, 
+  n.chains = NUM.CHAINS,
+  method="parallel", 
+  cl=CPU.cluster,
+  summarise=T,
+  inits = initfunction,
+  startburnin = 50000, 
+  startsample = 50000, 
+  max.time="1h",
+  crash.retry=2,
+  adapt=15000,
+  psrf.target = 1.05,
+  thin.sample=2000,
+  data = mydata,
+  jags = findjags(look_in=JAGS.PATH),
+  monitor = c(
+    # Chemical analysis parameters:
+    'const.analytic.sd',
+    'hetero.analytic.slope',
+    'C.thresh',
+    'log.calibration',
+    'background',
+    # Measurement parameters:
+    'Fup',
+    "Fstable"
+    ))
+```
+
+
+```{r, eval=FALSE}
+# load in Level 2 data
+dat <- read.csv(file="~/invitrotkstats/working/KreutzPFAS/KreutzPFAS-fup-UC-Level2.tsv", 
+    sep="\t",header=T) 
+
+# puting in 
+plot_uc_results(dat, coda.out, this.compound, cal = 1, MW = 1, cal.col="Calibration",uc.dilute=5,af.dilute=2)
+```
+
