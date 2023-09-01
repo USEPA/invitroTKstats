@@ -5,7 +5,7 @@
 #' check on the data collected and the Bayesian results, see if they are as expected.
 #' Data are read from a "Level2" text file.
 #'
-#' @param dat level 2 data set
+#' @param dat Level 2 data set
 #'
 #' @param bayes MCMC results
 #'
@@ -24,9 +24,9 @@
 #' @param name.col Which column of data indicates the test compound
 #' (Defaults to "Compound.Name")
 #'
-#' @param uc.dilute ultracentrifugation dilution factor
+#' @param uc.dilute Ultracentrifugation dilution factor (Defaults to 5)
 #'
-#' @param af.dilute aqueous fraction dilution factor
+#' @param af.dilute Aqueous fraction dilution factor (Defaults to 2)
 #'
 #' @return A list of two plots, one with axes in original unit and one's axes in log10-scale
 #'

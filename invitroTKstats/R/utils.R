@@ -4,7 +4,7 @@
 #'
 #' @return text with desired expression
 #'
-#' @import scales
+#' @importFrom scales scientific_format
 #'
 #' @export calc_fup_uc
 scientific_10 <- function(x) {
@@ -31,11 +31,11 @@ Heaviside <- function(x, threshold=0)
   return(out)
 }
 
-#' Convert a runjags object to a list
+#' Convert a runjags-class object to a list
 #'
-#' @param runjagsdata.in result from autorun.jags(), an object of class runjags
+#' @param runjagsdata.in MCMC results from autorun.jags(), object of class runjags
 #'
-#' @return a list contains data from the input runjags object
+#' @return List object containing MCMC results from the provided runjags object.
 #'
 #'
 #' @export runjagsdata.to.list
