@@ -2,12 +2,8 @@
 #'
 #' This function uses mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
-<<<<<<< HEAD
-#' unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
-=======
 #' unbound in plasma using rapid equilibrium dialysis
 #' \insertCite{waters2008validation}{invitroTKstats}.
->>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #' Data are read from a "Level2" text file that should have been formatted and created
 #' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 #' should have been curated and had a column added with the value "Y" indicating
@@ -26,8 +22,12 @@
 #' \eqn{f_{up}} is calculated from MS responses as:
 #'
 #'
-#' \eqn{f_{up} = \frac{max(0, mean(\text{PBS Response}*\text{Dilution.Factor})-mean(\text{NoPlasma.Blank Response}*\text{Dilution.Factor}))}{mean(\text{Plasma Response}*\text{Dilution.Factor}) -
-#'   mean(\text{Plasma.Blank Response}*\text{Dilution.Factor})}}
+#' \eqn{f_{up} = \frac{\max( 0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_{NPB}*c_{DF})}{n})}
+#' {\frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_B * c_{DF})}{n}}}
+#'
+#' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is
+#' No Plasma Blank Response, \eqn{r_{B}} is Plasma Blank Response, and n is the number
+#' of responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-fup-RED-Level2.tsv" is appended (defaults to "MYDATA")
@@ -85,13 +85,7 @@
 #' level3 <- calc_fup_red_point(FILENAME="Wambaugh2019")
 #'
 #' @references
-<<<<<<< HEAD
-#' Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis
-#' approach for the measurement of plasma protein binding." Journal of
-#' Pharmaceutical Sciences 97.10 (2008): 4586-4595.
-=======
 #'  \insertRef{waters2008validation}{invitroTKstats}
->>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #'
 #' @export calc_fup_red_point
 calc_fup_red_point <- function(FILENAME, good.col="Verified")

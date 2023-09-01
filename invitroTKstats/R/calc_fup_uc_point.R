@@ -20,8 +20,10 @@
 #'
 #' \eqn{f_{up}} is calculated from MS responses as:
 #'
+#' \eqn{f_{up} = \frac{\sum_{i = 1}^n(r_A * c_{DF}) / n}{\sum_{i = 1}^n(r_{T5} * c_{DF}) / n}}
 #'
-#' \eqn{f_{up} = \frac{mean(\text{AF Response}*\text{Dilution.Factor})}{mean(\text{T5 Response}*\text{Dilution.Factor})}}
+#' where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
+#' \eqn{r_{T5}} is T5 Response, and n is the number of responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
@@ -56,13 +58,7 @@
 #' level3 <- calc_fup_uc_point(FILENAME="Kreutz2020")
 #'
 #' @references
-<<<<<<< HEAD
-#' Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma
-#' lipoproteins by density-gradient ultracentrifugation." Analytical
-#' Biochemistry 65.1-2 (1975): 42-49.#'
-=======
 #' \insertRef{redgrave1975separation}{invitroTKstats}
->>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #'
 #' @export calc_fup_uc_point
 calc_fup_uc_point <- function(FILENAME, good.col="Verified")

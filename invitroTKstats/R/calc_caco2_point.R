@@ -2,11 +2,7 @@
 #'
 #' This function uses mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of membrane
-<<<<<<< HEAD
-#' permeability using Caco-2 cells (Hubatsch, 2007).
-=======
 #' permeability using Caco-2 cells \insertCite{hubatsch2007determination}{invitroTKstats}.
->>>>>>> 76e6bf869fc36b3edb47ccc81c8c9045ed96b4d8
 #' Data are read from a "Level2" text file that should have been formatted and
 #' created
 #' by \code{\link{format_caco2}} (this is the "Level1" file). The Level1 file
@@ -28,9 +24,12 @@
 #'
 #' \eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
 #'
-#' The rate of permeation, \eqn{\frac{dQ}{dt}} (peak area/s) is calculated as:
+#' The rate of permeation, \eqn{\frac{dQ}{dt}}( \eqn{\frac{\text{peak area}}{\text{time (s)}}} ) is calculated as:
 #'
-#' \eqn{\frac{dQ}{dt} = max(0, mean(\text{PBS Response}*\text{Dilution.Factor})-mean(\text{Blank Response}*\text{Dilution.Factor}))}
+#' \eqn{\frac{dQ}{dt} = \max(0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_B * c_{DF})}{n})}
+#'
+#' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
+#' and n is the number of responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")
