@@ -18,7 +18,7 @@
 #' }
 #' @param level2 A data.frame containing level2 data for fraction unbound in
 #' plasma measured by ultracentrifugation.
-#' 
+#'
 #' @param dtxsid Which chemical to be plotted.
 #'
 #' @return \item{ggplot2}{A figure of mass spec. response for different sample types}
@@ -78,10 +78,11 @@ plot_clint <- function(level2,dtxsid)
   level2 <- subset(level2, DTXSID==dtxsid)
 
   out <- ggplot(level2, aes(x=Time, y=Response)) +
+    ggtitle(paste(level2[1,"Compound.Name"]," (",level2[1,"DTXSID"],")",sep="")) +
     geom_point(mapping = aes(
       fill = factor(Sample.Type),
       shape = factor(Sample.Type),
       color=factor(Calibration)), size = 5)
+
   print(out)
-  return(out)
 }
