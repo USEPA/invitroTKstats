@@ -84,5 +84,5 @@ plot_clint <- function(level2,dtxsid)
       shape = factor(Sample.Type),
       color=factor(Calibration)), size = 5)
 
-  print(out)
+  return(out)
 }
