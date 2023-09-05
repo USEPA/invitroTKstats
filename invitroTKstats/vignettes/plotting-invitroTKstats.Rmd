@@ -21,6 +21,7 @@ library(parallel)
 library(runjags)
 ```
 
+
 ## plot_clint.R
 
 Data taken by this function should be a "Level2" data that have been formatted by `format_clint` (this is the "Level1" file) and have been curated, and should have a column added with the value "Y" indicating that each row is verified as usable for analysis (that is, the Level2 file).
@@ -56,7 +57,7 @@ par(mfrow=c(2,2),mar=c(4,4,2,2))
 
 # plot the data for four chemicals 
 for (id in unique(subset$DTXSID)[1:4]) {
-  plot_clint(subset, id)
+  print(plot_clint(subset, id))
 }
 ```
 
@@ -71,12 +72,14 @@ The function will plot the time vs response for a given DTXSID. The data set use
 # load in data
 level2.uc <- invitroTKstats::kreutz2023.uc
 
-# input the Level 2 data and a selected DTXSID
-# is returning two plots because the code do both print AND return
-DTXSID <- unique(level2.uc$DTXSID)[2]
-plot_fup_uc(level2.uc, DTXSID)
-```
+# set up 2x2 grid for figures 
+par(mfrow=c(2,2),mar=c(4,4,2,2))
 
+# plot the data for four chemicals 
+for (id in unique(level2.uc$DTXSID)[1:4]) {
+  print(plot_fup_uc(level2.uc, id))
+}
+```
 
 ## plot_uc_results.R
 
