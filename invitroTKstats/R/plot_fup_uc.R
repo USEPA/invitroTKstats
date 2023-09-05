@@ -18,7 +18,7 @@
 #' }
 #' @param level2 A data.frame containing level2 data for fraction unbound in
 #' plasma measured by ultracentrifugation.
-#' 
+#'
 #' @param dtxsid Which chemical to be plotted.
 #'
 #' @return \item{ggplot2}{A figure of mass spec. response for different sample types}
@@ -109,7 +109,6 @@ plot_fup_uc <- function(level2,dtxsid, good.col="Verified")
       fill=guide_legend(title="Calibration"),
       shape=guide_legend(title="Calibration"),
       color=guide_legend(title="Calibration"))
-  print(out)
 
-  return(out)
+  print(out)
 }
