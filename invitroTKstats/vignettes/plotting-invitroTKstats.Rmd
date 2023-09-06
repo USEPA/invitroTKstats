@@ -132,6 +132,38 @@ coda.out[[this.compound]] <- autorun.jags(
     ))
 ```
 
+*<Add a notification with a rough estimate of how long this will take on a user's local machine (since most users will not be using a HPC).>*
+
+```{r}
+# read in the level 2 for kreutz2023
+tmp <-read.delim("KreutzPFAS-fup-UC-Level2.tsv")
+tmp_sub <- dplyr::filter(tmp,DTXSID == "DTXSID50381992")
+# write the subset out to the vignettes directory
+out_dir <- "~/Git/invitrotkstats/invitroTKstats/vignettes/"
+write.table(tmp_sub,
+      file=paste0(out_dir,"tmp_sub-fup-UC-Level2.tsv"),
+      sep="\t",
+      row.names=F,
+      quote=F)
+```
+
+
+```{r}
+BOUT <- calc_fup_uc(FILENAME = "tmp_sub",
+                    JAGS.PATH="C:/Users/sdavid01/AppData/Local/Programs/JAGS/JAGS-4.3.1/x64")
+```
+
+```{r}
+# plot_uc_results is not exported in this branch
+source("~/Git/invitrotkstats/invitroTKstats/R/plot_uc_results.R",verbose = FALSE)
+
+plot_uc_results(tmp_sub,
+                bayes = BOUT$coda,
+                compound = "Bis(1H,1H-perfluoropropyl)amine",
+                cal = 1,
+                cal.col = "Calibration")
+```
+
 
 ```{r, eval=FALSE}
 # load in Level 2 data
