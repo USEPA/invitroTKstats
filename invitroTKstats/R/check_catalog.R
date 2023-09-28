@@ -1,9 +1,12 @@
-#' Function to check data catalog
+#' Function to Check Level 0 Data Catalog
 #' 
-#' DESCRIPTION NEEDED
+#' This function is meant to check whether the catalog file is in the anticipated
+#' format with required information.
+#' 
+#' @param cat The catalog to be checked, format `data.frame`.
 #' 
 #' @example
-#' check_catalog(cat = data.guide)
+#' check_catalog(cat = data.guide) # note the data.guide is not currently in `invitroTKstats`
 #' 
 #' @export
 check_catalog <- function(cat){
@@ -18,7 +21,7 @@ check_catalog <- function(cat){
     stop(paste(flag,collapse=", ")," - missing or mis-named columns in the",
          "data catalog.")
   }
-  cat("All of the standard columns in the catalog.")
+  # cat("All of the standard columns in the catalog.") # only un-comment if more checks added
   
   ### Final Check ###
   cat("Your data catalog is ready for merge_level0.")
