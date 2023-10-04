@@ -22,11 +22,11 @@
 #' \eqn{f_{up}} is calculated from MS responses as:
 #'
 #'
-#' \eqn{f_{up} = \frac{\max( 0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_{NPB}*c_{DF})}{n})}
+#' \eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_{NPB}*c_{DF})}{n}\right)}
 #' {\frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_B * c_{DF})}{n}}}
 #'
 #' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is
-#' No Plasma Blank Response, \eqn{r_{B}} is Plasma Blank Response, and n is the number
+#' No Plasma Blank Response, \eqn{r_{B}} is Plasma Blank Response, and \eqn{n} is the number
 #' of responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the

@@ -24,12 +24,12 @@
 #'
 #' \eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
 #'
-#' The rate of permeation, \eqn{\frac{dQ}{dt}}( \eqn{\frac{\text{peak area}}{\text{time (s)}}} ) is calculated as:
+#' The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
 #'
-#' \eqn{\frac{dQ}{dt} = \max(0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_B * c_{DF})}{n})}
+#' \eqn{\frac{dQ}{dt} = \max\left(0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n} - \frac{\sum_{i=1}^n(r_B * c_{DF})}{n}\right)}
 #'
 #' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
-#' and n is the number of responses.
+#' and \eqn{n} is the number of responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")

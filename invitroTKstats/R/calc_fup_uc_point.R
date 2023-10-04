@@ -23,7 +23,7 @@
 #' \eqn{f_{up} = \frac{\sum_{i = 1}^n(r_A * c_{DF}) / n}{\sum_{i = 1}^n(r_{T5} * c_{DF}) / n}}
 #'
 #' where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
-#' \eqn{r_{T5}} is T5 Response, and n is the number of responses.
+#' \eqn{r_{T5}} is T5 Response, and \eqn{n} is the number of responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
