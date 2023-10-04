@@ -6,22 +6,34 @@
 #' 
 #' @param file Vector of character strings with the file names of level 0 data.
 #' @param sheet Vector of character strings containing the sheet with MS data. 
-#' @param skip.rows Numeric vector containing the number of rows to skip in data file.
-#' @param date Vector of character strings containing the date of data collection,
-#'             format "MMDDYY". "MM" = 2 digit month, "DD" = 2 digit month,
-#'             and "YY" = 2 digit month.
-#' @param compound Vector of character strings with the relevant chemical identifier.
+#' @param skip.rows Numeric vector containing the number of rows to skip in
+#'                  data file.
+#' @param date Vector of character strings containing the date of data
+#'             collection, format "MMDDYY". "MM" = 2 digit month,
+#'             "DD" = 2 digit month, and "YY" = 2 digit month.
+#' @param compound Vector of character strings with the relevant chemical
+#'                 identifier.
 #' @param istd Vector of character strings with the internal standard.
-#' @param sample Vector of character strings with column names containing samples. 
-#' @param type Vector of character strings with column names containing type information.
-#' @param peak Vector of character strings with the column names containing mass spectrometry (MS) peak data.
-#' @param istd.peak Vector of character strings with column names containing internal standard (ITSD) peak data.
-#' @param conc Vector of character strings with column names containing exposure concentration data.
-#' @param analysis.param Vector of character strings with column names containing analysis parameters.
+#' @param sample Vector of character strings with column names containing
+#'               samples. 
+#' @param type Vector of character strings with column names containing type
+#'             information.
+#' @param peak Vector of character strings with the column names containing
+#'             mass spectrometry (MS) peak data.
+#' @param istd.peak Vector of character strings with column names containing
+#'                  internal standard (ITSD) peak data.
+#' @param conc Vector of character strings with column names containing
+#'             exposure concentration data.
+#' @param analysis.param Vector of character strings with column names
+#'                       containing analysis parameters.
+#' @param num.rows Numeric vector containing the number of rows with data to be
+#'                 pulled. (Default is NULL.)
 #' @param additional.info Named list or data.frame of additional columns to
-#'                        include in the catalog.  Additional columns should be
-#'                        named with the following structure "<Fill-in>.ColName",
-#'                        and all spaces should be designated by a period, "." .
+#'                        include in the catalog. Additional columns should
+#'                        follow the nomenclature of "<Fill-in>.ColName" if
+#'                        indicating column names with information to pull,
+#'                        otherwise a short name.  All spaces in additional
+#'                        column names should be designated with a period, "." .
 #'                        (Default is NULL, i.e. no additional columns.)
 #' 
 #' @seealso merge_level0
@@ -38,6 +50,7 @@
 create_catalog <- function(
     file,sheet,skip.rows,date,compound,istd,sample,
     type,peak,istd.peak,conc,analysis.param,
+    num.rows = NULL,
     additional.info = NULL){
   
   data.check <- c(file = missing(file),
@@ -64,7 +77,17 @@ create_catalog <- function(
     type,peak,conc,analysis.param
   )
   colnames(catalog) <- std.catcols
+  
   # check if we need to add a column with the number of rows
+  if(!is.null(num.rows)){
+    if(length(num.rows)!=nrow(catalog) & length(num.rows)!=1){
+      stop("Length of `num.rows` is greater than 1 and does not match the number of rows in the required catalog information.")
+    }
+    
+    catalog <- cbind.data.frame(catalog,Number.Data.Rows = num.rows)
+  }
+  
+  # check if we need to add columns with additional information
   if(!is.null(additional.info)){
     # check the class of the `additional.info` object
     stopifnot(is.data.frame(additional.info)|is.list(additional.info),
