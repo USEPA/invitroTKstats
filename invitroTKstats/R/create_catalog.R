@@ -1,26 +1,28 @@
 #' Function to create a catalog of level 0 files to be merged.
 #' 
-#' This function is meant for creating a catalog for all of the level 0 data
-#' files that will be merged with the `merge_level0` function.
+#' This function is meant for creating a catalog of all level 0 data
+#' files listed that will be merged with the `merge_level0` function.
+#' All arguments are required, with exception of `additional.info`.
 #' 
 #' @param file Vector of character strings with the file names of level 0 data.
 #' @param sheet Vector of character strings containing the sheet with MS data. 
-#' @param skip.rows Numeric vector containing the number of rows to skip.
-#' @param date Character vector containing the date of data collection,
+#' @param skip.rows Numeric vector containing the number of rows to skip in data file.
+#' @param date Vector of character strings containing the date of data collection,
 #'             format "MMDDYY". "MM" = 2 digit month, "DD" = 2 digit month,
 #'             and "YY" = 2 digit month.
 #' @param compound Vector of character strings with the relevant chemical identifier.
-#' @param istd
-#' @param sample
-#' @param type
-#' @param peak
-#' @param istd.peak
-#' @param conc
-#' @param analysis.param
+#' @param istd Vector of character strings with the internal standard.
+#' @param sample Vector of character strings with column names containing samples. 
+#' @param type Vector of character strings with column names containing type information.
+#' @param peak Vector of character strings with the column names containing mass spectrometry (MS) peak data.
+#' @param istd.peak Vector of character strings with column names containing internal standard (ITSD) peak data.
+#' @param conc Vector of character strings with column names containing exposure concentration data.
+#' @param analysis.param Vector of character strings with column names containing analysis parameters.
 #' @param additional.info Named list or data.frame of additional columns to
 #'                        include in the catalog.  Additional columns should be
 #'                        named with the following structure "<Fill-in>.ColName",
 #'                        and all spaces should be designated by a period, "." .
+#'                        (Default is NULL, i.e. no additional columns.)
 #' 
 #' @seealso merge_level0
 #' 
