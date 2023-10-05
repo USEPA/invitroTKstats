@@ -49,14 +49,14 @@ contain columns with names specified by the following arguments:}
 \item{FILENAME}{A string used to identify outputs of the function call.
 (defaults to "MYDATA")}
 
-\item{sample.col}{Which column of data.in indicates the unique mass 
-spectrometry (MS) sample name used by the laboratory. (Defaults to 
+\item{sample.col}{Which column of data.in indicates the unique mass
+spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name")}
 
-\item{lab.compound.col}{Which column of data.in indicates The test compound 
+\item{lab.compound.col}{Which column of data.in indicates The test compound
 name used by the laboratory (Defaults to "Lab.Compound.Name")}
 
-\item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure 
+\item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
 \item{date.col}{Which column of data.in indicates the laboratory measurment
@@ -65,11 +65,11 @@ date (Defaults to "Date")}
 \item{compound.col}{Which column of data.in indicates the test compound
 (Defaults to "Compound.Name")}
 
-\item{area.col}{Which column of data.in indicates the target analyte (that 
+\item{area.col}{Which column of data.in indicates the target analyte (that
 is, the test compound) MS peak area (Defaults to "Area")}
 
 \item{series.col}{Which column of data.in indicates the "series", that is
-a simultaneous replicate with the same analytical chemistry 
+a simultaneous replicate with the same analytical chemistry
 (Defaults to "Series")}
 
 \item{type.col}{Which column of data.in indicates the sample type (see table
@@ -78,16 +78,16 @@ above)(Defaults to "Sample.Type")}
 \item{std.conc.col}{Which column indicates the intended concentration 
 of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")}
 
-\item{cal}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{cal}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{cal.col}{Which column of data.in indicates the MS calibration -- for
 instance different machines on the same day or different days with the same
 MS analyzer (Defaults to "Cal")}
 
-\item{dilution}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{dilution}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{dilution.col}{Which column of data.in indicates how many times the
@@ -96,51 +96,51 @@ sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
 \item{istd.col}{Which column of data.in indicates the MS peak area for the
 internal standard (Defaults to "ISTD.Area")}
 
-\item{istd.name}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{istd.name}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{istd.name.col}{Which column of data.in indicates identity of the 
+\item{istd.name.col}{Which column of data.in indicates identity of the
 internal standard (Defaults to "ISTD.Name")}
 
-\item{istd.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{istd.conc}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{istd.conc.col}{Which column of data.in indicates the concentration of
 the internal standard in uM (Defaults to "ISTD.Conc")}
 
-\item{uc.assay.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{uc.assay.conc}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{uc.assay.conc.col}{Which column indicates the intended initial
 test chemical concentration in the UC assay in uM (Defaults to "Test.Target.Conc")}
 
-\item{analysis.method}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.method}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{analysis.method.col}{Which column of data.in indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
 "Analysis.Method")}
 
-\item{analysis.instrument}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.instrument}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{analysis.instrument.col}{Which column of data.in indicates the 
-instrument used for chemical analysis, for example 
-"Agilent 6890 GC with model 5973 MS" (Defaults to 
+\item{analysis.instrument.col}{Which column of data.in indicates the
+instrument used for chemical analysis, for example
+"Agilent 6890 GC with model 5973 MS" (Defaults to
 "Analysis.Instrument")}
 
-\item{analysis.parameters}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.parameters}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{analysis.parameters.col}{Which column of data.in indicates the 
+\item{analysis.parameters.col}{Which column of data.in indicates the
 parameters used to identify the compound on the chemical analysis instrument,
-for example 
+for example
 "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 (Defaulys to "Analysis.Paramaters").}
 
@@ -151,7 +151,7 @@ which the data were obtained (for example "MyWorkbook.xlsx").}
 observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{level0.sheet.col}{Which column of data.in indicates the specific 
+\item{level0.sheet.col}{Which column of data.in indicates the specific
 sheet containing the data if the file is an Excel workbook}
 
 \item{level0.sheet}{If this argument is used (defaults to NULL) every
@@ -164,7 +164,8 @@ data.frame A data.frame in standardized "level1" format
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using ultracentrifugation (Redgrave 1975?).
+unbound in plasma using ultracentrifugation
+\insertCite{redgrave1975separation}{invitroTKstats}.
 An input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }
@@ -193,9 +194,7 @@ level1 <- format_fup_uc(level0,
 
 }
 \references{
-Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
-lipoproteins by density-gradient ultracentrifugation." Analytical 
-Biochemistry 65.1-2 (1975): 42-49.#'
+\insertRef{redgrave1975separation}{invitroTKstats}
 }
 \author{
 John Wambaugh

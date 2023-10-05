@@ -38,17 +38,17 @@ the MS feature area for the chemical}
 \item{ISTD.offset}{An integer indicating how many columns difference there
 is between the chemical of study MS area and the ISTD MS area (defaults to 2)}
 
-\item{analysis.method}{A string describing the chemical analysis method 
+\item{analysis.method}{A string describing the chemical analysis method
 (Defaults to "GC", that is gas chromatography)}
 
 \item{instrument}{A string describing the instrument used for chemical 
 analysis (Defaults to "Something or Other 3000",}
 
-\item{inst.param.offset}{An integer indicating the difference in the number 
-of columns between the MS peak area and the column giving the instrument 
+\item{inst.param.offset}{An integer indicating the difference in the number
+of columns between the MS peak area and the column giving the instrument
 parameters (Defaults to -3)}
 
-\item{conc.offset}{An integer indicating the difference in the number 
+\item{conc.offset}{An integer indicating the difference in the number
 of columns between the MS peak area and the column giving the intended
 concentration for calibration curves (Defaults to -2)}
 
@@ -59,8 +59,8 @@ feature area column names (used for both test chemical and ISTD) (Defaults to
 \item{inst.param.base}{A character string used for forming the name of the
 chemical analysis instrument parameter column name (Defaults to "RT...")}
 
-\item{conc.base}{A character string used for forming the name of the 
-calibration curve intended concentration column name (Defaults to 
+\item{conc.base}{A character string used for forming the name of the
+calibration curve intended concentration column name (Defaults to
 "Final Conc....")}
 
 \item{id.cols}{A vector of character strings used for identifying each
@@ -85,13 +85,11 @@ of these types:
 }
 \examples{
 library(invitroTKstats)
-level0 <- 
+level0 <-
 
 }
 \references{
-Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
-lipoproteins by density-gradient ultracentrifugation." Analytical 
-Biochemistry 65.1-2 (1975): 42-49.#'
+\insertRef{redgrave1975separation}{invitroTKstats}
 }
 \author{
 John Wambaugh

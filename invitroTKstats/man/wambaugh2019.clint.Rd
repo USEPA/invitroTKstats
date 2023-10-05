@@ -3,7 +3,7 @@
 \docType{data}
 \name{wambaugh2019.clint}
 \alias{wambaugh2019.clint}
-\title{Mass Spectrometry for Wambaugh et al. (2019) Hepatocyte Incubations}
+\title{Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Hepatocyte Incubations}
 \format{
 A data.frame 23,021 rows and 15 variables: \describe{
 \item{\code{Preferred.Name}}{}
@@ -20,7 +20,7 @@ A data.frame 23,021 rows and 15 variables: \describe{
 \item{\code{Conc}}{}
 \item{\code{TaskOrder}}{}
 \item{\code{FileName}}{}
-\item{\code{X}}{} 
+\item{\code{X}}{}
 }
 }
 \source{
@@ -30,12 +30,13 @@ Wambaugh et al. (2019)
 wambaugh2019.clint
 }
 \description{
-Wambaugh et al. (2019) includes measurements for intrinsic hepatic clearance
+\insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes measurements for intrinsic hepatic clearance
 Clint measured using in vitro suspensions of pooled primary human hepatocytes
-(Shibata, et al. 2002).)
+\insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \references{
 \insertRef{shibata2002prediction}{invitroTKstats}
+
 \insertRef{wambaugh2019assessing}{invitroTKstats}
 }
 \keyword{data}
