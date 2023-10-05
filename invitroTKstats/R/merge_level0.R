@@ -29,11 +29,83 @@
 #' from the specified file and sheet.
 #'
 #' @param data.label A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
+#' (Default to "MYDATA")
 #' 
 #' @param level0.catalog A data frame describing which columns of which sheets
 #' in which Excel files contain MS data for analysis. See details for full
 #' explanation.
+#' 
+#' @param file.col (Character) Column name containing level 0 file names
+#' to pull data from.
+#' 
+#' @param sheet (Character) Excel file sheet name/identifier containing
+#' level 0 where data is to be pulled from. (Note: Single entry only, use only
+#' if all files have the same sheet identifier for level 0 data.)
+#' 
+#' @param sheet.col (Character) Column name containing sheet name/identifiers
+#' for the level 0 catalog. (Default to "Sheet")
+#' 
+#' @param skip.rows (Numeric) Number of rows to skip when extracting level 0
+#' data from the specified Excel file(s). (Note: Single entry only, use only if
+#' all files need to skip the same number of rows for extracting level 0 data.)
+#' 
+#' @param skip.rows.col (Character) Column name containing `skip.rows`
+#' information. (Default to "Skip.Rows")
+#' 
+#' @param num.rows (Numeric) Number of rows to pull when extracting level 0
+#' data from the specified Excel file(s). (Note: Single entry only, use only if
+#' all files need to pull the same number of rows for extracting level 0 data.)
+#' 
+#' @param num.rows.col (Character) Column name containing `num.rows`
+#' information. (Default to `NULL`)
+#' 
+#' @param date (Character) Date of laboratory measurements. Typical format
+#' "MMDDYY" ("MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year).
+#' 
+#' @param date.col (Character) Column name Which column of input.data indicates the laboratory measurement
+#' date (Defaults to "Date")
+#' 
+#' @param compound.col (Character) Column name of input.data indicates the
+#' test compound. (Defaults to "Compound.Name")
+#' 
+#' @param istd.col (Character) Column name of input.data indicating the
+#' MS peak area for the internal standard. (Defaults to "ISTD.Area")
+#' 
+#' @param sample.colname <FILL IN DETAILS>
+#' 
+#' @param sample.colname.col <FILL IN DETAILS>
+#' 
+#' @param type.colname <FILL IN DETAILS>
+#' 
+#' @param type.colname.col <FILL IN DETAILS>
+#' 
+#' @param peak.colname <FILL IN DETAILS>
+#' 
+#' @param peak.colname.col <FILL IN DETAILS>
+#' 
+#' @param istd.peak.colname <FILL IN DETAILS>
+#' 
+#' @param istd.peak.colname.col <FILL IN DETAILS>
+#' 
+#' @param conc.colname <FILL IN DETAILS>
+#' 
+#' @param conc.colname.col <FILL IN DETAILS>
+#' 
+#' @param analysis.param.colname <FILL IN DETAILS>
+#' 
+#' @param analysis.param.colname.col <FILL IN DETAILS>
+#' 
+#' @param additional.colnames <FILL IN DETAILS>
+#' 
+#' @param additional.colname.cols <FILL IN DETAILS>
+#' 
+#' @param chem.ids <FILL IN DETAILS>
+#' 
+#' @param chem.lab.id.col <FILL IN DETAILS>
+#' 
+#' @param chem.name.col <FILL IN DETAILS>
+#' 
+#' @param chem.dtxsid.col <FILL IN DETAILS>
 #' 
 #' @param sample.col Which column of clint.data indicates the unique mass 
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to 
@@ -44,12 +116,6 @@
 #' 
 #' @param dtxsid.col Which column of clint.data indicates EPA's DSSTox Structure 
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#' 
-#' @param date.col Which column of clint.data indicates the laboratory measurement
-#' date (Defaults to "Date")
-#' 
-#' @param compound.col Which column of clint.data indicates the test compound
-#' (Defaults to "Compound.Name")
 #' 
 #' @param area.col Which column of clint.data indicates the target analyte (that 
 #' is, the test compound) MS peak area (Defaults to "Area")
@@ -70,9 +136,6 @@
 #' @param density.col Which column of clint.data indicates the density (units of
 #' millions of hepatocytes per mL) hepatocytes in the in vitro incubation 
 #' (Defaults to "Hep.Density" )
-#' 
-#' @param istd.col Which column of clint.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
 #' 
 #' @param istd.name.col Which column of clint.data indicates identity of the 
 #' internal standard (Defaults to "ISTD.Name")
@@ -129,8 +192,6 @@
 #' @param dtxsid.col Which column of input.data indicates EPA's DSSTox Structure 
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
 #' 
-#' @param date.col Which column of input.data indicates the laboratory measurement
-#' date (Defaults to "Date")
 #' 
 #' @param series.col Which column of PPB.data indicates the "series", that is
 #' a simultaneous replicate with the same analytical chemistry 
@@ -139,9 +200,6 @@
 #' @param series If this argument is used (defaults to NULL) every observation 
 #' in the table is assigned the value of the argument and the corresponding
 #' column in input.table (if present) is ignored.
-#' 
-#' @param compound.col Which column of input.data indicates the test compound
-#' (Defaults to "Compound.Name")
 #' 
 #' @param area.col Which column of input.data indicates the target analyte (that 
 #' is, the test compound) MS peak area (Defaults to "Area")
@@ -168,9 +226,6 @@
 #' observation in the table is assigned the value of the argument and the 
 #' corresponding column in input.table (if present) is ignored.
 #' 
-#' 
-#' @param istd.col Which column of input.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
 #' 
 #' @param istd.name.col Which column of input.data indicates identity of the 
 #' internal standard (Defaults to "ISTD.Name")
