@@ -11,46 +11,26 @@
 #' @export
 check_catalog <- function(catalog){
   ### Catalog Standard Column Names ###
-  # set-up the standard catalog column name object
-  std.cols <- std.catcols
   # check if the standard catalog column names are in the catalog
   .check_std_colnames_in_data(data = catalog,std.colnames = std.catcols,data.name = "catalog")
   # print passing message
-  cat("All of the standard columns exist in the catalog. \n")
+  cat("All of the standard columns exist in the catalog. \n") # <may need to check with John which standard columns can have some missing data but can't all be missing out of standard columns and or others>
+  
+  ### Check if there Columns with only Missing Data (and are Problematic) ###
+  .check_all_miss_cols(data = catalog,req.cols = std.catcols) # <may need to check with John which standard columns require all data to be filled>
   
   ### Check that Required Columns have No Missing Data Entries ###
-  # if(any(sapply(catalog,function(x){any(is.na(x))})) | any(sapply(catalog,function(x){any(is.null(x))}))){
-  #   someNA <- names(which(sapply(catalog,function(x){any(is.na(x))})))
-  #   someNULL <- names(which(sapply(catalog,function(x){any(is.null(x))})))
-  #   
-  #   if(length(someNA)>0){
-  #     c("File",)
-  #   }
-  #   if(length(someNULL)>0){}
-  # }
-  ### Check Class of Standard Column Names ###
-  # check if there are any columns with only missing (NA or NULL) data and remove from `catalog` just for further checks 
-  if(any(sapply(catalog,function(x){all(is.na(x))})) | any(sapply(catalog,function(x){all(is.null(x))}))){
-    allNA <- which(sapply(catalog,function(x){all(is.na(x))}))
-    allNULL <- which(sapply(catalog,function(x){all(is.null(x))}))
-    # remove NA and NULL columns from catalog for checks
-    if(length(allNA)>0){
-      catalog <- dplyr::select(catalog,-names(allNA)) # catalog[,names(!allNA)]
-      std.cols <- std.cols[which(std.cols != names(allNA))]
-    }
-    if(length(allNULL)>0){
-      catalog <- dplyr::select(catalog,-names(allNULL)) # catalog[,names(!allNULL)]
-      std.cols <- std.cols[which(std.cols != names(allNULL))]
-    }
-  }
+  .check_no_miss_cols(data = catalog,req.cols = std.catcols,return.missing = TRUE)
+  cat("All standard columns are data complete.")
   
+  ### Check Class of Standard Column Names ###
   # check if the standard catalog column names are the correct class
-  std.cols.char <- std.cols[-which(std.cols == "Skip.Rows")]
+  std.cols.char <- std.catcols[-which(std.catcols == "Skip.Rows")]
   if("Number.Data.Rows"%in%colnames(catalog)){
-    std.cols.num <- c(std.cols[which(std.cols == "Skip.Rows")],
+    std.cols.num <- c(std.catcols[which(std.catcols == "Skip.Rows")],
                       num.rows = "Number.Data.Rows")
   }else{
-    std.cols.num <- std.cols[which(std.cols == "Skip.Rows")]
+    std.cols.num <- std.catcols[which(std.catcols == "Skip.Rows")]
   }
   # check 'character' class
   .check_char_cols(data = catalog,char.cols = std.cols.char)
