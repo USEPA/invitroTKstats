@@ -42,58 +42,68 @@
 #' level 0 where data is to be pulled from. (Note: Single entry only, use only
 #' if all files have the same sheet identifier for level 0 data.)
 #' 
-#' @param sheet.col (Character) Column name containing sheet name/identifiers
-#' for the level 0 catalog. (Default to "Sheet")
+#' @param sheet.col (Character) Catalog column name containing `sheet`
+#' information. (Default to "Sheet")
 #' 
 #' @param skip.rows (Numeric) Number of rows to skip when extracting level 0
 #' data from the specified Excel file(s). (Note: Single entry only, use only if
 #' all files need to skip the same number of rows for extracting level 0 data.)
 #' 
-#' @param skip.rows.col (Character) Column name containing `skip.rows`
+#' @param skip.rows.col (Character) Catalog column name containing `skip.rows`
 #' information. (Default to "Skip.Rows")
 #' 
 #' @param num.rows (Numeric) Number of rows to pull when extracting level 0
 #' data from the specified Excel file(s). (Note: Single entry only, use only if
 #' all files need to pull the same number of rows for extracting level 0 data.)
 #' 
-#' @param num.rows.col (Character) Column name containing `num.rows`
+#' @param num.rows.col (Character) Catalog column name containing `num.rows`
 #' information. (Default to `NULL`)
 #' 
 #' @param date (Character) Date of laboratory measurements. Typical format
 #' "MMDDYY" ("MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year).
+#' (Note: Single entry only, use only if all files have the same laboratory
+#' measurement date.)
 #' 
-#' @param date.col (Character) Column name Which column of input.data indicates the laboratory measurement
-#' date (Defaults to "Date")
+#' @param date.col (Character) Catalog column name containing `date`
+#' information. (Defaults to "Date")
 #' 
-#' @param compound.col (Character) Column name of input.data indicates the
-#' test compound. (Defaults to "Compound.Name")
+#' @param compound.col (Character) Column name of input.data (level0?) indicates the
+#' test compound. (Defaults to "Chemical.ID")
 #' 
-#' @param istd.col (Character) Column name of input.data indicating the
-#' MS peak area for the internal standard. (Defaults to "ISTD.Area")
+#' @param istd.col (Character) Column name of input.data (level0?) indicating the
+#' MS peak area for the internal standard. (Defaults to "ISTD")
 #' 
-#' @param sample.colname <FILL IN DETAILS>
+#' @param sample.colname (Character) Column name of level 0 data containing
+#' sample information. (Note: Single entry only, use only if all files use
+#' the same column name for sample names when extracting level 0 data.)
 #' 
-#' @param sample.colname.col <FILL IN DETAILS>
+#' @param sample.colname.col (Character) Catalog column name containing 
+#' `sample.colname` information. (Defaults to "Sample.ColName") 
 #' 
-#' @param type.colname <FILL IN DETAILS>
+#' @param type.colname (Character) <FILL IN DETAILS> (Note: Single entry only,)
 #' 
-#' @param type.colname.col <FILL IN DETAILS>
+#' @param type.colname.col (Character) Catalog column name containing
+#' `type.colname` information. (Defaults to "Type".)
 #' 
-#' @param peak.colname <FILL IN DETAILS>
+#' @param peak.colname (Character) <FILL IN DETAILS>
 #' 
-#' @param peak.colname.col <FILL IN DETAILS>
+#' @param peak.colname.col (Character) Catalog column name containing
+#' `peak.colname` information. (Defaults to "Peak.ColName")
 #' 
-#' @param istd.peak.colname <FILL IN DETAILS>
+#' @param istd.peak.colname (Character) <FILL IN DETAILS>
 #' 
-#' @param istd.peak.colname.col <FILL IN DETAILS>
+#' @param istd.peak.colname.col (Character) Catalog column name containing
+#' `istd.peak.colname` information. (Defaults to "ISTD.Peak.ColName")
 #' 
 #' @param conc.colname <FILL IN DETAILS>
 #' 
-#' @param conc.colname.col <FILL IN DETAILS>
+#' @param conc.colname.col (Character) Catalog column name containing 
+#' `conc.colname` information. (Defaults to "Conc.ColName")
 #' 
 #' @param analysis.param.colname <FILL IN DETAILS>
 #' 
-#' @param analysis.param.colname.col <FILL IN DETAILS>
+#' @param analysis.param.colname.col (Character) Catalog column name containing
+#' `analysis.param.colname` information. (Defaults to "AnalysisParam.ColName")
 #' 
 #' @param additional.colnames <FILL IN DETAILS>
 #' 
