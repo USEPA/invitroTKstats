@@ -26,7 +26,7 @@
 #'
 #' The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
 #'
-#' \eqn{\frac{dQ}{dt} = \max\left(0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^n(r_B * c_{DF})}{n_B}\right)}
+#' \eqn{\frac{dQ}{dt} = \max\left(0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}\right)}
 #'
 #' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
 #' \eqn{n_P} is the number of PBS Responses, and \eqn{n_B} is the number of Blank Responses.

@@ -22,8 +22,8 @@
 #' \eqn{f_{up}} is calculated from MS responses as:
 #'
 #'
-#' \eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^n(r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^n(r_{NPB}*c_{DF})}{n_{NPB}}\right)}
-#' {\frac{\sum_{i=1}^n(r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^n(r_B * c_{DF})}{n_B}}}
+#' \eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_{NPB}} (r_{NPB}*c_{DF})}{n_{NPB}}\right)}
+#' {\frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
 #'
 #' where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
 #' \eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
