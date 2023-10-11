@@ -18,7 +18,7 @@ summarize_table(
 indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
-\item{dtxsid.col}{Which column of input.table indicates EPA's DSSTox Structure 
+\item{dtxsid.col}{Which column of input.table indicates EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
 \item{compound.col}{Which column of input.table indicates the test compound
@@ -44,7 +44,7 @@ be available for each chemical-calibration pair to make an estimate.}
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using ultracentrifugation (Redgrave 1975?).
+unbound in plasma using ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats}.
 An input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }

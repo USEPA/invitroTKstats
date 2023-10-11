@@ -10,7 +10,7 @@ calc_fup_uc_point(FILENAME, good.col = "Verified")
 \item{FILENAME}{A string used to identify the input file, whatever the
 argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
+\item{good.col}{Name of a column indicating which rows have been verified for
 analysis, indicated by a "Y" (Defaults to "Verified")}
 }
 \value{
@@ -19,8 +19,9 @@ analysis, indicated by a "Y" (Defaults to "Verified")}
 \description{
 This function use describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using ultracentrifugation (Redgrave 1975?).
-Data are read from a "Level2" text file that should have been formatted and created 
+unbound in plasma using ultracentrifugation
+\insertCite{redgrave1975separation}{invitroTKstats}.
+Data are read from a "Level2" text file that should have been formatted and created
 by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 should have been curated and had a column added with the value "Y" indicating
 that each row is verified as usable for analysis (that is, the Level2 file).
@@ -35,13 +36,17 @@ of these types:
   Time zero plasma concentration \tab T0\cr
 }
 
-F_up is calculated from MS responses as:
+\eqn{f_{up}} is calculated from MS responses as:
 
-f_up = mean(AF Response * Dilution.Factor) / mean(T5 Response * Dilution Factor)
+\eqn{f_{up} = \frac{\sum_{i = 1}^{n_A} (r_A * c_{DF}) / n_A}{\sum_{i = 1}^{n_{T5}} (r_{T5} * c_{DF}) / n_{T5}}}
+
+where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
+\eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
+and \eqn{n_{T5}} is the number of T5 Responses.
 }
 \examples{
 level0 <- kreutz2020
-level0$Analysis.Method <- "GC" 
+level0$Analysis.Method <- "GC"
 level0$Analysis.Instrument <- "No Idea"
 level0$Analysis.Parameters <- "None"
 level1 <- format_fup_uc(level0,
@@ -59,13 +64,11 @@ write.table(level2,
   row.names=F,
   quote=F)
 
-level3 <- calc_fup_uc_point(FILENAME="Kreutz2020") 
+level3 <- calc_fup_uc_point(FILENAME="Kreutz2020")
 
 }
 \references{
-Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
-lipoproteins by density-gradient ultracentrifugation." Analytical 
-Biochemistry 65.1-2 (1975): 42-49.#'
+\insertRef{redgrave1975separation}{invitroTKstats}
 }
 \author{
 John Wambaugh

@@ -10,11 +10,11 @@ calc_caco2_point(FILENAME, good.col = "Verified")
 \item{FILENAME}{A string used to identify the input file, whatever the
 argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
+\item{good.col}{Name of a column indicating which rows have been verified for
 analysis, indicated by a "Y" (Defaults to "Verified")}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format} 
+\item{data.frame}{A data.frame in standardized format}
 \tabular{rrr}{
   C0_A2B \tab Time zero donor concentration \tab Mass Spec Response Ratio (RR) \cr
   dQdt_A2B \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
@@ -27,16 +27,16 @@ analysis, indicated by a "Y" (Defaults to "Verified")}
 }
 \description{
 This function uses mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of membrane 
-permeability using Caco-2 cells (Hubatsch, 2007).
-Data are read from a "Level2" text file that should have been formatted and 
-created 
+from samples collected as part of in vitro measurement of membrane
+permeability using Caco-2 cells \insertCite{hubatsch2007determination}{invitroTKstats}.
+Data are read from a "Level2" text file that should have been formatted and
+created
 by \code{\link{format_caco2}} (this is the "Level1" file). The Level1 file
 should have been curated by adding a column with the value "Y" indicating
 that each row is verified as usable for analysis (that is, the Level2 file).
 }
 \details{
-The data frame of observations should be annotated according to direction 
+The data frame of observations should be annotated according to direction
 (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
 of concentration measured:
 \tabular{rr}{
@@ -46,14 +46,17 @@ of concentration measured:
   Receiver compartment at end of experiment\tab R2\cr
 }
 
-Apparent membrane permeability (Papp) is calculated from MS responses as:
+Apparent membrane permeability (\eqn{P_{app}}) is calculated from MS responses as:
 
-P_app = (dQ/dt) / C_0 / A
 
-The rate of permeation, dQ/dt (peak area/s) is calculated as:
+\eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
 
-dQ/dt = max(0,(mean(PBS Response * Dilution.Factor) - 
-  mean(Blank Response * Dilution.Factor)))
+The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
+
+\eqn{\frac{dQ}{dt} = \max\left(0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}\right)}
+
+where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
+\eqn{n_P} is the number of PBS Responses, and \eqn{n_B} is the number of Blank Responses.
 }
 \examples{
 library(invitroTKstats)
@@ -74,16 +77,16 @@ level1 <- format_caco2(level0,
    analysis.instrument="GC or LC",
    analysis.method="Mass Spec"
    )
-   
+
 level2 <- level1
 level2$Verified <- "Y"
- 
+
 write.table(level2,
   file="EPACyprotex2021-Caco-2-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
-   
+
 level3 <- calc_caco2_point(FILENAME="EPACyprotex2021")
 
 write.table(level3,

@@ -4,7 +4,7 @@
 \name{wambaugh2019.methods}
 \alias{wambaugh2019.methods}
 \alias{Wambaugh2019.methods}
-\title{Mass Spectrometry Methods for Wambaugh et al. (2019) Chemicals}
+\title{Mass Spectrometry Methods for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Chemicals}
 \format{
 A data.frame 520 rows and 14 variables: \describe{
 \item{\code{DTXSID}}{}
@@ -30,12 +30,12 @@ Wambaugh et al. (2019)
 wambaugh2019.methods
 }
 \description{
-As reported in Wambaugh et al. (2019), contractor Cyprotex performed in vitro
+As reported in \insertCite{wambaugh2019assessing;textual}{invitroTKstats}, contractor Cyprotex performed in vitro
 toxicokinetic experiments requiring the development of analytical chemistry
 methods to quantitative concentration. 
 Liquid chromatography/mass spectrometry (LC/MS) was faster and 
 attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
-when LC/MS failed. For some chemicals the attempts to develop an 
+when LC/MS failed. For some chemicals the attempts to develop an
 analysis method failed for both LC/MS and GC/MS and no
 in vitro experiments were conducted.
 }

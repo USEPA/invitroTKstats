@@ -18,9 +18,13 @@
 #'   Time zero plasma concentration \tab T0\cr
 #' }
 #'
-#' F_up is calculated from MS responses as:
+#' \eqn{f_{up}} is calculated from MS responses as:
 #'
-#' f_up = mean(AF Response * Dilution.Factor) / mean(T5 Response * Dilution Factor)
+#' \eqn{f_{up} = \frac{\sum_{i = 1}^{n_A} (r_A * c_{DF}) / n_A}{\sum_{i = 1}^{n_{T5}} (r_{T5} * c_{DF}) / n_{T5}}}
+#'
+#' where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
+#' \eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
+#' and \eqn{n_{T5}} is the number of T5 Responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
