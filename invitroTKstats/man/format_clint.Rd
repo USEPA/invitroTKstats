@@ -55,8 +55,8 @@ contain columns with names specified by the following arguments:}
 \item{FILENAME}{A string used to identify outputs of the function call.
 (defaults to "MYDATA")}
 
-\item{sample.col}{Which column of input.data indicates the unique mass 
-spectrometry (MS) sample name used by the laboratory. (Defaults to 
+\item{sample.col}{Which column of input.data indicates the unique mass
+spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name")}
 
 \item{date.col}{Which column of input.data indicates the laboratory measurement
@@ -65,18 +65,18 @@ date (Defaults to "Date")}
 \item{compound.col}{Which column of input.data indicates the test compound
 (Defaults to "Compound.Name")}
 
-\item{dtxsid.col}{Which column of input.data indicates EPA's DSSTox Structure 
+\item{dtxsid.col}{Which column of input.data indicates EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
-\item{lab.compound.col}{Which column of input.data indicates The test compound 
+\item{lab.compound.col}{Which column of input.data indicates The test compound
 name used by the laboratory (Defaults to "Lab.Compound.Name")}
 
-\item{type.col}{Which column of input.data indicates the direction of the 
-measurements (either "AtoB" for apical to basolateral or "BtoA" for vice 
+\item{type.col}{Which column of input.data indicates the direction of the
+measurements (either "AtoB" for apical to basolateral or "BtoA" for vice
 versa) (Defaults to "Direction")}
 
 \item{density.col}{A single value to be used for all samples indicating
-the density of hepatocytes in suspension (10^6 hepatocytes / mL) 
+the density of hepatocytes in suspension (10^6 hepatocytes / mL)
 (Defaults to NULL)}
 
 \item{cal}{If this argument is used (defaults to NULL) every observation in
@@ -90,61 +90,61 @@ of the test chemical for calibration curves (Defaults to "Standard.Conc")}
 instance different machines on the same day or different days with the same
 MS analyzer (Defaults to "Cal")}
 
-\item{dilution}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{dilution}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{dilution.col}{Which column of data.in indicates how many times the
 sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
 
 \item{time.col}{Which column of data.in indicates the intended
-time of the measurment (in minutes) since the test chemical was introduced
+time of the measurement (in minutes) since the test chemical was introduced
 into the hepatocyte incubation (Defaults to "Time")}
 
 \item{istd.col}{Which column of input.data indicates the MS peak area for the
 internal standard (Defaults to "ISTD.Area")}
 
-\item{istd.name}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{istd.name}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{istd.name.col}{Which column of input.data indicates identity of the 
+\item{istd.name.col}{Which column of input.data indicates identity of the
 internal standard (Defaults to "ISTD.Name")}
 
-\item{istd.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{istd.conc}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{istd.conc.col}{Which column of input.data indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{area.col}{Which column of input.data indicates the target analyte (that 
+\item{area.col}{Which column of input.data indicates the target analyte (that
 is, the test compound) MS peak area (Defaults to "Area")}
 
-\item{analysis.method}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.method}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{analysis.method.col}{Which column of input.data indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
 "Analysis.Method")}
 
-\item{analysis.instrument}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.instrument}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{analysis.instrument.col}{Which column of input.data indicates the 
-instrument used for chemical analysis, for example 
-"Agilent 6890 GC with model 5973 MS" (Defaults to 
+\item{analysis.instrument.col}{Which column of input.data indicates the
+instrument used for chemical analysis, for example
+"Agilent 6890 GC with model 5973 MS" (Defaults to
 "Analysis.Instrument")}
 
-\item{analysis.parameters}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.parameters}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{analysis.parameters.col}{Which column of input.data indicates the 
+\item{analysis.parameters.col}{Which column of input.data indicates the
 parameters used to identify the compound on the chemical analysis instrument,
-for example 
+for example
 "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 (Defaulys to "Analysis.Paramaters").}
 
@@ -155,7 +155,7 @@ which the data were obtained (for example "MyWorkbook.xlsx").}
 observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{level0.sheet.col}{Which column of PPB.data indicates the specific 
+\item{level0.sheet.col}{Which column of PPB.data indicates the specific
 sheet containing the data if the file is an Excel workbook}
 
 \item{level0.sheet}{If this argument is used (defaults to NULL) every
@@ -163,7 +163,7 @@ observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{conc.col}{Which column of data.in indicates the intended
-test chemical concentration 
+test chemical concentration
 (units if uM) of
 at time zero (Defaults to "Conc")}
 
@@ -172,10 +172,10 @@ indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
 \item{series.col}{Which column of PPB.data indicates the "series", that is
-a simultaneous replicate with the same analytical chemistry 
+a simultaneous replicate with the same analytical chemistry
 (Defaults to "Series")}
 
-\item{series}{If this argument is used (defaults to NULL) every observation 
+\item{series}{If this argument is used (defaults to NULL) every observation
 in the table is assigned the value of the argument and the corresponding
 column in input.table (if present) is ignored.}
 
@@ -183,8 +183,8 @@ column in input.table (if present) is ignored.}
 test chemical concentration at time zero in the dosing solution (added to the
 donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
 
-\item{nominal.test.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{nominal.test.conc}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 }
 \value{
@@ -193,7 +193,7 @@ corresponding column in input.table (if present) is ignored.}
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical stability
-when incubated with suspended hepatocytes (Shibata, 2000). Disappearance of 
+when incubated with suspended hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}. Disappearance of
 the chemical over time is assumed to be due to metabolism by the hepatocytes.
 An input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.

@@ -28,10 +28,10 @@ of convergence according to Gelman and Rubin diagnostic.}
 
 \item{NUM.CORES}{The number of processors to use (default 2)}
 
-\item{RANDOM.SEED}{The seed used by the random number generator 
+\item{RANDOM.SEED}{The seed used by the random number generator
 (default 1111)}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
+\item{good.col}{Name of a column indicating which rows have been verified for
 analysis, indicated by a "Y" (Defaults to "Verified")}
 
 \item{JAGS.PATH}{The file path to JAGS.}
@@ -52,10 +52,10 @@ will decrease between 1 and 10 uM (defaults to 0.25)}
 This function use describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical clearance
 as characterized by disappearance of parent compound over time when incubated
-with primary hepatocytes (Shibata et al., 2000)
+with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \details{
-Data are read from a "Level2" text file that should have been formatted and created 
+Data are read from a "Level2" text file that should have been formatted and created
 by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 should have been curated and had a column added with the value "Y" indicating
 that each row is verified as usable for analysis (that is, the Level2 file).
@@ -86,7 +86,7 @@ clint$ISTD.Conc <- 1
 clint$Dilution.Factor <- 1
 clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
 clint$Hep.Density <- 0.5
-clint$Analysis.Method <- "LC or GC" 
+clint$Analysis.Method <- "LC or GC"
 clint$Analysis.Instrument <- "No Idea"
 clint$Analysis.Parameters <- "None"
 

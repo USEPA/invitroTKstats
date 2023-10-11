@@ -19,12 +19,16 @@
 #'   Equilibrium chemical in plasma well \tab Plasma\cr
 #' }
 #'
-#' F_up is calculated from MS responses as:
+#' \eqn{f_{up}} is calculated from MS responses as:
 #'
-#' f_up = max(0,(mean(PBS Response * Dilution.Factor) -
-#'   mean(NoPlasma.Blank Response * Dilution.Factor))) / (
-#'   mean(Plasma Response * Dilution Factor) -
-#'   mean(Plasma.Blank Response * Dilution.Factor))
+#'
+#' \eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_{NPB}} (r_{NPB}*c_{DF})}{n_{NPB}}\right)}
+#' {\frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
+#'
+#' where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
+#' \eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
+#' \eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{B}} is Plasma Blank Response,
+#' and \eqn{n_B} is the number of Plasma Blank Responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-fup-RED-Level2.tsv" is appended (defaults to "MYDATA")

@@ -10,7 +10,7 @@ calc_fup_red_point(FILENAME, good.col = "Verified")
 \item{FILENAME}{A string used to identify the input file, whatever the
 argument given, "-fup-RED-Level2.tsv" is appended (defaults to "MYDATA")}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
+\item{good.col}{Name of a column indicating which rows have been verified for
 analysis, indicated by a "Y" (Defaults to "Verified")}
 }
 \value{
@@ -19,8 +19,9 @@ analysis, indicated by a "Y" (Defaults to "Verified")}
 \description{
 This function uses mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
-Data are read from a "Level2" text file that should have been formatted and created 
+unbound in plasma using rapid equilibrium dialysis
+\insertCite{waters2008validation}{invitroTKstats}.
+Data are read from a "Level2" text file that should have been formatted and created
 by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 should have been curated and had a column added with the value "Y" indicating
 that each row is verified as usable for analysis (that is, the Level2 file).
@@ -36,12 +37,16 @@ of these types:
   Equilibrium chemical in plasma well \tab Plasma\cr
 }
 
-F_up is calculated from MS responses as:
+\eqn{f_{up}} is calculated from MS responses as:
 
-f_up = max(0,(mean(PBS Response * Dilution.Factor) - 
-  mean(NoPlasma.Blank Response * Dilution.Factor))) / (
-  mean(Plasma Response * Dilution Factor) -
-  mean(Plasma.Blank Response * Dilution.Factor))
+
+\eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_{NPB}} (r_{NPB}*c_{DF})}{n_{NPB}}\right)}
+{\frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
+
+where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
+\eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
+\eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{B}} is Plasma Blank Response,
+and \eqn{n_B} is the number of Plasma Blank Responses.
 }
 \examples{
 red <- subset(wambaugh2019.red, Protein==100)
@@ -55,7 +60,7 @@ red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
 red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
 red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
 red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
-red$Analysis.Method <- "LC or GC" 
+red$Analysis.Method <- "LC or GC"
 red$Analysis.Instrument <- "No Idea"
 red$Analysis.Parameters <- "None"
 
@@ -85,14 +90,12 @@ write.table(level2,
   sep="\t",
   row.names=F,
   quote=F)
-  
+
 level3 <- calc_fup_red_point(FILENAME="Wambaugh2019")
 
 }
 \references{
-Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
-approach for the measurement of plasma protein binding." Journal of 
-Pharmaceutical Sciences 97.10 (2008): 4586-4595.
+\insertRef{waters2008validation}{invitroTKstats}
 }
 \author{
 John Wambaugh

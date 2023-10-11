@@ -10,7 +10,7 @@ calc_clint_point(FILENAME, good.col = "Verified")
 \item{FILENAME}{A string used to identify the input file, whatever the
 argument given, "-Clint-Level3.tsv" is appended (defaults to "MYDATA")}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
+\item{good.col}{Name of a column indicating which rows have been verified for
 analysis, indicated by a "Y" (Defaults to "Verified")}
 }
 \value{
@@ -20,10 +20,10 @@ analysis, indicated by a "Y" (Defaults to "Verified")}
 This function use describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical clearance
 as characterized by disappearance of parent compound over time when incubated
-with primary hepatocytes (Shibata et al., 2000)
+with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \details{
-Data are read from a "Level2" text file that should have been formatted and created 
+Data are read from a "Level2" text file that should have been formatted and created
 by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
 should have been curated and had a column added with the value "Y" indicating
 that each row is verified as usable for analysis (that is, the Level2 file).
@@ -52,7 +52,7 @@ clint$ISTD.Conc <- 1
 clint$Dilution.Factor <- 1
 clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
 clint$Hep.Density <- 0.5
-clint$Analysis.Method <- "LC or GC" 
+clint$Analysis.Method <- "LC or GC"
 clint$Analysis.Instrument <- "No Idea"
 clint$Analysis.Parameters <- "None"
 
@@ -75,7 +75,7 @@ write.table(level2,
   quote=F)
 
 level3 <- calc_clint_point(FILENAME="Wambaugh2019")
- 
+
 # Just 1 uM data:
 write.table(subset(level2,Conc==1),
   file="Wambaugh2019-1-Clint-Level2.tsv",
@@ -90,7 +90,7 @@ write.table(subset(level2,Conc==10),
   file="Wambaugh2019-10-Clint-Level2.tsv",
   sep="\t",
   row.names=F,
-  quote=F) 
+  quote=F)
 
 level3.10 <- calc_clint_point(FILENAME="Wambaugh2019-10")
 

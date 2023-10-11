@@ -5,7 +5,7 @@
 \alias{kreutz2023}
 \alias{kreutz2023.uc}
 \alias{Kreutz2023}
-\title{Kreutz 2023 Ultracentrifugation Data Set}
+\title{\insertCite{kreutz2023category;textual}{invitroTKstats} Ultracentrifugation Data Set}
 \format{
 A data.frame with 2928 rows and 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -37,11 +37,13 @@ A data.frame with 2928 rows and 23 variables: \describe{
 kreutz2023.uc
 }
 \description{
-Mass Spectrometry measurements of plasma protein binding measured by 
+Mass Spectrometry measurements of plasma protein binding measured by
 ultracentrifugation for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
 }
 \references{
 \insertRef{howard2010plasma}{invitroTKstats}
+
+\insertRef{kreutz2023category}{invitroTKstats}
 }
 \keyword{data}
