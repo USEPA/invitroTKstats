@@ -20,10 +20,11 @@
 #'
 #' \eqn{f_{up}} is calculated from MS responses as:
 #'
-#' \eqn{f_{up} = \frac{\sum_{i = 1}^n(r_A * c_{DF}) / n}{\sum_{i = 1}^n(r_{T5} * c_{DF}) / n}}
+#' \eqn{f_{up} = \frac{\sum_{i = 1}^n(r_A * c_{DF}) / n_A}{\sum_{i = 1}^n(r_{T5} * c_{DF}) / n_{T5}}}
 #'
 #' where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
-#' \eqn{r_{T5}} is T5 Response, and \eqn{n} is the number of responses.
+#' \eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
+#' and \eqn{n_{T5}} is the number of T5 Responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
