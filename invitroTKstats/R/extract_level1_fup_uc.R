@@ -14,43 +14,55 @@
 #'
 #' @param data.set A data frame containing a sheet of data for conversion
 #'
-#' @param   chem.name A string giving the lab name of the chemical analyzed
+#' @param chem.name A string giving the lab name of the chemical analyzed
 #'
-#' @param   area.col.num An integer indicating which column of data.set contains
+#' @param area.col.num An integer indicating which column of data.set contains
 #' the MS feature area for the chemical
 #'
-#' @param   ISTD.name A string indicating the internal standard used
+#' @param ISTD.name A string indicating the internal standard used
 #'
-#' @param   ISTD.offset An integer indicating how many columns difference there
+#' @param ISTD.offset An integer indicating how many columns difference there
 #' is between the chemical of study MS area and the ISTD MS area (defaults to 2)
 #'
-#' @param   analysis.method A string describing the chemical analysis method
+#' @param analysis.method A string describing the chemical analysis method
 #' (Defaults to "GC", that is gas chromatography)
 #'
-#' @param   instrument A string describing the instrument used for chemical 
+#' @param instrument A string describing the instrument used for chemical 
 #' analysis (Defaults to "Something or Other 3000", 
 #'
-#' @param   inst.param.offset An integer indicating the difference in the number
+#' @param inst.param.offset An integer indicating the difference in the number
 #' of columns between the MS peak area and the column giving the instrument
 #' parameters (Defaults to -3)
 #'
-#' @param   conc.offset An integer indicating the difference in the number
+#' @param conc.offset An integer indicating the difference in the number
 #' of columns between the MS peak area and the column giving the intended
 #' concentration for calibration curves (Defaults to -2)
 #'
-#' @param   area.base A character string used for forming the name of MS
+#' @param area.base A character string used for forming the name of MS
 #' feature area column names (used for both test chemical and ISTD) (Defaults to
 #' "Area..."
 #'
-#' @param   inst.param.base A character string used for forming the name of the
+#' @param inst.param.base A character string used for forming the name of the
 #' chemical analysis instrument parameter column name (Defaults to "RT...")
 #'
-#' @param   conc.base A character string used for forming the name of the
+#' @param conc.base A character string used for forming the name of the
 #' calibration curve intended concentration column name (Defaults to
 #' "Final Conc....")
 #'
-#' @param   id.cols A vector of character strings used for identifying each
-#' sample (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time")
+#' @param id.cols A vector of character strings used for identifying each
+#' sample (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time")).
+#' 
+#' @param type.indicator.col A character string indicating which column of 
+#' data.set contains the type of observation (Defaults to "Name").
+#' 
+#' @param AF.type.str Defaults to "AF".
+#' 
+#' @param T1.type.str Defaults to "T1".
+#' 
+#' @param T5.type.str Defaults to "T5".
+#' 
+#' @param CC.type.str Defaults to "CC".
+#' 
 #'
 #' @return \item{data.frame}{A data.frame in standardized "level1" format}
 #'

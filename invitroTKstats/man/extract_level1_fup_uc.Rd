@@ -64,7 +64,18 @@ calibration curve intended concentration column name (Defaults to
 "Final Conc....")}
 
 \item{id.cols}{A vector of character strings used for identifying each
-sample (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time")}
+sample (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time")).}
+
+\item{type.indicator.col}{A character string indicating which column of 
+data.set contains the type of observation (Defaults to "Name").}
+
+\item{AF.type.str}{Defaults to "AF".}
+
+\item{T1.type.str}{Defaults to "T1".}
+
+\item{T5.type.str}{Defaults to "T5".}
+
+\item{CC.type.str}{Defaults to "CC".}
 }
 \value{
 \item{data.frame}{A data.frame in standardized "level1" format}
