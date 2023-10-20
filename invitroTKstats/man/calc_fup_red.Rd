@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_fup_red.R
 \name{calc_fup_red}
 \alias{calc_fup_red}
-\title{Calculate fraction unbound in plasma from rapid equilibruim dialysis data}
+\title{Calculate Fraction Unbound in Plasma From Rapid Equilibrium Dialysis Data}
 \usage{
 calc_fup_red(
   FILENAME,
@@ -16,75 +16,53 @@ calc_fup_red(
 )
 }
 \arguments{
-\item{FILENAME}{A string used to identify outputs of the function call.
-(defaults to "BASE_Model_Results")}
+\item{FILENAME}{A string used to identify the input Level-2 file, whatever the
+argument given, "-fup-RED-Level2.tsv" is appended.}
 
-\item{TEMP.DIR}{An optional directory where file writing may be faster.}
+\item{TEMP.DIR}{Alternative directory to output file
+(Defaults to NULL, all files will be written to user's current working directory).}
 
-\item{NUM.CHAINS}{The number of Markov Chains to use. This allows evaluation
-of convergence according to Gelman and Rubin diagnostic.}
+\item{NUM.CHAINS}{The number of Markov Chains to use (Defaults to 5).}
 
-\item{NUM.CORES}{The number of processors to use (default 2)}
+\item{NUM.CORES}{The number of processors to use (Defaults to 2).}
 
 \item{RANDOM.SEED}{The seed used by the random number generator
-(default 1111)}
+(Defaults to 1111).}
 
-\item{JAGS.PATH}{The file path to JAGS.}
+\item{good.col}{Name of a column indicating which rows have been verified for
+analysis, indicated by a "Y" (Defaults to "Verified").}
 
-\item{MS.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identity, and measurement type.}
+\item{JAGS.PATH}{The file path to JAGS (Defaults to NULL).}
 
-\item{this.conc}{The plasma protein concentration relative to physiologic
-levels (default 100\%)}
-
-\item{sample.col}{Which column of MS.data indicates the unique mass
-spectrometry (MS) sample name used by the laboratory. (Defaults to
-"Lab.Sample.Name")}
-
-\item{lab.compound.col}{Which column of MS.data indicates The test compound
-name used by the laboratory (Defaults to "Lab.Compound.Name")}
-
-\item{dtxsid.col}{Which column of MS.data indicates EPA's DSSTox Structure
-ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
-
-\item{date.col}{Which column of MS.data indicates the laboratory measurment
-date (Defaults to "Date")}
-
-\item{compound.col}{Which column of MS.data indicates the test compound
-(Defaults to "Compound.Name")}
-
-\item{area.col}{Which column of MS.data indicates the target analyte (that
-is, the test compound) MS peak area (Defaults to "Area")}
-
-\item{series.col}{Which column of MS.data indicates the "series", that is
-a simultaneous replicate (Defaults to "Series")}
-
-\item{type.col}{Which column of MS.data indicates the sample type (see table
-above)(Defaults to "Sample.Type")}
-
-\item{cal.col}{Which column of MS.data indicates the MS calibration -- for
-instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")}
-
-\item{dilution.col}{Which column of MS.data indicates how many times the
-sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
-
-\item{istd.col}{Which column of MS.data indicates the MS peak area for the
-internal standard (Defaults to "ISTD.Area")}
-
-\item{istd.name.col}{Which column of MS.data indicates identity of the
-internal standard (Defaults to "ISTD.Name")}
-
-\item{istd.conc.col}{Which column of MS.data indicates the concentration of
-the internal standard (Defaults to "ISTD.Conc")}
-
-\item{Test.Nominal.Conc.col}{Which column of MS.data indicates the intended
-test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
+\item{Physiological.Protein.Conc}{Defaults to 70/(66.5*1000)*1000000 per Berg and Lane (2011), 
+60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM.}
 }
 \value{
-A data.frame containing quunantiles of the Bayesian posteriors
+A list of two objects: 
+\enumerate{
+   \item{A data frame containing quantiles of the Bayesian posteriors of 
+   fraction unbound in plasma (Fup) of all compounds in input file. Column includes:
+   Compound.Name - compound name, Lab.Compound.Name - compound name used by 
+   the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
+   Fup.Med - median of posteriors, Fup.Low - 2.5th quantile, and Fup.High - 97.5th quantile}
+   \item{A runjags-class object containing results from JAGS model.}
+}
 }
 \description{
+This function uses MCMC simulation to calculate fraction unbound in plasma (Fup) 
+from rapid equilibrium dialysis (RED) data. This function then calculates quantiles 
+of posterior samples and returns a summary table along with all MCMC results.
+}
+\details{
+The input data should be a "Level-2" data that have been formatted and created
+by \code{\link{format_fup_red}}, then have been curated and had a column added
+with the value "Y" indicating that each row is verified as usable for analysis. 
+
+Be aware that this function will write couple files to user's current working directory
+unless other path is specified in the argument. Files being saved include the 
+summary table (.RData), JAG argument (.RData), and any "unverified" data that 
+were held out from the analysis (.tsv).  
+
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
@@ -96,14 +74,13 @@ of these types:
 }
 }
 \examples{
+# Level-2 file
 write.table(smeltz2023.red,
   file="SmeltzPFAS-fup-RED-Level2.tsv",
   sep="\t",
   row.names=F,
   quote=F)
 
-
-level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
 level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
                        NUM.CORES=8,
                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")

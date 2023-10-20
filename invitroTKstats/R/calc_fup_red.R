@@ -151,7 +151,20 @@ model {
 }
 "
 
-#' Calculate fraction unbound in plasma from rapid equilibruim dialysis data
+#' Calculate Fraction Unbound in Plasma From Rapid Equilibrium Dialysis Data
+#'
+#' This function uses MCMC simulation to calculate fraction unbound in plasma (Fup) 
+#' from rapid equilibrium dialysis (RED) data. This function then calculates quantiles 
+#' of posterior samples and returns a summary table along with all MCMC results.
+#' 
+#' The input data should be a "Level-2" data that have been formatted and created
+#' by \code{\link{format_fup_red}}, then have been curated and had a column added
+#' with the value "Y" indicating that each row is verified as usable for analysis. 
+#' 
+#' Be aware that this function will write couple files to user's current working directory
+#' unless other path is specified in the argument. Files being saved include the 
+#' summary table (.RData), JAG argument (.RData), and any "unverified" data that 
+#' were held out from the analysis (.tsv).  
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
@@ -163,72 +176,37 @@ model {
 #'   Equilibrium chemical in plasma well \tab Plasma\cr
 #' }
 #'
-#' @param MS.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identity, and measurement type.
 #'
-#' @param this.conc The plasma protein concentration relative to physiologic
-#' levels (default 100\%)
+#' @param FILENAME A string used to identify the input Level-2 file, whatever the
+#' argument given, "-fup-RED-Level2.tsv" is appended.
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "BASE_Model_Results")
+#' @param TEMP.DIR Alternative directory to output file
+#' (Defaults to NULL, all files will be written to user's current working directory).
 #'
-#' @param TEMP.DIR An optional directory where file writing may be faster.
+#' @param JAGS.PATH The file path to JAGS (Defaults to NULL).
 #'
-#' @param JAGS.PATH The file path to JAGS.
+#' @param NUM.CHAINS The number of Markov Chains to use (Defaults to 5).
 #'
-#' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
-#' of convergence according to Gelman and Rubin diagnostic.
-#'
-#' @param NUM.CORES The number of processors to use (default 2)
+#' @param NUM.CORES The number of processors to use (Defaults to 2).
 #'
 #' @param RANDOM.SEED The seed used by the random number generator
-#' (default 1111)
+#' (Defaults to 1111). 
 #'
-#' @param sample.col Which column of MS.data indicates the unique mass
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to
-#' "Lab.Sample.Name")
+#' @param good.col Name of a column indicating which rows have been verified for
+#' analysis, indicated by a "Y" (Defaults to "Verified"). 
 #'
-#' @param lab.compound.col Which column of MS.data indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' @param Physiological.Protein.Conc Defaults to 70/(66.5*1000)*1000000 per Berg and Lane (2011), 
+#' 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM. 
 #'
-#' @param dtxsid.col Which column of MS.data indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#'
-#' @param date.col Which column of MS.data indicates the laboratory measurment
-#' date (Defaults to "Date")
-#'
-#' @param compound.col Which column of MS.data indicates the test compound
-#' (Defaults to "Compound.Name")
-#'
-#' @param area.col Which column of MS.data indicates the target analyte (that
-#' is, the test compound) MS peak area (Defaults to "Area")
-#'
-#' @param series.col Which column of MS.data indicates the "series", that is
-#' a simultaneous replicate (Defaults to "Series")
-#'
-#' @param type.col Which column of MS.data indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
-#'
-#' @param cal.col Which column of MS.data indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
-#'
-#' @param dilution.col Which column of MS.data indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#'
-#' @param istd.col Which column of MS.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
-#'
-#' @param istd.name.col Which column of MS.data indicates identity of the
-#' internal standard (Defaults to "ISTD.Name")
-#'
-#' @param istd.conc.col Which column of MS.data indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
-#'
-#' @param Test.Nominal.Conc.col Which column of MS.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")
-#'
-#' @return A data.frame containing quunantiles of the Bayesian posteriors
+#' @return A list of two objects: 
+#' \enumerate{
+#'    \item{A data frame containing quantiles of the Bayesian posteriors of 
+#'    fraction unbound in plasma (Fup) of all compounds in input file. Column includes:
+#'    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
+#'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
+#'    Fup.Med - median of posteriors, Fup.Low - 2.5th quantile, and Fup.High - 97.5th quantile}
+#'    \item{A runjags-class object containing results from JAGS model.}
+#' }
 #'
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
@@ -238,14 +216,13 @@ model {
 #' @author John Wambaugh and Chantel Nicolas
 #'
 #' @examples
+#' # Level-2 file
 #' write.table(smeltz2023.red,
 #'   file="SmeltzPFAS-fup-RED-Level2.tsv",
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
 #'
-#'
-#' level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
 #'                        NUM.CORES=8,
 #'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
