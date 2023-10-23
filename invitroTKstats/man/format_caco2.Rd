@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_caco2.R
 \name{format_caco2}
 \alias{format_caco2}
-\title{Creates a standardized data table reporting Caco-2 data}
+\title{Creates a Standardized Data Table Reporting Caco-2 Data (Level-1)}
 \usage{
 format_caco2(
   data.in,
@@ -49,25 +49,26 @@ format_caco2(
 indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
-\item{FILENAME}{A string used to identify outputs of the function call.
-(defaults to "MYDATA")}
+\item{FILENAME}{A string used for naming the written output of the function call.
+The formatted data frame will be written to a tab-separated text file named
+"<FILENAME>-Caco-2-Level1.tsv" (Defaults to "MYDATA").}
 
 \item{sample.col}{Which column of data.in indicates the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name")}
 
 \item{lab.compound.col}{Which column of data.in indicates The test compound
-name used by the laboratory (Defaults to "Lab.Compound.Name")}
+name used by the laboratory (Defaults to "Lab.Compound.Name").}
 
 \item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure
-ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
+ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID").}
 
-\item{date.col}{Which column of data.in indicates the laboratory measurment
-date (Defaults to "Date")}
+\item{date.col}{Which column of data.in indicates the laboratory measurement
+date (Defaults to "Date").}
 
 \item{series.col}{Which column of PPB.data indicates the "series", that is
 a simultaneous replicate with the same analytical chemistry
-(Defaults to "Series")}
+(Defaults to "Series").}
 
 \item{series}{If this argument is used (defaults to NULL) every observation
 in the table is assigned the value of the argument and the corresponding
@@ -82,9 +83,8 @@ is, the test compound) MS peak area (Defaults to "Area")}
 \item{istd.col}{Which column of data.in indicates the MS peak area for the
 internal standard (Defaults to "ISTD.Area")}
 
-\item{type.col}{Which column of data.in indicates the direction of the
-measurements (either "AtoB" for apical to basolateral or "BtoA" for vice
-versa) (Defaults to "Direction")}
+\item{type.col}{Which column of data.in indicates the sample type (see table
+above)(Defaults to "Type")}
 
 \item{direction.col}{Which column of data.in indicates the direction of
 the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
@@ -106,12 +106,16 @@ corresponding column in input.table (if present) is ignored.}
 test chemical is added
 (Defaults to "Vol.Donor")}
 
+\item{compound.conc}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
+corresponding column in input.table (if present) is ignored.}
+
+\item{compound.conc.col}{Which column indicates the intended concentration 
+of the test chemical for calibration curves (Defaults to "Nominal.Conc")}
+
 \item{cal}{If this argument is used (defaults to NULL) every observation in
 the table is assigned the value of the argument and the corresponding
-column in input.table (if present) is ignored.
-
-#param compound.conc.col Which column indicates the intended concentration 
-of the test chemical for calibration curves (Defaults to "Standard.Conc")}
+column in input.table (if present) is ignored.}
 
 \item{cal.col}{Which column of data.in indicates the MS calibration -- for
 instance different machines on the same day or different days with the same
@@ -181,7 +185,8 @@ for example
 (Defaulys to "Analysis.Paramaters").}
 }
 \value{
-data.frame A data.frame in standardized "level1" format
+data.frame A data.frame in standardized "level1" format that contains a  
+standardized set of columns with standardized column names.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
@@ -209,7 +214,8 @@ of concentration measured:
   Receiver compartment at end of experiment\tab R2\cr
 }
 
-Chemical concentration is calculated qualitatively as a response:
+Chemical concentration is calculated qualitatively as a response and 
+returned as a column in the output data frame:
 
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
@@ -217,11 +223,20 @@ Response <- AREA / ISTD.AREA * ISTD.CONC
 library(invitroTKstats)
 level0 <- TO1caco2
 level1 <- format_caco2(level0,
-  FILENAME="EPACyprotex2021",
-  compound.col="CompoundName",
-  compound.conc.col="Standard.Conc",
-  membrane.area.col=0.11
-  )
+                       FILENAME="EPACyprotex2021",
+                       sample.col="SampleName",
+                       dtxsid.col="CompoundName",
+                       lab.compound.col="CompoundName",
+                       cal=1,
+                       istd.conc.col="ISTD.Conc",
+                       compound.col="CompoundName",
+                       compound.conc.col="Test.Target.Conc",
+                       membrane.area=0.11,
+                       series=1,
+                       analysis.parameters="Feature",
+                       analysis.instrument="GC or LC",
+                       analysis.method="Mass Spec"
+                      )
 
 }
 \references{

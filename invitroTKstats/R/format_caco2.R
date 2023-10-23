@@ -1,4 +1,4 @@
-#' Creates a standardized data table reporting Caco-2 data
+#' Creates a Standardized Data Table Reporting Caco-2 Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of membrane
@@ -24,12 +24,14 @@
 #'   Receiver compartment at end of experiment\tab R2\cr
 #' }
 #'
-#' Chemical concentration is calculated qualitatively as a response:
+#' Chemical concentration is calculated qualitatively as a response and 
+#' returned as a column in the output data frame:
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
+#' @param FILENAME A string used for naming the written output of the function call.
+#' The formatted data frame will be written to a tab-separated text file named
+#' "<FILENAME>-Caco-2-Level1.tsv" (Defaults to "MYDATA"). 
 #'
 #' @param data.in A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
@@ -40,17 +42,17 @@
 #' "Lab.Sample.Name")
 #'
 #' @param lab.compound.col Which column of data.in indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' name used by the laboratory (Defaults to "Lab.Compound.Name").
 #'
 #' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID").
 #'
-#' @param date.col Which column of data.in indicates the laboratory measurment
-#' date (Defaults to "Date")
+#' @param date.col Which column of data.in indicates the laboratory measurement
+#' date (Defaults to "Date").
 #'
 #' @param series.col Which column of PPB.data indicates the "series", that is
 #' a simultaneous replicate with the same analytical chemistry
-#' (Defaults to "Series")
+#' (Defaults to "Series").
 #'
 #' @param series If this argument is used (defaults to NULL) every observation
 #' in the table is assigned the value of the argument and the corresponding
@@ -65,9 +67,9 @@
 #' @param type.col Which column of data.in indicates the sample type (see table
 #' above)(Defaults to "Type")
 #'
-#' @param type.col Which column of data.in indicates the direction of the
-#' measurements (either "AtoB" for apical to basolateral or "BtoA" for vice
-#' versa) (Defaults to "Direction")
+#' @param direction.col Which column of data.in indicates the direction of
+#' the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
+#' to aprical (BtoA). (Defaults to "Direction")
 #'
 #' @param cal.col Which column of data.in indicates the MS calibration -- for
 #' instance different machines on the same day or different days with the same
@@ -77,8 +79,12 @@
 #' the table is assigned the value of the argument and the corresponding
 #' column in input.table (if present) is ignored.
 #' 
-#' #param compound.conc.col Which column indicates the intended concentration 
-#' of the test chemical for calibration curves (Defaults to "Standard.Conc")
+#' @param compound.conc.col Which column indicates the intended concentration 
+#' of the test chemical for calibration curves (Defaults to "Nominal.Conc")
+#' 
+#' @param compound.conc If this argument is used (defaults to NULL) every
+#' observation in the table is assigned the value of the argument and the
+#' corresponding column in input.table (if present) is ignored.
 #'
 #' @param dilution.col Which column of data.in indicates how many times the
 #' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
@@ -102,10 +108,6 @@
 #' (in cm^3) of the donor portion of the Caco-2 experimental well where the
 #' test chemical is added
 #' (Defaults to "Vol.Donor")
-#'
-#' @param direction.col Which column of data.in indicates the direction of
-#' the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
-#' to aprical (BtoA). (Defaults to "Direction")
 #'
 #' @param meas.time.col Which column of data.in indicates the amount of time
 #' before the receiver and donor compartments are measured (Defaults to "Time")
@@ -166,7 +168,8 @@
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
-#' @return data.frame A data.frame in standardized "level1" format
+#' @return data.frame A data.frame in standardized "level1" format that contains a  
+#' standardized set of columns with standardized column names. 
 #'
 #' @author John Wambaugh
 #'
@@ -174,11 +177,20 @@
 #' library(invitroTKstats)
 #' level0 <- TO1caco2
 #' level1 <- format_caco2(level0,
-#'   FILENAME="EPACyprotex2021",
-#'   compound.col="CompoundName",
-#'   compound.conc.col="Standard.Conc",
-#'   membrane.area.col=0.11
-#'   )
+#'                        FILENAME="EPACyprotex2021",
+#'                        sample.col="SampleName",
+#'                        dtxsid.col="CompoundName",
+#'                        lab.compound.col="CompoundName",
+#'                        cal=1,
+#'                        istd.conc.col="ISTD.Conc",
+#'                        compound.col="CompoundName",
+#'                        compound.conc.col="Test.Target.Conc",
+#'                        membrane.area=0.11,
+#'                        series=1,
+#'                        analysis.parameters="Feature",
+#'                        analysis.instrument="GC or LC",
+#'                        analysis.method="Mass Spec"
+#'                       )
 #'
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
@@ -232,7 +244,7 @@ format_caco2 <- function(data.in,
   # Force code to throw error if data.in accessed after this point:
   rm(data.in)
 
-# These arguments allow the user to specify a single value for every obseration
+# These arguments allow the user to specify a single value for every observation
 # in the table:
   if (!is.null(cal)) data.out[,cal.col] <- cal
   if (!is.null(dilution)) data.out[,dilution.factor.col] <- dilution
@@ -339,7 +351,7 @@ format_caco2 <- function(data.in,
     analysis.parameters.col
     )
 
-  # calculate the reponse:
+  # calculate the response:
   data.out[,area.col] <- signif(as.numeric(data.out[,area.col]), 5)
   data.out[,istd.col] <- signif(as.numeric(data.out[,istd.col]), 5)
   data.out[,istd.conc.col] <- as.numeric(data.out[,istd.conc.col])
