@@ -183,7 +183,7 @@ model {
 #' @param TEMP.DIR Alternative directory to output file
 #' (Defaults to NULL, all files will be written to user's current working directory).
 #'
-#' @param JAGS.PATH The file path to JAGS (Defaults to NULL).
+#' @param JAGS.PATH Specific path to JAGS on user's computer (Defaults to NA).
 #'
 #' @param NUM.CHAINS The number of Markov Chains to use (Defaults to 5).
 #'
@@ -195,8 +195,9 @@ model {
 #' @param good.col Name of a column indicating which rows have been verified for
 #' analysis, indicated by a "Y" (Defaults to "Verified"). 
 #'
-#' @param Physiological.Protein.Conc Defaults to 70/(66.5*1000)*1000000 per Berg and Lane (2011), 
-#' 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM. 
+#' @param Physiological.Protein.Conc Assumed physiological protein concentration 
+#' for plasma protein binding calculations. Defaults to 70/(66.5*1000)*1000000 
+#' per Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM. 
 #'
 #' @return A list of two objects: 
 #' \enumerate{
@@ -222,7 +223,8 @@ model {
 #'   sep="\t",
 #'   row.names=F,
 #'   quote=F)
-#'
+#' 
+#' # JAGS.PATH should be changed to the specific path to JAGS on user's computer
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
 #'                        NUM.CORES=8,
 #'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")

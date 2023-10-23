@@ -32,10 +32,11 @@ argument given, "-fup-RED-Level2.tsv" is appended.}
 \item{good.col}{Name of a column indicating which rows have been verified for
 analysis, indicated by a "Y" (Defaults to "Verified").}
 
-\item{JAGS.PATH}{The file path to JAGS (Defaults to NULL).}
+\item{JAGS.PATH}{Specific path to JAGS on user's computer (Defaults to NA).}
 
-\item{Physiological.Protein.Conc}{Defaults to 70/(66.5*1000)*1000000 per Berg and Lane (2011), 
-60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM.}
+\item{Physiological.Protein.Conc}{Assumed physiological protein concentration 
+for plasma protein binding calculations. Defaults to 70/(66.5*1000)*1000000 
+per Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM.}
 }
 \value{
 A list of two objects: 
@@ -81,6 +82,7 @@ write.table(smeltz2023.red,
   row.names=F,
   quote=F)
 
+# JAGS.PATH should be changed to the specific path to JAGS on user's computer
 level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
                        NUM.CORES=8,
                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
