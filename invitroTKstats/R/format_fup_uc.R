@@ -1,4 +1,4 @@
-#' Creates a standardized data table reporting UC PPB data
+#' Creates a Standardized Data Table Reporting UC PPB Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
@@ -15,12 +15,14 @@
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
-#' Chemical concentration is calculated qualitatively as a response:
+#' Chemical concentration is calculated qualitatively as a response and 
+#' returned as a column in the output data frame:
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
+#' @param FILENAME A string used for naming the written output of the function call.
+#' The formatted data frame will be written to a tab-separated text file named
+#' "<FILENAME>-fup-UC-Level1.tsv" (Defaults to "MYDATA").
 #'
 #' @param data.in A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
@@ -50,7 +52,14 @@
 #' (Defaults to "Series")
 #'
 #' @param type.col Which column of data.in indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
+#' above). (Defaults to "Sample.Type")
+#' 
+#' @param std.conc.col Which column indicates the intended concentration 
+#' of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")
+#'
+#' @param std.conc If this argument is used (defaults to NULL) every
+#' observation in the table is assigned the value of the argument and the
+#' corresponding column in input.table (if present) is ignored. 
 #'
 #' @param cal If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
@@ -60,9 +69,6 @@
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
 #' 
-#' @param std.conc.col Which column indicates the intended concentration 
-#' of the test chemical for calibration curves in uM (Defaults to "Standard.Conc")
-#'
 #' @param dilution If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
@@ -92,7 +98,7 @@
 #' corresponding column in input.table (if present) is ignored.
 #'
 #' @param uc.assay.conc.col Which column indicates the intended initial
-#' test chemical concentration in the UC assay in uM (Defaults to "Test.Target.Conc")
+#' test chemical concentration in the UC assay in uM (Defaults to "UC.Assay.Conc")
 #'
 #' @param analysis.method If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
@@ -120,22 +126,26 @@
 #' for example
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 #' (Defaulys to "Analysis.Paramaters").
+#' 
+#' @param note.col which column of data.in contains additional notes on 
+#' test compounds (Defaults to "Note").
 #'
 #' @param level0.file.col Which column of data.in indicates the file from
-#' which the data were obtained (for example "MyWorkbook.xlsx").
+#' which the data were obtained (Defaults to Level0.File).
 #'
 #' @param level0.file If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
 #' @param level0.sheet.col Which column of data.in indicates the specific
-#' sheet containing the data if the file is an Excel workbook
+#' sheet containing the data if the file is an Excel workbook (Defaults to Level0.Sheet)
 #'
 #' @param level0.sheet If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
-#' @return data.frame A data.frame in standardized "level1" format
+#' @return data.frame A data.frame in standardized "level1" format that contains a 
+#' standard list of columns with standardized column names. 
 #'
 #' @author John Wambaugh
 #'
