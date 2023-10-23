@@ -102,7 +102,7 @@ model {
 #' @param good.col Name of a column indicating which rows have been verified for
 #' analysis, indicated by a "Y" (Defaults to "Verified"). 
 #' 
-#' @param JAGS.PATH The file path to JAGS (Defaults to NA).
+#' @param JAGS.PATH The file path to JAGS specific to user's computer (Defaults to NA).
 #' 
 #' @return A list of two objects: 
 #' \enumerate{
@@ -115,6 +115,19 @@ model {
 #' }
 #'
 #' @author John Wambaugh and Chantel Nicolas
+#' 
+#' @examples 
+#' # Level-2 file
+#' write.table(level2,
+#'   file="KreutzPFAS-fup-UC-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F)
+#' 
+#' # JAGS.PATH should be changed to the specific path to JAGS on user's computer
+#' level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
+#'                        NUM.CORES=8,
+#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
 #' 
 #' @import parallel 
 #' @import runjags

@@ -31,7 +31,7 @@ argument given, "-fup-UC-Level2.tsv" is appended.}
 \item{good.col}{Name of a column indicating which rows have been verified for
 analysis, indicated by a "Y" (Defaults to "Verified").}
 
-\item{JAGS.PATH}{The file path to JAGS (Defaults to NA).}
+\item{JAGS.PATH}{The file path to JAGS specific to user's computer (Defaults to NA).}
 }
 \value{
 A list of two objects: 
@@ -68,6 +68,20 @@ of these types:
   Whole Plasma T5h Sample \tab T5\cr
 }
 We don't currently use the T1 data, but you must have CC, AF, and T5 data.
+}
+\examples{
+# Level-2 file
+write.table(level2,
+  file="KreutzPFAS-fup-UC-Level2.tsv",
+  sep="\t",
+  row.names=F,
+  quote=F)
+
+# JAGS.PATH should be changed to the specific path to JAGS on user's computer
+level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
+                       NUM.CORES=8,
+                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+
 }
 \author{
 John Wambaugh and Chantel Nicolas
