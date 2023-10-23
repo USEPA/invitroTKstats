@@ -69,13 +69,17 @@ sample (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time")).}
 \item{type.indicator.col}{A character string indicating which column of 
 data.set contains the type of observation (Defaults to "Name").}
 
-\item{AF.type.str}{Defaults to "AF".}
+\item{AF.type.str}{String used to annotate observation of this type: Aqueous Fraction. 
+Defaults to "AF".}
 
-\item{T1.type.str}{Defaults to "T1".}
+\item{T1.type.str}{String used to annotate observation of this type: Whole Plasma T1h Sample. 
+Defaults to "T1".}
 
-\item{T5.type.str}{Defaults to "T5".}
+\item{T5.type.str}{String used to annotate observation of this type: Whole Plasma T5h Sample. 
+Defaults to "T5".}
 
-\item{CC.type.str}{Defaults to "CC".}
+\item{CC.type.str}{String used to annotate observation of this type: Calibration Curve. 
+Defaults to "CC".}
 }
 \value{
 \item{data.frame}{A data.frame in standardized "level1" format}

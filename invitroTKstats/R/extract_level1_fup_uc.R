@@ -55,15 +55,18 @@
 #' @param type.indicator.col A character string indicating which column of 
 #' data.set contains the type of observation (Defaults to "Name").
 #' 
-#' @param AF.type.str Defaults to "AF".
+#' @param AF.type.str String used to annotate observation of this type: Aqueous Fraction. 
+#' Defaults to "AF".
 #' 
-#' @param T1.type.str Defaults to "T1".
+#' @param T1.type.str String used to annotate observation of this type: Whole Plasma T1h Sample. 
+#' Defaults to "T1".
 #' 
-#' @param T5.type.str Defaults to "T5".
+#' @param T5.type.str String used to annotate observation of this type: Whole Plasma T5h Sample. 
+#' Defaults to "T5".
 #' 
-#' @param CC.type.str Defaults to "CC".
+#' @param CC.type.str String used to annotate observation of this type: Calibration Curve. 
+#' Defaults to "CC".
 #' 
-#'
 #' @return \item{data.frame}{A data.frame in standardized "level1" format}
 #'
 #' @author John Wambaugh
@@ -75,7 +78,6 @@
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #'
-#' @export extract_level1_fup_uc
 # Lets make a function to automate annotation of Wetmore lab data:
 extract_level1_fup_uc <- function(
   data.set,
