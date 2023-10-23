@@ -105,7 +105,9 @@
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #' 
-#' @param clint.assay.conc.col
+#' @param clint.assay.conc.col Which column of data.in indicates the 
+#' intended test chemical concentration at time zero in the dosing solution 
+#' (added to the donor side of the Caco-2 test well). (Defaults to "Clint.Assay.Conc")
 #' 
 #' @param clint.assay.conc If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
@@ -158,7 +160,8 @@
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
-#' @return \item{data.frame}{A data.frame in standardized "level1" format}
+#' @return A data.frame in standardized "level1" format that contains a standard list
+#' of columns with standardized column names. 
 #'
 #' @author John Wambaugh
 #'
