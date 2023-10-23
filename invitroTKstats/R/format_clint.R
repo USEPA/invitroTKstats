@@ -1,4 +1,4 @@
-#' Creates a standardized data table reporting hepatocyte clearance data
+#' Creates a Standardized Data Table Reporting Hepatocyte Clearance Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical stability
@@ -15,12 +15,15 @@
 #'   Inactivated Hepatocytes \tab Inactive\cr
 #'   Calibration Curve \tab CC\cr
 #' }
-#' Chemical concentration is calculated qualitatively as a response:
+#' 
+#' Chemical concentration is calculated qualitatively as a response and 
+#' returned as a column in the output data frame:
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
+#' @param FILENAME A string used for naming the written output of the function call.
+#' The formatted data frame will be written to a tab-separated text file named
+#' "<FILENAME>-Clint-2-Level1.tsv" (Defaults to "MYDATA").
 #'
 #' @param data.in A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
@@ -29,198 +32,127 @@
 #' @param sample.col Which column of data.in indicates the unique mass
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name")
-#'
-#' @param lab.compound.col Which column of data.in indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
-#'
+#' 
+#' @param date.col Which column of data.in indicates the laboratory measurement
+#' date (Defaults to "Date").
+#' 
+#' @param date A single value to be assigned for all samples as 
+#' the laboratory measurement date (Defaults to NULL).
+#' 
+#' @param compound.col Which column of data.in indicates the test compound
+#' (Defaults to "Compound.Name")
+#' 
 #' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
 #' 
-#' @param date.col Which column of data.in indicates the laboratory measurement
-#' date (Defaults to "Date")
-#'
-#' @param compound.col Which column of data.in indicates the test compound
-#' (Defaults to "Compound.Name")
-#'
-#' @param area.col Which column of data.in indicates the target analyte (that
-#' is, the test compound) MS peak area (Defaults to "Area")
-#'
-#' @param series.col Which column of data.in indicates the "series", that is
-#' a simultaneous replicate (Defaults to "Series")
+#' @param lab.compound.col Which column of data.in indicates The test compound
+#' name used by the laboratory (Defaults to "Lab.Compound.Name")
 #'
 #' @param type.col Which column of data.in indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
+#' above). (Defaults to "Sample.Type")
+#' 
+#' @param density.col Which column of data.in indicates the density (units of
+#' millions of hepatocytes per mL) hepatocytes in the in vitro incubation
+#' (Defaults to "Hep.Density").
+#' 
+#' @param density A single value to be used for all samples indicating
+#' the density of hepatocytes in suspension (10^6 hepatocytes / mL)
+#' (Defaults to NULL).
+#'
+#' @param compound.conc.col Which column of data.in indicates the intended concentration 
+#' of the test chemical for calibration curves (Defaults to "Nominal.Conc")
+#'
+#' @param compound.conc A single value to be assigned for all samples as 
+#' the intended concentration of the test chemical for calibration curves 
+#' (Defaults to NULL).
 #'
 #' @param cal.col Which column of data.in indicates the MS calibration -- for
 #' instance different machines on the same day or different days with the same
 #' MS analyzer (Defaults to "Cal")
-#'
+#' 
+#' @param cal A single value to be assigned for all samples as 
+#' the calibration index (Defaults to NULL).
+#' 
 #' @param dilution.col Which column of data.in indicates how many times the
 #' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#'
-#' @param density.col Which column of data.in indicates the density (units of
-#' millions of hepatocytes per mL) hepatocytes in the in vitro incubation
-#' (Defaults to "Hep.Density" )
-#'
+#' 
+#' @param dilution A single value to be assigned for all samples indicating 
+#' the how many times the sample was diluted before MS analysis (Defaults to NULL).
+#' 
+#' @param time.col Which column of data.in indicates the intended
+#' time of the measurement (in minutes) since the test chemical was introduced
+#' into the hepatocyte incubation (Defaults to "Time")
+#' 
+#' @param time A single value to be assigned for all samples indicating the 
+#' intended time of the measurement since the test chemicals was introduced
+#' into the hepatocyte incubation (Defaults to 2). 
+#' 
 #' @param istd.col Which column of data.in indicates the MS peak area for the
 #' internal standard (Defaults to "ISTD.Area")
 #'
 #' @param istd.name.col Which column of data.in indicates identity of the
 #' internal standard (Defaults to "ISTD.Name")
-#'
-#' @param istd.conc.col Which column of data.in indicates the concentration
-#' (units if uM) of
-#' the internal standard (Defaults to "ISTD.Conc")
-#'
-#' @param conc.col Which column of data.in indicates the intended
-#' test chemical concentration
-#' (units if uM) of
-#' at time zero (Defaults to "Conc")
-#'
-#' @param time.col Which column of data.in indicates the intended
-#' time of the measurement (in minutes) since the test chemical was introduced
-#' into the hepatocyte incubation (Defaults to "Time")
-#'
-#' @param analysis.method.col Which column of PPB.data indicates the analytical
-#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
-#' "Analysis.Method")
-#'
-#' @param analysis.instrument.col Which column of PPB.data indicates the
-#' instrument used for chemical analysis, for example
-#' "Agilent 6890 GC with model 5973 MS" (Defaults to
-#' "Analysis.Instrument")
-#'
-#' @param analysis.parameters.col Which column of PPB.data indicates the
-#' parameters used to identify the compound on the chemical analysis instrument,
-#' for example
-#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaults to "Analysis.Parameters"). 
-#'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
-#'
-#' @param input.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identity, and measurement type. The data frame should
-#' contain columns with names specified by the following arguments:
-#'
-#' @param sample.col Which column of input.data indicates the unique mass
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to
-#' "Lab.Sample.Name")
-#'
-#' @param density.col Which column of input.data indicates the density of
-#' hepatocytes in suspension (10^6 hepatocytes / mL) (Defaults to "Hep.Density")
-#'
-#' @param density.col A single value to be used for all samples indicating
-#' the density of hepatocytes in suspension (10^6 hepatocytes / mL)
-#' (Defaults to NULL)
-#'
-#' @param lab.compound.col Which column of input.data indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
-#'
-#' @param dtxsid.col Which column of input.data indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
 #' 
-#' @param date.col Which column of input.data indicates the laboratory measurement
-#' date (Defaults to "Date")
-#'
-#' @param series.col Which column of PPB.data indicates the "series", that is
-#' a simultaneous replicate with the same analytical chemistry
-#' (Defaults to "Series")
-#'
-#' @param series If this argument is used (defaults to NULL) every observation
-#' in the table is assigned the value of the argument and the corresponding
-#' column in input.table (if present) is ignored.
-#'
-#' @param compound.col Which column of input.data indicates the test compound
-#' (Defaults to "Compound.Name")
-#'
-#' @param area.col Which column of input.data indicates the target analyte (that
-#' is, the test compound) MS peak area (Defaults to "Area")
-#'
-#' @param type.col Which column of input.data indicates the sample type (see table
-#' above)(Defaults to "Type")
-#'
-#' @param type.col Which column of input.data indicates the direction of the
-#' measurements (either "AtoB" for apical to basolateral or "BtoA" for vice
-#' versa) (Defaults to "Direction")
-#'
-#' @param cal.col Which column of input.data indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
-#'
-#' @param cal If this argument is used (defaults to NULL) every observation in
-#' the table is assigned the value of the argument and the corresponding
-#' column in input.table (if present) is ignored.
-#' 
-#' #param compound.conc.col Which column indicates the intended concentration 
-#' of the test chemical for calibration curves (Defaults to "Standard.Conc")
-#'
-#' @param dilution If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
-#'
-#'
-#' @param istd.col Which column of input.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
-#'
-#' @param istd.name.col Which column of input.data indicates identity of the
-#' internal standard (Defaults to "ISTD.Name")
-#'
 #' @param istd.name If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
-#' @param istd.conc.col Which column of input.data indicates the concentration of
+#' @param istd.conc.col Which column of data.in indicates the concentration
+#' (units if uM) of
 #' the internal standard (Defaults to "ISTD.Conc")
-#'
+#' 
 #' @param istd.conc If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
-#'
-#' @param nominal.test.conc.col Which column of input.data indicates the intended
-#' test chemical concentration at time zero in the dosing solution (added to the
-#' donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")
-#'
-#' @param nominal.test.conc If this argument is used (defaults to NULL) every
+#' 
+#' @param clint.assay.conc.col
+#' 
+#' @param clint.assay.conc If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param area.col Which column of data.in indicates the target analyte (that
+#' is, the test compound) MS peak area (Defaults to "Area")
 #'
-#' @param analysis.method.col Which column of input.data indicates the analytical
+#' @param analysis.method.col Which column of data.in indicates the analytical
 #' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
 #' "Analysis.Method")
-#'
+#' 
 #' @param analysis.method If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
-#' @param analysis.instrument.col Which column of input.data indicates the
+#' @param analysis.instrument.col Which column of data.in indicates the
 #' instrument used for chemical analysis, for example
 #' "Agilent 6890 GC with model 5973 MS" (Defaults to
 #' "Analysis.Instrument")
-#'
+#' 
 #' @param analysis.instrument If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
-#' @param analysis.parameters.col Which column of input.data indicates the
+#' @param analysis.parameters.col Which column of data.in indicates the
 #' parameters used to identify the compound on the chemical analysis instrument,
 #' for example
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaulys to "Analysis.Paramaters").
-#'
+#' (Defaults to "Analysis.Parameters"). 
+#' 
 #' @param analysis.parameters If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
+#' 
+#' @param note.col which column of data.in contains additional notes on 
+#' test compounds (Defaults to "Note").
 #'
-#' @param level0.file.col Which column of PPB.data indicates the file from
-#' which the data were obtained (for example "MyWorkbook.xlsx").
+#' @param level0.file.col Which column of data.in indicates the file from
+#' which the data were obtained (Defaults to "Level0.File").
 #'
 #' @param level0.file If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
 #' corresponding column in input.table (if present) is ignored.
 #'
-#' @param level0.sheet.col Which column of PPB.data indicates the specific
-#' sheet containing the data if the file is an Excel workbook
+#' @param level0.sheet.col Which column of data.in indicates the specific
+#' sheet containing the data if the file is an Excel workbook (Defaults to "Level0.Sheet").
 #'
 #' @param level0.sheet If this argument is used (defaults to NULL) every
 #' observation in the table is assigned the value of the argument and the
@@ -433,11 +365,11 @@ format_clint <- function(data.in,
     level0.sheet.col
     )
 
-  # Set reasonable sig figs:
+  # Set reasonable significant digits:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
 
-  # calculate the reponse:
+  # calculate the response:
   data.out[,"Response"] <- signif(data.out[,area.col] /
      data.out[,istd.col] * data.out[,istd.conc.col], 4)
 
