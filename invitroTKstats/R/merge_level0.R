@@ -39,30 +39,33 @@
 #' to pull data from.
 #' 
 #' @param sheet (Character) Excel file sheet name/identifier containing
-#' level 0 where data is to be pulled from. (Note: Single entry only, use only
-#' if all files have the same sheet identifier for level 0 data.)
+#' level 0 where data is to be pulled from. (Defaults to `NULL`.) (Note: Single
+#' entry only, use only if all files have the same sheet identifier for
+#' level 0 data.) 
 #' 
 #' @param sheet.col (Character) Catalog column name containing `sheet`
 #' information. (Default to "Sheet")
 #' 
 #' @param skip.rows (Numeric) Number of rows to skip when extracting level 0
-#' data from the specified Excel file(s). (Note: Single entry only, use only if
-#' all files need to skip the same number of rows for extracting level 0 data.)
+#' data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
+#' entry only, use only if all files need to skip the same number of rows
+#' for extracting level 0 data.)
 #' 
 #' @param skip.rows.col (Character) Catalog column name containing `skip.rows`
 #' information. (Default to "Skip.Rows")
 #' 
 #' @param num.rows (Numeric) Number of rows to pull when extracting level 0
-#' data from the specified Excel file(s). (Note: Single entry only, use only if
-#' all files need to pull the same number of rows for extracting level 0 data.)
+#' data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
+#' entry only, use only if all files need to pull the same number of rows for
+#' extracting level 0 data.)
 #' 
 #' @param num.rows.col (Character) Catalog column name containing `num.rows`
 #' information. (Default to `NULL`)
 #' 
 #' @param date (Character) Date of laboratory measurements. Typical format
 #' "MMDDYY" ("MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year).
-#' (Note: Single entry only, use only if all files have the same laboratory
-#' measurement date.)
+#' (Defaults to `NULL`.) (Note: Single entry only, use only if all files have
+#' the same laboratory measurement date.)
 #' 
 #' @param date.col (Character) Catalog column name containing `date`
 #' information. (Defaults to "Date")
@@ -74,23 +77,25 @@
 #' MS peak area for the internal standard. (Defaults to "ISTD")
 #' 
 #' @param sample.colname (Character) Column name of level 0 data containing
-#' sample information. (Note: Single entry only, use only if all files use
-#' the same column name for sample names when extracting level 0 data.)
+#' sample information. (Defaults to `NULL`.) (Note: Single entry only, use only
+#' if all files use the same column name for sample names when extracting
+#' level 0 data.)
 #' 
 #' @param sample.colname.col (Character) Catalog column name containing 
 #' `sample.colname` information. (Defaults to "Sample.ColName") 
 #' 
 #' @param type.colname (Character) Column name of the level 0 data containing
-#'  the type of sample. (Note: Single entry only, use only if all files use the
-#'  same column name for sample type information when extracting level 0 data.)
+#'  the type of sample. (Defaults to `NULL`.) (Note: Single entry only, use
+#'  only if all files use the same column name for sample type information
+#'  when extracting level 0 data.)
 #' 
 #' @param type.colname.col (Character) Catalog column name containing
 #' `type.colname` information. (Defaults to "Type".)
 #' 
 #' @param peak.colname (Character) Column name of the level 0 data containing
-#'  the analyte Mass Spectrometry peak area. (Note: Single entry only, use only
-#'  if all files use the same column name for analyte peak area information
-#'  when extracting level 0 data.)
+#'  the analyte Mass Spectrometry peak area. (Defaults to `NULL`.)
+#'  (Note: Single entry only, use only if all files use the same column name
+#'  for analyte peak area information when extracting level 0 data.)
 #' 
 #' @param peak.colname.col (Character) Catalog column name containing
 #' `peak.colname` information. (Defaults to "Peak.ColName")
@@ -104,7 +109,7 @@
 #' `istd.peak.colname` information. (Defaults to "ISTD.Peak.ColName")
 #' 
 #' @param conc.colname (Character) Column name of the level 0 data containing
-#'  intended concentrations for calibration curves.
+#'  intended concentrations for calibration curves. (Defaults to `NULL`.)
 #'  (Note: Single entry only, use only if all files use the same column name
 #'  for intended concentration information when extracting level 0 data.)
 #'  
@@ -113,18 +118,19 @@
 #' 
 #' @param analysis.param.colname (Character) Column name of the level 0 data
 #'  containing Mass Spectrometry instrument parameters for the analyte.
-#'  (Note: Single entry only, use only if all files use the same column name for
-#'  analysis parameter information when extracting level 0 data.)
+#'  (Defaults to `NULL`.) (Note: Single entry only, use only if all files use
+#'  the same column name for analysis parameter information when extracting
+#'  level 0 data.)
 #' 
 #' @param analysis.param.colname.col (Character) Catalog column name containing
 #' `analysis.param.colname` information. (Defaults to "AnalysisParam.ColName")
 #' 
 #' @param additional.colnames Additional columns from the level 0 data files to
 #'  pull information from when extracting level 0 data and include in the
-#'  compiled level 0 returned from `merge_level0`. (Defaults to NULL)
+#'  compiled level 0 returned from `merge_level0`. (Defaults to `NULL`.)
 #' 
 #' @param additional.colname.cols Catalog column name(s) containing 
-#'  `additional.colnames` information, (Defaults to NULL)
+#'  `additional.colnames` information, (Defaults to `NULL`.)
 #' 
 #' @param chem.ids (Data frame) A data frame containing basic chemical
 #'  identification information for tested chemicals.
