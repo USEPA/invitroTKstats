@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_fup_uc.R
 \name{calc_fup_uc}
 \alias{calc_fup_uc}
-\title{Calculate Fraction Unbound in Plasma (Fup) from Ultracentrifugation data}
+\title{Calculate Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data}
 \usage{
 calc_fup_uc(
   FILENAME = "UC_Model_Results",
@@ -15,55 +15,57 @@ calc_fup_uc(
 )
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input Level-2 file, whatever the
-argument given, "-fup-UC-Level2.tsv" is appended.}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file, whatever the
+argument given, "-fup-UC-Level2.tsv" is appended. (Defauls to "UC_Model_Results")}
 
-\item{TEMP.DIR}{Alternative directory to output file
-(Defaults to NULL, all files will be written to user's current working directory).}
+\item{TEMP.DIR}{(Character) Alternative directory to save output files.
+(Defaults to NULL, all files will be written to user's current working directory)}
 
-\item{NUM.CHAINS}{The number of Markov Chains to use (Defaults to 5).}
+\item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5)}
 
-\item{NUM.CORES}{The number of processors to use (Defaults to 2).}
+\item{NUM.CORES}{(Numeric) The number of processors to use. (Defaults to 2)}
 
-\item{RANDOM.SEED}{The seed used by the random number generator
-(Defaults to 1111).}
+\item{RANDOM.SEED}{(Numeric) The seed used by the random number generator.
+(Defaults to 1111)}
 
-\item{good.col}{Name of a column indicating which rows have been verified for
-analysis, indicated by a "Y" (Defaults to "Verified").}
+\item{good.col}{(Character) Column name indicating which rows have been verified for 
+analysis, valid data rows indicated with "Y". (Defaults to "Verified")}
 
-\item{JAGS.PATH}{The file path to JAGS specific to user's computer (Defaults to NA).}
+\item{JAGS.PATH}{(Character) Computer specific file path to JAGS software. (Defaults to NA)}
 }
 \value{
 A list of two objects: 
 \enumerate{
-   \item{A data frame containing quantiles of the Bayesian posteriors of 
-   fraction unbound in plasma (Fup) of all compounds in input file. Column includes:
+   \item{A data frame with Bayesian estimated fraction unbound in plasma (Fup) 
+   and credible intervals for all compounds in the input file. Column includes:
    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
    the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
-   Fup.Med - median of posteriors, Fup.Low - 2.5th quantile, and Fup.High - 97.5th quantile}
+   Fup.Med - Posterior median, Fup.Low - 2.5th quantile, and Fup.High - 97.5th quantile.}
    \item{A runjags-class object containing results from JAGS model.}
 }
 }
 \description{
-This function uses MCMC simulation to calculate fraction unbound in plasma (Fup) 
-from Ultracentrifugation (UC) data. This function then calculates quantiles 
-of posterior samples and returns a summary table along with all MCMC results.
+This function uses Bayesian modeling, via MCMC simulations, of data collected 
+from Ultracentrifugation (UC) assays to estimate the fraction unbound in plasma (Fup) 
+and credible interval. This function calculates Fup and the credible interval 
+from posterior samples of the MCMC and returns a summary table along with 
+the full MCMC results.
 }
 \details{
-The input data should be a "Level-2" data that have been formatted and created
-by \code{\link{format_fup_uc}}, then have been curated and had a column added
-with the value "Y" indicating that each row is verified as usable for analysis. 
+The input data should be a "Level-2". Level-2 data is Level-1 data formatted 
+with the \code{\link{format_fup_uc}} function, then curated with a verification column with 
+"Y" indicating the row of data is valid for analysis. 
 
-Be aware that this function will write couple files to user's current working directory
-unless other path is specified in the argument. Files being saved include the 
-summary table (.RData), JAG argument (.RData), and any "unverified" data that 
-were held out from the analysis (.tsv).  
+Note: By default, this function writes files to the user's current working directory 
+unless another path is specified in the TEMP.DIR argument. Saved files include 
+the summary table (.RData), JAGS model (.RData), and any "unverified" data 
+excluded from the analysis (.tsv).
 
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
-  Ultracentrifugation Aqueous Fraction \tab UC\cr
+  Ultracentrifugation Aqueous Fraction \tab AF\cr
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }
@@ -77,7 +79,7 @@ write.table(level2,
   row.names=F,
   quote=F)
 
-# JAGS.PATH should be changed to the specific path to JAGS on user's computer
+# JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
                        NUM.CORES=8,
                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
