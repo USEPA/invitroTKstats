@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_fup_uc.R
 \name{calc_fup_uc}
 \alias{calc_fup_uc}
-\title{Calculate Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data}
+\title{Calculate the Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data}
 \usage{
 calc_fup_uc(
   FILENAME = "UC_Model_Results",
@@ -15,61 +15,73 @@ calc_fup_uc(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file, whatever the
-argument given, "-fup-UC-Level2.tsv" is appended. (Defauls to "UC_Model_Results")}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results")}
 
-\item{TEMP.DIR}{(Character) Alternative directory to save output files.
-(Defaults to NULL, all files will be written to user's current working directory)}
+\item{TEMP.DIR}{(Character) Alternative directory to save output files. By
+default, i.e. unspecified, all files will be exported to the user's current
+working directory. (Defaults to `NULL`.)}
 
-\item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5)}
+\item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5.)}
 
-\item{NUM.CORES}{(Numeric) The number of processors to use. (Defaults to 2)}
+\item{NUM.CORES}{(Numeric) The number of computer processors to use for
+parallel computing. (Defaults to 2.)}
 
 \item{RANDOM.SEED}{(Numeric) The seed used by the random number generator.
-(Defaults to 1111)}
+(Defaults to 1111.)}
 
-\item{good.col}{(Character) Column name indicating which rows have been verified for 
-analysis, valid data rows indicated with "Y". (Defaults to "Verified")}
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
 
-\item{JAGS.PATH}{(Character) Computer specific file path to JAGS software. (Defaults to NA)}
+\item{JAGS.PATH}{(Character) Computer specific file path to JAGS software.
+(Defaults to `NA`.)}
 }
 \value{
 A list of two objects: 
 \enumerate{
-   \item{A data frame with Bayesian estimated fraction unbound in plasma (Fup) 
-   and credible intervals for all compounds in the input file. Column includes:
-   Compound.Name - compound name, Lab.Compound.Name - compound name used by 
-   the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
-   Fup.Med - Posterior median, Fup.Low - 2.5th quantile, and Fup.High - 97.5th quantile.}
-   \item{A runjags-class object containing results from JAGS model.}
+   \item{Results: A data frame with Bayesian estimated fraction unbound
+   in plasma (Fup) and credible intervals for all compounds in the input file.
+   Column includes:
+   Compound.Name - compound name,
+   Lab.Compound.Name - compound name used by the laboratory,
+   DTXSID - EPA's DSSTox Structure ID,
+   Fup.point - point estimate of Fup,
+   Fup.Med - Posterior median,
+   Fup.Low - 2.5th quantile,
+   and Fup.High - 97.5th quantile.}
+   \item{coda: A runjags-class object containing results from JAGS model.}
 }
 }
 \description{
-This function uses Bayesian modeling, via MCMC simulations, of data collected 
-from Ultracentrifugation (UC) assays to estimate the fraction unbound in plasma (Fup) 
-and credible interval. This function calculates Fup and the credible interval 
-from posterior samples of the MCMC and returns a summary table along with 
-the full MCMC results.
+This function estimates the fraction unbound in plasma (Fup) and credible
+intervals with a Bayesian modeling approach, via MCMC simulations.
+Data used in modeling is collected from Ultracentrifugation (UC) Fup assays.
+Fup and the credible interval are calculated from the MCMC posterior samples
+and the function returns a summary table along with the full set of
+MCMC results.
 }
 \details{
-The input data should be a "Level-2". Level-2 data is Level-1 data formatted 
-with the \code{\link{format_fup_uc}} function, then curated with a verification column with 
-"Y" indicating the row of data is valid for analysis. 
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_fup_uc}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
 
-Note: By default, this function writes files to the user's current working directory 
-unless another path is specified in the TEMP.DIR argument. Saved files include 
-the summary table (.RData), JAGS model (.RData), and any "unverified" data 
-excluded from the analysis (.tsv).
+Note: By default, this function writes files to the user's current working
+directory. Users must specify an alternative path with the `TEMP.DIR`
+argument if they want the files exported to another path. Exported files 
+include the summary table (.RData), JAGS model (.RData), and any "unverified" 
+data excluded from the analysis (.tsv).
 
 The data frame of observations should be annotated according to
-of these types:
+these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
   Ultracentrifugation Aqueous Fraction \tab AF\cr
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }
-We don't currently use the T1 data, but you must have CC, AF, and T5 data.
+We don't currently use the T1 data, but CC, AF, and T5 data are required.
 }
 \examples{
 # Level-2 file
