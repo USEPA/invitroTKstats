@@ -61,92 +61,93 @@ model {
 }
 "
 
-#' Calculate fraction unbound in plasma from ultracentrifugation data
+#' Calculate the Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data
 #'
+#' This function estimates the fraction unbound in plasma (Fup) and credible
+#' intervals with a Bayesian modeling approach, via MCMC simulations.
+#' Data used in modeling is collected from Ultracentrifugation (UC) Fup assays.
+#' Fup and the credible interval are calculated from the MCMC posterior samples
+#' and the function returns a summary table along with the full set of
+#' MCMC results.
+#' 
+#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_fup_uc}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for analysis. 
+#' 
+#' Note: By default, this function writes files to the user's current working
+#' directory. Users must specify an alternative path with the `TEMP.DIR`
+#' argument if they want the files exported to another path. Exported files 
+#' include the summary table (.RData), JAGS model (.RData), and any "unverified" 
+#' data excluded from the analysis (.tsv).
+#' 
 #' The data frame of observations should be annotated according to
-#' of these types:
+#' these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab AF\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
-#' We don't currently use the T1 data, but you must have CC, AF, and T5 data.
+#' We don't currently use the T1 data, but CC, AF, and T5 data are required.
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "BASE_Model_Results")
+#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' "<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results")
 #'
-#' @param TEMP.DIR An optional directory where file writing may be faster.
+#' @param TEMP.DIR (Character) Alternative directory to save output files. By
+#' default, i.e. unspecified, all files will be exported to the user's current
+#' working directory. (Defaults to `NULL`.)
 #'
-#' @param JAGS.PATH The file path to JAGS.
+#' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
-#' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
-#' of convergence according to Gelman and Rubin diagnostic.
+#' @param NUM.CORES (Numeric) The number of computer processors to use for
+#' parallel computing. (Defaults to 2.)
 #'
-#' @param NUM.CORES The number of processors to use (default 2)
-#'
-#' @param RANDOM.SEED The seed used by the random number generator 
-#' (default 1111)
-#' @param PPB.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identity, and measurement type. The data frame should
-#' contain columns with names specified by the following arguments:
+#' @param RANDOM.SEED (Numeric) The seed used by the random number generator.
+#' (Defaults to 1111.)
 #' 
-#' @param sample.col Which column of PPB.data indicates the unique mass 
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
-#' "Lab.Sample.Name")
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
 #' 
-#' @param lab.compound.col Which column of PPB.data indicates The test compound 
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' @param JAGS.PATH (Character) Computer specific file path to JAGS software.
+#' (Defaults to `NA`.)
 #' 
-#' @param dtxsid.col Which column of PPB.data indicates EPA's DSSTox Structure 
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#' 
-#' @param date.col Which column of PPB.data indicates the laboratory measurement
-#' date (Defaults to "Date")
-#' 
-#' @param compound.col Which column of PPB.data indicates the test compound
-#' (Defaults to "Compound.Name")
-#' 
-#' @param area.col Which column of PPB.data indicates the target analyte (that 
-#' is, the test compound) MS peak area (Defaults to "Area")
-#' 
-#' @param series.col Which column of PPB.data indicates the "series", that is
-#' a simultaneous replicate (Defaults to "Series")
-#' 
-#' @param type.col Which column of PPB.data indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
-#' 
-#' @param cal.col Which column of PPB.data indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
-#'
-#' #param std.conc.col Which column indicates the intended concentration 
-#' of the test chemical for calibration curves (Defaults to "Standard.Conc")
-#' 
-#' @param dilution.col Which column of PPB.data indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#' 
-#' @param istd.col Which column of PPB.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
-#' 
-#' @param istd.name.col Which column of PPB.data indicates identity of the 
-#' internal standard (Defaults to "ISTD.Name")
-#' 
-#' @param istd.conc.col Which column of PPB.data indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
-#' 
-#' @param uc.assay.conc.col Which column of PPB.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "UC.Assay.Conc") 
-#'
-#' @return A data.frame containing quunantiles of the Bayesian posteriors 
+#' @return A list of two objects: 
+#' \enumerate{
+#'    \item{Results: A data frame with Bayesian estimated fraction unbound
+#'    in plasma (Fup) and credible intervals for all compounds in the input file.
+#'    Column includes:
+#'    Compound.Name - compound name,
+#'    Lab.Compound.Name - compound name used by the laboratory,
+#'    DTXSID - EPA's DSSTox Structure ID,
+#'    Fup.point - point estimate of Fup,
+#'    Fup.Med - Posterior median,
+#'    Fup.Low - 2.5th quantile,
+#'    and Fup.High - 97.5th quantile.}
+#'    \item{coda: A runjags-class object containing results from JAGS model.}
+#' }
 #'
 #' @author John Wambaugh and Chantel Nicolas
+#' 
+#' @examples 
+#' # Level-2 file
+#' write.table(level2,
+#'   file="KreutzPFAS-fup-UC-Level2.tsv",
+#'   sep="\t",
+#'   row.names=F,
+#'   quote=F)
+#' 
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
+#'                        NUM.CORES=8,
+#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
 #' 
 #' @import parallel 
 #' @import runjags
 #' 
 #' @export calc_fup_uc
-calc_fup_uc <- function(PPB.data,
+calc_fup_uc <- function(
   FILENAME = "UC_Model_Results",
   TEMP.DIR = NULL,
   NUM.CHAINS=5, 
