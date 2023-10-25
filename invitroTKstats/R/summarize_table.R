@@ -1,48 +1,82 @@
-#' Creates a standardized data table reporting UC PPB data
+#' Creates a Summary Table of MS Data Frame
 #'
-#' This function formats data describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats}.
-#' An input data frame is organized into a standard set of columns and is written
-#' to a tab-separated text file.
+#' This function creates and returns a list containing summary counts of the input data table.
+#' Summary counts include the counts of observations, unique chemicals and unique 
+#' measurements in the input data table. If a vector of data types is specified in 
+#' the argument \code{req.types}, the function also checks if each chemical has 
+#' observations for every measurement type included the vector for each chemical-calibration pair. 
+#' If it dose, the chemical is said to have a complete data set. Otherwise, it has an incomplete data set. 
+#' The counts of chemicals with complete and incomplete data sets are returned in the output list. 
+#' The input data frame can be Caco-2 data, ultracentrifugation (UC) data, rapid equilibrium dialysis (RED) data, 
+#' or hepatocyte clearance (Clint) data. Tables of measurement types and annotations 
+#' used in each assay are available in Details. 
 #'
-#' The data frame of observations should be annotated according to
-#' of these types:
+#' Sample types used in ultracentrifugation (UC) data should be 
+#' annotated according to this table:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab AF\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
-#' Chemical concentration is calculated qualitatively as a response:
+#' 
+#' Sample types in rapid equilibrium dialysis (RED) data should be annotated according to
+#' this table:
+#' \tabular{rrrrr}{
+#'   Blank (ignored) \tab Blank\cr
+#'   Plasma well concentration \tab Plasma\cr
+#'   Phosphate-buffered well concentration\tab PBS\cr
+#'   Time zero plasma concentration \tab T0\cr
+#'   Plasma stability sample \tab Stability\cr
+#'   Equilibrium Control Well 1 \tab EC1\cr
+#'   Equilibrium Control Well 2 \tab EC2\cr
+#'   Calibration Curve \tab CC\cr
+#' }
 #'
-#' Response <- AREA / ISTD.AREA * ISTD.CONC
+#' Sample types in hepatocyte clearance data should be annotated according to
+#' this table:
+#' \tabular{rrrrr}{
+#'   Blank \tab Blank\cr
+#'   Hepatocyte incubation concentration \tab Cvst\cr
+#'   Inactivated Hepatocytes \tab Inactive\cr
+#'   Calibration Curve \tab CC\cr
+#' }
+#' 
+#' Sample types used in Caco-2 data should be annotated according to
+#' this table:
+#' \tabular{rr}{
+#'   Blank with no chemical added \tab Blank \cr
+#'   Dosing vehicle (C0) at target concentration \tab D0\cr
+#'   Donor compartment at end of experiment \tab D2\cr
+#'   Receiver compartment at end of experiment\tab R2\cr
+#' }
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
-#'
-#' @param input.table A data frame containing mass-spectrometry peak areas,
+#' @param input.table (Data Frame) A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param dtxsid.col Which column of input.table indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' @param dtxsid.col (Character) Column name of input.table indicates EPA's DSSTox Structure
+#' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID")
 #'
-#' @param compound.col Which column of input.table indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param compound.col (Character) Column name of input.table containing the test compound.
+#' (Defaults to "Compound.Name".)
 #'
-#' @param cal.col Which column of input.table indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Calibration")
+#' @param cal.col (Character) Column name of input.table containing the MS calibration. 
+#' Calibration typically uses indices or dates to represent if the analyses were done on 
+#' different machines on the same day or on different days with the same MS analyzer. 
+#' (Defaults to "Calibration".)
 #'
-#' @param type.col Which column of input.table indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
+#' @param type.col (Character) Column name of input.table containing the sample type (see tables
+#' in Details). (Defaults to "Sample.Type".)
 #'
-#' @param req.types If set (defaults to NULL) all of the measurement types 
-#' included in this vector of character strings must
-#' be available for each chemical-calibration pair to make an estimate.
+#' @param req.types (Character Vector) A vector of character strings contains
+#' measurement types. If used, the function checks if all of the measurement types included in this vector are
+#' available for each chemical-calibration pair. (Defaults to \code{NULL}.)
 #'
-#' @return \item{list}{A list containing the summary counts from the table}
+#' @return A list containing the summary counts from the input data table. The list includes: 
+#' the number of observations, the number of unique chemicals, the number of unique measurements, 
+#' the number of chemicals with complete data sets, the number of chemicals with incomplete data sets, 
+#' and the number of chemicals with repeated observations.
 #'
 #' @author John Wambaugh
 #' @export summarize_table
