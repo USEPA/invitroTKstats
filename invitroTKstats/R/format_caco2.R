@@ -52,112 +52,111 @@
 #' @param series.col (Character) Column name containing `series` information. (Defaults to "Series".)
 #'
 #' @param series (Numeric) Index of simultaneous replicates with the same analytical chemistry. 
-#' (Note: Single entry only, use 1 only if all test compounds have one replicate.) (Defaults to NULL.)
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use 1 only if all test compounds have one replicate.) 
 #'
-#' @param compound.col (Character) Column name of data.in indicates the test compound.
+#' @param compound.col (Character) Column name of data.in containing the test compound.
 #' (Defaults to "Compound.Name".)
 #'
-#' @param area.col (Character) Column name of data.in indicates the target analyte (that
+#' @param area.col (Character) Column name of data.in containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
 #'
-#' @param type.col (Character) Column name of data.in indicates the sample type (see table
-#' above) (Defaults to "Type".)
+#' @param type.col (Character) Column name of data.in containing the sample type (see table
+#' under Details). (Defaults to "Type".)
 #'
-#' @param direction.col (Character) Column name of data.in indicates the direction of
-#' the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
-#' to aprical (BtoA). (Defaults to "Direction".)
+#' @param direction.col (Character) Column name of data.in containing the direction of
+#' the Caco-2 permeability experiment: either apical donor to basal receiver (AtoB), or 
+#' basal donor to apical receiver (BtoA). (Defaults to "Direction".)
 #'
 #' @param cal.col (Character) Column name containing `cal` 
 #' information. (Defaults to "Cal".)
 #'
-#' @param cal (Numeric) MS calibration index, indicates the analyses were done on different machines 
-#' on the same day or different days with the same MS analyzer. (Note: Single entry only, 
-#' use only if all data were collected with the same machine, on the same date, with the same MS analyzer.)
-#' (Defaults to NULL.)
+#' @param cal (Character) MS calibration the samples were based on, typically uses 
+#' indices or dates to represent if the analyses were done on different machines on 
+#' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, 
+#' use only if all data were collected based on the same calibration.)
 #' 
 #' @param compound.conc.col (Character) Column name containing `compound.conc` 
 #' information. (Defaults to "Nominal.Conc".)
 #' 
-#' #param compound.conc (Numeric) The intended concentration
-#' of the test chemical for calibration curves. (Note: Single entry only,
-#' use only if all test compounds have the same intended concentration.)
-#' (Defaults to NULL.)
+#param compound.conc (Numeric) The intended concentration
+#of the test chemical for calibration curves. (Note: Single entry only,
+#use only if all test compounds have the same intended concentration.)
+#(Defaults to \code{NULL}.)
 #'
 #' @param dilution.col (Character) Column name containing `dilution` 
 #' information. (Defaults to "Dilution.Factor".)
 #'
 #' @param dilution (Numeric) Number of times the sample was diluted before MS 
-#' analysis. (Note: Single entry only, use only if all samples were diluted the same
-#' number of times.) (Defaults to NULL.)
+#' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' samples underwent the same number of dilutions.)
 #'
 #' @param membrane.area.col (Character) Column name containing `membrane.area` 
 #' information. (Defaults to "Membrane.Area".)
 #'
 #' @param membrane.area (Numeric) The area of the Caco-2 monolayer (in cm^2). 
-#' (Note: Single entry only, use only if all test compounds have the same area of the Caco-2 monolayer.)
-#' (Defaults to NULL.)
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+#' have the same area for the Caco-2 monolayer.)
 #'
-#' @param receiver.vol.col (Character) Column name of data.in indicates the volume
+#' @param receiver.vol.col (Character) Column name of data.in containing the volume
 #' (in cm^3) of the receiver portion of the Caco-2 experimental well. 
 #' (Defaults to "Vol.Receiver".)
 #'
-#' @param donor.vol.col (Character) Column name of data.in indicates the volume
+#' @param donor.vol.col (Character) Column name of data.in containing the volume
 #' (in cm^3) of the donor portion of the Caco-2 experimental well where the
 #' test chemical is added. (Defaults to "Vol.Donor".)
 #'
 #' @param meas.time.col (Character) Column name containing `meas.time` 
 #' information. (Defaults to "Time".)
 #'
-#' @param meas.time (Numeric) The amount of time before the receiver and donor 
-#' compartments are measured. (Defaults to 2 hours.)
+#' @param meas.time (Numeric) The amount of time (in hours) before the receiver and donor 
+#' compartments are measured. (Defaults to 2.)
 #'
-#' @param istd.col (Character) Column name of data.in indicating the
+#' @param istd.col (Character) Column name of data.in containing the
 #' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #'
 #' @param istd.name.col (Character) Column name containing `istd.name` information. (Defaults to "ISTD.Name".)
 #'
-#' @param istd.name (Character) The identity of the internal standard. 
-#' (Note: Single entry only, use only if all test compounds use the same internal standard.) 
-#' (Defaults to NULL.)
+#' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds use the same internal standard.) 
 #'
 #' @param istd.conc.col (Character) Column name containing `istd.conc` information. (Defaults to "ISTD.Conc".)
 #'
-#' @param istd.conc (Numeric) The concentration of the internal standard. 
-#' (Note: Single entry only, use only if all test compounds have the same 
-#' concentration of the internal standard.) (Defaults to NULL.)
+#' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds have the same 
+#' concentration of the internal standard.) 
 #'
 #' @param nominal.test.conc.col (Character) Column name containing `nominal.test.conc` 
 #' information. (Defaults to "Test.Target.Conc".)
 #'
-#' @param nominal.test.conc (Numeric) The intended test chemical concentration 
-#' at time zero in the dosing solution (added to the donor side of the Caco-2 test well).
-#' (Note: Single entry only, use only if the same initial concentration was used 
-#' for all test compounds). (Defaults to NULL.)
+#' @param nominal.test.conc (Numeric) The test chemical concentration in the dosing solution
+#' that added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
+#' concentration was used for all tested compounds.)
 #'
 #' @param analysis.method.col (Character) Column name containing `analysis.method` 
 #' information. (Defaults to "Analysis.Method".)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
-#' typically "LCMS" or "GCMS". (Note: Single entry only, 
-#' use only if the same method was used for all test compounds). (Defaults to NULL.)
+#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same method was used for all tested compounds.)
 #'
 #' @param analysis.instrument.col (Character) Column name containing `analysis.instrument` 
 #' information. (Defaults to "Analysis.Instrument".)
 #'
 #' @param analysis.instrument (Character) The instrument used for chemical analysis, 
-#' for example "Agilent 6890 GC with model 5973 MS". (Note: Single entry only, 
-#' use only if the same instrument was used for all samples). (Defaults to NULL.)
+#' for example "Agilent 6890 GC with model 5973 MS". (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same instrument was used for all tested compounds.) 
 #'
 #' @param analysis.parameters.col (Character) Column name containing `analysis.parameters` 
 #' information. (Defaults to "Analysis.Paramaters".)
 #'
 #' @param analysis.parameters (Character) The parameters used to identify the 
 #' compound on the chemical analysis instrument, for example
-#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0". 
-#' (Note: Single entry only, use only if the same parameter was used for all test compounds). 
-#' (Defaults to NULL.)
+#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0". (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
 #'
-#' @return data.frame A data.frame in standardized "level1" format that contains a  
+#' @return data.frame A data.frame in standardized "level1" format containing a  
 #' standardized set of columns with standardized column names. 
 #'
 #' @author John Wambaugh
