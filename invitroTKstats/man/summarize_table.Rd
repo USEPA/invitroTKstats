@@ -37,18 +37,18 @@ measurement types. If used, the function checks if all of the measurement types 
 available for each chemical-calibration pair. (Defaults to \code{NULL}.)}
 }
 \value{
-A list containing the summary counts from the input data table. The list includes: 
+A list containing the summary counts from the input data table. The list includes 
 the number of observations, the number of unique chemicals, the number of unique measurements, 
 the number of chemicals with complete data sets, the number of chemicals with incomplete data sets, 
 and the number of chemicals with repeated observations.
 }
 \description{
 This function creates and returns a list containing summary counts of the input data table.
-Summary counts include the counts of observations, unique chemicals and unique 
-measurements in the input data table. If a vector of data types is specified in 
-the argument \code{req.types}, the function also checks if each chemical has 
-observations for every measurement type included the vector for each chemical-calibration pair. 
-If it dose, the chemical is said to have a complete data set. Otherwise, it has an incomplete data set. 
+The list includes the counts of observations, unique chemicals and unique 
+measurements in the input data table, and a vector of chemicals that have repeated observations. 
+If a vector of data types is specified in the argument \code{req.types}, the function also checks if each chemical has 
+observations for every measurement type included in the vector for each chemical-calibration pair. 
+If it does, the chemical is said to have a complete data set. Otherwise, it has an incomplete data set. 
 The counts of chemicals with complete and incomplete data sets are returned in the output list. 
 The input data frame can be Caco-2 data, ultracentrifugation (UC) data, rapid equilibrium dialysis (RED) data, 
 or hepatocyte clearance (Clint) data. Tables of measurement types and annotations 
@@ -94,6 +94,13 @@ this table:
   Donor compartment at end of experiment \tab D2\cr
   Receiver compartment at end of experiment\tab R2\cr
 }
+}
+\examples{
+# need to re-visit the path to load data for this example 
+load("~/invitroTKstats/Data/Kreutz2023.RData")
+summarize_table(kreutz2023.uc, req.types = c("CC", "T1", "T5", "AF"))
+summarize_table(kreutz2023.clint)
+
 }
 \author{
 John Wambaugh
