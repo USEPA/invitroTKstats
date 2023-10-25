@@ -14,21 +14,25 @@
 #'
 #' @param data.set (Data Frame) A data frame containing a sheet of data for conversion.
 #'
-#' @param chem.name (Character) A string giving the lab name of the chemical analyzed.
+#' @param chem.name (Character) A string giving the lab name of the chemical analyzed. The
+#' value provided is used for all rows in the output data frame. 
 #'
 #' @param area.col.num (Numeric) An integer indicating which column of data.set contains
 #' the MS feature area for the chemical.
 #'
-#' @param ISTD.name (Character) A string indicating the internal standard used. 
+#' @param ISTD.name (Character) A string indicating the internal standard used. The
+#' value provided is used for all rows in the output data frame. 
 #'
 #' @param ISTD.offset (Numeric) An integer indicating how many columns difference there
 #' is between the chemical of study MS area and the ISTD MS area. (Defaults to 2.)
 #'
-#' @param analysis.method (Character) A string describing the chemical analysis method.
+#' @param analysis.method (Character) A string describing the chemical analysis method. The
+#' value provided is used for all rows in the output data frame. 
 #' (Defaults to "GC", that is gas chromatography.)
 #'
 #' @param instrument (Character) A string describing the instrument used for chemical 
-#' analysis. (Defaults to "Something or Other 3000".)
+#' analysis. The value provided is used for all rows in the output data frame. 
+#' (Defaults to "Something or Other 3000".)
 #'
 #' @param inst.param.offset (Numeric) An integer indicating the difference in the number
 #' of columns between the MS peak area and the column giving the instrument
@@ -49,7 +53,7 @@
 #' calibration curve intended concentration column name. (Defaults to
 #' "Final Conc....".)
 #'
-#' @param id.cols (Vector) A vector of character strings used for identifying each
+#' @param id.cols (Character Vector) A vector of character strings used for identifying each
 #' sample. (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time").)
 #' 
 #' @param type.indicator.col (Character) A character string indicating which column of 
