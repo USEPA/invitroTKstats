@@ -2,8 +2,8 @@
 #'
 #' This function returns a scatter plot of the mass spectrometry (MS) responses 
 #' of one chemical collected for the measurement of fraction unbound in plasma (Fup)
-#' using ultracentrifugation (UC). The y-axis is the MS responses and the x-axis 
-#' is the sample type. Responses from different measurements/calibrations are labeled by different 
+#' using ultracentrifugation (UC). The y-axis is the MS response and the x-axis 
+#' is the sample type. Responses from different measurements/calibrations are plotted with different 
 #' shapes and colors. 
 #' 
 #' The input data frame to this function should be "Level-2" data. Level-2 data is Level-1,
