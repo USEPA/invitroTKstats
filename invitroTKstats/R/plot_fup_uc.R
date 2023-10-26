@@ -1,27 +1,26 @@
-#' Plot Mass Spec. Response for Measurement of Fraction Unbound in Plasma (UC)
+#' Plot Mass Spec. Responses for Measurements of Fraction Unbound in Plasma using ultracentrifugation (UC)
 #'
-#' This function use describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats}.
-#' Data are read from a "Level2" text file that should have been formatted and created
-#' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-#' should have been curated and had a column added with the value "Y" indicating
-#' that each row is verified as usable for analysis (that is, the Level2 file).
-#'
-#' The should be annotated according to
-#' of these types:
-#' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
-#'   Plasma well concentration \tab Plasma\cr
-#'   Phosphate-buffered well concentration\tab PBS\cr
-#'   Time zero plasma concentration \tab T0\cr
-#' }
-#' @param level2 A data.frame containing level2 data for fraction unbound in
-#' plasma measured by ultracentrifugation.
+#' This function returns a scatter plot of the mass spectrometry (MS) responses 
+#' of one chemical collected for the measurement of fraction unbound in plasma (Fup)
+#' using ultracentrifugation (UC). The y-axis is the MS responses and the x-axis 
+#' is the sample type. Responses from different measurements/calibrations are labeled by different 
+#' shapes and colors. 
 #' 
-#' @param dtxsid Which chemical to be plotted.
+#' The input data frame to this function should be "Level-2" data. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_fup_uc}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for plotting.  
 #'
-#' @return \item{ggplot2}{A figure of mass spec. response for different sample types}
+#' @param level2 (Data Frame) A data.frame containing Level-2 data for fraction unbound in
+#' plasma (Fup) measured by ultracentrifugation (UC).
+#' 
+#' @param dtxsid (Character) EPA's DSSTox Structure ID of the chemical to be plotted.
+#' 
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for plotting are indicated with a "Y".
+#' (Defaults to "Verified".)
+#'
+#' @return \item{ggplot2}{A figure of mass spec. response for different sample types.}
 #'
 #' @author John Wambaugh
 #'
