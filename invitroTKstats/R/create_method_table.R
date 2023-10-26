@@ -1,36 +1,39 @@
-#' Creates a standardized data table for chemical analysis methods
+#' Creates a Standardized Data Table for Chemical Analysis Methods
 #'
-#' This function extracts the chemical analysis methods from a set of MS data.
+#' This function extracts the chemical analysis methods from a set of MS data and 
+#' returns a data table with each row representing a unique chemical-method
+#' pair. (Unique chemical identified by unique EPA's DSSTox Structure 
+#' ID.) Each row contains all compound names, analysis parameters, analysis instruments, 
+#' and internal standards used for each chemical-method pair. 
 #'
-#' @param input.table A data frame containing mass-spectrometry peak areas,
+#' @param input.table (Data Frame) A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and analytical chemistry methods.
 #' It should contain columns with names specified by the following arguments:
 #' 
-#' @param dtxsid.col Which column of input.table indicates EPA's DSSTox Structure 
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' @param dtxsid.col (Character) Column name of input.table containing EPA's DSSTox Structure 
+#' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #' 
-#' @param compound.col Which column of input.table indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param compound.col (Character) Column name of input.table containing the test compound.
+#' (Defaults to "Compound.Name".)
 #' 
-#' @param istd.name.col Which column of PPB.data indicates identity of the 
-#' internal standard (Defaults to "ISTD.Name")
+#' @param istd.name.col (Character) Column name of input.table containing identity of the 
+#' internal standard. (Defaults to "ISTD.Name".)
 #' 
-#' @param analysis.method.col Which column of PPB.data indicates the analytical
-#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
-#' "Analysis.Method")
+#' @param analysis.method.col (Character) Column name of input.table containing the analytical
+#' chemistry analysis method, typically "LCMS" or "GCMS", liquid or gas chromatography 
+#' mass spectrometry. (Defaults to "Analysis.Method".)
 #'
-#' @param analysis.instrument.col Which column of PPB.data indicates the 
-#' instrument used for chemical analysis, for example 
-#' "Agilent 6890 GC with model 5973 MS" (Defaults to 
-#' "Analysis.Instrument")
+#' @param analysis.instrument.col (Character) Column name of input.table containing the 
+#' instrument used for chemical analysis. For example, "Agilent 6890 GC with model 5973 MS". 
+#' (Defaults to "Analysis.Instrument".)
 #'
-#' @param analysis.parameters.col Which column of PPB.data indicates the 
-#' parameters used to identify the compound on the chemical analysis instrument,
-#' for example 
-#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaulys to "Analysis.Paramaters"). 
+#' @param analysis.parameters.col (Character) Column name of input.table containing the 
+#' parameters used to identify the compound on the chemical analysis instrument.
+#' For example, "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0".
+#' (Defaults to "Analysis.Parameters".) 
 #'
-#' @return A data.frame with one row per method 
+#' @return A data frame with one row per chemical-method pair containing analysis parameters
+#' and instruments, internal standards and compound name used for each pair.
 #'
 #' @author John Wambaugh
 #'
@@ -38,85 +41,7 @@
 #' library(invitroTKstats)
 #'
 #' create_method_table(smeltz2020)
-#'
 #' create_method_table(kreutz2020,compound.col="Name")
-#'
-#' # Create the method columns invitroTKstats is expecting from the
-#' # Wambaugh et al. (2019) supplemental table 10:
-#' wambaugh2019.methods$Method <- ""
-#' # Need to convert NA's to something to allow logic to work on whole column:
-#' wambaugh2019.methods[is.na(wambaugh2019.methods$LC),"LC"] <- ""
-#' # Describe the chemcials with LC as such:
-#' wambaugh2019.methods[wambaugh2019.methods$LC=="Y","Method"] <- "LC"
-#' # Need to convert NA's to something to allow logic to work on whole column:
-#' wambaugh2019.methods[is.na(wambaugh2019.methods$GC),"GC"] <- ""
-#' # Describe the chemcials with GC as such:
-#' wambaugh2019.methods[wambaugh2019.methods$GC=="Y","Method"] <- "GC"
-#' # Remove the non GC/LC-able chemicals:
-#' 
-#' # Set instruments and notes:
-#' # Agilent QQQ:
-#' # Need to convert NA's to something to allow logic to work on whole column:
-#' wambaugh2019.methods[is.na(wambaugh2019.methods$Agilent.QQQ),"Agilent.QQQ"] <-
-#'   "Failed"
-#' wambaugh2019.methods[wambaugh2019.methods$Agilent.QQQ!="Failed","Instrument"] <-
-#'   "Agilent QQQ"
-#' wambaugh2019.methods[wambaugh2019.methods$Agilent.QQQ!="Failed",
-#'   "Analysis.Notes"] <- 
-#'   wambaugh2019.methods[wambaugh2019.methods$Agilent.QQQ!="Failed","Agilent.QQQ"]
-#' 
-#' # Water's Xevo:
-#' # Need to convert NA's to something to allow logic to work on whole column:
-#' wambaugh2019.methods[is.na(wambaugh2019.methods$Water.s.Xevo),"Water.s.Xevo"] <-
-#'   "Failed"
-#' wambaugh2019.methods[wambaugh2019.methods$Water.s.Xevo!="Failed",
-#'   "Instrument"] <- "Waters Xevo"
-#' wambaugh2019.methods[wambaugh2019.methods$Water.s.Xevo!="Failed",
-#'   "Analysis.Notes"] <- 
-#'   wambaugh2019.methods[wambaugh2019.methods$Water.s.Xevo!="Failed",
-#'   "Water.s.Xevo"]
-#'   
-#' # AB.Sciex.Qtrap:
-#' # Need to convert NA's to something to allow logic to work on whole column:
-#' wambaugh2019.methods[is.na(wambaugh2019.methods$AB.Sciex.Qtrap),
-#'   "AB.Sciex.Qtrap"] <-  "Failed"
-#' wambaugh2019.methods[wambaugh2019.methods$AB.Sciex.Qtrap!="Failed",
-#'   "Instrument"] <- "AB Sciex QTRAP"
-#' wambaugh2019.methods[wambaugh2019.methods$AB.Sciex.Qtrap!="Failed",
-#'   "Analysis.Notes"] <- 
-#'   wambaugh2019.methods[wambaugh2019.methods$AB.Sciex.Qtrap!="Failed",
-#'   "AB.Sciex.Qtrap"]  
-#' 
-#' # Agilent.GCMS:
-#' # Need to convert NA's to something to allow logic to work on whole column:
-#' wambaugh2019.methods[is.na(wambaugh2019.methods$Agilent.GCMS),
-#'   "Agilent.GCMS"] <-  "Failed"
-#' wambaugh2019.methods[wambaugh2019.methods$Agilent.GCMS!="Failed",
-#'   "Instrument"] <- "Agilent GCMS"
-#' wambaugh2019.methods[wambaugh2019.methods$Agilent.GCMS!="Failed",
-#'   "Analysis.Notes"] <- 
-#'   wambaugh2019.methods[wambaugh2019.methods$Agilent.GCMS!="Failed",
-#'   "Agilent.GCMS"]  
-#' 
-#' # GCTOF:
-#' # Need to convert NA's to something to allow logic to work on whole column:
-#' wambaugh2019.methods[is.na(wambaugh2019.methods$GCTOF),
-#'   "GCTOF"] <-  "Failed"
-#' wambaugh2019.methods[wambaugh2019.methods$GCTOF!="Failed",
-#'   "Instrument"] <- "GCTOF"
-#' wambaugh2019.methods[wambaugh2019.methods$GCTOF!="Failed",
-#'   "Analysis.Notes"] <- 
-#'   wambaugh2019.methods[wambaugh2019.methods$GCTOF!="Failed",
-#'   "GCTOF"]  
-#'   
-#' # Add other needed columns:
-#' wambaugh2019.methods$ISTD.Name <- "Bucetin and Diclofenac"
-#' 
-#' create_method_table(wambaugh2019.methods,
-#'   compound.col="PREFERRED_NAME",
-#'   analysis.method.col="Method",
-#'   analysis.instrument.col="Instrument", 
-#'   analysis.parameters.col="Analysis.Notes")
 #'
 #' @export create_method_table
 create_method_table <- function(input.table,
