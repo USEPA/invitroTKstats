@@ -44,12 +44,12 @@ format_caco2(
 )
 }
 \arguments{
+\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
+"<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".)}
+
 \item{data.in}{(Data Frame) A data frame containing mass-spectrometry peak areas,
 indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
-
-\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
-"<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".)}
 
 \item{sample.col}{(Character) Column name of data.in containing the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
@@ -64,7 +64,7 @@ ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 \item{date.col}{(Character) Column name of data.in containing the laboratory measurement
 date. (Defaults to "Date".)}
 
-\item{series.col}{(Character) Column name containing `series` information. (Defaults to "Series".)}
+\item{series.col}{(Character) Column name containing \code{series} information. (Defaults to "Series".)}
 
 \item{series}{(Numeric) Index of simultaneous replicates with the same analytical chemistry. 
 (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
@@ -86,7 +86,7 @@ under Details). (Defaults to "Type".)}
 the Caco-2 permeability experiment: either apical donor to basal receiver (AtoB), or 
 basal donor to apical receiver (BtoA). (Defaults to "Direction".)}
 
-\item{membrane.area.col}{(Character) Column name containing `membrane.area` 
+\item{membrane.area.col}{(Character) Column name containing \code{membrane.area} 
 information. (Defaults to "Membrane.Area".)}
 
 \item{membrane.area}{(Numeric) The area of the Caco-2 monolayer (in cm^2). 
@@ -101,7 +101,7 @@ have the same area for the Caco-2 monolayer.)}
 (in cm^3) of the donor portion of the Caco-2 experimental well where the
 test chemical is added. (Defaults to "Vol.Donor".)}
 
-\item{compound.conc.col}{(Character) Column name containing `compound.conc` 
+\item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
 information. (Defaults to "Nominal.Conc".)}
 
 \item{cal}{(Character) MS calibration the samples were based on, typically uses 
@@ -110,17 +110,17 @@ the same day or on different days with the same MS analyzer. (Defaults to \code{
 (Note: Single entry only, 
 use only if all data were collected based on the same calibration.)}
 
-\item{cal.col}{(Character) Column name containing `cal` 
+\item{cal.col}{(Character) Column name containing \code{cal} 
 information. (Defaults to "Cal".)}
 
 \item{dilution}{(Numeric) Number of times the sample was diluted before MS 
 analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
 samples underwent the same number of dilutions.)}
 
-\item{dilution.col}{(Character) Column name containing `dilution` 
+\item{dilution.col}{(Character) Column name containing \code{dilution} 
 information. (Defaults to "Dilution.Factor".)}
 
-\item{meas.time.col}{(Character) Column name containing `meas.time` 
+\item{meas.time.col}{(Character) Column name containing \code{meas.time} 
 information. (Defaults to "Time".)}
 
 \item{meas.time}{(Numeric) The amount of time (in hours) before the receiver and donor 
@@ -129,19 +129,19 @@ compartments are measured. (Defaults to 2.)}
 \item{istd.name}{(Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if all tested compounds use the same internal standard.)}
 
-\item{istd.name.col}{(Character) Column name containing `istd.name` information. (Defaults to "ISTD.Name".)}
+\item{istd.name.col}{(Character) Column name containing \code{istd.name} information. (Defaults to "ISTD.Name".)}
 
 \item{istd.conc}{(Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if all tested compounds have the same 
 internal standard concentration.)}
 
-\item{istd.conc.col}{(Character) Column name containing `istd.conc` information. (Defaults to "ISTD.Conc".)}
+\item{istd.conc.col}{(Character) Column name containing \code{istd.conc} information. (Defaults to "ISTD.Conc".)}
 
 \item{nominal.test.conc}{(Numeric) The test chemical concentration in the dosing solution
 that is added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
 concentration was used for all tested compounds.)}
 
-\item{nominal.test.conc.col}{(Character) Column name containing `nominal.test.conc` 
+\item{nominal.test.conc.col}{(Character) Column name containing \code{nominal.test.conc} 
 information. (Defaults to "Test.Target.Conc".)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
@@ -149,14 +149,14 @@ typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass s
 (Defaults to \code{NULL}.) (Note: Single entry only, 
 use only if the same method was used for all tested compounds.)}
 
-\item{analysis.method.col}{(Character) Column name containing `analysis.method` 
+\item{analysis.method.col}{(Character) Column name containing \code{analysis.method} 
 information. (Defaults to "Analysis.Method".)}
 
 \item{analysis.instrument}{(Character) The instrument used for chemical analysis, 
 for example "Agilent 6890 GC with model 5973 MS". (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if the same instrument was used for all tested compounds.)}
 
-\item{analysis.instrument.col}{(Character) Column name containing `analysis.instrument` 
+\item{analysis.instrument.col}{(Character) Column name containing \code{analysis.instrument} 
 information. (Defaults to "Analysis.Instrument".)}
 
 \item{analysis.parameters}{(Character) The parameters used to identify the 
@@ -164,11 +164,11 @@ compound on the chemical analysis instrument, for example
 "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0". (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if the same parameters were used for all tested compounds.)}
 
-\item{analysis.parameters.col}{(Character) Column name containing `analysis.parameters` 
+\item{analysis.parameters.col}{(Character) Column name containing \code{analysis.parameters} 
 information. (Defaults to "Analysis.Parameters".)}
 }
 \value{
-data.frame A data.frame in standardized "level1" format containing a  
+A data frame in standardized Level-1 format containing a  
 standardized set of columns with standardized column names.
 }
 \description{
