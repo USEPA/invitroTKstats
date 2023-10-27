@@ -153,18 +153,18 @@ model {
 
 #' Calculate Fraction Unbound in Plasma (Fup) From Rapid Equilibrium Dialysis (RED) Data
 #'
-#' This function uses Bayesian modeling, via MCMC simulations, of data collected 
-#' from Rapid Equilibrium Dialysis (RED) assays to estimate the fraction unbound in plasma (Fup) 
-#' and credible interval. This function calculates Fup and the credible interval 
-#' from posterior samples of the MCMC and returns a summary table along with 
-#' the full MCMC results.
+#' This function estimates the fraction unbound in plasma (Fup) with Bayesian
+#' modeling on Rapid Equilibrium Dialysis (RED) data. Both Fup and
+#' the credible interval are estimated from posterior samples of the MCMC.
+#' A summary table along with the full set of MCMC results is returned from
+#' the function.
 #' 
-#' The input data should be a "Level-2". Level-2 data is Level-1 data formatted 
-#' with the \code{\link{format_fup_red}} function, then curated with a verification column with 
-#' "Y" indicating the row of data is valid for analysis. 
+#' The input data should be "Level-2". Level-2 data is Level-1 data, formatted 
+#' with the \code{\link{format_fup_red}} function, and curated with a
+#' verification column where "Y" indicates a data row is valid for analysis. 
 #' 
 #' Note: By default, this function writes files to the user's current working directory 
-#' unless another path is specified in the TEMP.DIR argument. Saved files include 
+#' unless another path is specified in the \code{TEMP.DIR} argument. Files saved include 
 #' the summary table (.RData), JAGS model (.RData), and any "unverified" data 
 #' excluded from the analysis (.tsv).
 #' 
@@ -183,33 +183,34 @@ model {
 #' "<FILENAME>-fup-RED-Level2.tsv".
 #'
 #' @param TEMP.DIR (Character) Alternative directory to save output files. 
-#' If NULL, all files will be written to the current working directory. 
-#' (Defaults to NULL)
+#' If \code{NULL}, all files will be written to the current working directory. 
+#' (Defaults to \code{NULL})
 #'
-#' @param JAGS.PATH (Character) Computer specific file path to JAGS software. (Defaults to NA)
+#' @param JAGS.PATH (Character) Computer specific file path to JAGS software. (Defaults to \code{NA})
 #'
 #' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5)
 #'
-#' @param NUM.CORES (Numeric) The number of processors to use. (Defaults to 2)
+#' @param NUM.CORES (Numeric) The number of processors to use for parallel computing. (Defaults to 2)
 #'
 #' @param RANDOM.SEED The seed used by the random number generator.
 #' (Defaults to 1111)
 #'
 #' @param good.col (Character) Column name indicating which rows have been 
-#' verified for analysis, valid data rows indicated with "Y". (Defaults to "Verified")
+#' verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified")
 #'
 #' @param Physiological.Protein.Conc (Numeric) The assumed physiological protein concentration 
-#' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000 
-#' according to Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM.) 
+#' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
+#' According to Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa,
+#' assume all protein is albumin to estimate default in uM.) 
 #'
 #' @return A list of two objects: 
 #' \enumerate{
-#'    \item{A data frame with Bayesian estimated fraction unbound in plasma (Fup) 
-#'    and credible intervals for all compounds in the input file. Column includes:
+#'    \item{Results: A data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
+#'    and credible interval for all compounds in the input file. Column includes:
 #'    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
 #'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
 #'    Fup.Med - posterior median, Fup.Low - 2.5th quantile, and Fup.High - 97.5th quantile}
-#'    \item{A runjags-class object containing results from JAGS model.}
+#'    \item{coda: A runjags-class object containing results from JAGS model.}
 #' }
 #'
 #' @references
