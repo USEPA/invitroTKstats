@@ -1,9 +1,9 @@
 #' Creates a Standardized Data Table of Chemical Identities
 #'
-#' This function creates a data table that summarizes different names used for each chemical 
-#' from a set of MS data. Each row in the returned data table represents an unique chemical 
-#' defined by EPA's DSSTox Structure ID (dtxsid) and contains all compound names and names 
-#' used by laboratory for that particular chemical in the data.   
+#' This function creates a data frame summarizing chemical identifiers used for 
+#' each tested chemical in MS data. Each row in the resulting data frame provides 
+#' EPA's DSSTox Structure ID (dtxsid), preferred compound name, and the name used 
+#' by the laboratory.
 #'
 #' @param input.table (Data Frame) A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and analytical chemistry methods.
@@ -18,8 +18,9 @@
 #' @param lab.compound.col (Character) Column name of input.table containing the test compound 
 #' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
 #' 
-#' @return A data.frame with one row per chemical containing compound names and laboratory names used
-#' for each chemical in the input data frame.   
+#' @return A data frame with one row per unique chemical, contains chemical 
+#' identifiers including DTXSID, standard/preferred compound name, 
+#' and the chemical name used by the laboratory for all chemicals in the input data frame.  
 #'
 #' @author John Wambaugh
 #'
