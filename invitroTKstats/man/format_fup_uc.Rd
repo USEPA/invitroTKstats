@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_fup_uc.R
 \name{format_fup_uc}
 \alias{format_fup_uc}
-\title{Creates a Standardized Data Table Reporting Ultracentrifugation (UC) PPB Data (Level-1)}
+\title{Creates a Standardized Data Frame Reporting Ultracentrifugation (UC) PPB Data (Level-1)}
 \usage{
 format_fup_uc(
   data.in,
@@ -163,7 +163,7 @@ data.in is obtained from, if the level-0 file is an Excel workbook.
 were obtained from the same sheet in the same Level-0 file.)}
 }
 \value{
-A data frame in standardized "level1" format containing a  
+A data frame in standardized Level-1 format containing a  
 standardized set of columns with standardized column names.
 }
 \description{

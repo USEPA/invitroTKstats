@@ -1,4 +1,4 @@
-#' Creates a Standardized Data Table Reporting Ultracentrifugation (UC) PPB Data (Level-1)
+#' Creates a Standardized Data Frame Reporting Ultracentrifugation (UC) PPB Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
@@ -140,7 +140,7 @@
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
 #' were obtained from the same sheet in the same Level-0 file.) 
 #'
-#' @return A data frame in standardized "level1" format containing a  
+#' @return A data frame in standardized Level-1 format containing a  
 #' standardized set of columns with standardized column names.  
 #'
 #' @author John Wambaugh
