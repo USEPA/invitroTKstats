@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_fup_uc.R
 \name{format_fup_uc}
 \alias{format_fup_uc}
-\title{Creates a Standardized Data Table Reporting UC PPB Data (Level-1)}
+\title{Creates a Standardized Data Table Reporting Ultracentrifugation (UC) PPB Data (Level-1)}
 \usage{
 format_fup_uc(
   data.in,
@@ -59,7 +59,7 @@ name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 \item{dtxsid.col}{(Character) Column name of data.in containing EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{date.col}{date.col (Character) Column name of data.in containing the laboratory measurement
+\item{date.col}{(Character) Column name of data.in containing the laboratory measurement
 date. (Defaults to "Date".)}
 
 \item{compound.col}{(Character) Column name of data.in containing the test compound.
@@ -137,7 +137,7 @@ for example "Waters Xevo TQ-S micro (QEB0036)". (Defaults to \code{NULL}.)
 \item{analysis.instrument.col}{(Character) Column name containing \code{analysis.instrument} 
 information. (Defaults to "Analysis.Instrument".)}
 
-\item{analysis.parameters}{analysis.parameters (Numeric) The parameters used to identify the 
+\item{analysis.parameters}{(Character) The parameters used to identify the 
 compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if the same parameters were used for all tested compounds.)}
 

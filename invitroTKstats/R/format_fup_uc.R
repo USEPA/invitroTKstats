@@ -1,4 +1,4 @@
-#' Creates a Standardized Data Table Reporting UC PPB Data (Level-1)
+#' Creates a Standardized Data Table Reporting Ultracentrifugation (UC) PPB Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
@@ -37,7 +37,7 @@
 #' @param dtxsid.col (Character) Column name of data.in containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param date.col date.col (Character) Column name of data.in containing the laboratory measurement
+#' @param date.col (Character) Column name of data.in containing the laboratory measurement
 #' date. (Defaults to "Date".)
 #'
 #' @param compound.col (Character) Column name of data.in containing the test compound.
@@ -115,7 +115,7 @@
 #' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
 #' information. (Defaults to "Analysis.Instrument".)
 #'
-#' @param analysis.parameters analysis.parameters (Numeric) The parameters used to identify the 
+#' @param analysis.parameters (Character) The parameters used to identify the 
 #' compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
 #'
