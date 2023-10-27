@@ -67,7 +67,8 @@ date. (Defaults to "Date".)}
 \item{series.col}{(Character) Column name containing `series` information. (Defaults to "Series".)}
 
 \item{series}{(Numeric) Index of simultaneous replicates with the same analytical chemistry. 
-(Defaults to \code{NULL}.) (Note: Single entry only, use 1 only if all test compounds have one replicate.)}
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+use the same number of replicates.)}
 
 \item{compound.col}{(Character) Column name of data.in containing the test compound.
 (Defaults to "Compound.Name".)}
@@ -132,19 +133,19 @@ compartments are measured. (Defaults to 2.)}
 
 \item{istd.conc}{(Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if all tested compounds have the same 
-concentration of the internal standard.)}
+internal standard concentration.)}
 
 \item{istd.conc.col}{(Character) Column name containing `istd.conc` information. (Defaults to "ISTD.Conc".)}
 
 \item{nominal.test.conc}{(Numeric) The test chemical concentration in the dosing solution
-that added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
+that is added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
 concentration was used for all tested compounds.)}
 
 \item{nominal.test.conc.col}{(Character) Column name containing `nominal.test.conc` 
 information. (Defaults to "Test.Target.Conc".)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
-typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry. 
+typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
 (Defaults to \code{NULL}.) (Note: Single entry only, 
 use only if the same method was used for all tested compounds.)}
 

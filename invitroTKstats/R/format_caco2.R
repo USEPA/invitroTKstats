@@ -52,7 +52,8 @@
 #' @param series.col (Character) Column name containing `series` information. (Defaults to "Series".)
 #'
 #' @param series (Numeric) Index of simultaneous replicates with the same analytical chemistry. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use 1 only if all test compounds have one replicate.) 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+#' use the same number of replicates.)
 #'
 #' @param compound.col (Character) Column name of data.in containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -124,20 +125,20 @@
 #'
 #' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all tested compounds have the same 
-#' concentration of the internal standard.) 
+#' internal standard concentration.) 
 #'
 #' @param nominal.test.conc.col (Character) Column name containing `nominal.test.conc` 
 #' information. (Defaults to "Test.Target.Conc".)
 #'
 #' @param nominal.test.conc (Numeric) The test chemical concentration in the dosing solution
-#' that added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
+#' that is added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
 #' concentration was used for all tested compounds.)
 #'
 #' @param analysis.method.col (Character) Column name containing `analysis.method` 
 #' information. (Defaults to "Analysis.Method".)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
-#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry. 
+#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
 #' (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same method was used for all tested compounds.)
 #'
