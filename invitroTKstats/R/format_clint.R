@@ -4,7 +4,7 @@
 #' from samples collected as part of in vitro measurement of chemical stability
 #' when incubated with suspended hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}. Disappearance of
 #' the chemical over time is assumed to be due to metabolism by the hepatocytes.
-#' An input data frame is organized into a standard set of columns and is written
+#' The input data frame is organized into a standard set of columns and is written
 #' to a tab-separated text file.
 #'
 #' The data frame of observations should be annotated according to
@@ -21,147 +21,147 @@
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME A string used for naming the written output of the function call.
-#' The formatted data frame will be written to a tab-separated text file named
-#' "<FILENAME>-Clint-2-Level1.tsv" (Defaults to "MYDATA").
+#' @param FILENAME (Character) A string used to identify the output Level-1 file.
+#' "<FILENAME>-Clint-2-Level1.tsv". (Defaults to "MYDATA").
 #'
-#' @param data.in A data frame containing mass-spectrometry peak areas,
+#' @param data.in (Data Frame) A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param sample.col Which column of data.in indicates the unique mass
+#' @param sample.col (Character) Column name of data.in containing the unique mass
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
-#' "Lab.Sample.Name")
+#' "Lab.Sample.Name".)
 #' 
-#' @param date.col Which column of data.in indicates the laboratory measurement
-#' date (Defaults to "Date").
+#' @param date.col (Character) Column name of data.in containing the laboratory measurement
+#' date. (Defaults to "Date".)
 #' 
-#' @param date A single value to be assigned for all samples as 
-#' the laboratory measurement date (Defaults to NULL).
+#param date A single value to be assigned for all samples as 
+#the laboratory measurement date (Defaults to NULL).
 #' 
-#' @param compound.col Which column of data.in indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param compound.col (Character) Column name of data.in containing the test compound.
+#' (Defaults to "Compound.Name".)
 #' 
-#' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' @param dtxsid.col (Character) Column name of data.in containing EPA's DSSTox Structure
+#' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #' 
-#' @param lab.compound.col Which column of data.in indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' @param lab.compound.col (Character) Column name of data.in containing the test compound
+#' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
 #'
-#' @param type.col Which column of data.in indicates the sample type (see table
-#' above). (Defaults to "Sample.Type")
+#' @param type.col (Character) Column name of data.in containing the sample type (see table
+#' under Details). (Defaults to "Sample.Type".)
 #' 
-#' @param density.col Which column of data.in indicates the density (units of
-#' millions of hepatocytes per mL) hepatocytes in the in vitro incubation
-#' (Defaults to "Hep.Density").
+#' @param density.col (Character) Column name containing `density` 
+#' information. (Defaults to "Hep.Density".)
 #' 
-#' @param density A single value to be used for all samples indicating
-#' the density of hepatocytes in suspension (10^6 hepatocytes / mL)
-#' (Defaults to NULL).
+#' @param density (Numeric) The density (units of
+#' millions of hepatocytes per mL) hepatocytes in the in vitro incubation. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if all tested compounds have the same density.)
 #'
-#' @param compound.conc.col Which column of data.in indicates the intended concentration 
-#' of the test chemical for calibration curves (Defaults to "Nominal.Conc")
+#param compound.conc.col Which column of data.in indicates the intended concentration 
+#of the test chemical for calibration curves (Defaults to "Nominal.Conc")
 #'
-#' @param compound.conc A single value to be assigned for all samples as 
-#' the intended concentration of the test chemical for calibration curves 
-#' (Defaults to NULL).
+#param compound.conc A single value to be assigned for all samples as 
+#the intended concentration of the test chemical for calibration curves 
+#(Defaults to NULL).
 #'
-#' @param cal.col Which column of data.in indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
+#' @param cal.col (Character) Column name containing `cal` 
+#' information. (Defaults to "Cal".)
 #' 
-#' @param cal A single value to be assigned for all samples as 
-#' the calibration index (Defaults to NULL).
+#' @param cal (Character) MS calibration the samples were based on, typically uses 
+#' indices or dates to represent if the analyses were done on different machines on 
+#' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, 
+#' use only if all data were collected based on the same calibration.)
 #' 
-#' @param dilution.col Which column of data.in indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
+#' @param dilution.col (Character) Column name containing `dilution` 
+#' information. (Defaults to "Dilution.Factor".)
 #' 
-#' @param dilution A single value to be assigned for all samples indicating 
-#' the how many times the sample was diluted before MS analysis (Defaults to NULL).
+#' @param dilution (Numeric) Number of times the sample was diluted before MS 
+#' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' samples underwent the same number of dilutions.)
 #' 
-#' @param time.col Which column of data.in indicates the intended
-#' time of the measurement (in minutes) since the test chemical was introduced
-#' into the hepatocyte incubation (Defaults to "Time")
+#' @param time.col (Character) Column name containing `time` 
+#' information. (Defaults to "Time".)
 #' 
-#' @param time A single value to be assigned for all samples indicating the 
-#' intended time of the measurement since the test chemicals was introduced
-#' into the hepatocyte incubation (Defaults to 2). 
+#' @param time (Numeric) The intended time of the measurement (in minutes) since the test 
+#' chemicals was introduced into the hepatocyte incubation. (Defaults to 2.) 
 #' 
-#' @param istd.col Which column of data.in indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
+#' @param istd.col (Character) Column name of data.in containing the
+#' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #'
-#' @param istd.name.col Which column of data.in indicates identity of the
-#' internal standard (Defaults to "ISTD.Name")
+#' @param istd.name.col (Character) Column name containing `istd.name` information. 
+#' (Defaults to "ISTD.Name".)
 #' 
-#' @param istd.name If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
+#' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds use the same internal standard.) 
 #'
-#' @param istd.conc.col Which column of data.in indicates the concentration
-#' (units if uM) of
-#' the internal standard (Defaults to "ISTD.Conc")
+#' @param istd.conc.col (Character) Column name containing `istd.conc` information. 
+#' (Defaults to "ISTD.Conc".)
 #' 
-#' @param istd.conc If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
+#' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds have the same 
+#' internal standard concentration.) 
 #' 
-#' @param clint.assay.conc.col Which column of data.in indicates the 
-#' intended test chemical concentration at time zero in the dosing solution 
-#' (added to the donor side of the Caco-2 test well). (Defaults to "Clint.Assay.Conc")
+#' @param std.conc.col (Character) Column name containing `std.conc` 
+#' information. (Defaults to "Standard.Conc".)
 #' 
-#' @param clint.assay.conc If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
+#' @param std.conc (Numeric) The standard test chemical concentration for 
+#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same standard concentration was used for all tested compounds.)
 #' 
-#' @param area.col Which column of data.in indicates the target analyte (that
-#' is, the test compound) MS peak area (Defaults to "Area")
-#'
-#' @param analysis.method.col Which column of data.in indicates the analytical
-#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
-#' "Analysis.Method")
+#' @param clint.assay.conc.col (Character) Column name containing `clint.assay.conc` 
+#' information. (Defaults to "Clint.Assay.Conc".)
 #' 
-#' @param analysis.method If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
-#'
-#' @param analysis.instrument.col Which column of data.in indicates the
-#' instrument used for chemical analysis, for example
-#' "Agilent 6890 GC with model 5973 MS" (Defaults to
-#' "Analysis.Instrument")
+#' @param clint.assay.conc (Numeric) The initial test chemical concentration for 
+#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same initial concentration was used for all tested compounds.)
 #' 
-#' @param analysis.instrument If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
+#' @param area.col (Character) Column name of data.in containing the target analyte (that
+#' is, the test compound) MS peak area. (Defaults to "Area".)
 #'
-#' @param analysis.parameters.col Which column of data.in indicates the
-#' parameters used to identify the compound on the chemical analysis instrument,
-#' for example
-#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaults to "Analysis.Parameters"). 
+#' @param analysis.method.col (Character) Column name containing `analysis.method` 
+#' information. (Defaults to "Analysis.Method".)
 #' 
-#' @param analysis.parameters If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
+#' @param analysis.method (Character) The analytical chemistry analysis method, 
+#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same method was used for all tested compounds.)
+#'
+#' @param analysis.instrument.col (Character) Column name containing `analysis.instrument` 
+#' information. (Defaults to "Analysis.Instrument".)
 #' 
-#' @param note.col which column of data.in contains additional notes on 
-#' test compounds (Defaults to "Note").
+#' @param analysis.instrument (Character) The instrument used for chemical analysis, 
+#' for example "Waters Xevo TQ-S micro (QEB0036)". (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same instrument was used for all tested compounds.) 
 #'
-#' @param level0.file.col Which column of data.in indicates the file from
-#' which the data were obtained (Defaults to "Level0.File").
+#' @param analysis.parameters.col (Character) Column name containing `analysis.parameters` 
+#' information. (Defaults to "Analysis.Parameters".)
+#' 
+#' @param analysis.parameters (Numeric) The parameters used to identify the 
+#' compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
+#' 
+#' @param note.col (Character) Column name of data.in containing additional notes on 
+#' test compounds. (Defaults to "Note").
 #'
-#' @param level0.file If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
+#' @param level0.file.col (Character) Column name containing `level0.file` information. 
+#' (Defaults to "Level0.File".)
 #'
-#' @param level0.sheet.col Which column of data.in indicates the specific
-#' sheet containing the data if the file is an Excel workbook (Defaults to "Level0.Sheet").
+#' @param level0.file (Character) The Level-0 file from which the data.in were obtained.
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' were obtained from the same Level-0 file.) 
 #'
-#' @param level0.sheet If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
+#' @param level0.sheet.col (Character) Column name containing `level0.sheet` information.
+#' (Defaults to "Level0.Sheet".)
 #'
-#' @return A data.frame in standardized "level1" format that contains a standard list
-#' of columns with standardized column names. 
+#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
+#' data.in is obtained from, if the level-0 file is an Excel workbook. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' were obtained from the same sheet in the same Level-0 file.) 
+#'
+#' @return A data.frame in standardized "level1" format containing a  
+#' standardized set of columns with standardized column names. 
 #'
 #' @author John Wambaugh
 #'
@@ -195,7 +195,7 @@
 format_clint <- function(data.in,
   FILENAME = "MYDATA",
   sample.col="Lab.Sample.Name",
-  date=NULL,
+  #date=NULL,
   date.col="Date",
   compound.col="Compound.Name",
   dtxsid.col="DTXSID",
@@ -203,8 +203,8 @@ format_clint <- function(data.in,
   type.col="Sample.Type",
   density=NULL,
   density.col="Hep.Density",
-  compound.conc=NULL,
-  compound.conc.col="Nominal.Conc",
+  #compound.conc=NULL,
+  #compound.conc.col="Nominal.Conc",
   cal=NULL,
   cal.col="Cal",
   dilution=NULL,
