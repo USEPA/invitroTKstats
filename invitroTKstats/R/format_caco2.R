@@ -150,7 +150,7 @@
 #' (Note: Single entry only, use only if the same instrument was used for all tested compounds.) 
 #'
 #' @param analysis.parameters.col (Character) Column name containing `analysis.parameters` 
-#' information. (Defaults to "Analysis.Paramaters".)
+#' information. (Defaults to "Analysis.Parameters".)
 #'
 #' @param analysis.parameters (Character) The parameters used to identify the 
 #' compound on the chemical analysis instrument, for example

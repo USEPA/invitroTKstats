@@ -165,7 +165,7 @@ compound on the chemical analysis instrument, for example
 (Note: Single entry only, use only if the same parameters were used for all tested compounds.)}
 
 \item{analysis.parameters.col}{(Character) Column name containing `analysis.parameters` 
-information. (Defaults to "Analysis.Paramaters".)}
+information. (Defaults to "Analysis.Parameters".)}
 }
 \value{
 data.frame A data.frame in standardized "level1" format containing a  
