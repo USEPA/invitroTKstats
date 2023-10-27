@@ -1,10 +1,10 @@
-#' Plot Mass Spec. Responses for Measurements of Fraction Unbound in Plasma using ultracentrifugation (UC)
+#' Plot Mass Spectrometry Responses for Measurements of Fraction Unbound in Plasma using Ultracentrifugation (UC)
 #'
-#' This function returns a scatter plot of the mass spectrometry (MS) responses 
+#' This function generates a scatter plot of the mass spectrometry (MS) responses 
 #' of one chemical collected for the measurement of fraction unbound in plasma (Fup)
-#' using ultracentrifugation (UC). The y-axis is the MS response and the x-axis 
-#' is the sample type. Responses from different measurements/calibrations are plotted with different 
-#' shapes and colors. 
+#' using ultracentrifugation (UC). The scatter plot displays the MS 
+#' responses (y-axis) by sample types (x-axis). Responses from different measurements/calibrations 
+#' are labeled with different shapes and colors. 
 #' 
 #' The input data frame to this function should be "Level-2" data. Level-2 data is Level-1,
 #' data formatted with the \code{\link{format_fup_uc}} function, and curated
@@ -14,13 +14,13 @@
 #' @param level2 (Data Frame) A data.frame containing Level-2 data for fraction unbound in
 #' plasma (Fup) measured by ultracentrifugation (UC).
 #' 
-#' @param dtxsid (Character) EPA's DSSTox Structure ID of the chemical to be plotted.
+#' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
 #' 
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for plotting are indicated with a "Y".
 #' (Defaults to "Verified".)
 #'
-#' @return \item{ggplot2}{A figure of mass spec. response for different sample types.}
+#' @return \item{ggplot2}{A figure of mass spec. responses for different sample types.}
 #'
 #' @author John Wambaugh
 #'
