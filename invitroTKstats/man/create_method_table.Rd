@@ -30,7 +30,7 @@ internal standard. (Defaults to "ISTD.Name".)}
 
 \item{analysis.method.col}{(Character) Column name of input.table containing the analytical
 chemistry analysis method, typically "LCMS" or "GCMS", liquid or gas chromatography 
-mass spectrometry. (Defaults to "Analysis.Method".)}
+mass spectrometry, respectively. (Defaults to "Analysis.Method".)}
 
 \item{analysis.instrument.col}{(Character) Column name of input.table containing the 
 instrument used for chemical analysis. For example, "Agilent 6890 GC with model 5973 MS". 
@@ -42,14 +42,14 @@ For example, "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, C
 (Defaults to "Analysis.Parameters".)}
 }
 \value{
-A data frame with one row per chemical-method pair containing analysis parameters
-and instruments, internal standards and compound name used for each pair.
+A data frame with one row per chemical-method pair containing 
+information on analysis parameters, instruments, internal standards, 
+and compound identifiers used for each pair.
 }
 \description{
 This function extracts the chemical analysis methods from a set of MS data and 
-returns a data table with each row representing a unique chemical-method
-pair. (Unique chemical identified by unique EPA's DSSTox Structure 
-ID.) Each row contains all compound names, analysis parameters, analysis instruments, 
+returns a data frame with each row representing a unique chemical-method
+pair. (Unique chemical identified by DTXSID's.) Each row contains all compound names, analysis parameters, analysis instruments, 
 and internal standards used for each chemical-method pair.
 }
 \examples{
