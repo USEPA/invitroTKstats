@@ -1,10 +1,10 @@
-#' Creates a standardized data table reporting RED PPB data
+#' Creates a Standardized Data Frame Reporting Rapid Equilibrium Dialysis (RED) PPB data
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using rapid equilibrium dialysis
 #' \insertCite{waters2008validation}{invitroTKstats}.
-#' An input data frame is organized into a standard set of columns and is written
+#' The input data frame is organized into a standard set of columns and is written
 #' to a tab-separated text file.
 #'
 #' The data frame of observations should be annotated according to
@@ -19,127 +19,148 @@
 #'   Equilibrium Control Well 2 \tab EC2\cr
 #'   Calibration Curve \tab CC\cr
 #' }
-#' Chemical concentration is calculated qualitatively as a response:
+#' Chemical concentration is calculated qualitatively as a response and 
+#' returned as a column in the output data frame:
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
+#' @param FILENAME (Character) A string used to identify the output Level-1 file.
+#' "<FILENAME>-fup-RED-Level1.tsv". (Defaults to "MYDATA".)
 #'
-#' @param data.in A data frame containing mass-spectrometry peak areas,
+#' @param data.in (Data Frame) A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param sample.col Which column of data.in indicates the unique mass
+#' @param sample.col (Character) Column name of data.in containing the unique mass
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
-#' "Lab.Sample.Name")
+#' "Lab.Sample.Name".)
 #' 
-#' #param date 
+#param date 
 #' 
-#' @param date.col Which column of data.in indicates the laboratory measurement
-#' date (Defaults to "Date")
+#' @param date.col (Character) Column name of data.in containing the laboratory measurement
+#' date. (Defaults to "Date".)
 #' 
-#' @param compound.col Which column of data.in indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param compound.col (Character) Column name of data.in containing the test compound.
+#' (Defaults to "Compound.Name".)
 #' 
-#' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' @param dtxsid.col (Character) Column name of data.in containing EPA's DSSTox Structure
+#' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #' 
-#' @param lab.compound.col Which column of data.in indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' @param lab.compound.col (Character) Column name of data.in containing the test compound
+#' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
+#' 
+#' @param type.col (Character) Column name of data.in containing the sample type (see table
+#' under Details). (Defaults to "Sample.Type".)
+#' 
+#' @param cal (Character) MS calibration the samples were based on, typically uses 
+#' indices or dates to represent if the analyses were done on different machines on 
+#' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, 
+#' use only if all data were collected based on the same calibration.)
+#' 
+#' @param cal.col (Character) Column name containing \code{cal} 
+#' information. (Defaults to "Cal".)
 #'
-#' @param type.col Which column of data.in indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
+#' @param replicate (Numeric) Simultaneous replicates with the same analytical chemistry. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+#' use the same number of replicates.)
 #' 
-#' @param cal
+#' @param replicate.col (Character) Column name containing \code{replicate} 
+#' information. (Defaults to "Replicate".)
 #' 
-#' @param cal.col Which column of data.in indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
-#'
-#' @param replicate
+#' @param dilution (Numeric) Number of times the sample was diluted before MS 
+#' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' samples underwent the same number of dilutions.)
 #' 
-#' @param replicate.col (Character) data.in column name containing the replicate number
+#' @param dilution.col (Character) Column name containing \code{dilution} 
+#' information. (Defaults to "Dilution.Factor".)
+#'
+#' @param time.col (Character) Column name of data.in containing the time. 
+#' (Defaults to "Time".)
 #' 
-#' @param dilution (Numeric) Number of times the sample was diluted before MS analysis. 
-#' (Note: Single entry only, use only if all observations need use the same value 
-#' for dilution)
+#param time 
+#'
+#' @param istd.col (Character) Column name of data.in containing the
+#' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #' 
-#' @param dilution.col Which column of data.in indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
+#' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds use the same internal standard.) 
 #'
-#' @param time.col Which column of data.in indicates 
+#' @param istd.name.col (Character) Column name containing \code{istd.name} information. 
+#' (Defaults to "ISTD.Name".)
 #' 
-#' #param time 
+#' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds have the same 
+#' internal standard concentration.) 
 #'
-#' @param istd.col Which column of data.in indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
+#' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. 
+#' (Defaults to "ISTD.Conc".)
 #' 
-#' @param istd.name
+#' @param test.nominal.conc (Numeric) The intended test chemical concentration 
+#' at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
+#' if all tested compounds used the same concentration at time zero.)
 #'
-#' @param istd.name.col Which column of data.in indicates identity of the
-#' internal standard (Defaults to "ISTD.Name")
+#' @param Test.Nominal.Conc.col (Character) Column name containing \code{test.nominal.conc} 
+#' information. (Defaults to "Test.Target.Conc".)
+#'
+#' @param plasma.percent (Numeric) Plasma Percent. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
+#' if all tested compounds have the same plasma percent.)
 #' 
-#' @param istd.conc
+#' @param plasma.percent.col (Character) Column name containing \code{plasma.percent} 
+#' information. (Defaults to "Plasma.Percent".)
 #'
-#' @param istd.conc.col Which column of data.in indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
+#' @param std.conc (Numeric) The standard test chemical concentration for 
+#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same standard concentration was used for all tested compounds.)
 #' 
-#' @param test.nominal.conc 
+#' @param std.conc.col (Character) Column name containing \code{std.conc} 
+#' information. (Defaults to "Standard.Conc".)
 #'
-#' @param Test.Nominal.Conc.col Which column of data.in indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")
-#'
-#' @param plasma.percent
+#' @param area.col (Character) Column name of data.in containing the target analyte (that
+#' is, the test compound) MS peak area. (Defaults to "Area".)
 #' 
-#' @param plasma.percent.col Which column of data.in indicates the plasma percent
+#' @param analysis.method (Character) The analytical chemistry analysis method, 
+#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same method was used for all tested compounds.)
 #'
-#' @param std.conc null
+#' @param analysis.method.col (Character) Column name containing \code{analysis.method} 
+#' information. (Defaults to "Analysis.Method".)
 #' 
-#' @param std.conc.col Standard.Conc",
+#' @param analysis.instrument (Character) The instrument used for chemical analysis, 
+#' for example "Waters ACQUITY I-Class UHPLC - Xevo TQ-S uTQMS". (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same instrument was used for all tested compounds.)
 #'
-#' @param area.col Which column of data.in indicates the target analyte (that
-#' is, the test compound) MS peak area (Defaults to "Area")
+#' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
+#' information. (Defaults to "Analysis.Instrument".)
 #' 
-#' @param analysis.method
+#' @param analysis.parameters (Character) The parameters used to identify the 
+#' compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
 #'
-#' @param analysis.method.col Which column of data.in indicates the analytical
-#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
-#' "Analysis.Method")
+#' @param analysis.parameters.col (Character) Column name containing \code{analysis.instrument} 
+#' information. (Defaults to "Analysis.Instrument".)
 #' 
-#' @param analysis.instrument
+#' @param note.col (Character) Column name of data.in containing additional notes on 
+#' test compounds. (Defaults to "Note".)
 #'
-#' @param analysis.instrument.col Which column of data.in indicates the
-#' instrument used for chemical analysis, for example
-#' "Agilent 6890 GC with model 5973 MS" (Defaults to
-#' "Analysis.Instrument")
+#' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
+#' (Defaults to "Level0.File".)
+#'
+#' @param level0.file (Character) The Level-0 file from which the data.in were obtained.
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' were obtained from the same Level-0 file.) 
 #' 
-#' @param analysis.parameters
+#' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
+#' (Defaults to "Level0.Sheet".)
 #'
-#' @param analysis.parameters.col Which column of data.in indicates the
-#' parameters used to identify the compound on the chemical analysis instrument,
-#' for example
-#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaulys to "Analysis.Paramaters").
+#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
+#' data.in is obtained from, if the level-0 file is an Excel workbook. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' were obtained from the same sheet in the same Level-0 file.)
 #' 
-#' @param note.col which column of data.in contains additional notes on 
-#' test compounds (Defaults to "Note").
-#'
-#' @param level0.file.col Which column of data.in indicates the file from
-#' which the data were obtained (Defaults to "Level0.File").
-#'
-#' @param level0.file If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
-#'
-#' @param level0.sheet.col Which column of data.in indicates the specific
-#' sheet containing the data if the file is an Excel workbook (Defaults to "Level0.Sheet").
-#'
-#' @param level0.sheet If this argument is used (defaults to NULL) every
-#' observation in the table is assigned the value of the argument and the
-#' corresponding column in input.table (if present) is ignored.
-#'
-#' @return \item{data.frame}{A data.frame in standardized "level1" format}
+#' @return A data frame in standardized Level-1 format containing a  
+#' standardized set of columns with standardized column names.  
 #'
 #' @author John Wambaugh
 #'
