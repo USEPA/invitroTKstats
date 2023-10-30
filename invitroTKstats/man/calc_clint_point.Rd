@@ -2,19 +2,22 @@
 % Please edit documentation in R/calc_clint_point.R
 \name{calc_clint_point}
 \alias{calc_clint_point}
-\title{Calculate a point estimate of intrinsic hepatic clearance}
+\title{Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint)}
 \usage{
 calc_clint_point(FILENAME, good.col = "Verified")
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-Clint-Level3.tsv" is appended (defaults to "MYDATA")}
+\item{FILENAME}{A string used to identify the input Level-2 file.
+"<FILENAME>-Clint-Level2.tsv".}
 
-\item{good.col}{Name of a column indicating which rows have been verified for
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+A data frame with one row per chemical, contains point estimate of intrinsic 
+clearance (Clint), p-value and Akaike information criterion (AIC) of the linear 
+regression fit for all chemicals in the input data frame.
 }
 \description{
 This function use describing mass spectrometry (MS) peak areas
@@ -23,16 +26,16 @@ as characterized by disappearance of parent compound over time when incubated
 with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \details{
-Data are read from a "Level2" text file that should have been formatted and created
-by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-should have been curated and had a column added with the value "Y" indicating
-that each row is verified as usable for analysis (that is, the Level2 file).
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_clint}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
 
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Blank \tab Blank\cr
-  Hepatocyte incubation concentration \tab Conc\cr
+  Hepatocyte incubation concentration vs. time \tab Cvst\cr
 }
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of
