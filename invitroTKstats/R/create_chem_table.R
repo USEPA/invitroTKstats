@@ -9,18 +9,20 @@
 #' indication of chemical identity, and analytical chemistry methods.
 #' It should contain columns with names specified by the following arguments:
 #' 
-#' @param dtxsid.col (Character) Column name of input.table containing EPA's DSSTox Structure 
-#' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
+#' @param dtxsid.col (Character) Column name of \code{input.table} containing
+#' EPA's DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard}).
+#' (Defaults to "DTXSID".)
 #' 
-#' @param compound.col (Character) Column name of input.table containing the test compound.
-#' (Defaults to "Compound.Name".)
+#' @param compound.col (Character) Column name of \code{input.table} containing
+#' the test compound. (Defaults to "Compound.Name".)
 #' 
-#' @param lab.compound.col (Character) Column name of input.table containing the test compound 
+#' @param lab.compound.col (Character) Column name of \code{input.table} containing the test compound 
 #' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
 #' 
-#' @return A data frame with one row per unique chemical, contains chemical 
-#' identifiers including DTXSID, standard/preferred compound name, 
-#' and the chemical name used by the laboratory for all chemicals in the input data frame.  
+#' @return A data frame containing the chemical identifiers for all unique
+#' chemicals in the input data frame.  Each row per maps a unique chemical,
+#' indicated by the DTXSID, to all the preferred compound names
+#' and all chemical names used by the laboratory referenced in the input data frame.   
 #'
 #' @author John Wambaugh
 #'
