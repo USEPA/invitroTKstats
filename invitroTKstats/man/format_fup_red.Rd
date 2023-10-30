@@ -53,26 +53,26 @@ contain columns with names specified by the following arguments:}
 \item{FILENAME}{(Character) A string used to identify the output Level-1 file.
 "<FILENAME>-fup-RED-Level1.tsv". (Defaults to "MYDATA".)}
 
-\item{sample.col}{(Character) Column name of data.in containing the unique mass
+\item{sample.col}{(Character) Column name of \code{data.in} containing the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name".)}
 
-\item{date.col}{(Character) Column name of data.in containing the laboratory measurement
+\item{date.col}{(Character) Column name of \code{data.in} containing the laboratory measurement
 date. (Defaults to "Date".)}
 
-\item{compound.col}{(Character) Column name of data.in containing the test compound.
+\item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
 (Defaults to "Compound.Name".)}
 
-\item{dtxsid.col}{(Character) Column name of data.in containing EPA's DSSTox Structure
+\item{dtxsid.col}{(Character) Column name of \code{data.in} containing EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{lab.compound.col}{(Character) Column name of data.in containing the test compound
+\item{lab.compound.col}{(Character) Column name of \code{data.in} containing the test compound
 name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 
-\item{type.col}{(Character) Column name of data.in containing the sample type (see table
+\item{type.col}{(Character) Column name of \code{data.in} containing the sample type (see table
 under Details). (Defaults to "Sample.Type".)}
 
-\item{cal}{(Character) MS calibration the samples were based on, typically uses 
+\item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
 the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
 (Note: Single entry only, 
@@ -95,10 +95,10 @@ samples underwent the same number of dilutions.)}
 \item{dilution.col}{(Character) Column name containing \code{dilution} 
 information. (Defaults to "Dilution.Factor".)}
 
-\item{time.col}{(Character) Column name of data.in containing the time. 
+\item{time.col}{(Character) Column name of \code{data.in} containing the time. 
 (Defaults to "Time".)}
 
-\item{istd.col}{(Character) Column name of data.in containing the
+\item{istd.col}{(Character) Column name of \code{data.in} containing the
 MS peak area for the internal standard. (Defaults to "ISTD.Area".)}
 
 \item{istd.name}{(Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
@@ -118,6 +118,9 @@ internal standard concentration.)}
 at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
 if all tested compounds used the same concentration at time zero.)}
 
+\item{test.nominal.conc.col}{(Character) Column name containing \code{test.nominal.conc} 
+information. (Defaults to "Test.Target.Conc".)}
+
 \item{plasma.percent}{(Numeric) Plasma Percent. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
 if all tested compounds have the same plasma percent.)}
 
@@ -131,7 +134,7 @@ use only if the same standard concentration was used for all tested compounds.)}
 \item{std.conc.col}{(Character) Column name containing \code{std.conc} 
 information. (Defaults to "Standard.Conc".)}
 
-\item{area.col}{(Character) Column name of data.in containing the target analyte (that
+\item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
 is, the test compound) MS peak area. (Defaults to "Area".)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
@@ -153,29 +156,26 @@ information. (Defaults to "Analysis.Instrument".)}
 compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if the same parameters were used for all tested compounds.)}
 
-\item{analysis.parameters.col}{(Character) Column name containing \code{analysis.instrument} 
-information. (Defaults to "Analysis.Instrument".)}
+\item{analysis.parameters.col}{(Character) Column name containing \code{analysis.parameters} 
+information. (Defaults to "Analysis.Parameters".)}
 
-\item{note.col}{(Character) Column name of data.in containing additional notes on 
+\item{note.col}{(Character) Column name of \code{data.in} containing additional notes on 
 test compounds. (Defaults to "Note".)}
 
 \item{level0.file.col}{(Character) Column name containing \code{level0.file} information. 
 (Defaults to "Level0.File".)}
 
-\item{level0.file}{(Character) The Level-0 file from which the data.in were obtained.
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+\item{level0.file}{(Character) The Level-0 file from which the \code{data.in} were obtained.
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
 were obtained from the same Level-0 file.)}
 
 \item{level0.sheet.col}{(Character) Column name containing \code{level0.sheet} information.
 (Defaults to "Level0.Sheet".)}
 
 \item{level0.sheet}{(Character) The specific sheet name of Level-0 file from which the 
-data.in is obtained from, if the level-0 file is an Excel workbook. 
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+\code{data.in} is obtained from, if the level-0 file is an Excel workbook. 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
 were obtained from the same sheet in the same Level-0 file.)}
-
-\item{Test.Nominal.Conc.col}{(Character) Column name containing \code{test.nominal.conc} 
-information. (Defaults to "Test.Target.Conc".)}
 }
 \value{
 A data frame in standardized Level-1 format containing a  
