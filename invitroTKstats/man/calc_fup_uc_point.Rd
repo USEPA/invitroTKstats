@@ -2,31 +2,36 @@
 % Please edit documentation in R/calc_fup_uc_point.R
 \name{calc_fup_uc_point}
 \alias{calc_fup_uc_point}
-\title{Calculate a point estimate of Fraction Unbound in Plasma (UC)}
+\title{Calculate Point Estimates of Fraction Unbound in Plasma (UC) with ultracentrifugation (UC) Data}
 \usage{
 calc_fup_uc_point(FILENAME, good.col = "Verified")
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")}
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
 
-\item{good.col}{Name of a column indicating which rows have been verified for
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{@param}{FILENAME (Character) A string used to identify the input Level-2 file.
+"<FILENAME>-fup-UC-Level2.tsv".}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+A data frame with one row per chemical, contains chemical identifiers 
+such as preferred compound name, compound name used by the laboratory, 
+EPA's DSSTox Structure ID, calibration and a point estimate of 
+fraction unbound in plasma (Fup) for all chemicals in the input data frame.
 }
 \description{
-This function use describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using ultracentrifugation
-\insertCite{redgrave1975separation}{invitroTKstats}.
-Data are read from a "Level2" text file that should have been formatted and created
-by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-should have been curated and had a column added with the value "Y" indicating
-that each row is verified as usable for analysis (that is, the Level2 file).
+This function calculates point estimates of fraction unbound in plasma (Fup) from 
+mass spectrometry (MS) responses collected as part of in vitro measurement 
+of chemical Fup using ultracentrifugation \insertCite{waters2008validation}{invitroTKstats}. 
+Calculation formula is available in Details.
 }
 \details{
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_fup_uc}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
+
 The should be annotated according to
 of these types:
 \tabular{rrrrr}{
