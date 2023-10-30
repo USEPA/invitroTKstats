@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_clint.R
 \name{plot_clint}
 \alias{plot_clint}
-\title{Plot Mass Spec. Response for Measurement of Intrinsic Hepatic Clearance}
+\title{Plot Mass Spectrometry Responses for Measurements of Intrinsic Hepatic Clearance}
 \usage{
 plot_clint(level2, dtxsid)
 }
@@ -13,7 +13,7 @@ of chemical stability when incubated with suspended hepatocytes.}
 \item{dtxsid}{(Character) EPA's DSSTox Structure ID for the chemical to be plotted.}
 }
 \value{
-\item{ggplot2}{A figure of mass spec. responses for different sample types.}
+\item{ggplot2}{A figure of mass spectrometry responses for different sample types.}
 }
 \description{
 This function generates a response-versus-time plot using mass spectrometry (MS) 

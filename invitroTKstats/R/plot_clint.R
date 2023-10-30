@@ -1,4 +1,4 @@
-#' Plot Mass Spec. Response for Measurement of Intrinsic Hepatic Clearance
+#' Plot Mass Spectrometry Responses for Measurements of Intrinsic Hepatic Clearance
 #'
 #' This function generates a response-versus-time plot using mass spectrometry (MS) 
 #' responses collected for measurement of a chemical's intrinsic hepatic clearance.
@@ -15,7 +15,7 @@
 #' 
 #' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
 #'
-#' @return \item{ggplot2}{A figure of mass spec. responses for different sample types.}
+#' @return \item{ggplot2}{A figure of mass spectrometry responses for different sample types.}
 #'
 #' @author John Wambaugh
 #'
