@@ -27,30 +27,30 @@
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param sample.col (Character) Column name of data.in containing the unique mass
+#' @param sample.col (Character) Column name of \code{data.in} containing the unique mass
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name".)
 #'
-#' @param lab.compound.col (Character) Column name of data.in containing the test compound
+#' @param lab.compound.col (Character) Column name of \code{data.in} containing the test compound
 #' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
 #'
-#' @param dtxsid.col (Character) Column name of data.in containing EPA's DSSTox Structure
+#' @param dtxsid.col (Character) Column name of \code{data.in} containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param date.col (Character) Column name of data.in containing the laboratory measurement
+#' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
 #' date. (Defaults to "Date".)
 #'
-#' @param compound.col (Character) Column name of data.in containing the test compound.
+#' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
 #'
-#' @param area.col (Character) Column name of data.in containing the target analyte (that
+#' @param area.col (Character) Column name of \code{data.in} containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
 #'
-#' @param series.col (Character) Column name of data.in containing the number of 
+#' @param series.col (Character) Column name of \code{data.in} containing the number of 
 #' simultaneous replicates with the same analytical chemistry. 
 #' (Defaults to "Series".)
 #'
-#' @param type.col (Character) Column name of data.in containing the sample type (see table
+#' @param type.col (Character) Column name of \code{data.in} containing the sample type (see table
 #' under Details). (Defaults to "Sample.Type".)
 #' 
 #' @param std.conc.col (Character) Column name containing \code{std.conc} 
@@ -76,7 +76,7 @@
 #' @param dilution.col (Character) Column name containing \code{dilution} 
 #' information. (Defaults to "Dilution.Factor".)
 #'
-#' @param istd.col (Character) Column name of data.in containing the
+#' @param istd.col (Character) Column name of \code{data.in} containing the
 #' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #'
 #' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
@@ -122,22 +122,22 @@
 #' @param analysis.parameters.col (Character) Column name containing \code{analysis.parameters} 
 #' information. (Defaults to "Analysis.Parameters".)
 #' 
-#' @param note.col (Character) Column name of data.in containing additional notes on 
+#' @param note.col (Character) Column name of \code{data.in} containing additional notes on 
 #' test compounds. (Defaults to "Note").
 #'
 #' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
 #' (Defaults to "Level0.File".)
 #'
-#' @param level0.file (Character) The Level-0 file from which the data.in were obtained.
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
 #' were obtained from the same Level-0 file.) 
 #'
 #' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
 #' (Defaults to "Level0.Sheet".)
 #'
 #' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
-#' data.in is obtained from, if the level-0 file is an Excel workbook. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' \code{data.in} is obtained from, if the level-0 file is an Excel workbook. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
 #' were obtained from the same sheet in the same Level-0 file.) 
 #'
 #' @return A data frame in standardized Level-1 format containing a  
