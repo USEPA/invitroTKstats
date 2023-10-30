@@ -16,19 +16,21 @@ create_chem_table(
 indication of chemical identity, and analytical chemistry methods.
 It should contain columns with names specified by the following arguments:}
 
-\item{dtxsid.col}{(Character) Column name of input.table containing EPA's DSSTox Structure 
-ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
+\item{dtxsid.col}{(Character) Column name of \code{input.table} containing
+EPA's DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard}).
+(Defaults to "DTXSID".)}
 
-\item{compound.col}{(Character) Column name of input.table containing the test compound.
-(Defaults to "Compound.Name".)}
+\item{compound.col}{(Character) Column name of \code{input.table} containing
+the test compound. (Defaults to "Compound.Name".)}
 
-\item{lab.compound.col}{(Character) Column name of input.table containing the test compound 
+\item{lab.compound.col}{(Character) Column name of \code{input.table} containing the test compound 
 name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 }
 \value{
-A data frame with one row per unique chemical, contains chemical 
-identifiers including DTXSID, standard/preferred compound name, 
-and the chemical name used by the laboratory for all chemicals in the input data frame.
+A data frame containing the chemical identifiers for all unique
+chemicals in the input data frame.  Each row per maps a unique chemical,
+indicated by the DTXSID, to all the preferred compound names
+and all chemical names used by the laboratory referenced in the input data frame.
 }
 \description{
 This function creates a data frame summarizing chemical identifiers used for 
