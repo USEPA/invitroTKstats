@@ -15,15 +15,15 @@ verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
 }
 \value{
-A data frame with one row per chemical, contains point estimate of intrinsic 
-clearance (Clint), p-value and Akaike information criterion (AIC) of the linear 
+A data frame with one row per chemical, contains a point estimate of intrinsic 
+clearance (Clint), the p-value and the akaike information criterion (AIC) of the linear 
 regression fit for all chemicals in the input data frame.
 }
 \description{
-This function use describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical clearance
-as characterized by disappearance of parent compound over time when incubated
-with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
+This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
+using mass spectrometry (MS) peak area data collected as part of in vitro measurement 
+of chemical clearance, as characterized by the disappearance of parent compound over 
+time when incubated with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \details{
 The input to this function should be "Level-2" data. Level-2 data is Level-1,
