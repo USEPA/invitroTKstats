@@ -69,7 +69,7 @@ date. (Defaults to "Date".)}
 is, the test compound) MS peak area. (Defaults to "Area".)}
 
 \item{series.col}{(Character) Column name of data.in containing the number of 
-simultaneous replicate with the same analytical chemistry. 
+simultaneous replicates with the same analytical chemistry. 
 (Defaults to "Series".)}
 
 \item{type.col}{(Character) Column name of data.in containing the sample type (see table
@@ -82,7 +82,7 @@ use only if the same standard concentration was used for all tested compounds.)}
 \item{std.conc.col}{(Character) Column name containing \code{std.conc} 
 information. (Defaults to "Standard.Conc".)}
 
-\item{cal}{(Character) MS calibration the samples were based on, typically uses 
+\item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
 the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
 (Note: Single entry only, 
@@ -114,7 +114,7 @@ internal standard concentration.)}
 \item{istd.conc.col}{(Character) Column name containing \code{istd.conc} information. 
 (Defaults to "ISTD.Conc".)}
 
-\item{uc.assay.conc}{Which column indicates the intended initial
+\item{uc.assay.conc}{(Numeric) The intended initial
 test chemical concentration in the UC assay in uM. (Defaults to \code{NULL}.)
 (Note: Single entry only, 
 use only if the same initial concentration was used for all tested compounds.)}

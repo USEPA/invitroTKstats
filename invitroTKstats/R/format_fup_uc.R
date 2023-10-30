@@ -47,7 +47,7 @@
 #' is, the test compound) MS peak area. (Defaults to "Area".)
 #'
 #' @param series.col (Character) Column name of data.in containing the number of 
-#' simultaneous replicate with the same analytical chemistry. 
+#' simultaneous replicates with the same analytical chemistry. 
 #' (Defaults to "Series".)
 #'
 #' @param type.col (Character) Column name of data.in containing the sample type (see table
@@ -60,7 +60,7 @@
 #' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same standard concentration was used for all tested compounds.)
 #'
-#' @param cal (Character) MS calibration the samples were based on, typically uses 
+#' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
 #' indices or dates to represent if the analyses were done on different machines on 
 #' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, 
@@ -92,7 +92,7 @@
 #' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. 
 #' (Defaults to "ISTD.Conc".)
 #'
-#' @param uc.assay.conc Which column indicates the intended initial
+#' @param uc.assay.conc (Numeric) The intended initial
 #' test chemical concentration in the UC assay in uM. (Defaults to \code{NULL}.)
 #' (Note: Single entry only, 
 #' use only if the same initial concentration was used for all tested compounds.)
