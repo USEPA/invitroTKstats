@@ -55,18 +55,18 @@
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param dtxsid.col (Character) Column name of input.table indicates EPA's DSSTox Structure
+#' @param dtxsid.col (Character) Column name of \code{input.table} indicates EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param compound.col (Character) Column name of input.table containing the test compound.
+#' @param compound.col (Character) Column name of \code{input.table} containing the test compound.
 #' (Defaults to "Compound.Name".)
 #'
-#' @param cal.col (Character) Column name of input.table containing the MS calibration. 
+#' @param cal.col (Character) Column name of \code{input.table} containing the MS calibration. 
 #' Calibration typically uses indices or dates to represent if the analyses were done on 
 #' different machines on the same day or on different days with the same MS analyzer. 
 #' (Defaults to "Calibration".)
 #'
-#' @param type.col (Character) Column name of input.table containing the sample type (see tables
+#' @param type.col (Character) Column name of \code{input.table} containing the sample type (see tables
 #' in Details). (Defaults to "Sample.Type".)
 #'
 #' @param req.types (Character Vector) A vector of character strings contains
