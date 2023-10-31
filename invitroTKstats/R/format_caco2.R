@@ -32,46 +32,51 @@
 #' @param FILENAME (Character) A string used to identify the output Level-1 file.
 #' "<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".) 
 #'
-#' @param data.in (Data Frame) A data frame containing mass-spectrometry peak areas,
+#' @param data.in (Data Frame) A data frame or a matrix containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param sample.col (Character) Column name of data.in containing the unique mass
+#' @param sample.col (Character) Column name of \code{data.in} containing the unique mass
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name".)
 #'
-#' @param lab.compound.col (Character) Column name of data.in containing the test compound
+#' @param lab.compound.col (Character) Column name of \code{data.in} containing the test compound
 #' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
 #'
-#' @param dtxsid.col (Character) Column name of data.in containing EPA's DSSTox Structure
+#' @param dtxsid.col (Character) Column name of \code{data.in} containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param date.col (Character) Column name of data.in containing the laboratory measurement
+#' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
 #' date. (Defaults to "Date".)
 #'
-#' @param series.col (Character) Column name containing \code{series} information. (Defaults to "Series".)
+#' @param series.col (Character) Column name containing \code{series} information. (Defaults to "Series".) 
+#' (Note: \code{data.in} does not necessarily have this field. 
+#' If this field is missing, it can be auto-filled with the value 
+#' specified in \code{series}.)
 #'
 #' @param series (Numeric) Index of simultaneous replicates with the same analytical chemistry. 
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
 #' use the same number of replicates.)
 #'
-#' @param compound.col (Character) Column name of data.in containing the test compound.
+#' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
 #'
-#' @param area.col (Character) Column name of data.in containing the target analyte (that
+#' @param area.col (Character) Column name of \code{data.in} containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
 #'
-#' @param type.col (Character) Column name of data.in containing the sample type (see table
+#' @param type.col (Character) Column name of \code{data.in} containing the sample type (see table
 #' under Details). (Defaults to "Type".)
 #'
-#' @param direction.col (Character) Column name of data.in containing the direction of
+#' @param direction.col (Character) Column name of \code{data.in} containing the direction of
 #' the Caco-2 permeability experiment: either apical donor to basal receiver (AtoB), or 
 #' basal donor to apical receiver (BtoA). (Defaults to "Direction".)
 #'
 #' @param cal.col (Character) Column name containing \code{cal} 
-#' information. (Defaults to "Cal".)
+#' information. (Defaults to "Cal".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{cal}.)
 #'
-#' @param cal (Character) MS calibration the samples were based on, typically uses 
+#' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
 #' indices or dates to represent if the analyses were done on different machines on 
 #' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, 
@@ -86,14 +91,18 @@
 #(Defaults to \code{NULL}.)
 #'
 #' @param dilution.col (Character) Column name containing \code{dilution} 
-#' information. (Defaults to "Dilution.Factor".)
+#' information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{dilution}.)
 #'
 #' @param dilution (Numeric) Number of times the sample was diluted before MS 
 #' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
 #' samples underwent the same number of dilutions.)
 #'
 #' @param membrane.area.col (Character) Column name containing \code{membrane.area} 
-#' information. (Defaults to "Membrane.Area".)
+#' information. (Defaults to "Membrane.Area".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{membrane.area}.)
 #'
 #' @param membrane.area (Numeric) The area of the Caco-2 monolayer (in cm^2). 
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
@@ -108,7 +117,9 @@
 #' test chemical is added. (Defaults to "Vol.Donor".)
 #'
 #' @param meas.time.col (Character) Column name containing \code{meas.time} 
-#' information. (Defaults to "Time".)
+#' information. (Defaults to "Time".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{meas.time}.)
 #'
 #' @param meas.time (Numeric) The amount of time (in hours) before the receiver and donor 
 #' compartments are measured. (Defaults to 2.)
@@ -116,26 +127,34 @@
 #' @param istd.col (Character) Column name of data.in containing the
 #' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #'
-#' @param istd.name.col (Character) Column name containing \code{istd.name} information. (Defaults to "ISTD.Name".)
+#' @param istd.name.col (Character) Column name containing \code{istd.name} information. (Defaults to "ISTD.Name".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, 
+#' it can be auto-filled with the value specified in \code{istd.name}.)
 #'
 #' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all tested compounds use the same internal standard.) 
 #'
-#' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. (Defaults to "ISTD.Conc".)
+#' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. (Defaults to "ISTD.Conc".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, 
+#' it can be auto-filled with the value specified in \code{istd.conc}.)
 #'
 #' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all tested compounds have the same 
 #' internal standard concentration.) 
 #'
 #' @param nominal.test.conc.col (Character) Column name containing \code{nominal.test.conc} 
-#' information. (Defaults to "Test.Target.Conc".)
+#' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{nominal.test.conc}.)
 #'
 #' @param nominal.test.conc (Numeric) The test chemical concentration in the dosing solution
 #' that is added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
 #' concentration was used for all tested compounds.)
 #'
 #' @param analysis.method.col (Character) Column name containing \code{analysis.method} 
-#' information. (Defaults to "Analysis.Method".)
+#' information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.method}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
@@ -143,14 +162,18 @@
 #' use only if the same method was used for all tested compounds.)
 #'
 #' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
-#' information. (Defaults to "Analysis.Instrument".)
+#' information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.instrument}.)
 #'
 #' @param analysis.instrument (Character) The instrument used for chemical analysis, 
 #' for example "Agilent 6890 GC with model 5973 MS". (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if the same instrument was used for all tested compounds.) 
 #'
 #' @param analysis.parameters.col (Character) Column name containing \code{analysis.parameters} 
-#' information. (Defaults to "Analysis.Parameters".)
+#' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.parameters}.)
 #'
 #' @param analysis.parameters (Character) The parameters used to identify the 
 #' compound on the chemical analysis instrument, for example
