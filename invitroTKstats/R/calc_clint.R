@@ -185,10 +185,10 @@ model {
 #'    \item{Results: A data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
 #'    for 1 and 10 uM and credible intervals for all compounds in the input file. Column includes:
 #'    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
-#'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Clint.1.low and Clint.10.low
-#'    Clint.1.Med/Clint.10.Med - posterior median, Clint.1.low/Clint.10.low - 2.5th quantile, 
-#'    Clint.1.low/Clint.10.low - 97.5th quantile, Clint.pValue, Sat.pValue, degrades.pValue - 
-#'    p-values for clint, saturation probability, and abiotoc degradation.}
+#'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Clint.1.Med/Clint.10.Med - posterior median, 
+#'    Clint.1.Low/Clint.10.Low - 2.5th quantile, Clint.1.High/Clint.10.High - 97.5th quantile, 
+#'    Clint.pValue, Sat.pValue, degrades.pValue - "p-values" estimated from the probabilities of 
+#'    observing decreases, saturations, and abiotic degradations in all posterior samples.}
 #'    \item{coda: A runjags-class object containing results from JAGS model.}
 #' }
 #'
