@@ -19,24 +19,24 @@ create_method_table(
 indication of chemical identity, and analytical chemistry methods.
 It should contain columns with names specified by the following arguments:}
 
-\item{dtxsid.col}{(Character) Column name of input.table containing EPA's DSSTox Structure 
+\item{dtxsid.col}{(Character) Column name of \code{input.table} containing EPA's DSSTox Structure 
 ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{compound.col}{(Character) Column name of input.table containing the test compound.
+\item{compound.col}{(Character) Column name of \code{input.table} containing the test compound.
 (Defaults to "Compound.Name".)}
 
-\item{istd.name.col}{(Character) Column name of input.table containing identity of the 
+\item{istd.name.col}{(Character) Column name of \code{input.table} containing identity of the 
 internal standard. (Defaults to "ISTD.Name".)}
 
-\item{analysis.method.col}{(Character) Column name of input.table containing the analytical
+\item{analysis.method.col}{(Character) Column name of \code{input.table} containing the analytical
 chemistry analysis method, typically "LCMS" or "GCMS", liquid or gas chromatography 
 mass spectrometry, respectively. (Defaults to "Analysis.Method".)}
 
-\item{analysis.instrument.col}{(Character) Column name of input.table containing the 
+\item{analysis.instrument.col}{(Character) Column name of \code{input.table} containing the 
 instrument used for chemical analysis. For example, "Agilent 6890 GC with model 5973 MS". 
 (Defaults to "Analysis.Instrument".)}
 
-\item{analysis.parameters.col}{(Character) Column name of input.table containing the 
+\item{analysis.parameters.col}{(Character) Column name of \code{input.table} containing the 
 parameters used to identify the compound on the chemical analysis instrument.
 For example, "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0".
 (Defaults to "Analysis.Parameters".)}
