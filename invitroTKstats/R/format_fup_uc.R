@@ -21,9 +21,9 @@
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
 #' @param FILENAME (Character) A string used to identify the output Level-1 file.
-#' "<FILENAME>-fup-UC-Level1.tsv". (Defaults to "MYDATA").
+#' "<FILENAME>-fup-UC-Level1.tsv". (Defaults to "MYDATA".)
 #'
-#' @param data.in A data frame containing mass-spectrometry peak areas,
+#' @param data.in (Data Frame) A data frame or a matrix containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
@@ -54,7 +54,9 @@
 #' under Details). (Defaults to "Sample.Type".)
 #' 
 #' @param std.conc.col (Character) Column name containing \code{std.conc} 
-#' information. (Defaults to "Standard.Conc".)
+#' information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{std.conc}.)
 #'
 #' @param std.conc (Numeric) The standard test chemical concentration for 
 #' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
@@ -67,14 +69,18 @@
 #' use only if all data were collected based on the same calibration.)
 #'
 #' @param cal.col (Character) Column name containing \code{cal} 
-#' information. (Defaults to "Cal".)
+#' information. (Defaults to "Cal".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{cal}.)
 #' 
-#' @param dilution  (Numeric) Number of times the sample was diluted before MS 
+#' @param dilution (Numeric) Number of times the sample was diluted before MS 
 #' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
 #' samples underwent the same number of dilutions.)
 #'
 #' @param dilution.col (Character) Column name containing \code{dilution} 
-#' information. (Defaults to "Dilution.Factor".)
+#' information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{dilution}.)
 #'
 #' @param istd.col (Character) Column name of \code{data.in} containing the
 #' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
@@ -83,14 +89,18 @@
 #' (Note: Single entry only, use only if all tested compounds use the same internal standard.) 
 #'
 #' @param istd.name.col (Character) Column name containing \code{istd.name} information. 
-#' (Defaults to "ISTD.Name".)
+#' (Defaults to "ISTD.Name".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{istd.name}.)
 #'
 #' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all tested compounds have the same 
 #' internal standard concentration.) 
 #'
 #' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. 
-#' (Defaults to "ISTD.Conc".)
+#' (Defaults to "ISTD.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{istd.conc}.)
 #'
 #' @param uc.assay.conc (Numeric) The intended initial
 #' test chemical concentration in the UC assay in uM. (Defaults to \code{NULL}.)
@@ -98,7 +108,9 @@
 #' use only if the same initial concentration was used for all tested compounds.)
 #'
 #' @param uc.assay.conc.col (Character) Column name containing \code{uc.assay.conc} 
-#' information. (Defaults to "UC.Assay.Conc".)
+#' information. (Defaults to "UC.Assay.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{uc.assay.conc}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
@@ -106,34 +118,44 @@
 #' use only if the same method was used for all tested compounds.)
 #'
 #' @param analysis.method.col (Character) Column name containing \code{analysis.method} 
-#' information. (Defaults to "Analysis.Method".)
+#' information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.method}.)
 #' 
 #' @param analysis.instrument (Character) The instrument used for chemical analysis, 
 #' for example "Waters Xevo TQ-S micro (QEB0036)". (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if the same instrument was used for all tested compounds.) 
 #'
 #' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
-#' information. (Defaults to "Analysis.Instrument".)
+#' information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.instrument}.)
 #'
 #' @param analysis.parameters (Character) The parameters used to identify the 
 #' compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
 #'
 #' @param analysis.parameters.col (Character) Column name containing \code{analysis.parameters} 
-#' information. (Defaults to "Analysis.Parameters".)
+#' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.parameters}.)
 #' 
 #' @param note.col (Character) Column name of \code{data.in} containing additional notes on 
 #' test compounds. (Defaults to "Note").
 #'
 #' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
-#' (Defaults to "Level0.File".)
+#' (Defaults to "Level0.File".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.file}.)
 #'
 #' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
 #' were obtained from the same Level-0 file.) 
 #'
 #' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
-#' (Defaults to "Level0.Sheet".)
+#' (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.sheet}.)
 #'
 #' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
 #' \code{data.in} is obtained from, if the level-0 file is an Excel workbook. 
