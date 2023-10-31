@@ -28,7 +28,8 @@
 #' (Defaults to "Verified".)
 #'
 #' @return A data frame with one row per chemical, contains a point estimate of intrinsic 
-#' clearance (Clint), the p-value and the akaike information criterion (AIC) of the linear 
+#' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
+#' the p-value and the akaike information criterion (AIC) of the linear 
 #' regression fit for all chemicals in the input data frame. 
 #' 
 #' @author John Wambaugh
