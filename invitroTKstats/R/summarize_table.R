@@ -1,6 +1,7 @@
-#' Creates a Summary Table of MS Data Frame
+#' Creates a Summary Table of Mass-Spectrometry (MS) Data
 #'
-#' This function creates and returns a list containing summary counts of the input data table.
+#' This function creates and returns a list containing summary counts of a data frame containing
+#' mass-spectrometry (MS) data, MS calibration, chemical identifiers, and measurement type.
 #' The list includes the counts of observations, unique chemicals and unique 
 #' measurements in the input data table, and a vector of chemicals that have repeated observations. 
 #' If a vector of data types is specified in the argument \code{req.types}, the function also checks if each chemical has 
@@ -11,8 +12,8 @@
 #' or hepatocyte clearance (Clint) data. Tables of measurement types and annotations 
 #' used in each assay are available in Details. 
 #'
-#' Sample types used in ultracentrifugation (UC) data should be 
-#' annotated according to this table:
+#' Sample types used in ultracentrifugation (UC) data collected for calculation of 
+#' chemical fraction unbound in plasma (Fup) should be annotated according to this table:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
 #'   Ultracentrifugation Aqueous Fraction \tab AF\cr
@@ -20,8 +21,8 @@
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
 #' 
-#' Sample types in rapid equilibrium dialysis (RED) data should be annotated according to
-#' this table:
+#' Samples types used in rapid equilibrium dialysis (RED) data collected for calculation of 
+#' chemical fraction unbound in plasma (Fup) should be annotated according to this table:
 #' \tabular{rrrrr}{
 #'   Blank (ignored) \tab Blank\cr
 #'   Plasma well concentration \tab Plasma\cr
@@ -33,7 +34,7 @@
 #'   Calibration Curve \tab CC\cr
 #' }
 #'
-#' Sample types in hepatocyte clearance data should be annotated according to
+#' Sample types in hepatocyte clearance (Clint) data should be annotated according to
 #' this table:
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
@@ -55,7 +56,7 @@
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param dtxsid.col (Character) Column name of \code{input.table} indicates EPA's DSSTox Structure
+#' @param dtxsid.col (Character) Column name of \code{input.table} containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
 #' @param compound.col (Character) Column name of \code{input.table} containing the test compound.
@@ -70,8 +71,8 @@
 #' in Details). (Defaults to "Sample.Type".)
 #'
 #' @param req.types (Character Vector) A vector of character strings contains
-#' measurement types. If used, the function checks if all of the measurement types included in this vector are
-#' available for each chemical-calibration pair. (Defaults to \code{NULL}.)
+#' measurement types. If a vector is specified, each chemical-calibration pair will be 
+#' checked if it has observations for all of the measurement types in the vector. (Defaults to \code{NULL}.)
 #'
 #' @return A list containing the summary counts from the input data table. The list includes 
 #' the number of observations, the number of unique chemicals, the number of unique measurements, 
@@ -83,8 +84,11 @@
 #' @examples 
 #' # need to re-visit the path to load data for this example 
 #' load("~/invitroTKstats/Data/Kreutz2023.RData")
+#' load("~/invitroTKstats/Data/Smeltz2023.RData")
 #' summarize_table(kreutz2023.uc, req.types = c("CC", "T1", "T5", "AF"))
 #' summarize_table(kreutz2023.clint)
+#' summarize_table(smeltz2023.red, req.types = c("NoPlasma.Blank","CC","T0","PBS","Plasma",
+#' "Stability","Plasma.Blank"))
 #' 
 #' @export summarize_table
 summarize_table <- function(input.table,
