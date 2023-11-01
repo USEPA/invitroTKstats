@@ -2,27 +2,29 @@
 % Please edit documentation in R/plot_clint.R
 \name{plot_clint}
 \alias{plot_clint}
-\title{Plot Mass Spectrometry Responses for Measurements of Intrinsic Hepatic Clearance}
+\title{Plot Mass Spectrometry Responses from Measurements of Intrinsic
+Hepatic Clearance}
 \usage{
 plot_clint(level2, dtxsid)
 }
 \arguments{
-\item{level2}{(Data Frame) A data frame containing Level-2 data for measurement 
-of chemical stability when incubated with suspended hepatocytes.}
+\item{level2}{(Data Frame) A data frame containing Level-2 data with a measure
+of chemical clearance over time when incubated with suspended hepatocytes.}
 
 \item{dtxsid}{(Character) EPA's DSSTox Structure ID for the chemical to be plotted.}
 }
 \value{
-\item{ggplot2}{A figure of mass spectrometry responses for different sample types.}
+\item{ggplot2}{A figure of mass spectrometry responses over time for
+various sample types.}
 }
 \description{
-This function generates a response-versus-time plot using mass spectrometry (MS) 
-responses collected for measurement of a chemical's intrinsic hepatic clearance.
+This function generates a response-versus-time plot of mass spectrometry (MS) 
+responses collected from measurements of intrinsic hepatic clearance for a chemical.
 Responses from different measurements/calibrations are labeled with different colors, 
-and responses of different sample types are labeled with different shapes.
+and responses from various sample types are labeled with different shapes.
 }
 \details{
-The input data frame to this function should be "Level-2" data. Level-2 data is Level-1,
+The function requires "Level-2" data for plotting. Level-2 data is Level-1,
 data formatted with the \code{\link{format_clint}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for plotting.
