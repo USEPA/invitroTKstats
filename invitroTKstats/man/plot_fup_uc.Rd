@@ -2,32 +2,33 @@
 % Please edit documentation in R/plot_fup_uc.R
 \name{plot_fup_uc}
 \alias{plot_fup_uc}
-\title{Plot Mass Spectrometry Responses for Measurements of Fraction Unbound in Plasma using Ultracentrifugation (UC)}
+\title{Plot Mass Spectrometry Responses for Fraction Unbound in Plasma Data from
+Ultracentrifugation (UC)}
 \usage{
 plot_fup_uc(level2, dtxsid, good.col = "Verified")
 }
 \arguments{
-\item{level2}{(Data Frame) A data.frame containing Level-2 data for fraction unbound in
-plasma (Fup) measured by ultracentrifugation (UC).}
+\item{level2}{(Data Frame) A data.frame containing Level-2 data for fraction
+unbound in plasma (Fup) measured by ultracentrifugation (UC).}
 
 \item{dtxsid}{(Character) EPA's DSSTox Structure ID for the chemical to be plotted.}
 
-\item{good.col}{(Character) Column name indicating which rows have been
-verified, data rows valid for plotting are indicated with a "Y".
-(Defaults to "Verified".)}
+\item{good.col}{(Character) Column name containg verification information,
+data rows valid for plotting are indicated with a "Y". (Defaults to "Verified".)}
 }
 \value{
-\item{ggplot2}{A figure of mass spec. responses for different sample types.}
+\item{ggplot2}{A figure of mass spectrometry responses for
+various sample types.}
 }
 \description{
-This function generates a scatter plot of the mass spectrometry (MS) responses 
-of one chemical collected for the measurement of fraction unbound in plasma (Fup)
+This function generates a scatter plot of mass spectrometry (MS) responses 
+for one chemical collected from measurement of fraction unbound in plasma (Fup)
 using ultracentrifugation (UC). The scatter plot displays the MS 
-responses (y-axis) by sample types (x-axis). Responses from different measurements/calibrations 
-are labeled with different shapes and colors.
+responses (y-axis) by sample types (x-axis). Responses from different
+measurements/calibrations are labeled with different shapes and colors.
 }
 \details{
-The input data frame to this function should be "Level-2" data. Level-2 data is Level-1,
+This function requires "Level-2" data for plotting. Level-2 data is Level-1,
 data formatted with the \code{\link{format_fup_uc}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for plotting.
