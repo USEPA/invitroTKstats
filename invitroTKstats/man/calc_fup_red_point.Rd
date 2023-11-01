@@ -2,7 +2,8 @@
 % Please edit documentation in R/calc_fup_red_point.R
 \name{calc_fup_red_point}
 \alias{calc_fup_red_point}
-\title{Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with Rapid Equilibrium Dialysis (RED) Data}
+\title{Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with
+Rapid Equilibrium Dialysis (RED) Data}
 \usage{
 calc_fup_red_point(FILENAME, good.col = "Verified")
 }
@@ -16,14 +17,16 @@ verified, data rows valid for analysis are indicated with a "Y".
 }
 \value{
 A data frame with one row per chemical, contains chemical identifiers 
-such as preferred compound name, EPA's DSSTox Structure ID, calibration and a point estimate of 
-fraction unbound in plasma (Fup) for all chemicals in the input data frame.
+such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
+and point estimates for the fraction unbound in plasma (Fup)
+for all chemicals in the input data frame.
 }
 \description{
-This function calculates point estimates of fraction unbound in plasma (Fup) from 
-mass spectrometry (MS) responses collected as part of in vitro measurement 
-of chemical Fup using rapid equilibrium dialysis \insertCite{waters2008validation}{invitroTKstats}. 
-Calculation formula is available in Details.
+This function calculates the point estimates for the fraction unbound in plasma
+(Fup) using mass spectrometry (MS) peak areas from samples collected as part
+in vitro measurements of chemical Fup using rapid equilibrium dialysis
+\insertCite{waters2008validation}{invitroTKstats}. See the Details section
+for the equation(s) used in point estimation.
 }
 \details{
 The input to this function should be "Level-2" data. Level-2 data is Level-1,
