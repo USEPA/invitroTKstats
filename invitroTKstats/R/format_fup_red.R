@@ -1,14 +1,14 @@
-#' Creates a Standardized Data Frame Reporting Rapid Equilibrium Dialysis (RED) PPB data
+#' Creates a Standardized Data Frame with Rapid Equilibrium Dialysis (RED)
+#' Plasma Protein Binding (PPB) Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using rapid equilibrium dialysis
 #' \insertCite{waters2008validation}{invitroTKstats}.
-#' The input data frame is organized into a standard set of columns and is written
+#' The input data frame is organized into a standard set of columns and written
 #' to a tab-separated text file.
 #'
-#' The data frame of observations should be annotated according to
-#' of these types:
+#' The data frame of observations should be annotated according to these types:
 #' \tabular{rrrrr}{
 #'   Blank (ignored) \tab Blank\cr
 #'   Plasma well concentration \tab Plasma\cr
@@ -27,7 +27,7 @@
 #' @param FILENAME (Character) A string used to identify the output Level-1 file.
 #' "<FILENAME>-fup-RED-Level1.tsv". (Defaults to "MYDATA".)
 #'
-#' @param data.in (Data Frame) A data frame or a matrix containing mass-spectrometry peak areas,
+#' @param data.in (Data Frame) A Level-0 data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
@@ -183,35 +183,36 @@
 #' specified in \code{level0.sheet}.)
 #'
 #' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
-#' \code{data.in} is obtained from, if the level-0 file is an Excel workbook. 
+#' \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
 #' were obtained from the same sheet in the same Level-0 file.)
 #' 
-#' @return A data frame in standardized Level-1 format containing a  
-#' standardized set of columns with standardized column names.  
+#' @return A Level-1 data frame with a standardized format containing a  
+#' standardized set of columns with standardized column names with plasma protein
+#' binding (PPB) data from an rapid equilibrium dialysis (RED) assay. 
 #'
 #' @author John Wambaugh
 #'
 #' @examples
 #' library(invitroTKstats)
-#'red <- wambaugh2019.red
-#'red$Date <- "2019"
-#'red$Sample.Type <- "Blank"
-#'red <- subset(red,!is.na(SampleName))
-#'red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-#'red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-#'red$Dilution.Factor <- NA
-#'red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-#'red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-#'red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-#'red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
+#' red <- wambaugh2019.red
+#' red$Date <- "2019"
+#' red$Sample.Type <- "Blank"
+#' red <- subset(red,!is.na(SampleName))
+#' red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
+#' red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
+#' red$Dilution.Factor <- NA
+#' red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
+#' red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
+#' red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
+#' red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
 #'
-#'red$Test.Target.Conc <- 5
-#'red$ISTD.Name <- "Bucetin and Diclofenac"
-#'red$ISTD.Conc <- 1
-#'red$Series <- 1
+#' red$Test.Target.Conc <- 5
+#' red$ISTD.Name <- "Bucetin and Diclofenac"
+#' red$ISTD.Conc <- 1
+#' red$Series <- 1
 #'
-#'level1 <- format_fup_red(red,
+#' level1 <- format_fup_red(red,
 #'  FILENAME="Wambaugh2019",
 #'  sample.col="SampleName",
 #'  compound.col="Preferred.Name",
@@ -222,8 +223,9 @@
 #' \insertRef{waters2008validation}{invitroTKstats}
 #'
 #' @export format_fup_red
-format_fup_red <- function(data.in,
+format_fup_red <- function(
   FILENAME = "MYDATA",
+  data.in,
   sample.col="Lab.Sample.Name",
   #date=NULL,
   date.col="Date",
