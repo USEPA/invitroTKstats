@@ -5,7 +5,7 @@
 #' pair. (Unique chemical identified by DTXSID's.) Each row contains all compound names, analysis parameters, analysis instruments, 
 #' and internal standards used for each chemical-method pair. 
 #'
-#' @param input.table (Data Frame) A data frame containing mass-spectrometry peak areas,
+#' @param input.table (Data Frame) A Level-1 or Level-2 data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and analytical chemistry methods.
 #' It should contain columns with names specified by the following arguments:
 #' 

@@ -15,7 +15,7 @@ create_method_table(
 )
 }
 \arguments{
-\item{input.table}{(Data Frame) A data frame containing mass-spectrometry peak areas,
+\item{input.table}{(Data Frame) A Level-1 or Level-2 data frame containing mass-spectrometry peak areas,
 indication of chemical identity, and analytical chemistry methods.
 It should contain columns with names specified by the following arguments:}
 
