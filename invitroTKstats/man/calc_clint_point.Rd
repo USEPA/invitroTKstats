@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_clint_point.R
 \name{calc_clint_point}
 \alias{calc_clint_point}
-\title{Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint)}
+\title{Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)}
 \usage{
 calc_clint_point(FILENAME, good.col = "Verified")
 }
@@ -15,9 +15,9 @@ verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
 }
 \value{
-A data frame with one row per chemical, contains a point estimate of intrinsic 
+A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
 clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
-the p-value and the akaike information criterion (AIC) of the linear 
+the p-value and the Akaike Information Criterion (AIC) of the linear 
 regression fit for all chemicals in the input data frame.
 }
 \description{

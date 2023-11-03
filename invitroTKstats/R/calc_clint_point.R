@@ -1,4 +1,4 @@
-#' Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint)
+#' Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)
 #'
 #' This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
 #' using mass spectrometry (MS) peak area data collected as part of in vitro measurement 
@@ -27,9 +27,9 @@
 #' verified, data rows valid for analysis are indicated with a "Y".
 #' (Defaults to "Verified".)
 #'
-#' @return A data frame with one row per chemical, contains a point estimate of intrinsic 
+#' @return A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
 #' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
-#' the p-value and the akaike information criterion (AIC) of the linear 
+#' the p-value and the Akaike Information Criterion (AIC) of the linear 
 #' regression fit for all chemicals in the input data frame. 
 #' 
 #' @author John Wambaugh
