@@ -188,7 +188,7 @@
 #' were obtained from the same sheet in the same Level-0 file.) 
 #'
 #' @return A Level-1 data frame with a standardized format containing a  
-#' standardized set of columns with standardized column names with hepatic
+#' standardized set of columns and column names with hepatic
 #' clearance data for a variety of chemicals. 
 #'
 #' @author John Wambaugh
