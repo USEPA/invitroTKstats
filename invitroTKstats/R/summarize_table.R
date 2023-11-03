@@ -1,19 +1,19 @@
 #' Creates a Summary Table of Mass-Spectrometry (MS) Data
 #'
-#' This function creates and returns a list containing summary counts of a data frame containing
+#' This function creates and returns a list containing summary counts from the provided data frame containing
 #' mass-spectrometry (MS) data, MS calibration, chemical identifiers, and measurement type.
-#' The list includes the counts of observations, unique chemicals and unique 
+#' The list includes the number of observations, unique chemicals, unique 
 #' measurements in the input data table, and a vector of chemicals that have repeated observations. 
 #' If a vector of data types is specified in the argument \code{req.types}, the function also checks if each chemical has 
 #' observations for every measurement type included in the vector for each chemical-calibration pair. 
 #' If it does, the chemical is said to have a complete data set. Otherwise, it has an incomplete data set. 
-#' The counts of chemicals with complete and incomplete data sets are returned in the output list. 
+#' The number of complete and incomplete datasets, for each chemical, are returned in the output list. 
 #' The input data frame can be Caco-2 data, ultracentrifugation (UC) data, rapid equilibrium dialysis (RED) data, 
-#' or hepatocyte clearance (Clint) data. Tables of measurement types and annotations 
-#' used in each assay are available in Details. 
+#' or hepatocyte clearance (Clint) data. See the Details section for measurement type and 
+#' annotation tables used in each assay.
 #'
 #' Sample types used in ultracentrifugation (UC) data collected for calculation of 
-#' chemical fraction unbound in plasma (Fup) should be annotated according to this table:
+#' chemical fraction unbound in plasma (Fup) should be annotated as follows:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
 #'   Ultracentrifugation Aqueous Fraction \tab AF\cr
@@ -22,7 +22,7 @@
 #' }
 #' 
 #' Samples types used in rapid equilibrium dialysis (RED) data collected for calculation of 
-#' chemical fraction unbound in plasma (Fup) should be annotated according to this table:
+#' chemical fraction unbound in plasma (Fup) should be annotated as follows:
 #' \tabular{rrrrr}{
 #'   Blank (ignored) \tab Blank\cr
 #'   Plasma well concentration \tab Plasma\cr
@@ -34,8 +34,7 @@
 #'   Calibration Curve \tab CC\cr
 #' }
 #'
-#' Sample types in hepatocyte clearance (Clint) data should be annotated according to
-#' this table:
+#' Sample types in hepatocyte clearance (Clint) data should be annotated as follows:
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
 #'   Hepatocyte incubation concentration \tab Cvst\cr
@@ -43,8 +42,8 @@
 #'   Calibration Curve \tab CC\cr
 #' }
 #' 
-#' Sample types used in Caco-2 data should be annotated according to
-#' this table:
+#' Samples types used in Caco-2 data to calculate membrane permeability should 
+#' be annotated as follows:
 #' \tabular{rr}{
 #'   Blank with no chemical added \tab Blank \cr
 #'   Dosing vehicle (C0) at target concentration \tab D0\cr
@@ -70,7 +69,7 @@
 #' @param type.col (Character) Column name of \code{input.table} containing the sample type (see tables
 #' in Details). (Defaults to "Sample.Type".)
 #'
-#' @param req.types (Character Vector) A vector of character strings contains
+#' @param req.types (Character Vector) A vector of character strings containing
 #' measurement types. If a vector is specified, each chemical-calibration pair will be 
 #' checked if it has observations for all of the measurement types in the vector. (Defaults to \code{NULL}.)
 #'
