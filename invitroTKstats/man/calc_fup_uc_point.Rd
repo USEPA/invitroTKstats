@@ -2,29 +2,31 @@
 % Please edit documentation in R/calc_fup_uc_point.R
 \name{calc_fup_uc_point}
 \alias{calc_fup_uc_point}
-\title{Calculate Point Estimates of Fraction Unbound in Plasma (UC) with ultracentrifugation (UC) Data}
+\title{Calculate Point Estimates of Fraction Unbound in Plasma with
+Ultracentrifugation (UC) Data}
 \usage{
 calc_fup_uc_point(FILENAME, good.col = "Verified")
 }
 \arguments{
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"<FILENAME>-fup-UC-Level2.tsv".}
+
 \item{good.col}{(Character) Column name indicating which rows have been
 verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
-
-\item{@param}{FILENAME (Character) A string used to identify the input Level-2 file.
-"<FILENAME>-fup-UC-Level2.tsv".}
 }
 \value{
 A data frame with one row per chemical, contains chemical identifiers 
 such as preferred compound name, compound name used by the laboratory, 
-EPA's DSSTox Structure ID, calibration and a point estimate of 
-fraction unbound in plasma (Fup) for all chemicals in the input data frame.
+EPA's DSSTox Structure ID, calibration, and point estimates for
+the fraction unbound in plasma (Fup) for all chemicals in the input data frame.
 }
 \description{
-This function calculates point estimates of fraction unbound in plasma (Fup) from 
-mass spectrometry (MS) responses collected as part of in vitro measurement 
-of chemical Fup using ultracentrifugation \insertCite{waters2008validation}{invitroTKstats}. 
-Calculation formula is available in Details.
+This function calculates the point estimates for the fraction unbound in
+plasma (Fup) using mass spectrometry (MS) peak areas from samples collected
+as part of in vitro measurements of chemical Fup using ultracentrifugation
+\insertCite{waters2008validation}{invitroTKstats}. See the Details section
+for the equation(s) used in the point estimate.
 }
 \details{
 The input to this function should be "Level-2" data. Level-2 data is Level-1,

@@ -29,7 +29,7 @@
 #' \eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
 #' and \eqn{n_{T5}} is the number of T5 Responses.
 #'
-#' @param @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-fup-UC-Level2.tsv".
 #'
 #' @param good.col (Character) Column name indicating which rows have been
