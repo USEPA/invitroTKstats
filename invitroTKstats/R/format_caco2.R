@@ -1,4 +1,4 @@
-#' Creates a Standardized Data Table Reporting Caco-2 Data (Level-1)
+#' Creates a Standardized Data Table with Caco-2 Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of membrane
@@ -32,8 +32,9 @@
 #' @param FILENAME (Character) A string used to identify the output Level-1 file.
 #' "<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".) 
 #'
-#' @param data.in (Data Frame) A data frame or a matrix containing mass-spectrometry peak areas,
-#' indication of chemical identity, and measurement type. The data frame should
+#' @param data.in (Data Frame) A Level-0 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
 #' @param sample.col (Character) Column name of \code{data.in} containing the unique mass
@@ -49,7 +50,8 @@
 #' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
 #' date. (Defaults to "Date".)
 #'
-#' @param series.col (Character) Column name containing \code{series} information. (Defaults to "Series".) 
+#' @param series.col (Character) Column name containing \code{series} information.
+#' (Defaults to "Series".) 
 #' (Note: \code{data.in} does not necessarily have this field. 
 #' If this field is missing, it can be auto-filled with the value 
 #' specified in \code{series}.)
@@ -108,11 +110,11 @@
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
 #' have the same area for the Caco-2 monolayer.)
 #'
-#' @param receiver.vol.col (Character) Column name of data.in containing the volume
+#' @param receiver.vol.col (Character) Column name of \code{data.in} containing the volume
 #' (in cm^3) of the receiver portion of the Caco-2 experimental well. 
 #' (Defaults to "Vol.Receiver".)
 #'
-#' @param donor.vol.col (Character) Column name of data.in containing the volume
+#' @param donor.vol.col (Character) Column name of \code{data.in} containing the volume
 #' (in cm^3) of the donor portion of the Caco-2 experimental well where the
 #' test chemical is added. (Defaults to "Vol.Donor".)
 #'
@@ -124,7 +126,7 @@
 #' @param meas.time (Numeric) The amount of time (in hours) before the receiver and donor 
 #' compartments are measured. (Defaults to 2.)
 #'
-#' @param istd.col (Character) Column name of data.in containing the
+#' @param istd.col (Character) Column name of \code{data.in} containing the
 #' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #'
 #' @param istd.name.col (Character) Column name containing \code{istd.name} information. (Defaults to "ISTD.Name".) 
@@ -148,7 +150,8 @@
 #' specified in \code{nominal.test.conc}.)
 #'
 #' @param nominal.test.conc (Numeric) The test chemical concentration in the dosing solution
-#' that is added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
+#' that is added to the donor side at time zero. (Defaults to \code{NULL}.)
+#' (Note: Single entry only, use only if the same initial 
 #' concentration was used for all tested compounds.)
 #'
 #' @param analysis.method.col (Character) Column name containing \code{analysis.method} 
@@ -157,9 +160,9 @@
 #' specified in \code{analysis.method}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
-#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, 
-#' use only if the same method was used for all tested compounds.)
+#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
+#' spectrometry, respectively. (Defaults to \code{NULL}.)
+#' (Note: Single entry only, use only if the same method was used for all tested compounds.)
 #'
 #' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
 #' information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
@@ -180,8 +183,9 @@
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0". (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
 #'
-#' @return A data frame in standardized Level-1 format containing a  
-#' standardized set of columns with standardized column names. 
+#' @return A Level-1 data frame with a standardized format containing a  
+#' standardized set of columns and column names with membrane permeability data
+#' from a Caco-2 assay.
 #'
 #' @author John Wambaugh
 #'
