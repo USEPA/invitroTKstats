@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_clint.R
 \name{calc_clint}
 \alias{calc_clint}
-\title{Calculate Intrinsic Hepatic Clearance (Clint) with Bayesian Modeling}
+\title{Calculate Intrinsic Hepatic Clearance (Clint) with Bayesian Modeling (Level-4)}
 \usage{
 calc_clint(
   FILENAME,
@@ -50,7 +50,7 @@ will decrease between 1 and 10 uM. (Defaults to 0.25.)}
 \value{
 A list of two objects: 
 \enumerate{
-   \item{Results: A data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
+   \item{Results: A Level-4 data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
    for 1 and 10 uM and credible intervals for all compounds in the input file. Column includes:
    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
    the laboratory, DTXSID - EPA's DSSTox Structure ID, Clint.1.Med/Clint.10.Med - posterior median, 
@@ -62,7 +62,7 @@ A list of two objects:
 }
 \description{
 This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
-modeling on Rapid Equilibrium Dialysis (RED) data. Both Clint at 1 and 10 uM (if tested) 
+modeling on Hepatocyte Incubation data. Clint at both 1 and 10 uM (if tested) 
 and the credible intervals are estimated from posterior samples of the MCMC.
 A summary table along with the full set of MCMC results is returned from
 the function.
