@@ -167,25 +167,25 @@
 #' 
 #' @param note.col (Character) Column name of \code{data.in} containing additional notes on 
 #' test compounds. (Defaults to "Note".)
-#'
+#' 
+#' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+#' were obtained from the same Level-0 file.)
+#' 
 #' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
 #' (Defaults to "Level0.File".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{level0.file}.)
-#'
-#' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
+#' 
+#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
+#' \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
-#' were obtained from the same Level-0 file.) 
+#' were obtained from the same sheet in the same Level-0 file.)
 #' 
 #' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
 #' (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{level0.sheet}.)
-#'
-#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
-#' \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
-#' were obtained from the same sheet in the same Level-0 file.)
 #' 
 #' @return A Level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with plasma protein
@@ -260,10 +260,10 @@ format_fup_red <- function(
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
   note.col="Note",
-  level0.file.col="Level0.File",
   level0.file=NULL,
-  level0.sheet.col="Level0.Sheet",
-  level0.sheet=NULL
+  level0.file.col="Level0.File",
+  level0.sheet=NULL,
+  level0.sheet.col="Level0.Sheet"
   )
 {
   data.in <- as.data.frame(data.in)
