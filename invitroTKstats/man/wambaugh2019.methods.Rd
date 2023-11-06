@@ -7,20 +7,20 @@
 \title{Mass Spectrometry Methods for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Chemicals}
 \format{
 A data.frame 520 rows and 14 variables: \describe{
-\item{\code{DTXSID}}{}
-\item{\code{PREFERRED_NAME}}{}
+\item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+\item{\code{PREFERRED_NAME}}{Preferred name for a test compound.}
 \item{\code{CASRN}}{}
 \item{\code{MOLECULAR_FORMULA}}{}
 \item{\code{AVERAGE_MASS}}{}
 \item{\code{QSAR_READY_SMILES}}{}
-\item{\code{LC}}{}
+\item{\code{LC}}{Logical variable if liquid chromatography-mass spectrometry was used.}
 \item{\code{Agilent.QQQ}}{}
 \item{\code{Water.s.Xevo}}{}
 \item{\code{AB.Sciex.Qtrap}}{}
-\item{\code{GC}}{}
+\item{\code{GC}}{Logical variable if gas chromatography-mass spectrometry was used.}
 \item{\code{Agilent.GCMS}}{}
 \item{\code{GCTOF}}{}
-\item{\code{Comment}}{}
+\item{\code{Comment}}{Any additional comments for a test compound.}
   }
 }
 \source{

@@ -7,19 +7,19 @@
 \title{Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Protein Binding}
 \format{
 A data.frame 17,689 rows and 14 variables: \describe{
-\item{\code{Preferred.Name}}{}
+\item{\code{Preferred.Name}}{Preferred name used for a test compound.}
 \item{\code{CAS}}{}
-\item{\code{DTXSID}}{}
-\item{\code{SampleName}}{}
+\item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+\item{\code{SampleName}}{Sample name used by the laboratory.}
 \item{\code{CompoundName}}{}
 \item{\code{Transition}}{}
-\item{\code{Area}}{}
-\item{\code{ISTD.Area}}{}
+\item{\code{Area}}{The test compound MS peak area.}
+\item{\code{ISTD.Area}}{MS peak area for the internal standard.}
 \item{\code{ISTDResponseRatio}}{}
-\item{\code{Dilution.Factor}}{}
+\item{\code{Dilution.Factor}}{How many times a sample was diluted.}
 \item{\code{Protein}}{}
 \item{\code{Task.Order}}{}
-\item{\code{RawDataSet}}{}
+\item{\code{RawDataSet}}{Name of the file the data came from.}
 \item{\code{CyprotexEPASetNumber}}{}
 }
 }

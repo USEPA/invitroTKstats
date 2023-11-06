@@ -8,16 +8,16 @@
 A data.frame 23,021 rows and 15 variables: \describe{
 \item{\code{Preferred.Name}}{}
 \item{\code{CAS}}{}
-\item{\code{DTXSID}}{}
-\item{\code{Sample.Name}}{}
+\item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+\item{\code{Sample.Name}}{Sample name used by the laboratory.}
 \item{\code{Name}}{}
 \item{\code{Transition}}{}
-\item{\code{Area}}{}
-\item{\code{ISTD.Area}}{}
+\item{\code{Area}}{The test compound MS peak area.}
+\item{\code{ISTD.Area}}{MS peak area for the internal standard.}
 \item{\code{ISTDResponseRatio}}{}
 \item{\code{ln...Remaining}}{}
-\item{\code{Time..mins.}}{}
-\item{\code{Conc}}{}
+\item{\code{Time..mins.}}{Time in minues between when the incubation started and when the sample was taken.}
+\item{\code{Conc}}{Test compound concentration.}
 \item{\code{TaskOrder}}{}
 \item{\code{FileName}}{}
 \item{\code{X}}{}

@@ -13,16 +13,16 @@
 #' @format A data.frame 23,021 rows and 15 variables: \describe{
 #' \item{\code{Preferred.Name}}{}
 #' \item{\code{CAS}}{}
-#' \item{\code{DTXSID}}{}
-#' \item{\code{Sample.Name}}{}
+#' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+#' \item{\code{Sample.Name}}{Sample name used by the laboratory.}
 #' \item{\code{Name}}{}
 #' \item{\code{Transition}}{}
-#' \item{\code{Area}}{}
-#' \item{\code{ISTD.Area}}{}
+#' \item{\code{Area}}{The test compound MS peak area.}
+#' \item{\code{ISTD.Area}}{MS peak area for the internal standard.}
 #' \item{\code{ISTDResponseRatio}}{}
 #' \item{\code{ln...Remaining}}{}
-#' \item{\code{Time..mins.}}{}
-#' \item{\code{Conc}}{}
+#' \item{\code{Time..mins.}}{Time in minues between when the incubation started and when the sample was taken.}
+#' \item{\code{Conc}}{Test compound concentration.}
 #' \item{\code{TaskOrder}}{}
 #' \item{\code{FileName}}{}
 #' \item{\code{X}}{}
@@ -51,20 +51,20 @@
 #' @aliases Wambaugh2019.methods
 #' @docType data
 #' @format A data.frame 520 rows and 14 variables: \describe{
-#' \item{\code{DTXSID}}{}
-#' \item{\code{PREFERRED_NAME}}{}
+#' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+#' \item{\code{PREFERRED_NAME}}{Preferred name for a test compound.}
 #' \item{\code{CASRN}}{}
 #' \item{\code{MOLECULAR_FORMULA}}{}
 #' \item{\code{AVERAGE_MASS}}{}
 #' \item{\code{QSAR_READY_SMILES}}{}
-#' \item{\code{LC}}{}
+#' \item{\code{LC}}{Logical variable if liquid chromatography-mass spectrometry was used.}
 #' \item{\code{Agilent.QQQ}}{}
 #' \item{\code{Water.s.Xevo}}{}
 #' \item{\code{AB.Sciex.Qtrap}}{}
-#' \item{\code{GC}}{}
+#' \item{\code{GC}}{Logical variable if gas chromatography-mass spectrometry was used.}
 #' \item{\code{Agilent.GCMS}}{}
 #' \item{\code{GCTOF}}{}
-#' \item{\code{Comment}}{}
+#' \item{\code{Comment}}{Any additional comments for a test compound.}
 #'   }
 #' @references
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
@@ -82,19 +82,19 @@
 #' @aliases Wambaugh2019.red
 #' @docType data
 #' @format A data.frame 17,689 rows and 14 variables: \describe{
-#' \item{\code{Preferred.Name}}{}
+#' \item{\code{Preferred.Name}}{Preferred name used for a test compound.}
 #' \item{\code{CAS}}{}
-#' \item{\code{DTXSID}}{}
-#' \item{\code{SampleName}}{}
+#' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+#' \item{\code{SampleName}}{Sample name used by the laboratory.}
 #' \item{\code{CompoundName}}{}
 #' \item{\code{Transition}}{}
-#' \item{\code{Area}}{}
-#' \item{\code{ISTD.Area}}{}
+#' \item{\code{Area}}{The test compound MS peak area.}
+#' \item{\code{ISTD.Area}}{MS peak area for the internal standard.}
 #' \item{\code{ISTDResponseRatio}}{}
-#' \item{\code{Dilution.Factor}}{}
+#' \item{\code{Dilution.Factor}}{How many times a sample was diluted.}
 #' \item{\code{Protein}}{}
 #' \item{\code{Task.Order}}{}
-#' \item{\code{RawDataSet}}{}
+#' \item{\code{RawDataSet}}{Name of the file the data came from.}
 #' \item{\code{CyprotexEPASetNumber}}{}
 #' }
 #'
