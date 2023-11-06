@@ -49,22 +49,25 @@
 #'
 #' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
 #' date. (Defaults to "Date".)
-#'
+#' 
+#' @param series (Numeric) Index of simultaneous replicates with the same analytical chemistry. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+#' use the same number of replicates.)
+#' 
 #' @param series.col (Character) Column name containing \code{series} information.
 #' (Defaults to "Series".) 
 #' (Note: \code{data.in} does not necessarily have this field. 
 #' If this field is missing, it can be auto-filled with the value 
 #' specified in \code{series}.)
 #'
-#' @param series (Numeric) Index of simultaneous replicates with the same analytical chemistry. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
-#' use the same number of replicates.)
-#'
 #' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
 #'
 #' @param area.col (Character) Column name of \code{data.in} containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
+#' 
+#' @param istd.col (Character) Column name of \code{data.in} containing the
+#' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #'
 #' @param type.col (Character) Column name of \code{data.in} containing the sample type (see table
 #' under Details). (Defaults to "Type".)
@@ -72,43 +75,15 @@
 #' @param direction.col (Character) Column name of \code{data.in} containing the direction of
 #' the Caco-2 permeability experiment: either apical donor to basal receiver (AtoB), or 
 #' basal donor to apical receiver (BtoA). (Defaults to "Direction".)
-#'
-#' @param cal.col (Character) Column name containing \code{cal} 
-#' information. (Defaults to "Cal".) (Note: \code{data.in} does not
-#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{cal}.)
-#'
-#' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
-#' indices or dates to represent if the analyses were done on different machines on 
-#' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
-#' (Note: Single entry only, 
-#' use only if all data were collected based on the same calibration.)
 #' 
-#' @param compound.conc.col (Character) Column name containing \code{compound.conc} 
-#' information. (Defaults to "Nominal.Conc".)
+#' @param membrane.area (Numeric) The area of the Caco-2 monolayer (in cm^2). 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+#' have the same area for the Caco-2 monolayer.)
 #' 
-#param compound.conc (Numeric) The intended concentration
-#of the test chemical for calibration curves. (Note: Single entry only,
-#use only if all test compounds have the same intended concentration.)
-#(Defaults to \code{NULL}.)
-#'
-#' @param dilution.col (Character) Column name containing \code{dilution} 
-#' information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
-#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{dilution}.)
-#'
-#' @param dilution (Numeric) Number of times the sample was diluted before MS 
-#' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
-#' samples underwent the same number of dilutions.)
-#'
 #' @param membrane.area.col (Character) Column name containing \code{membrane.area} 
 #' information. (Defaults to "Membrane.Area".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{membrane.area}.)
-#'
-#' @param membrane.area (Numeric) The area of the Caco-2 monolayer (in cm^2). 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
-#' have the same area for the Caco-2 monolayer.)
 #'
 #' @param receiver.vol.col (Character) Column name of \code{data.in} containing the volume
 #' (in cm^3) of the receiver portion of the Caco-2 experimental well. 
@@ -117,71 +92,96 @@
 #' @param donor.vol.col (Character) Column name of \code{data.in} containing the volume
 #' (in cm^3) of the donor portion of the Caco-2 experimental well where the
 #' test chemical is added. (Defaults to "Vol.Donor".)
+#' 
+#param compound.conc (Numeric) The intended concentration
+#of the test chemical for calibration curves. (Note: Single entry only,
+#use only if all test compounds have the same intended concentration.)
+#(Defaults to \code{NULL}.)
 #'
+#' @param compound.conc.col (Character) Column name containing \code{compound.conc} 
+#' information. (Defaults to "Nominal.Conc".)
+#' 
+#' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
+#' indices or dates to represent if the analyses were done on different machines on 
+#' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, 
+#' use only if all data were collected based on the same calibration.)
+#' 
+#' @param cal.col (Character) Column name containing \code{cal} 
+#' information. (Defaults to "Cal".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{cal}.)
+#' 
+#' @param dilution (Numeric) Number of times the sample was diluted before MS 
+#' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' samples underwent the same number of dilutions.)
+#'
+#' @param dilution.col (Character) Column name containing \code{dilution} 
+#' information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{dilution}.)
+#' 
+#' @param meas.time (Numeric) The amount of time (in hours) before the receiver and donor 
+#' compartments are measured. (Defaults to 2.)
+#' 
 #' @param meas.time.col (Character) Column name containing \code{meas.time} 
 #' information. (Defaults to "Time".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{meas.time}.)
-#'
-#' @param meas.time (Numeric) The amount of time (in hours) before the receiver and donor 
-#' compartments are measured. (Defaults to 2.)
-#'
-#' @param istd.col (Character) Column name of \code{data.in} containing the
-#' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
-#'
+#' 
+#' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds use the same internal standard.)
+#' 
 #' @param istd.name.col (Character) Column name containing \code{istd.name} information. (Defaults to "ISTD.Name".) 
 #' (Note: \code{data.in} does not necessarily have this field. If this field is missing, 
 #' it can be auto-filled with the value specified in \code{istd.name}.)
-#'
-#' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
-#' (Note: Single entry only, use only if all tested compounds use the same internal standard.) 
-#'
-#' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. (Defaults to "ISTD.Conc".) 
-#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, 
-#' it can be auto-filled with the value specified in \code{istd.conc}.)
 #'
 #' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all tested compounds have the same 
 #' internal standard concentration.) 
 #'
-#' @param nominal.test.conc.col (Character) Column name containing \code{nominal.test.conc} 
-#' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
-#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{nominal.test.conc}.)
+#' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. (Defaults to "ISTD.Conc".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, 
+#' it can be auto-filled with the value specified in \code{istd.conc}.)
 #'
 #' @param nominal.test.conc (Numeric) The test chemical concentration in the dosing solution
 #' that is added to the donor side at time zero. (Defaults to \code{NULL}.)
 #' (Note: Single entry only, use only if the same initial 
 #' concentration was used for all tested compounds.)
 #'
-#' @param analysis.method.col (Character) Column name containing \code{analysis.method} 
-#' information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
+#' @param nominal.test.conc.col (Character) Column name containing \code{nominal.test.conc} 
+#' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{analysis.method}.)
+#' specified in \code{nominal.test.conc}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
 #' spectrometry, respectively. (Defaults to \code{NULL}.)
 #' (Note: Single entry only, use only if the same method was used for all tested compounds.)
 #'
-#' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
-#' information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
+#' @param analysis.method.col (Character) Column name containing \code{analysis.method} 
+#' information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{analysis.instrument}.)
+#' specified in \code{analysis.method}.)
 #'
 #' @param analysis.instrument (Character) The instrument used for chemical analysis, 
 #' for example "Agilent 6890 GC with model 5973 MS". (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if the same instrument was used for all tested compounds.) 
 #'
-#' @param analysis.parameters.col (Character) Column name containing \code{analysis.parameters} 
-#' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
+#' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
+#' information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{analysis.parameters}.)
-#'
+#' specified in \code{analysis.instrument}.)
+#' 
 #' @param analysis.parameters (Character) The parameters used to identify the 
 #' compound on the chemical analysis instrument, for example
 #' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0". (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
+#' 
+#' @param analysis.parameters.col (Character) Column name containing \code{analysis.parameters} 
+#' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.parameters}.)
 #'
 #' @return A Level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with membrane permeability data
@@ -218,15 +218,15 @@ format_caco2 <- function(data.in,
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
   date.col="Date",
-  series.col="Series",
   series=NULL,
+  series.col="Series",
   compound.col="Compound.Name",
   area.col="Area",
   istd.col="ISTD.Area",
   type.col="Type",
   direction.col="Direction",
-  membrane.area.col="Membrane.Area",
   membrane.area=NULL,
+  membrane.area.col="Membrane.Area",
   receiver.vol.col="Vol.Receiver",
   donor.vol.col="Vol.Donor",
   #compound.conc=NULL,
@@ -235,8 +235,8 @@ format_caco2 <- function(data.in,
   cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  meas.time.col="Time",
   meas.time = 2,
+  meas.time.col="Time",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,

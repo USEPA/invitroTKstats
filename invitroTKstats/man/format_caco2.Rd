@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_caco2.R
 \name{format_caco2}
 \alias{format_caco2}
-\title{Creates a Standardized Data Table Reporting Caco-2 Data (Level-1)}
+\title{Creates a Standardized Data Table with Caco-2 Data (Level-1)}
 \usage{
 format_caco2(
   data.in,
@@ -11,15 +11,15 @@ format_caco2(
   lab.compound.col = "Lab.Compound.Name",
   dtxsid.col = "DTXSID",
   date.col = "Date",
-  series.col = "Series",
   series = NULL,
+  series.col = "Series",
   compound.col = "Compound.Name",
   area.col = "Area",
   istd.col = "ISTD.Area",
   type.col = "Type",
   direction.col = "Direction",
-  membrane.area.col = "Membrane.Area",
   membrane.area = NULL,
+  membrane.area.col = "Membrane.Area",
   receiver.vol.col = "Vol.Receiver",
   donor.vol.col = "Vol.Donor",
   compound.conc.col = "Nominal.Conc",
@@ -27,8 +27,8 @@ format_caco2(
   cal.col = "Cal",
   dilution = NULL,
   dilution.col = "Dilution.Factor",
-  meas.time.col = "Time",
   meas.time = 2,
+  meas.time.col = "Time",
   istd.name = NULL,
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
@@ -44,12 +44,13 @@ format_caco2(
 )
 }
 \arguments{
+\item{data.in}{(Data Frame) A Level-0 data frame containing
+mass-spectrometry peak areas, indication of chemical identity,
+and measurement type. The data frame should
+contain columns with names specified by the following arguments:}
+
 \item{FILENAME}{(Character) A string used to identify the output Level-1 file.
 "<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".)}
-
-\item{data.in}{(Data Frame) A data frame or a matrix containing mass-spectrometry peak areas,
-indication of chemical identity, and measurement type. The data frame should
-contain columns with names specified by the following arguments:}
 
 \item{sample.col}{(Character) Column name of \code{data.in} containing the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
@@ -64,14 +65,15 @@ ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 \item{date.col}{(Character) Column name of \code{data.in} containing the laboratory measurement
 date. (Defaults to "Date".)}
 
-\item{series.col}{(Character) Column name containing \code{series} information. (Defaults to "Series".) 
-(Note: \code{data.in} does not necessarily have this field. 
-If this field is missing, it can be auto-filled with the value 
-specified in \code{series}.)}
-
 \item{series}{(Numeric) Index of simultaneous replicates with the same analytical chemistry. 
 (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
 use the same number of replicates.)}
+
+\item{series.col}{(Character) Column name containing \code{series} information.
+(Defaults to "Series".) 
+(Note: \code{data.in} does not necessarily have this field. 
+If this field is missing, it can be auto-filled with the value 
+specified in \code{series}.)}
 
 \item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
 (Defaults to "Compound.Name".)}
@@ -79,7 +81,7 @@ use the same number of replicates.)}
 \item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
 is, the test compound) MS peak area. (Defaults to "Area".)}
 
-\item{istd.col}{(Character) Column name of data.in containing the
+\item{istd.col}{(Character) Column name of \code{data.in} containing the
 MS peak area for the internal standard. (Defaults to "ISTD.Area".)}
 
 \item{type.col}{(Character) Column name of \code{data.in} containing the sample type (see table
@@ -89,20 +91,20 @@ under Details). (Defaults to "Type".)}
 the Caco-2 permeability experiment: either apical donor to basal receiver (AtoB), or 
 basal donor to apical receiver (BtoA). (Defaults to "Direction".)}
 
+\item{membrane.area}{(Numeric) The area of the Caco-2 monolayer (in cm^2). 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+have the same area for the Caco-2 monolayer.)}
+
 \item{membrane.area.col}{(Character) Column name containing \code{membrane.area} 
 information. (Defaults to "Membrane.Area".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{membrane.area}.)}
 
-\item{membrane.area}{(Numeric) The area of the Caco-2 monolayer (in cm^2). 
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
-have the same area for the Caco-2 monolayer.)}
-
-\item{receiver.vol.col}{(Character) Column name of data.in containing the volume
+\item{receiver.vol.col}{(Character) Column name of \code{data.in} containing the volume
 (in cm^3) of the receiver portion of the Caco-2 experimental well. 
 (Defaults to "Vol.Receiver".)}
 
-\item{donor.vol.col}{(Character) Column name of data.in containing the volume
+\item{donor.vol.col}{(Character) Column name of \code{data.in} containing the volume
 (in cm^3) of the donor portion of the Caco-2 experimental well where the
 test chemical is added. (Defaults to "Vol.Donor".)}
 
@@ -129,13 +131,13 @@ information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{dilution}.)}
 
+\item{meas.time}{(Numeric) The amount of time (in hours) before the receiver and donor 
+compartments are measured. (Defaults to 2.)}
+
 \item{meas.time.col}{(Character) Column name containing \code{meas.time} 
 information. (Defaults to "Time".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{meas.time}.)}
-
-\item{meas.time}{(Numeric) The amount of time (in hours) before the receiver and donor 
-compartments are measured. (Defaults to 2.)}
 
 \item{istd.name}{(Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if all tested compounds use the same internal standard.)}
@@ -153,7 +155,8 @@ internal standard concentration.)}
 it can be auto-filled with the value specified in \code{istd.conc}.)}
 
 \item{nominal.test.conc}{(Numeric) The test chemical concentration in the dosing solution
-that is added to the donor side at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only if the same initial 
+that is added to the donor side at time zero. (Defaults to \code{NULL}.)
+(Note: Single entry only, use only if the same initial 
 concentration was used for all tested compounds.)}
 
 \item{nominal.test.conc.col}{(Character) Column name containing \code{nominal.test.conc} 
@@ -162,9 +165,9 @@ necessarily have this field. If this field is missing, it can be auto-filled wit
 specified in \code{nominal.test.conc}.)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
-typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
-(Defaults to \code{NULL}.) (Note: Single entry only, 
-use only if the same method was used for all tested compounds.)}
+typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
+spectrometry, respectively. (Defaults to \code{NULL}.)
+(Note: Single entry only, use only if the same method was used for all tested compounds.)}
 
 \item{analysis.method.col}{(Character) Column name containing \code{analysis.method} 
 information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
@@ -191,8 +194,9 @@ necessarily have this field. If this field is missing, it can be auto-filled wit
 specified in \code{analysis.parameters}.)}
 }
 \value{
-A data frame in standardized Level-1 format containing a  
-standardized set of columns with standardized column names.
+A Level-1 data frame with a standardized format containing a  
+standardized set of columns and column names with membrane permeability data
+from a Caco-2 assay.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
