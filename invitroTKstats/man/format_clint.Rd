@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_clint.R
 \name{format_clint}
 \alias{format_clint}
-\title{Creates a Standardized Data Table Reporting Hepatocyte Clearance Data (Level-1)}
+\title{Creates a Standardized Data Table with Hepatocyte Clearance Data (Level-1)}
 \usage{
 format_clint(
   data.in,
@@ -19,8 +19,8 @@ format_clint(
   cal.col = "Cal",
   dilution = NULL,
   dilution.col = "Dilution.Factor",
-  time.col = "Time",
   time = 2,
+  time.col = "Time",
   istd.col = "ISTD.Area",
   istd.name = NULL,
   istd.name.col = "ISTD.Name",
@@ -38,14 +38,14 @@ format_clint(
   analysis.parameters = NULL,
   analysis.parameters.col = "Analysis.Parameters",
   note.col = "Note",
-  level0.file.col = "Level0.File",
   level0.file = NULL,
-  level0.sheet.col = "Level0.Sheet",
-  level0.sheet = NULL
+  level0.file.col = "Level0.File",
+  level0.sheet = NULL,
+  level0.sheet.col = "Level0.Sheet"
 )
 }
 \arguments{
-\item{data.in}{(Data Frame) A data frame or a matrix containing mass-spectrometry peak areas,
+\item{data.in}{(Data Frame) A Level-0 data frame or a matrix containing mass-spectrometry peak areas,
 indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
@@ -101,15 +101,15 @@ information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{dilution}.)}
 
+\item{time}{(Numeric) The intended time of the measurement (in minutes) since the test 
+chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)}
+
 \item{time.col}{(Character) Column name containing \code{time} 
 information. (Defaults to "Time".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{time}.)}
 
-\item{time}{(Numeric) The intended time of the measurement (in minutes) since the test 
-chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)}
-
-\item{istd.col}{(Character) Column name of data.in containing the
+\item{istd.col}{(Character) Column name of \code{data.in} containing the
 MS peak area for the internal standard. (Defaults to "ISTD.Area".)}
 
 \item{istd.name}{(Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
@@ -147,7 +147,7 @@ information. (Defaults to "Clint.Assay.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{clint.assay.conc}.)}
 
-\item{area.col}{(Character) Column name of data.in containing the target analyte (that
+\item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
 is, the test compound) MS peak area. (Defaults to "Area".)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
@@ -178,37 +178,39 @@ information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{analysis.parameters}.)}
 
-\item{note.col}{(Character) Column name of data.in containing additional notes on 
+\item{note.col}{(Character) Column name of \code{data.in} containing additional notes on 
 test compounds. (Defaults to "Note").}
+
+\item{level0.file}{(Character) The Level-0 file from which the \code{data.in} were obtained.
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+were obtained from the same Level-0 file.)}
 
 \item{level0.file.col}{(Character) Column name containing \code{level0.file} information. 
 (Defaults to "Level0.File".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{level0.file}.)}
 
-\item{level0.file}{(Character) The Level-0 file from which the data.in were obtained.
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
-were obtained from the same Level-0 file.)}
+\item{level0.sheet}{(Character) The specific sheet name of Level-0 file from which the 
+\code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+were obtained from the same sheet in the same Level-0 file.)}
 
 \item{level0.sheet.col}{(Character) Column name containing \code{level0.sheet} information.
 (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{level0.sheet}.)}
-
-\item{level0.sheet}{(Character) The specific sheet name of Level-0 file from which the 
-data.in is obtained from, if the level-0 file is an Excel workbook. 
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
-were obtained from the same sheet in the same Level-0 file.)}
 }
 \value{
-A data frame in standardized Level-1 format containing a  
-standardized set of columns with standardized column names.
+A Level-1 data frame with a standardized format containing a  
+standardized set of columns and column names with hepatic
+clearance data for a variety of chemicals.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical stability
-when incubated with suspended hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}. Disappearance of
-the chemical over time is assumed to be due to metabolism by the hepatocytes.
+when incubated with suspended hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
+Disappearance of the chemical over time is assumed to be due to metabolism
+by the hepatocytes.
 The input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }
