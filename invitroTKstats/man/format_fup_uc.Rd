@@ -2,11 +2,12 @@
 % Please edit documentation in R/format_fup_uc.R
 \name{format_fup_uc}
 \alias{format_fup_uc}
-\title{Creates a Standardized Data Frame Reporting Ultracentrifugation (UC) PPB Data (Level-1)}
+\title{Creates a Standardized Data Frame with Ultracentrifugation (UC)
+Plasma Protein Binding Data (Level-1)}
 \usage{
 format_fup_uc(
-  data.in,
   FILENAME = "MYDATA",
+  data.in,
   sample.col = "Lab.Sample.Name",
   lab.compound.col = "Lab.Compound.Name",
   dtxsid.col = "DTXSID",
@@ -35,44 +36,44 @@ format_fup_uc(
   analysis.parameters = NULL,
   analysis.parameters.col = "Analysis.Parameters",
   note.col = "Note",
-  level0.file.col = "Level0.File",
   level0.file = NULL,
-  level0.sheet.col = "Level0.Sheet",
-  level0.sheet = NULL
+  level0.file.col = "Level0.File",
+  level0.sheet = NULL,
+  level0.sheet.col = "Level0.Sheet"
 )
 }
 \arguments{
 \item{FILENAME}{(Character) A string used to identify the output Level-1 file.
 "<FILENAME>-fup-UC-Level1.tsv". (Defaults to "MYDATA".)}
 
-\item{data.in}{(Data Frame) A data frame or a matrix containing mass-spectrometry peak areas,
-indication of chemical identity, and measurement type. The data frame should
-contain columns with names specified by the following arguments:}
+\item{data.in}{(Data Frame) A Level-0 data frame containing mass-spectrometry
+peak areas, indication of chemical identity, and measurement type.
+The data frame should contain columns with names specified by the following arguments:}
 
-\item{sample.col}{(Character) Column name of \code{data.in} containing the unique mass
+\item{sample.col}{(Character) Column name from \code{data.in} containing the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name".)}
 
-\item{lab.compound.col}{(Character) Column name of \code{data.in} containing the test compound
+\item{lab.compound.col}{(Character) Column name from \code{data.in} containing the test compound
 name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 
-\item{dtxsid.col}{(Character) Column name of \code{data.in} containing EPA's DSSTox Structure
+\item{dtxsid.col}{(Character) Column name from \code{data.in} containing EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{date.col}{(Character) Column name of \code{data.in} containing the laboratory measurement
+\item{date.col}{(Character) Column name from \code{data.in} containing the laboratory measurement
 date. (Defaults to "Date".)}
 
-\item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
+\item{compound.col}{(Character) Column name from \code{data.in} containing the test compound.
 (Defaults to "Compound.Name".)}
 
-\item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
+\item{area.col}{(Character) Column name from \code{data.in} containing the target analyte (that
 is, the test compound) MS peak area. (Defaults to "Area".)}
 
-\item{series.col}{(Character) Column name of \code{data.in} containing the number of 
+\item{series.col}{(Character) Column name from \code{data.in} containing the number of 
 simultaneous replicates with the same analytical chemistry. 
 (Defaults to "Series".)}
 
-\item{type.col}{(Character) Column name of \code{data.in} containing the sample type (see table
+\item{type.col}{(Character) Column name from \code{data.in} containing the sample type (see table
 under Details). (Defaults to "Sample.Type".)}
 
 \item{std.conc}{(Numeric) The standard test chemical concentration for 
@@ -81,19 +82,19 @@ use only if the same standard concentration was used for all tested compounds.)}
 
 \item{std.conc.col}{(Character) Column name containing \code{std.conc} 
 information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{std.conc}.)}
+necessarily have this field. If this field is missing, it can be
+auto-filled with the value specified in \code{std.conc}.)}
 
 \item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
 the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
-(Note: Single entry only, 
-use only if all data were collected based on the same calibration.)}
+(Note: Single entry only, use only if all data were collected based on the
+same calibration.)}
 
 \item{cal.col}{(Character) Column name containing \code{cal} 
 information. (Defaults to "Cal".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{cal}.)}
+necessarily have this field. If this field is missing, it can be
+auto-filled with the value specified in \code{cal}.)}
 
 \item{dilution}{(Numeric) Number of times the sample was diluted before MS 
 analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
@@ -101,104 +102,110 @@ samples underwent the same number of dilutions.)}
 
 \item{dilution.col}{(Character) Column name containing \code{dilution} 
 information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{dilution}.)}
+necessarily have this field. If this field is missing, it can be
+auto-filled with the value specified in \code{dilution}.)}
 
 \item{istd.col}{(Character) Column name of \code{data.in} containing the
 MS peak area for the internal standard. (Defaults to "ISTD.Area".)}
 
-\item{istd.name}{(Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
-(Note: Single entry only, use only if all tested compounds use the same internal standard.)}
+\item{istd.name}{(Character) The identity of the internal standard.
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all
+tested compounds use the same internal standard.)}
 
 \item{istd.name.col}{(Character) Column name containing \code{istd.name} information. 
-(Defaults to "ISTD.Name".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
+(Defaults to "ISTD.Name".) (Note: \code{data.in} does not necessarily have
+this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{istd.name}.)}
 
-\item{istd.conc}{(Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
-(Note: Single entry only, use only if all tested compounds have the same 
-internal standard concentration.)}
+\item{istd.conc}{(Numeric) The concentration for the internal standard.
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all
+tested compounds have the same internal standard concentration.)}
 
-\item{istd.conc.col}{(Character) Column name containing \code{istd.conc} information. 
-(Defaults to "ISTD.Conc".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{istd.conc}.)}
+\item{istd.conc.col}{(Character) Column name containing \code{istd.conc}
+information.  (Defaults to "ISTD.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be
+auto-filled with the value specified in \code{istd.conc}.)}
 
-\item{uc.assay.conc}{(Numeric) The intended initial
-test chemical concentration in the UC assay in uM. (Defaults to \code{NULL}.)
-(Note: Single entry only, 
-use only if the same initial concentration was used for all tested compounds.)}
+\item{uc.assay.conc}{(Numeric) The intended initial test chemical
+concentration in the UC assay in uM. (Defaults to \code{NULL}.)
+(Note: Single entry only,  use only if the intended initial concentration
+was the same for all tested compounds.)}
 
 \item{uc.assay.conc.col}{(Character) Column name containing \code{uc.assay.conc} 
 information. (Defaults to "UC.Assay.Conc".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{uc.assay.conc}.)}
+necessarily have this field. If this field is missing, it can be auto-filled
+with the value specified in \code{uc.assay.conc}.)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
-typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
-(Defaults to \code{NULL}.) (Note: Single entry only, 
+typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
+spectrometry, respectively. (Defaults to \code{NULL}.) (Note: Single entry only, 
 use only if the same method was used for all tested compounds.)}
 
 \item{analysis.method.col}{(Character) Column name containing \code{analysis.method} 
 information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{analysis.method}.)}
+necessarily have this field. If this field is missing, it can be auto-filled
+with the value specified in \code{analysis.method}.)}
 
 \item{analysis.instrument}{(Character) The instrument used for chemical analysis, 
 for example "Waters Xevo TQ-S micro (QEB0036)". (Defaults to \code{NULL}.) 
-(Note: Single entry only, use only if the same instrument was used for all tested compounds.)}
+(Note: Single entry only, use only if the same instrument was used for all
+tested compounds.)}
 
-\item{analysis.instrument.col}{(Character) Column name containing \code{analysis.instrument} 
-information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{analysis.instrument}.)}
+\item{analysis.instrument.col}{(Character) Column name containing
+\code{analysis.instrument} information. (Defaults to "Analysis.Instrument".)
+(Note: \code{data.in} does not necessarily have this field. If this field
+is missing, it can be auto-filled with the value specified in
+\code{analysis.instrument}.)}
 
 \item{analysis.parameters}{(Character) The parameters used to identify the 
 compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
-(Note: Single entry only, use only if the same parameters were used for all tested compounds.)}
+(Note: Single entry only, use only if the same parameters were used for all
+tested compounds.)}
 
-\item{analysis.parameters.col}{(Character) Column name containing \code{analysis.parameters} 
-information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{analysis.parameters}.)}
+\item{analysis.parameters.col}{(Character) Column name containing
+\code{analysis.parameters} information. (Defaults to "Analysis.Parameters".)
+(Note: \code{data.in} does not necessarily have this field. If this field
+is missing, it can be auto-filled with the value specified in
+\code{analysis.parameters}.)}
 
-\item{note.col}{(Character) Column name of \code{data.in} containing additional notes on 
-test compounds. (Defaults to "Note").}
+\item{note.col}{(Character) Column name of \code{data.in} containing
+additional notes on the test compounds. (Defaults to "Note").}
 
-\item{level0.file.col}{(Character) Column name containing \code{level0.file} information. 
-(Defaults to "Level0.File".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{level0.file}.)}
+\item{level0.file}{(Character) The Level-0 file from which the \code{data.in}
+were obtained. (Defaults to \code{NULL}.) (Note: Single entry only, use only
+if all rows in \code{data.in} were obtained from the same Level-0 file.)}
 
-\item{level0.file}{(Character) The Level-0 file from which the \code{data.in} were obtained.
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
-were obtained from the same Level-0 file.)}
+\item{level0.file.col}{(Character) Column name containing \code{level0.file}
+information. (Defaults to "Level0.File".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled
+with the value specified in \code{level0.file}.)}
 
-\item{level0.sheet.col}{(Character) Column name containing \code{level0.sheet} information.
-(Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{level0.sheet}.)}
+\item{level0.sheet}{(Character) The specific sheet name of the Level-0 file
+where \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in
+\code{data.in} were obtained from the same sheet in the same Level-0 file.)}
 
-\item{level0.sheet}{(Character) The specific sheet name of Level-0 file from which the 
-\code{data.in} is obtained from, if the level-0 file is an Excel workbook. 
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
-were obtained from the same sheet in the same Level-0 file.)}
+\item{level0.sheet.col}{(Character) Column name containing \code{level0.sheet}
+information. (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled
+with the value specified in \code{level0.sheet}.)}
 }
 \value{
-A data frame in standardized Level-1 format containing a  
-standardized set of columns with standardized column names.
+A Level-1 data frame with a standardized format containing a  
+standardized set of columns and column names with plasma protein binding
+(PPB) data from an ultracentrifugation (UC) assay.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
 unbound in plasma using ultracentrifugation
 \insertCite{redgrave1975separation}{invitroTKstats}.
-The input data frame is organized into a standard set of columns and is written
+The input data frame is organized into a standard set of columns and written
 to a tab-separated text file.
 }
 \details{
 The data frame of observations should be annotated according to
-of these types:
+these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
   Ultracentrifugation Aqueous Fraction \tab AF\cr
