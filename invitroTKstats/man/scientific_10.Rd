@@ -7,10 +7,11 @@
 scientific_10(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{(Character) String to be formatted.}
 }
 \value{
-text with desired expression
+Text with desired expression. Replace any scientific e notation to ten notation, 
+simplify 10^01 to 10 and 10^0 to 1.
 }
 \description{
 Formatting function for X-axis in log10-scale

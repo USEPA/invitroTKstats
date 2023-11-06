@@ -1,12 +1,12 @@
 #' Formatting function for X-axis in log10-scale
 #'
-#' @param x
+#' @param x (Character) String to be formatted. 
 #'
-#' @return text with desired expression
+#' @return Text with desired expression. Replace any scientific e notation to ten notation, 
+#' simplify 10^01 to 10 and 10^0 to 1.
 #'
 #' @importFrom scales scientific_format
 #'
-#' @export calc_fup_uc
 scientific_10 <- function(x) {
   out <- gsub("1e", "10^", scientific_format()(x))
   out <- gsub("\\+","",out)
@@ -16,14 +16,13 @@ scientific_10 <- function(x) {
 
 #' Heaviside
 #'
-#' @param x a vector
+#' @param x (Numeric) A numeric vector.
 #'
-#' @param threshold defaults to 0
+#' @param threshold (Numeric) A threshold value used to compare to elements in \code{x}. (Defaults to 0.)
 #'
-#' @return  a vector of 1 and 0, 1 indicates input element is above threshold
+#' @return A vector of 1 and 0, 1 indicates the element in \code{x} is larger or equal to the threshold.
 #'
 #'
-#' @export Heaviside
 Heaviside <- function(x, threshold=0)
 {
   out <- rep(0,length(x))
@@ -33,12 +32,11 @@ Heaviside <- function(x, threshold=0)
 
 #' Convert a runjags-class object to a list
 #'
-#' @param runjagsdata.in MCMC results from autorun.jags(), object of class runjags
+#' @param runjagsdata.in (\code{runjags} Object) MCMC results from autorun.jags.
 #'
 #' @return List object containing MCMC results from the provided runjags object.
 #'
 #'
-#' @export runjagsdata.to.list
 runjagsdata.to.list <- function(runjagsdata.in)
 {
   temp <- strsplit(runjagsdata.in,"\n")[[1]]

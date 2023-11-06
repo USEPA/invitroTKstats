@@ -7,12 +7,12 @@
 Heaviside(x, threshold = 0)
 }
 \arguments{
-\item{x}{a vector}
+\item{x}{(Numeric) A numeric vector.}
 
-\item{threshold}{defaults to 0}
+\item{threshold}{(Numeric) A threshold value used to compare to elements in \code{x}. (Defaults to 0.)}
 }
 \value{
-a vector of 1 and 0, 1 indicates input element is above threshold
+A vector of 1 and 0, 1 indicates the element in \code{x} is larger or equal to the threshold.
 }
 \description{
 Heaviside
