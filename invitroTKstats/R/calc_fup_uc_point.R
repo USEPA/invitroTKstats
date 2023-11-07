@@ -1,13 +1,16 @@
-#' Calculate a point estimate of Fraction Unbound in Plasma (UC)
+#' Calculate Point Estimates of Fraction Unbound in Plasma with
+#' Ultracentrifugation (UC) Data 
 #'
-#' This function use describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation
-#' \insertCite{redgrave1975separation}{invitroTKstats}.
-#' Data are read from a "Level2" text file that should have been formatted and created
-#' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-#' should have been curated and had a column added with the value "Y" indicating
-#' that each row is verified as usable for analysis (that is, the Level2 file).
+#' This function calculates the point estimates for the fraction unbound in
+#' plasma (Fup) using mass spectrometry (MS) peak areas from samples collected
+#' as part of in vitro measurements of chemical Fup using ultracentrifugation
+#' \insertCite{waters2008validation}{invitroTKstats}. See the Details section
+#' for the equation(s) used in the point estimate.
+#' 
+#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_fup_uc}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for analysis. 
 #'
 #' The should be annotated according to
 #' of these types:
@@ -26,13 +29,17 @@
 #' \eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
 #' and \eqn{n_{T5}} is the number of T5 Responses.
 #'
-#' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
+#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' "<FILENAME>-fup-UC-Level2.tsv".
 #'
-#' @param good.col Name of a column indicating which rows have been verified for
-#' analysis, indicated by a "Y" (Defaults to "Verified")
-#'
-#' @return \item{data.frame}{A data.frame in standardized format}
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
+#' 
+#' @return A data frame with one row per chemical, contains chemical identifiers 
+#' such as preferred compound name, compound name used by the laboratory, 
+#' EPA's DSSTox Structure ID, calibration, and point estimates for
+#' the fraction unbound in plasma (Fup) for all chemicals in the input data frame. 
 #'
 #' @author John Wambaugh
 #'
