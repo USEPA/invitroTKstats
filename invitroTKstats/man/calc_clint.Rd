@@ -62,8 +62,8 @@ A list of two objects:
 }
 \description{
 This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
-modeling on Hepatocyte Incubation data. Clint at both 1 and 10 uM (if tested) 
-and the credible intervals are estimated from posterior samples of the MCMC.
+modeling on Hepatocyte Incubation data. Clint and the credible intervals,
+at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
 A summary table along with the full set of MCMC results is returned from
 the function.
 }
