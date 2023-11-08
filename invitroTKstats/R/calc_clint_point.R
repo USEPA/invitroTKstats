@@ -2,31 +2,31 @@
 
 #' Decay Model
 #' 
-#' This function calculates and returns test compound concentration at time \code{t}, using a model of
+#' This function calculates and returns the test compound concentration at time \code{t}, using a model of
 #' exponential decay with time \eqn{C(t) = C_0*e^{-mt}}, where \eqn{C_0} is the 
 #' test compound concentration at time 0, \code{m} is a rate constant (argument \code{k_elim}),
 #' and \code{t} is the incubation time in hour.
 #' 
 #' @param time.hours (Numeric) Incubation Time (in hour).
 #' @param conc (Numeric) Test compound concentration at time 0.
-#' @param cal (Numeric) Calibration index.
+#' @param cal (Numeric) Calibration.
 #' @param k_elim (Numeric) Rate constant.
 #' 
 #' @return Test compound concentration at time \code{t}.
 decay <- function(time.hours,conc,cal,k_elim) cal*conc*exp(-k_elim*time.hours)
 
-#' Log-Likelihood of residual function
+#' Log-Likelihood of Linear Regression Fit
 #' 
-#' This function returns the negative log-likelihood 
+#' This function returns the negative log-likelihood of the linear regression of
+#' MS response as a function of time.
 #' 
-#' @param this.data (Data Frame) A data frame containing data of a compound.
-#' @param cal (Numeric) Calibration index.
+#@param this.data (Data Frame) A data frame containing data of a compound.
+#' @param cal (Numeric) Calibration.
 #' @param k_elim (Numeric) Rate constant.
-#' @param sigma (Numeric) standard deviation of the residual
+#' @param sigma (Numeric) Standard deviation of the residual.
 #' 
 #' @return Negative log-likelihood.
-#' 
-lldecay <- function(this.data, cal,k_elim,sigma)
+lldecay <- function(cal,k_elim,sigma)
 {
   if (sigma < 0.0001) sigma <- 0.0001
   N <- dim(this.data)[1]
@@ -42,14 +42,14 @@ lldecay <- function(this.data, cal,k_elim,sigma)
   return(-ll)
 }
 
-#' Decay Formula with saturation
+#' Decay Formula with Saturation Probability
 #' 
-#' This function calculates and returns test compound concentration at time \code{t}, using a model of
-#' exponential decay with time, in addition, taking into account of saturation
-#' probability \eqn{C(t) = C_0*e^{-m*sat*t}}, where \eqn{C_0} is the test compound concentration at time 0, \code{m} is a rate constant (argument \code{k_elim}),
-#' sat is the saturation probability, and \code{t} is the incubation time in hour.
-#' saturation meaning observing a lower clearance at a higher concentration. Metabolism 
-#' was completely saturated by 10 uM. (John's paper cite here)
+#' This function calculates and returns the test compound concentration at time \code{t}, using a model of
+#' exponential decay with time while taking into account of saturation
+#' probability \eqn{C(t) = C_0*e^{-m*sat*t}}. \eqn{C_0} is the test compound concentration at time 0, \code{m} is a rate constant (argument \code{k_elim}),
+#' \code{sat} is the saturation probability, and \code{t} is the incubation time in hour.
+#' Saturation is defined as observing a lower clearance at a higher concentration. The calculation
+#' assumes metabolism is completely saturated by 10 uM (i.e. \code{sat} = 1 if \eqn{C_0} = 10.) (John's paper cite here)
 #' 
 #' @param time.hours (Numeric) Incubation time in hours.
 #' @param conc (Numeric) Concentration at time 0.
@@ -57,19 +57,24 @@ lldecay <- function(this.data, cal,k_elim,sigma)
 #' @param k_elim (Numeric) rate constant.
 #' @param sat (Numeric) saturation probability, equals 1 when concentration is 10 uM.
 #' 
+#' @return Test compound concentration at time \code{t}.
+#' 
 satdecay <- function(time.hours,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.hours)
 
-#' Log-Likelihood Function
+#' Log-Likelihood of Linear Regression Fit
 #' 
-#' This function returns the negative log-likelihood.
+#' This function returns the negative log-likelihood of the linear regression of
+#' MS response as a function of time and saturation probability.
 #' 
-#' @param this.data (Data Frame) A data frame containing data of a compound.
+#@param this.data (Data Frame) A data frame containing data of a compound.
 #' @param cal (Numeric) Calibration
 #' @param k_elim (Numeric) Rate constant.
 #' @param sigma (Numeric) standard deviation.
 #' @param sat (Numeric) saturation probability.
 #' 
-llsatdecay <- function(this.data,cal,k_elim,sigma,sat)
+#' @return Negative log-likelihood.
+#' 
+llsatdecay <- function(cal,k_elim,sigma,sat)
 {
   if (sigma < 0.0001) sigma <- 0.0001
   N <- dim(this.data)[1]
@@ -401,11 +406,11 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
 
 # Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-Clint-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  # write.table(out.table,
+  #   file=paste(FILENAME,"-Clint-Level3.tsv",sep=""),
+  #   sep="\t",
+  #   row.names=F,
+  #   quote=F)
 
   print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))
   print(paste("Intrinsic clearance (Clint) calculated for",num.cal,"measurements."))
