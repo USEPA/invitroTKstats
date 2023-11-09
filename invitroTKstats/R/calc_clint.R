@@ -363,9 +363,10 @@ calc_clint <- function(
       {
         # Use random number seed for reproducibility
         set.seed(RANDOM.SEED)
-
+        
+        init_vals <- function(chain) initfunction_clint(mydata=mydata, chain = chain)
         # write out arguments to runjags:
-        save(this.compound,mydata,initfunction,
+        save(this.compound,mydata,init_vals,
         file=paste(FILENAME,"-Clint-PREJAGS.RData",sep=""))
 
         # Run JAGS:
@@ -375,7 +376,7 @@ calc_clint <- function(
                            method="parallel",
                            cl=CPU.cluster,
                            summarise=T,
-                           inits = initfunction_clint,
+                           inits = init_vals,
                            max.time="300s",
                            startsample=4000,
                            adapt=5000,
