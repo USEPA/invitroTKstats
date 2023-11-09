@@ -35,10 +35,13 @@
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name".)
 #' 
-#param date 
+#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all data were collected on the same date.)
 #' 
-#' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
-#' date. (Defaults to "Date".)
+#' @param date.col (Character) Column name of containing \code{date} information. 
+#' (Defaults to "Date".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{date}.)
 #' 
 #' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -81,12 +84,15 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{dilution}.)
 #'
-#' @param time.col (Character) Column name of \code{data.in} containing the time (in hours) 
-#' from the start of incubation to when the measurements were taken.
-#' (Defaults to "Time".)
-#' 
-#param time 
+#' @param time (Numeric) Time (in hours) from the start of incubation to when the 
+#' measurements were taken.(Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' samples were taken after the same amount of incubation time.)
 #'
+#' @param time.col (Character) Column name containing \code{time} information. 
+#' (Defaults to "Time".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{time}.)
+#' 
 #' @param istd.col (Character) Column name of \code{data.in} containing the
 #' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
 #' 
@@ -107,7 +113,7 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{istd.conc}.)
 #' 
-#' @param test.nominal.conc (Numeric) The intended test chemical concentration 
+#' @param test.nominal.conc (Numeric) The test chemical concentration 
 #' at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
 #' if all tested compounds used the same concentration at time zero.)
 #'
@@ -227,7 +233,7 @@ format_fup_red <- function(
   FILENAME = "MYDATA",
   data.in,
   sample.col="Lab.Sample.Name",
-  #date=NULL,
+  date=NULL,
   date.col="Date",
   compound.col="Compound.Name",
   dtxsid.col="DTXSID",
@@ -239,8 +245,8 @@ format_fup_red <- function(
   replicate.col="Replicate",
   dilution=NULL,
   dilution.col="Dilution.Factor",
+  time = 4,
   time.col="Time",
-  #time = 4,
   istd.col="ISTD.Area",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
@@ -284,6 +290,8 @@ format_fup_red <- function(
 # These arguments allow the user to specify a single value for every obseration
 # in the table:
   if (!is.null(cal)) data.in[,cal.col] <- cal
+  if (!is.null(date)) data.in[,date.col] <- date
+  if (!is.null(time)) data.in[,time.col] <- time
   if (!is.null(replicate)) data.in[,replicate.col] <- replicate
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
