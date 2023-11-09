@@ -5,9 +5,10 @@
 \title{Creates a Standardized Data Table with Hepatocyte Clearance Data (Level-1)}
 \usage{
 format_clint(
-  data.in,
   FILENAME = "MYDATA",
+  data.in,
   sample.col = "Lab.Sample.Name",
+  date = NULL,
   date.col = "Date",
   compound.col = "Compound.Name",
   dtxsid.col = "DTXSID",
@@ -15,6 +16,8 @@ format_clint(
   type.col = "Sample.Type",
   density = NULL,
   density.col = "Hep.Density",
+  compound.conc = NULL,
+  compound.conc.col = "Nominal.Conc",
   cal = NULL,
   cal.col = "Cal",
   dilution = NULL,
@@ -45,19 +48,25 @@ format_clint(
 )
 }
 \arguments{
+\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
+"<FILENAME>-Clint-Level1.tsv". (Defaults to "MYDATA").}
+
 \item{data.in}{(Data Frame) A Level-0 data frame or a matrix containing mass-spectrometry peak areas,
 indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
-
-\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
-"<FILENAME>-Clint-Level1.tsv". (Defaults to "MYDATA").}
 
 \item{sample.col}{(Character) Column name of \code{data.in} containing the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name".)}
 
-\item{date.col}{(Character) Column name of \code{data.in} containing the laboratory measurement
-date. (Defaults to "Date".)}
+\item{date}{(Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+(Note: Single entry only, 
+use only if all data were collected on the same date.)}
+
+\item{date.col}{(Character) Column name containing \code{date} information. (Defaults to "Date".)
+(Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{date}.)}
 
 \item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
 (Defaults to "Compound.Name".)}
@@ -81,6 +90,15 @@ information. (Defaults to "Hep.Density".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{density}.)}
 
+\item{compound.conc}{(Numeric) The concentration 
+of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if all tested compounds have the same concentration for calibration curves.)}
+
+\item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
+information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{compound.conc}.)}
+
 \item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
 the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
@@ -101,7 +119,7 @@ information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{dilution}.)}
 
-\item{time}{(Numeric) The intended time of the measurement (in minutes) since the test 
+\item{time}{(Numeric) Time of the measurement (in minutes) since the test 
 chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)}
 
 \item{time.col}{(Character) Column name containing \code{time} 

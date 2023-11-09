@@ -33,11 +33,14 @@
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name".)
 #' 
-#param date A single value to be assigned for all samples as 
-#the laboratory measurement date (Defaults to NULL).
+#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, 
+#' use only if all data were collected on the same date.)
 #'
-#' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
-#' date. (Defaults to "Date".)
+#' @param date.col (Character) Column name containing \code{date} information. (Defaults to "Date".)
+#' (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{date}.)
 #' 
 #' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -61,11 +64,14 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{density}.)
 #' 
-#param compound.conc A single value to be assigned for all samples as 
-#the intended concentration of the test chemical for calibration curves 
-#(Defaults to NULL).
-#param compound.conc.col Which column of \code{data.in} indicates the intended concentration 
-#of the test chemical for calibration curves (Defaults to "Nominal.Conc")
+#' @param compound.conc (Numeric) The concentration 
+#' of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if all tested compounds have the same concentration for calibration curves.)
+#' 
+#' @param compound.conc.col (Character) Column name containing \code{compound.conc} 
+#' information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{compound.conc}.)
 #' 
 #' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
 #' indices or dates to represent if the analyses were done on different machines on 
@@ -87,7 +93,7 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{dilution}.)
 #' 
-#' @param time (Numeric) The intended time of the measurement (in minutes) since the test 
+#' @param time (Numeric) Time of the measurement (in minutes) since the test 
 #' chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)
 #' 
 #' @param time.col (Character) Column name containing \code{time} 
@@ -219,10 +225,11 @@
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @export format_clint
-format_clint <- function(data.in,
+format_clint <- function(
   FILENAME = "MYDATA",
+  data.in,
   sample.col="Lab.Sample.Name",
-  #date=NULL,
+  date=NULL,
   date.col="Date",
   compound.col="Compound.Name",
   dtxsid.col="DTXSID",
@@ -230,8 +237,8 @@ format_clint <- function(data.in,
   type.col="Sample.Type",
   density=NULL,
   density.col="Hep.Density",
-  #compound.conc=NULL,
-  #compound.conc.col="Nominal.Conc",
+  compound.conc=NULL,
+  compound.conc.col="Nominal.Conc",
   cal=NULL,
   cal.col="Cal",
   dilution=NULL,
@@ -288,6 +295,9 @@ format_clint <- function(data.in,
 
 # These arguments allow the user to specify a single value for every obseration
 # in the table:
+  if (!is.null(date)) data.in[,date.col] <- date
+  if (!is.null(compound.conc)) data.in[,compound.conc.col] <- compound.conc
+  if (!is.null(time)) data.in[,time.col] <- time
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(density)) data.in[,density.col] <- density
@@ -319,6 +329,7 @@ format_clint <- function(data.in,
     istd.conc.col,
     istd.col,
     density.col,
+    compound.conc.col,
     std.conc.col,
     clint.assay.conc.col,
     time.col,
