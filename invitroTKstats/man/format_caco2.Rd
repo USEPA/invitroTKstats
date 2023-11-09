@@ -115,7 +115,9 @@ use only if all test compounds have the same concentration for calibration curve
 (Defaults to \code{NULL}.)}
 
 \item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
-information. (Defaults to "Nominal.Conc".)}
+information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{compound.conc}.)}
 
 \item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
