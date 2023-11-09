@@ -4,37 +4,41 @@
 #' files listed that will be merged with the `merge_level0` function.
 #' All arguments are required, with exception of `additional.info`.
 #' 
-#' @param file Vector of character strings with the file names of level 0 data.
-#' @param sheet Vector of character strings containing the sheet with MS data. 
-#' @param skip.rows Numeric vector containing the number of rows to skip in
-#'                  data file.
-#' @param date Vector of character strings containing the date of data
-#'             collection, format "MMDDYY". "MM" = 2 digit month,
-#'             "DD" = 2 digit month, and "YY" = 2 digit month.
-#' @param compound Vector of character strings with the relevant chemical
-#'                 identifier.
-#' @param istd Vector of character strings with the internal standard.
-#' @param sample Vector of character strings with column names containing
-#'               samples. 
-#' @param type Vector of character strings with column names containing type
-#'             information.
-#' @param peak Vector of character strings with the column names containing
-#'             mass spectrometry (MS) peak data.
-#' @param istd.peak Vector of character strings with column names containing
-#'                  internal standard (ITSD) peak data.
-#' @param conc Vector of character strings with column names containing
-#'             exposure concentration data.
-#' @param analysis.param Vector of character strings with column names
-#'                       containing analysis parameters.
-#' @param num.rows Numeric vector containing the number of rows with data to be
-#'                 pulled. (Default is NULL.)
-#' @param additional.info Named list or data.frame of additional columns to
+#' @param file (\emph{character vector}) Vector of character strings with
+#'             the file names of level 0 data.
+#' @param sheet (\emph{character vector}) Vector of character strings containing
+#'              the sheet name with MS data. 
+#' @param skip.rows (\emph{numeric vector}) Numeric vector containing the
+#'                  number of rows to skip in data file.
+#' @param date (\emph{character vector}) Vector of character strings containing
+#'             the date of data collection, format "MMDDYY".
+#'             "MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year.
+#' @param compound (\emph{character vector}) Vector of character strings with
+#'                 the relevant chemical identifier.
+#' @param istd (\emph{character vector}) Vector of character strings with the
+#'             internal standard.
+#' @param sample (\emph{character vector}) Vector of character strings with
+#'               column names containing samples. 
+#' @param type (\emph{character vector}) Vector of character strings with column
+#'             names containing type information.
+#' @param peak (\emph{character vector}) Vector of character strings with the
+#'             column names containing mass spectrometry (MS) peak data.
+#' @param istd.peak (\emph{character vector}) Vector of character strings with
+#'                  column names containing internal standard (ITSD) peak data.
+#' @param conc (\emph{character vector}) Vector of character strings with column
+#'             names containing exposure concentration data.
+#' @param analysis.param (\emph{character vector}) Vector of character strings
+#'                       with column names containing analysis parameters.
+#' @param num.rows (\emph{numeric vector}) Numeric vector containing the number
+#'                 of rows with data to be pulled. (Default is \code{NULL}.)
+#' @param additional.info (\emph{list} or \emph{data.frame}) Named list or
+#'                        data.frame of additional columns to
 #'                        include in the catalog. Additional columns should
 #'                        follow the nomenclature of "<Fill-in>.ColName" if
 #'                        indicating column names with information to pull,
 #'                        otherwise a short name.  All spaces in additional
 #'                        column names should be designated with a period, "." .
-#'                        (Default is NULL, i.e. no additional columns.)
+#'                        (Default is \code{NULL}, i.e. no additional columns.)
 #' 
 #' @seealso merge_level0
 #' 
@@ -70,6 +74,26 @@ create_catalog <- function(
     stop("The following arguments need to be specified:\n\t",
          paste(names(data.check)[which(data.check)],collapse = "\n\t"))
   }
+  
+  length.check <- c(file = length(file),
+                    sheet = length(sheet),
+                    skip.rows = length(skip.rows),
+                    date = length(date),
+                    compound = length(compound),
+                    istd = length(istd),
+                    sample = length(sample),
+                    type = length(type),
+                    peak = length(peak),
+                    istd.peak = length(istd.peak),
+                    conc = length(conc),
+                    analysis.param = length(analysis.param))
+  u.len.check <- unique(length.check)
+  if(length(u.len.check) > 1 & !(1%in%u.len.check)|length(u.len.check) > 2){
+    stop("The following columns have mis-matching lengths preventing data.frame creation:\n\t",
+         paste(paste(names(length.check)[which(length.check!=1)],
+                     length.check[which(length.check!=1)],sep = ": "),
+               collapse = "\n\t"))
+  }
   # build the base catalog
   catalog <- cbind.data.frame(
     file,sheet,skip.rows,
@@ -102,6 +126,15 @@ create_catalog <- function(
     
     catalog <- cbind.data.frame(catalog,additional.info)
   }
+  
+  # Verify the catalog is in the appropriate format
+  cat("##################################",
+      "## Data Catalog Checks",
+      "##################################",
+      sep = "\n")
+  check_catalog(catalog = catalog)
+  cat("\n")
+  cat("##################################")
   # output the catalog object
   return(catalog)
 }

@@ -21,7 +21,7 @@ check_catalog <- function(catalog){
   
   ### Check that Required Columns have No Missing Data Entries ###
   .check_no_miss_cols(data = catalog,req.cols = std.catcols,return.missing = TRUE)
-  cat("All standard columns are data complete.")
+  cat("All standard columns are data complete.\n")
   
   ### Check Class of Standard Column Names ###
   # check if the standard catalog column names are the correct class
@@ -37,7 +37,7 @@ check_catalog <- function(catalog){
   # check 'numeric' class
   .check_num_cols(data = catalog,num.cols = std.cols.num)
   
-  cat("All of the standard columns in the catalog are of the correct class. \n")
+  cat("All of the standard columns in the catalog are of the correct class.\n")
   
   ### Final Check ###
   cat("Your data catalog is ready for merge_level0.")

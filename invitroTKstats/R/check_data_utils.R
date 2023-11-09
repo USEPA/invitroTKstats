@@ -69,7 +69,7 @@
     # if the user want know the cells missing data, then print.
     if(return.missing){print(incomp.req.data)}
     # throw an error and stop all actions
-    stop("The following cells have missing data where values are required: \n\t"))
+    stop("The following cells have missing data where values are required: \n\t",
          paste(missing_cells,collapse = ", "))
   }
 }
