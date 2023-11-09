@@ -52,15 +52,18 @@ runjagsdata.to.list <- function(runjagsdata.in)
 }
 
 
-#' Convert a runjags-class object to a list
+#' Build Data Object for Intrinsic Hepatic Clearance (Clint) Bayesian Model
 #'
-#' @param this.cvt 
-#' @param this.data subset of data of a test compound
-#' @param decrease.prob
-#' @param saturate.prob
-#' @param degrade.prob
+#' @param this.cvt (Data Frame) Subset of data containing all "Cvst" sample observations of one test compound.
+#' @param this.data (Data Frame) Subset of data containing all observations of one test compound.
+#' @param decrease.prob (Numeric) Prior probability that a chemical will decrease in
+#' the assay.
+#' @param saturate.prob (Numeric) Prior probability that a chemicals rate of metabolism
+#' will decrease between 1 and 10 uM.
+#' @param degrade.prob (Numeric) Prior probability that a chemical will be unstable
+#' (that is, degrade abiotically) in the assay.
 #'
-#' @return List object JGAS model needs 
+#' @return A named list to be passed into the Bayesian model. 
 #'
 build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob, degrade.prob)
 {
@@ -217,11 +220,14 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
   ))
 }
 
-#' Initial values for JAG
+#' Set Initial Values for Intrinsic Hepatic Clearance (Clint) Bayesian Model
 #' 
+#' @param mydata (List) Output of \code{build_mydata_clint}.
+#' @param chain (Numeric) The number of Markov Chains to use.
 #' 
-
-initfunction_clint <- function(chain)
+#' @return A list of initial values.
+#' 
+initfunction_clint <- function(mydata, chain)
 {
   seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
   set.seed(seed)
@@ -236,7 +242,7 @@ initfunction_clint <- function(chain)
     C.thresh = runif(mydata$Num.cal, 0, 0.1),
     log.calibration = rep(0,mydata$Num.cal),
     background = rep(0,mydata$Num.cal),
-    # Statistics characterizing the measurment:
+    # Statistics characterizing the measurement:
     decreases = rbinom(1,1,0.5),
     degrades = rbinom(1,1,0.5),
     bio.rate = runif(1,0.05,0.25),
@@ -246,7 +252,15 @@ initfunction_clint <- function(chain)
   ))
 }
 
-build_mydata_fup_red <- function(this.data)
+#' Build Data Object for Fup RED Bayesian Model
+#' 
+#' @param this.data (Data Frame) Subset of data containing all observations of one test compound.
+#' @param Physiological.Protein.Conc (Numeric) The assumed physiological protein concentration 
+#' for plasma protein binding calculations. 
+#' 
+#' @return A named list to be passed into the Bayesian model.
+#' 
+build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
 {
   #mg/mL -> g/L is 1:1
   #kDa -> g/mol is *1000
@@ -390,9 +404,14 @@ build_mydata_fup_red <- function(this.data)
   ))
 }
 
-
-
-initfunction_fup_red <- function(chain)
+#' Set Initial Values for Fup RED Bayesian Model
+#' 
+#' @param mydata (List) Output of \code{build_mydata_fup_red}.
+#' @param chain (Numeric) The number of Markov Chains to use.
+#' 
+#' @return A list of initial values.
+#' 
+initfunction_fup_red <- function(mydata, chain)
 {
   seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
   set.seed(seed)
@@ -416,14 +435,13 @@ initfunction_fup_red <- function(chain)
   ))
 }
 
-
+#' Build Data Object for Fup UC Bayesian Model
+#'
+#' @param MS.data (Data Frame) Subset of data containing all observations of one test compound.
+#' 
+#' @return A named list to be passed into the Bayesian model. 
 build_mydata_fup_uc <- function(MS.data){
   
-  if (any(MS.data[,type.col]=="CC") &
-      any(MS.data[,type.col]=="T1") &
-      any(MS.data[,type.col]=="T5") &
-      any(MS.data[,type.col]=="AF"))
-  {
     all.cal <- unique(MS.data[,cal.col])
     Num.cal <- length(all.cal)        
     #
@@ -518,8 +536,14 @@ build_mydata_fup_uc <- function(MS.data){
 }
 
 
-
-initfunction_fup_uc <- function(chain)
+#' Set Initial Values for Fup UC Bayesian Model
+#' 
+#' @param mydata (List) Output of \code{build_mydata_clint}.
+#' @param chain (Numeric) The number of Markov Chains to use.
+#' 
+#' @return A list of initial values.
+#' 
+initfunction_fup_uc <- function(mydata, chain)
 {
   seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
   set.seed(seed)
