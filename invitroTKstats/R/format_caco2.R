@@ -93,10 +93,10 @@
 #' (in cm^3) of the donor portion of the Caco-2 experimental well where the
 #' test chemical is added. (Defaults to "Vol.Donor".)
 #' 
-#param compound.conc (Numeric) The intended concentration
-#of the test chemical for calibration curves. (Note: Single entry only,
-#use only if all test compounds have the same intended concentration.)
-#(Defaults to \code{NULL}.)
+#' @param compound.conc (Numeric) The concentration
+#' of the test chemical for calibration curves. (Note: Single entry only, 
+#' use only if all test compounds have the same concentration for calibration curves.) 
+#' (Defaults to \code{NULL}.)
 #'
 #' @param compound.conc.col (Character) Column name containing \code{compound.conc} 
 #' information. (Defaults to "Nominal.Conc".)
@@ -212,8 +212,9 @@
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
 #'
 #' @export format_caco2
-format_caco2 <- function(data.in,
+format_caco2 <- function(
   FILENAME = "MYDATA",
+  data.in,
   sample.col="Lab.Sample.Name",
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
@@ -229,7 +230,7 @@ format_caco2 <- function(data.in,
   membrane.area.col="Membrane.Area",
   receiver.vol.col="Vol.Receiver",
   donor.vol.col="Vol.Donor",
-  #compound.conc=NULL,
+  compound.conc=NULL,
   compound.conc.col="Nominal.Conc",
   cal=NULL,
   cal.col="Cal",
@@ -276,6 +277,7 @@ format_caco2 <- function(data.in,
   if (!is.null(membrane.area)) data.out[,membrane.area.col] <- membrane.area
   if (!is.null(series)) data.out[,series.col] <- series
   if (!is.null(meas.time)) data.out[,meas.time.col] <- meas.time
+  if (!is.null(compound.conc)) data.out[,compound.conc.col] <- compound.conc
 
 # We need all these columns in data.out
   cols <-c(

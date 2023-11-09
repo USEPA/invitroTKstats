@@ -5,8 +5,8 @@
 \title{Creates a Standardized Data Table with Caco-2 Data (Level-1)}
 \usage{
 format_caco2(
-  data.in,
   FILENAME = "MYDATA",
+  data.in,
   sample.col = "Lab.Sample.Name",
   lab.compound.col = "Lab.Compound.Name",
   dtxsid.col = "DTXSID",
@@ -22,6 +22,7 @@ format_caco2(
   membrane.area.col = "Membrane.Area",
   receiver.vol.col = "Vol.Receiver",
   donor.vol.col = "Vol.Donor",
+  compound.conc = NULL,
   compound.conc.col = "Nominal.Conc",
   cal = NULL,
   cal.col = "Cal",
@@ -44,13 +45,13 @@ format_caco2(
 )
 }
 \arguments{
+\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
+"<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".)}
+
 \item{data.in}{(Data Frame) A Level-0 data frame containing
 mass-spectrometry peak areas, indication of chemical identity,
 and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
-
-\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
-"<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".)}
 
 \item{sample.col}{(Character) Column name of \code{data.in} containing the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
@@ -107,6 +108,11 @@ specified in \code{membrane.area}.)}
 \item{donor.vol.col}{(Character) Column name of \code{data.in} containing the volume
 (in cm^3) of the donor portion of the Caco-2 experimental well where the
 test chemical is added. (Defaults to "Vol.Donor".)}
+
+\item{compound.conc}{(Numeric) The concentration
+of the test chemical for calibration curves. (Note: Single entry only, 
+use only if all test compounds have the same concentration for calibration curves.) 
+(Defaults to \code{NULL}.)}
 
 \item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
 information. (Defaults to "Nominal.Conc".)}
