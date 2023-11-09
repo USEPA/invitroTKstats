@@ -1,32 +1,3 @@
-# Documentations of utility/Objective Functions Functions Utilized in calc_clint_point
-
-# decay - Decay Model
-# 
-# This function calculates and returns the test compound concentration at time t, using a model of
-# exponential decay with time C(t) = C_0*e^{-mt}, where C_0 is the 
-# test compound concentration at time 0, m is a rate constant (argument k_elim),
-# and t is the incubation time in hour.
-# 
-# lldecay - Log-Likelihood of Linear Regression Fit
-# This function returns the negative log-likelihood of the linear regression of
-# MS response as a function of time.
-# 
-# satdecay - Decay Formula with Saturation Probability
-# 
-# This function calculates and returns the test compound concentration at time t, using a model of
-# exponential decay with time while taking into account of saturation
-# probability C(t) = C_0*e^{-m*sat*t}. C_0 is the test compound concentration at time 0, m is a rate constant (argument k_elim),
-# sat is the saturation probability, and t is the incubation time in hour.
-# Saturation is defined as observing a lower clearance at a higher concentration. The calculation
-# assumes metabolism is completely saturated by 10 uM (i.e. sat = 1 if C_0 = 10.) 
-# 
-# llsatdecay - Log-Likelihood of Linear Regression Fit
-# This function returns the negative log-likelihood of the linear regression of
-# MS response as a function of time and saturation probability.
- 
-
-
-
 #' Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)
 #'
 #' This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
@@ -200,7 +171,14 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table <-NULL
   num.chem <- 0
   num.cal <- 0
+  
+  # decay - This function calculates the test compound concentration at time t, using a model of
+  # exponential decay with time C(t) = C_0*e^{-mt}, where C_0 is the 
+  # test compound concentration at time 0, m is a rate constant (argument k_elim),
+  # and t is the incubation time in hour.
   decay <- function(time.hours,conc,cal,k_elim) cal*conc*exp(-k_elim*time.hours)
+  
+  # Negative log-likelihood of the linear regression fit
   lldecay <- function(cal,k_elim,sigma)
   {
     if (sigma < 0.0001) sigma <- 0.0001
@@ -216,7 +194,16 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     if (is.na(ll)) browser()
     return(-ll)
   }
+  
+  # satdecay - This function calculates the test compound concentration at time t, using a model of
+  # exponential decay with time while taking into account of saturation
+  # probability C(t) = C_0*e^{-m*sat*t}. C_0 is the test compound concentration at time 0, m is a rate constant (argument k_elim),
+  # sat is the saturation probability, and t is the incubation time in hour.
+  # Saturation is defined as observing a lower clearance at a higher concentration. The calculation
+  # assumes metabolism is completely saturated by 10 uM (i.e. sat = 1 if C_0 = 10.) 
   satdecay <- function(time.hours,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.hours)
+  
+  # Negative log-likelihood of the linear regression fit
   llsatdecay <- function(cal,k_elim,sigma,sat)
   {
     if (sigma < 0.0001) sigma <- 0.0001
