@@ -438,16 +438,20 @@ initfunction_fup_red <- function(mydata, chain)
 #' Build Data Object for Fup UC Bayesian Model
 #'
 #' @param MS.data (Data Frame) Subset of data containing all observations of one test compound.
+#' @param CC.data (Data Frame) Subset of data containing observations of calibration curves samples.
+#' @param T1.data (Data Frame) Subset of data containing observations of Whole Plasma T1h Samples.
+#' @param T5.data (Data Frame) Subset of data containing observations of Whole Plasma T5h Samples.
+#' @param AF.data (Data Frame) Subset of data containing observations of Aqueous Fraction samples.
 #' 
 #' @return A named list to be passed into the Bayesian model. 
-build_mydata_fup_uc <- function(MS.data){
+build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
   
     all.cal <- unique(MS.data[,cal.col])
     Num.cal <- length(all.cal)        
     #
     #
     #
-    CC.data <- MS.data[MS.data[,type.col]=="CC",]
+    #CC.data <- MS.data[MS.data[,type.col]=="CC",]
     Num.cc.obs <- dim(CC.data)[1]
     CC.data$Obs.Conc <- seq(1,Num.cc.obs)
     Conc <- CC.data[,std.conc.col]
@@ -455,11 +459,11 @@ build_mydata_fup_uc <- function(MS.data){
     #
     #
     #  Each series contains T1, T5, and AF data
-    T1.data <- MS.data[MS.data[,type.col]=="T1",]
+    #T1.data <- MS.data[MS.data[,type.col]=="T1",]
     Num.T1.obs <- dim(T1.data)[1]
-    T5.data <- MS.data[MS.data[,type.col]=="T5",]
+    #T5.data <- MS.data[MS.data[,type.col]=="T5",]
     Num.T5.obs <- dim(T5.data)[1]
-    AF.data <- MS.data[MS.data[,type.col]=="AF",]
+    #AF.data <- MS.data[MS.data[,type.col]=="AF",]
     Num.AF.obs <- dim(AF.data)[1]
     Num.series <- 0
     all.series <- NULL

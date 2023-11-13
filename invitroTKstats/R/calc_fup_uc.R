@@ -306,7 +306,11 @@ calc_fup_uc <- function(
           any(MS.data[,type.col]=="AF"))
       {
        
-        mydata <- build_mydata_fup_uc(MS.data)
+        CC.data <- MS.data[MS.data[,type.col]=="CC",]
+        T1.data <- MS.data[MS.data[,type.col]=="T1",]
+        T5.data <- MS.data[MS.data[,type.col]=="T5",]
+        AF.data <- MS.data[MS.data[,type.col]=="AF",]
+        mydata <- build_mydata_fup_uc(MS.data, CC.data, T1.data, T5.data, AF.data)
         
         init_vals <- function(chain) initfunction_fup_uc(mydata=mydata, chain = chain)
         # write out arguments to runjags:
