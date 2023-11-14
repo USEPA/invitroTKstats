@@ -86,15 +86,15 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
   #
   # Extract the observations
   this.cvt <- subset(this.data, Sample.Type=="Cvst")
-  obs <-  this.cvt[!is.na(this.cvt[,time.col]), "Response"]
+  obs <-  this.cvt[!is.na(this.cvt[,"Time"]), "Response"]
   Num.obs <- length(obs)
-  obs.time <- this.cvt[!is.na(this.cvt[,time.col]), "Time"]
-  obs.df <- this.cvt[!is.na(this.cvt[,time.col]), "Dilution.Factor"]
+  obs.time <- this.cvt[!is.na(this.cvt[,"Time"]), "Time"]
+  obs.df <- this.cvt[!is.na(this.cvt[,"Time"]), "Dilution.Factor"]
   obs.conc <- rep(NA, Num.obs)
   for (this.conc in Test.conc)
   {
     obs.conc[this.cvt[
-      !is.na(this.cvt[,time.col]), "Clint.Assay.Conc"] == this.conc] <-
+      !is.na(this.cvt[,"Time"]), "Clint.Assay.Conc"] == this.conc] <-
       which(Test.conc == this.conc)
   }
   # Match observations to correct calibration curve:
@@ -137,14 +137,14 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
   Num.abio.obs <- dim(this.abio)[1]
   if (Num.abio.obs > 0)
   {
-    abio.obs <-  this.abio[!is.na(this.abio[,time.col]), "Response"]
-    abio.obs.time <- this.abio[!is.na(this.abio[,time.col]), "Time"]
-    abio.obs.df <- this.abio[!is.na(this.abio[,time.col]), "Dilution.Factor"]
+    abio.obs <-  this.abio[!is.na(this.abio[,"Time"]), "Response"]
+    abio.obs.time <- this.abio[!is.na(this.abio[,"Time"]), "Time"]
+    abio.obs.df <- this.abio[!is.na(this.abio[,"Time"]), "Dilution.Factor"]
     abio.obs.conc <- rep(NA, Num.abio.obs)
     for (this.conc in Test.conc)
     {
       abio.obs.conc[this.abio[
-        !is.na(this.abio[,time.col]), "Clint.Assay.Conc"] == this.conc] <-
+        !is.na(this.abio[,"Time"]), "Clint.Assay.Conc"] == this.conc] <-
         which(Test.conc == this.conc)
     }
     abio.obs.cal <- rep(NA, Num.abio.obs)
@@ -446,7 +446,7 @@ initfunction_fup_red <- function(mydata, chain)
 #' @return A named list to be passed into the Bayesian model. 
 build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
   
-    all.cal <- unique(MS.data[,cal.col])
+    all.cal <- unique(MS.data[,"Calibration"])
     Num.cal <- length(all.cal)        
     #
     #
@@ -454,8 +454,8 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
     #CC.data <- MS.data[MS.data[,type.col]=="CC",]
     Num.cc.obs <- dim(CC.data)[1]
     CC.data$Obs.Conc <- seq(1,Num.cc.obs)
-    Conc <- CC.data[,std.conc.col]
-    Dilution.Factor <- CC.data[,dilution.col]
+    Conc <- CC.data[,"Standard.Conc"]
+    Dilution.Factor <- CC.data[,"Dilution.Factor"]
     #
     #
     #  Each series contains T1, T5, and AF data
@@ -471,34 +471,34 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
     for (i in 1:Num.cal)
     {
       these.series <- unique(T5.data[
-        T5.data[,cal.col]==all.cal[i],
-        series.col])
+        T5.data[,"Calibration"]==all.cal[i],
+        "Series"])
       Num.series <- Num.series + length(these.series) 
       T1.data[
-        T1.data[,cal.col]==all.cal[i],
-        series.col] <- paste(all.cal[i],
+        T1.data[,"Calibration"]==all.cal[i],
+        "Series"] <- paste(all.cal[i],
                              T1.data[                          
-                               T1.data[,cal.col]==all.cal[i],
-                               series.col],
+                               T1.data[,"Calibration"]==all.cal[i],
+                               "Series"],
                              sep="-")
       T5.data[
-        T5.data[,cal.col]==all.cal[i],
-        series.col] <- paste(all.cal[i],
+        T5.data[,"Calibration"]==all.cal[i],
+        "Series"] <- paste(all.cal[i],
                              T5.data[                          
-                               T5.data[,cal.col]==all.cal[i],
-                               series.col],
+                               T5.data[,"Calibration"]==all.cal[i],
+                               "Series"],
                              sep="-")
       AF.data[
-        AF.data[,cal.col]==all.cal[i],
-        series.col] <- paste(all.cal[i],
+        AF.data[,"Calibration"]==all.cal[i],
+        "Series"] <- paste(all.cal[i],
                              AF.data[
-                               AF.data[,cal.col]==all.cal[i],
-                               series.col],
+                               AF.data[,"Calibration"]==all.cal[i],
+                               "Series"],
                              sep="-")
       all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
       Test.Nominal.Conc[i] <- mean(T1.data[
-        T1.data[,cal.col]==all.cal[i],
-        uc.assay.conc.col],na.rm=T)
+        T1.data[,"Calibration"]==all.cal[i],
+        "UC.Assay.T1.Conc"],na.rm=T)
     }
     # There is one initial concentration per series, even if there are
     # multiple observations of that series:
@@ -520,7 +520,7 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
     Num.obs <- dim(UC.obs)[1]
     for (i in 1:Num.cal)
     {
-      UC.obs[UC.obs[,cal.col]==all.cal[i],"Obs.Cal"] <- i
+      UC.obs[UC.obs[,"Calibration"]==all.cal[i],"Obs.Cal"] <- i
     }
     #
     #
