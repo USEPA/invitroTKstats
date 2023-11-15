@@ -94,10 +94,9 @@
 #' test chemical is added. (Defaults to "Vol.Donor".)
 #' 
 #' @param compound.conc (Numeric) The concentration
-#' of the test chemical for calibration curves. (Note: Single entry only, 
+#' of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if all test compounds have the same concentration for calibration curves.) 
-#' (Defaults to \code{NULL}.)
-#'
+#' 
 #' @param compound.conc.col (Character) Column name containing \code{compound.conc} 
 #' information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
