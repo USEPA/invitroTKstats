@@ -38,7 +38,7 @@
 #' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all data were collected on the same date.)
 #' 
-#' @param date.col (Character) Column name of containing \code{date} information. 
+#' @param date.col (Character) Column name containing \code{date} information. 
 #' (Defaults to "Date".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{date}.)
@@ -84,8 +84,8 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{dilution}.)
 #'
-#' @param time (Numeric) Time (in hours) from the start of incubation to when the 
-#' measurements were taken.(Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' @param time (Numeric) Incubation time (in hours) - from the start of incubation to 
+#' when the sample measurements were taken. (Defaults to 4.) (Note: Single entry only, use only if all 
 #' samples were taken after the same amount of incubation time.)
 #'
 #' @param time.col (Character) Column name containing \code{time} information. 
