@@ -2,24 +2,24 @@
 % Please edit documentation in R/format_caco2.R
 \name{format_caco2}
 \alias{format_caco2}
-\title{Creates a standardized data table reporting Caco-2 data}
+\title{Creates a Standardized Data Table with Caco-2 Data (Level-1)}
 \usage{
 format_caco2(
-  data.in,
   FILENAME = "MYDATA",
+  data.in,
   sample.col = "Lab.Sample.Name",
   lab.compound.col = "Lab.Compound.Name",
   dtxsid.col = "DTXSID",
   date.col = "Date",
-  series.col = "Series",
   series = NULL,
+  series.col = "Series",
   compound.col = "Compound.Name",
   area.col = "Area",
   istd.col = "ISTD.Area",
   type.col = "Type",
   direction.col = "Direction",
-  membrane.area.col = "Membrane.Area",
   membrane.area = NULL,
+  membrane.area.col = "Membrane.Area",
   receiver.vol.col = "Vol.Receiver",
   donor.vol.col = "Vol.Donor",
   compound.conc = NULL,
@@ -28,8 +28,8 @@ format_caco2(
   cal.col = "Cal",
   dilution = NULL,
   dilution.col = "Dilution.Factor",
-  meas.time.col = "Time",
   meas.time = 2,
+  meas.time.col = "Time",
   istd.name = NULL,
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
@@ -45,143 +45,165 @@ format_caco2(
 )
 }
 \arguments{
-\item{data.in}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identity, and measurement type. The data frame should
+\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
+"<FILENAME>-Caco-2-Level1.tsv". (Defaults to "MYDATA".)}
+
+\item{data.in}{(Data Frame) A Level-0 data frame containing
+mass-spectrometry peak areas, indication of chemical identity,
+and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
-\item{FILENAME}{A string used to identify outputs of the function call.
-(defaults to "MYDATA")}
-
-\item{sample.col}{Which column of data.in indicates the unique mass
+\item{sample.col}{(Character) Column name of \code{data.in} containing the unique mass
 spectrometry (MS) sample name used by the laboratory. (Defaults to
-"Lab.Sample.Name")}
+"Lab.Sample.Name".)}
 
-\item{lab.compound.col}{Which column of data.in indicates The test compound
-name used by the laboratory (Defaults to "Lab.Compound.Name")}
+\item{lab.compound.col}{(Character) Column name of \code{data.in} containing the test compound
+name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 
-\item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure
-ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
+\item{dtxsid.col}{(Character) Column name of \code{data.in} containing EPA's DSSTox Structure
+ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{date.col}{Which column of data.in indicates the laboratory measurment
-date (Defaults to "Date")}
+\item{date.col}{(Character) Column name of \code{data.in} containing the laboratory measurement
+date. (Defaults to "Date".)}
 
-\item{series.col}{Which column of PPB.data indicates the "series", that is
-a simultaneous replicate with the same analytical chemistry
-(Defaults to "Series")}
+\item{series}{(Numeric) Index of simultaneous replicates with the same analytical chemistry. 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+use the same number of replicates.)}
 
-\item{series}{If this argument is used (defaults to NULL) every observation
-in the table is assigned the value of the argument and the corresponding
-column in input.table (if present) is ignored.}
+\item{series.col}{(Character) Column name containing \code{series} information.
+(Defaults to "Series".) 
+(Note: \code{data.in} does not necessarily have this field. 
+If this field is missing, it can be auto-filled with the value 
+specified in \code{series}.)}
 
-\item{compound.col}{Which column of data.in indicates the test compound
-(Defaults to "Compound.Name")}
+\item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
+(Defaults to "Compound.Name".)}
 
-\item{area.col}{Which column of data.in indicates the target analyte (that
-is, the test compound) MS peak area (Defaults to "Area")}
+\item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
+is, the test compound) MS peak area. (Defaults to "Area".)}
 
-\item{istd.col}{Which column of data.in indicates the MS peak area for the
-internal standard (Defaults to "ISTD.Area")}
+\item{istd.col}{(Character) Column name of \code{data.in} containing the
+MS peak area for the internal standard. (Defaults to "ISTD.Area".)}
 
-\item{type.col}{Which column of data.in indicates the direction of the
-measurements (either "AtoB" for apical to basolateral or "BtoA" for vice
-versa) (Defaults to "Direction")}
+\item{type.col}{(Character) Column name of \code{data.in} containing the sample type (see table
+under Details). (Defaults to "Type".)}
 
-\item{direction.col}{Which column of data.in indicates the direction of
-the Caco-2 permeability experiment, either apical to basal (AtoB) or basal
-to aprical (BtoA). (Defaults to "Direction")}
+\item{direction.col}{(Character) Column name of \code{data.in} containing the direction of
+the Caco-2 permeability experiment: either apical donor to basal receiver (AtoB), or 
+basal donor to apical receiver (BtoA). (Defaults to "Direction".)}
 
-\item{membrane.area.col}{Which column of data.in indicates the area of the
-Caco-2 monolayer (in cm^2) (Defaults to "Membrane.Area")}
+\item{membrane.area}{(Numeric) The area of the Caco-2 monolayer (in cm^2). 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
+have the same area for the Caco-2 monolayer.)}
 
-\item{membrane.area}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{membrane.area.col}{(Character) Column name containing \code{membrane.area} 
+information. (Defaults to "Membrane.Area".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{membrane.area}.)}
 
-\item{receiver.vol.col}{Which column of data.in indicates the volume
-(in cm^3) of the receiver portion of the Caco-2 experimental well
-(Defaults to "Vol.Receiver")}
+\item{receiver.vol.col}{(Character) Column name of \code{data.in} containing the volume
+(in cm^3) of the receiver portion of the Caco-2 experimental well. 
+(Defaults to "Vol.Receiver".)}
 
-\item{donor.vol.col}{Which column of data.in indicates the volume
+\item{donor.vol.col}{(Character) Column name of \code{data.in} containing the volume
 (in cm^3) of the donor portion of the Caco-2 experimental well where the
-test chemical is added
-(Defaults to "Vol.Donor")}
+test chemical is added. (Defaults to "Vol.Donor".)}
 
-\item{cal}{If this argument is used (defaults to NULL) every observation in
-the table is assigned the value of the argument and the corresponding
-column in input.table (if present) is ignored.
+\item{compound.conc}{(Numeric) The concentration
+of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if all test compounds have the same concentration for calibration curves.)}
 
-#param compound.conc.col Which column indicates the intended concentration 
-of the test chemical for calibration curves (Defaults to "Standard.Conc")}
+\item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
+information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{compound.conc}.)}
 
-\item{cal.col}{Which column of data.in indicates the MS calibration -- for
-instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")}
+\item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
+indices or dates to represent if the analyses were done on different machines on 
+the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
+(Note: Single entry only, 
+use only if all data were collected based on the same calibration.)}
 
-\item{dilution}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{cal.col}{(Character) Column name containing \code{cal} 
+information. (Defaults to "Cal".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{cal}.)}
 
-\item{dilution.col}{Which column of data.in indicates how many times the
-sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
+\item{dilution}{(Numeric) Number of times the sample was diluted before MS 
+analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+samples underwent the same number of dilutions.)}
 
-\item{meas.time.col}{Which column of data.in indicates the amount of time
-before the receiver and donor compartments are measured (Defaults to "Time")}
+\item{dilution.col}{(Character) Column name containing \code{dilution} 
+information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{dilution}.)}
 
-\item{meas.time}{If this argument is used (defaults to 2 h) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{meas.time}{(Numeric) The amount of time (in hours) before the receiver and donor 
+compartments are measured. (Defaults to 2.)}
 
-\item{istd.name}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{meas.time.col}{(Character) Column name containing \code{meas.time} 
+information. (Defaults to "Time".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{meas.time}.)}
 
-\item{istd.name.col}{Which column of data.in indicates identity of the
-internal standard (Defaults to "ISTD.Name")}
+\item{istd.name}{(Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if all tested compounds use the same internal standard.)}
 
-\item{istd.conc}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{istd.name.col}{(Character) Column name containing \code{istd.name} information. (Defaults to "ISTD.Name".) 
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, 
+it can be auto-filled with the value specified in \code{istd.name}.)}
 
-\item{istd.conc.col}{Which column of data.in indicates the concentration of
-the internal standard (Defaults to "ISTD.Conc")}
+\item{istd.conc}{(Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if all tested compounds have the same 
+internal standard concentration.)}
 
-\item{nominal.test.conc}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{istd.conc.col}{(Character) Column name containing \code{istd.conc} information. (Defaults to "ISTD.Conc".) 
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, 
+it can be auto-filled with the value specified in \code{istd.conc}.)}
 
-\item{nominal.test.conc.col}{Which column of data.in indicates the intended
-test chemical concentration at time zero in the dosing solution (added to the
-donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
+\item{nominal.test.conc}{(Numeric) The test chemical concentration in the dosing solution
+that is added to the donor side at time zero. (Defaults to \code{NULL}.)
+(Note: Single entry only, use only if the same initial 
+concentration was used for all tested compounds.)}
 
-\item{analysis.method}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{nominal.test.conc.col}{(Character) Column name containing \code{nominal.test.conc} 
+information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{nominal.test.conc}.)}
 
-\item{analysis.method.col}{Which column of data.in indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
-"Analysis.Method")}
+\item{analysis.method}{(Character) The analytical chemistry analysis method, 
+typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
+spectrometry, respectively. (Defaults to \code{NULL}.)
+(Note: Single entry only, use only if the same method was used for all tested compounds.)}
 
-\item{analysis.instrument}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{analysis.method.col}{(Character) Column name containing \code{analysis.method} 
+information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{analysis.method}.)}
 
-\item{analysis.instrument.col}{Which column of data.in indicates the
-instrument used for chemical analysis, for example
-"Agilent 6890 GC with model 5973 MS" (Defaults to
-"Analysis.Instrument")}
+\item{analysis.instrument}{(Character) The instrument used for chemical analysis, 
+for example "Agilent 6890 GC with model 5973 MS". (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if the same instrument was used for all tested compounds.)}
 
-\item{analysis.parameters}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{analysis.instrument.col}{(Character) Column name containing \code{analysis.instrument} 
+information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{analysis.instrument}.)}
 
-\item{analysis.parameters.col}{Which column of data.in indicates the
-parameters used to identify the compound on the chemical analysis instrument,
-for example
-"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-(Defaulys to "Analysis.Paramaters").}
+\item{analysis.parameters}{(Character) The parameters used to identify the 
+compound on the chemical analysis instrument, for example
+"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0". (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if the same parameters were used for all tested compounds.)}
+
+\item{analysis.parameters.col}{(Character) Column name containing \code{analysis.parameters} 
+information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{analysis.parameters}.)}
 }
 \value{
-data.frame A data.frame in standardized "level1" format
+A Level-1 data frame with a standardized format containing a  
+standardized set of columns and column names with membrane permeability data
+from a Caco-2 assay.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
@@ -209,7 +231,8 @@ of concentration measured:
   Receiver compartment at end of experiment\tab R2\cr
 }
 
-Chemical concentration is calculated qualitatively as a response:
+Chemical concentration is calculated qualitatively as a response and 
+returned as a column in the output data frame:
 
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
@@ -217,11 +240,20 @@ Response <- AREA / ISTD.AREA * ISTD.CONC
 library(invitroTKstats)
 level0 <- TO1caco2
 level1 <- format_caco2(level0,
-  FILENAME="EPACyprotex2021",
-  compound.col="CompoundName",
-  compound.conc.col="Standard.Conc",
-  membrane.area.col=0.11
-  )
+                       FILENAME="EPACyprotex2021",
+                       sample.col="SampleName",
+                       dtxsid.col="CompoundName",
+                       lab.compound.col="CompoundName",
+                       cal=1,
+                       istd.conc.col="ISTD.Conc",
+                       compound.col="CompoundName",
+                       compound.conc.col="Test.Target.Conc",
+                       membrane.area=0.11,
+                       series=1,
+                       analysis.parameters="Feature",
+                       analysis.instrument="GC or LC",
+                       analysis.method="Mass Spec"
+                      )
 
 }
 \references{
