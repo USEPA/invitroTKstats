@@ -145,6 +145,10 @@ model {
 #' @import parallel 
 #' @import runjags
 #' 
+#' @import coda
+#'
+#' @import Rdpack
+#'
 #' @export calc_fup_uc
 calc_fup_uc <- function(PPB.data,
   FILENAME = "UC_Model_Results",

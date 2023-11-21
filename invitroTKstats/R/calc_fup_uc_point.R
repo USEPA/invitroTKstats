@@ -57,6 +57,8 @@
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export calc_fup_uc_point
 calc_fup_uc_point <- function(FILENAME, good.col="Verified")
 {

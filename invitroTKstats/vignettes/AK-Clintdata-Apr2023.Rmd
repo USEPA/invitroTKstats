@@ -4,7 +4,7 @@ author: "John Wambaugh"
 date: "April 26, 2023"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Kreutz 2023 UC Data}
+  %\VignetteIndexEntry{Kreutz 2023 UC CLint}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

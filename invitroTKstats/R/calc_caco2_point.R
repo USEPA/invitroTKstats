@@ -87,6 +87,8 @@
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export calc_caco2_point
 calc_caco2_point <- function(FILENAME, good.col="Verified")
 {

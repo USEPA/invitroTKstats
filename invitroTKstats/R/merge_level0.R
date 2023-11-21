@@ -151,6 +151,8 @@
 #'
 #' @author John Wambaugh
 #' 
+#' @import readxl
+#' 
 #' @export merge_level0
 merge_level0 <- function(data.label="MYDATA",
   level0.catalog,

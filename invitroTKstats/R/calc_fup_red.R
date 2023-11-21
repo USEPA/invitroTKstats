@@ -250,6 +250,10 @@ model {
 #'                        NUM.CORES=8,
 #'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
 #'
+#' @import coda
+#'
+#' @import Rdpack
+#'
 #' @export calc_fup_red
 calc_fup_red <- function(
   FILENAME,

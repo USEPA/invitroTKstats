@@ -213,6 +213,10 @@ model {
 #'
 #' level4 <- calc_clint_point(FILENAME="Wambaugh2019")
 #'
+#' @import Rdpack
+#'
+#' @import coda
+#'
 #' @export calc_clint
 calc_clint <- function(
   FILENAME,
