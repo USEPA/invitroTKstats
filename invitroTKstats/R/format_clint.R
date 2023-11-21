@@ -224,6 +224,8 @@
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export format_clint
 format_clint <- function(
   FILENAME = "MYDATA",
