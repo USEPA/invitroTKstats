@@ -24,7 +24,7 @@ Authors@R: c(
 Depends: R (>= 2.10)
 Imports: runjags, parallel, readxl, coda, ggplot2, Rdpack, scales, stats4
 RdMacros: Rdpack
-Suggests:
+Suggests: knitr, R.rsp
 License: GPL-3
 LazyData: true
 Encoding: UTF-8
