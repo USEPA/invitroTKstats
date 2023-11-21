@@ -2,31 +2,38 @@
 % Please edit documentation in R/calc_fup_red_point.R
 \name{calc_fup_red_point}
 \alias{calc_fup_red_point}
-\title{Calculate a point estimate of Fraction Unbound in Plasma (RED)}
+\title{Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with
+Rapid Equilibrium Dialysis (RED) Data}
 \usage{
 calc_fup_red_point(FILENAME, good.col = "Verified")
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-fup-RED-Level2.tsv" is appended (defaults to "MYDATA")}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"<FILENAME>-fup-RED-Level2.tsv".}
 
-\item{good.col}{Name of a column indicating which rows have been verified for
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+A data frame with one row per chemical, contains chemical identifiers 
+such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
+and point estimates for the fraction unbound in plasma (Fup)
+for all chemicals in the input data frame.
 }
 \description{
-This function uses mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using rapid equilibrium dialysis
-\insertCite{waters2008validation}{invitroTKstats}.
-Data are read from a "Level2" text file that should have been formatted and created
-by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-should have been curated and had a column added with the value "Y" indicating
-that each row is verified as usable for analysis (that is, the Level2 file).
+This function calculates the point estimates for the fraction unbound in plasma
+(Fup) using mass spectrometry (MS) peak areas from samples collected as part
+in vitro measurements of chemical Fup using rapid equilibrium dialysis
+\insertCite{waters2008validation}{invitroTKstats}. See the Details section
+for the equation(s) used in point estimation.
 }
 \details{
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_fup_red}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
+
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
@@ -37,12 +44,16 @@ of these types:
   Equilibrium chemical in plasma well \tab Plasma\cr
 }
 
-F_up is calculated from MS responses as:
+\eqn{f_{up}} is calculated from MS responses as:
 
-f_up = max(0,(mean(PBS Response * Dilution.Factor) -
-  mean(NoPlasma.Blank Response * Dilution.Factor))) / (
-  mean(Plasma Response * Dilution Factor) -
-  mean(Plasma.Blank Response * Dilution.Factor))
+
+\eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_{NPB}} (r_{NPB}*c_{DF})}{n_{NPB}}\right)}
+{\frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
+
+where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
+\eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
+\eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{B}} is Plasma Blank Response,
+and \eqn{n_B} is the number of Plasma Blank Responses.
 }
 \examples{
 red <- subset(wambaugh2019.red, Protein==100)
