@@ -55,8 +55,8 @@ contain columns with names specified by the following arguments:}
 \item{FILENAME}{A string used to identify outputs of the function call.
 (defaults to "MYDATA")}
 
-\item{sample.col}{Which column of data.in indicates the unique mass 
-spectrometry (MS) sample name used by the laboratory. (Defaults to 
+\item{sample.col}{Which column of data.in indicates the unique mass
+spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name")}
 
 \item{date.col}{Which column of data.in indicates the laboratory measurement
@@ -65,10 +65,10 @@ date (Defaults to "Date")}
 \item{compound.col}{Which column of data.in indicates the test compound
 (Defaults to "Compound.Name")}
 
-\item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure 
+\item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
-\item{lab.compound.col}{Which column of data.in indicates The test compound 
+\item{lab.compound.col}{Which column of data.in indicates The test compound
 name used by the laboratory (Defaults to "Lab.Compound.Name")}
 
 \item{type.col}{Which column of data.in indicates the sample type (see table
@@ -84,27 +84,27 @@ sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
 \item{istd.col}{Which column of data.in indicates the MS peak area for the
 internal standard (Defaults to "ISTD.Area")}
 
-\item{istd.name.col}{Which column of data.in indicates identity of the 
+\item{istd.name.col}{Which column of data.in indicates identity of the
 internal standard (Defaults to "ISTD.Name")}
 
 \item{istd.conc.col}{Which column of data.in indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{area.col}{Which column of data.in indicates the target analyte (that 
+\item{area.col}{Which column of data.in indicates the target analyte (that
 is, the test compound) MS peak area (Defaults to "Area")}
 
 \item{analysis.method.col}{Which column of data.in indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
 "Analysis.Method")}
 
-\item{analysis.instrument.col}{Which column of data.in indicates the 
-instrument used for chemical analysis, for example 
-"Agilent 6890 GC with model 5973 MS" (Defaults to 
+\item{analysis.instrument.col}{Which column of data.in indicates the
+instrument used for chemical analysis, for example
+"Agilent 6890 GC with model 5973 MS" (Defaults to
 "Analysis.Instrument")}
 
-\item{analysis.parameters.col}{Which column of data.in indicates the 
+\item{analysis.parameters.col}{Which column of data.in indicates the
 parameters used to identify the compound on the chemical analysis instrument,
-for example 
+for example
 "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 (Defaulys to "Analysis.Paramaters").}
 
@@ -120,7 +120,8 @@ test chemical concentration at time zero (Defaults to "Test.Target.Conc")}
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
+unbound in plasma using rapid equilibrium dialysis
+\insertCite{waters2008validation}{invitroTKstats}.
 An input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }
@@ -169,9 +170,7 @@ level1 <- format_fup_red(red,
 
 }
 \references{
-Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
-approach for the measurement of plasma protein binding." Journal of 
-Pharmaceutical Sciences 97.10 (2008): 4586-4595.
+\insertRef{waters2008validation}{invitroTKstats}
 }
 \author{
 John Wambaugh

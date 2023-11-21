@@ -18,7 +18,7 @@ plot_uc_results(
 )
 }
 \arguments{
-\item{dat}{level 2 data set}
+\item{dat}{Level 2 data set}
 
 \item{bayes}{MCMC results}
 
@@ -37,9 +37,9 @@ plot_uc_results(
 \item{name.col}{Which column of data indicates the test compound
 (Defaults to "Compound.Name")}
 
-\item{uc.dilute}{ultracentrifugation dilution factor}
+\item{uc.dilute}{Ultracentrifugation dilution factor (Defaults to 5)}
 
-\item{af.dilute}{aqueous fraction dilution factor}
+\item{af.dilute}{Aqueous fraction dilution factor (Defaults to 2)}
 }
 \value{
 A list of two plots, one with axes in original unit and one's axes in log10-scale

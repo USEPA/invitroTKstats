@@ -52,38 +52,38 @@ contain columns with names specified by the following arguments:}
 \item{FILENAME}{A string used to identify outputs of the function call.
 (defaults to "MYDATA")}
 
-\item{sample.col}{Which column of data.in indicates the unique mass 
-spectrometry (MS) sample name used by the laboratory. (Defaults to 
+\item{sample.col}{Which column of data.in indicates the unique mass
+spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name")}
 
-\item{lab.compound.col}{Which column of data.in indicates The test compound 
+\item{lab.compound.col}{Which column of data.in indicates The test compound
 name used by the laboratory (Defaults to "Lab.Compound.Name")}
 
-\item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure 
+\item{dtxsid.col}{Which column of data.in indicates EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
 
 \item{date.col}{Which column of data.in indicates the laboratory measurment
 date (Defaults to "Date")}
 
 \item{series.col}{Which column of PPB.data indicates the "series", that is
-a simultaneous replicate with the same analytical chemistry 
+a simultaneous replicate with the same analytical chemistry
 (Defaults to "Series")}
 
-\item{series}{If this argument is used (defaults to NULL) every observation 
+\item{series}{If this argument is used (defaults to NULL) every observation
 in the table is assigned the value of the argument and the corresponding
 column in input.table (if present) is ignored.}
 
 \item{compound.col}{Which column of data.in indicates the test compound
 (Defaults to "Compound.Name")}
 
-\item{area.col}{Which column of data.in indicates the target analyte (that 
+\item{area.col}{Which column of data.in indicates the target analyte (that
 is, the test compound) MS peak area (Defaults to "Area")}
 
 \item{istd.col}{Which column of data.in indicates the MS peak area for the
 internal standard (Defaults to "ISTD.Area")}
 
-\item{type.col}{Which column of data.in indicates the direction of the 
-measurements (either "AtoB" for apical to basolateral or "BtoA" for vice 
+\item{type.col}{Which column of data.in indicates the direction of the
+measurements (either "AtoB" for apical to basolateral or "BtoA" for vice
 versa) (Defaults to "Direction")}
 
 \item{direction.col}{Which column of data.in indicates the direction of
@@ -93,15 +93,15 @@ to aprical (BtoA). (Defaults to "Direction")}
 \item{membrane.area.col}{Which column of data.in indicates the area of the
 Caco-2 monolayer (in cm^2) (Defaults to "Membrane.Area")}
 
-\item{membrane.area}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{membrane.area}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{receiver.vol.col}{Which column of data.in indicates the volume 
+\item{receiver.vol.col}{Which column of data.in indicates the volume
 (in cm^3) of the receiver portion of the Caco-2 experimental well
 (Defaults to "Vol.Receiver")}
 
-\item{donor.vol.col}{Which column of data.in indicates the volume 
+\item{donor.vol.col}{Which column of data.in indicates the volume
 (in cm^3) of the donor portion of the Caco-2 experimental well where the
 test chemical is added
 (Defaults to "Vol.Donor")}
@@ -117,8 +117,8 @@ of the test chemical for calibration curves (Defaults to "Standard.Conc")}
 instance different machines on the same day or different days with the same
 MS analyzer (Defaults to "Cal")}
 
-\item{dilution}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{dilution}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{dilution.col}{Which column of data.in indicates how many times the
@@ -127,56 +127,56 @@ sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
 \item{meas.time.col}{Which column of data.in indicates the amount of time
 before the receiver and donor compartments are measured (Defaults to "Time")}
 
-\item{meas.time}{If this argument is used (defaults to 2 h) every 
-observation in the table is assigned the value of the argument and the 
+\item{meas.time}{If this argument is used (defaults to 2 h) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{istd.name}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{istd.name}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{istd.name.col}{Which column of data.in indicates identity of the 
+\item{istd.name.col}{Which column of data.in indicates identity of the
 internal standard (Defaults to "ISTD.Name")}
 
-\item{istd.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{istd.conc}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{istd.conc.col}{Which column of data.in indicates the concentration of
 the internal standard (Defaults to "ISTD.Conc")}
 
-\item{nominal.test.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{nominal.test.conc}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{nominal.test.conc.col}{Which column of data.in indicates the intended
 test chemical concentration at time zero in the dosing solution (added to the
 donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
 
-\item{analysis.method}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.method}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
 \item{analysis.method.col}{Which column of data.in indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
+chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
 "Analysis.Method")}
 
-\item{analysis.instrument}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.instrument}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{analysis.instrument.col}{Which column of data.in indicates the 
-instrument used for chemical analysis, for example 
-"Agilent 6890 GC with model 5973 MS" (Defaults to 
+\item{analysis.instrument.col}{Which column of data.in indicates the
+instrument used for chemical analysis, for example
+"Agilent 6890 GC with model 5973 MS" (Defaults to
 "Analysis.Instrument")}
 
-\item{analysis.parameters}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
+\item{analysis.parameters}{If this argument is used (defaults to NULL) every
+observation in the table is assigned the value of the argument and the
 corresponding column in input.table (if present) is ignored.}
 
-\item{analysis.parameters.col}{Which column of data.in indicates the 
+\item{analysis.parameters.col}{Which column of data.in indicates the
 parameters used to identify the compound on the chemical analysis instrument,
-for example 
+for example
 "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
 (Defaulys to "Analysis.Paramaters").}
 }
@@ -185,21 +185,21 @@ data.frame A data.frame in standardized "level1" format
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of membrane 
-permeability using Caco-2 cells (Hubatsch, 2007). The input data frame is 
-organized into a standard set of columns and is written to a tab-separated 
-text file.
+from samples collected as part of in vitro measurement of membrane
+permeability using Caco-2 cells \insertCite{hubatsch2007determination}{invitroTKstats}.
+The input data frame is organized into a standard set of columns and is
+written to a tab-separated text file.
 }
 \details{
-In this experiment an 
+In this experiment an
 in vitro well is separated into two by a membrane composed of a monolayer of
 Caco-2 cells. A test chemical is added to either the apical or basal side of
 of the monolayer at time 0, and after a set time samples are taken from both
 the "donor" (side where the test chemical was added) and the "receiver side.
 Depending on the direction of the test the donor side can be either apical or
-basal. 
+basal.
 
-The data frame of observations should be annotated according to direction 
+The data frame of observations should be annotated according to direction
 (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
 of concentration measured:
 \tabular{rr}{

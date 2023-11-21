@@ -4,7 +4,7 @@
 \name{smeltz2023.uc}
 \alias{smeltz2023.uc}
 \alias{Smeltz2023.uc}
-\title{Smeltz 2023 Ultracentrifugation Data Set}
+\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} Ultracentrifugation Data Set}
 \format{
 A level 2 data.frame with 10133 rows 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -36,11 +36,13 @@ A level 2 data.frame with 10133 rows 23 variables: \describe{
 smeltz2023.uc
 }
 \description{
-Mass Spectrometry measurements of plasma protein binding measured by 
+Mass Spectrometry measurements of plasma protein binding measured by
 ultracentrifugation for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 }
 \references{
 \insertRef{howard2010plasma}{invitroTKstats}
+
+\insertRef{smeltz2023plasma}{invitroTKstats}
 }
 \keyword{data}
