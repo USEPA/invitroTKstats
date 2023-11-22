@@ -1,34 +1,45 @@
-#' Plot Measurements of Fraction Unbound in Plasma (UC) of a Compound
+#' Plot Mass Spectrometry Responses for Fraction Unbound in Plasma Data from
+#' Ultracentrifugation (UC) with Calibration Curves
 #'
-#' This function plots the measurements of a compound with calibration curves
-#' from ultracentrifugation data. Users can use the returned plots for a reality
-#' check on the data collected and the Bayesian results, see if they are as expected.
-#' Data are read from a "Level2" text file.
+#' This function generates two scatter plots of mass spectrometry (MS) responses 
+#' by nominal concentration for one chemical, overlaid with Bayesian calibration curves.
+#' The MS responses were collected from measurement of fraction unbound in plasma (Fup)
+#' using ultracentrifugation (UC). The two scatter plots are differentiated by the unit of axes. 
+#' One plot uses axes in the original unit and one plot uses axes in log-10 scale. 
+#' Users can use the returned plots for a reality check on the data collected and the 
+#' Bayesian results, see if the data behave as expected.
 #'
-#' @param dat Level 2 data set
+#' @param dat (Data Frame) Level-2 Ultracentrifugation (UC) Fup assays data. 
+#' This should be the same Level-2 data used to generate \code{bayes}.
 #'
-#' @param bayes MCMC results
+#' @param bayes (List) MCMC results returned from \code{calc_fup_uc}.
 #'
-#' @param compound name of a compound
+#' @param compound (Character) Name of the compound to be plotted.
 #'
-#' @param cal Calibration Identifier
+#' @param cal (Character) Which calibration the data to be plotted is based on.
 #'
-#' @param MW molecular weight
+#' @param MW (Numeric) Molecular weight.
 #'
-#' @param quad.cal Quadratic Calibration curve results from Mass Spec
-#' (Defaults to NULL)
+#' @param quad.cal (List or Named Vector) Quadratic calibration curve results from Mass Spec. 
+#' (Defaults to \code{NULL}.)
 #'
-#' @param cal.col Which column of data indicates the calibration
-#' (Defaults to "Cal")
+#' @param cal.col (Character) Column name from \code{dat} containing the 
+#' the calibration information. Typically, this uses indices or dates to represent 
+#' if the analyses were done on different machines on 
+#' the same day or on different days with the same MS analyzer. (Defaults to "Cal".)
 #'
-#' @param name.col Which column of data indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param name.col (Character) Column name from \code{dat} containing compound names. 
+#' (Defaults to "Compound.Name".)
 #'
-#' @param uc.dilute Ultracentrifugation dilution factor (Defaults to 5)
+#' @param uc.dilute (Numeric) Number of times the sample was diluted before MS 
+#' analysis. (Defaults to 5.)
 #'
-#' @param af.dilute Aqueous fraction dilution factor (Defaults to 2)
+#' @param af.dilute (Numeric) Number of times the Aqueous Fraction samples were diluted before MS 
+#' analysis. (Defaults to 2.)
 #'
-#' @return A list of two plots, one with axes in original unit and one's axes in log10-scale
+#' @return A list of two scatter plots of MS responses versus nominal concentration,
+#' overlaid with a Bayesian calibration curve. One plot displays the axes in the original unit and 
+#' one displays the axes in log-10 scale.
 #'
 #' @author John Wambaugh
 #'

@@ -2,7 +2,8 @@
 % Please edit documentation in R/plot_uc_results.R
 \name{plot_uc_results}
 \alias{plot_uc_results}
-\title{Plot Measurements of Fraction Unbound in Plasma (UC) of a Compound}
+\title{Plot Mass Spectrometry Responses for Fraction Unbound in Plasma Data from
+Ultracentrifugation (UC) with Calibration Curves}
 \usage{
 plot_uc_results(
   dat,
@@ -18,37 +19,47 @@ plot_uc_results(
 )
 }
 \arguments{
-\item{dat}{Level 2 data set}
+\item{dat}{(Data Frame) Level-2 Ultracentrifugation (UC) Fup assays data. 
+This should be the same Level-2 data used to generate \code{bayes}.}
 
-\item{bayes}{MCMC results}
+\item{bayes}{(List) MCMC results returned from \code{calc_fup_uc}.}
 
-\item{compound}{name of a compound}
+\item{compound}{(Character) Name of the compound to be plotted.}
 
-\item{cal}{Calibration Identifier}
+\item{cal}{(Character) Which calibration the data to be plotted is based on.}
 
-\item{MW}{molecular weight}
+\item{MW}{(Numeric) Molecular weight.}
 
-\item{quad.cal}{Quadratic Calibration curve results from Mass Spec
-(Defaults to NULL)}
+\item{quad.cal}{(List or Named Vector) Quadratic calibration curve results from Mass Spec. 
+(Defaults to \code{NULL}.)}
 
-\item{cal.col}{Which column of data indicates the calibration
-(Defaults to "Cal")}
+\item{cal.col}{(Character) Column name from \code{dat} containing the 
+the calibration information. Typically, this uses indices or dates to represent 
+if the analyses were done on different machines on 
+the same day or on different days with the same MS analyzer. (Defaults to "Cal".)}
 
-\item{name.col}{Which column of data indicates the test compound
-(Defaults to "Compound.Name")}
+\item{name.col}{(Character) Column name from \code{dat} containing compound names. 
+(Defaults to "Compound.Name".)}
 
-\item{uc.dilute}{Ultracentrifugation dilution factor (Defaults to 5)}
+\item{uc.dilute}{(Numeric) Number of times the sample was diluted before MS 
+analysis. (Defaults to 5.)}
 
-\item{af.dilute}{Aqueous fraction dilution factor (Defaults to 2)}
+\item{af.dilute}{(Numeric) Number of times the Aqueous Fraction samples were diluted before MS 
+analysis. (Defaults to 2.)}
 }
 \value{
-A list of two plots, one with axes in original unit and one's axes in log10-scale
+A list of two scatter plots of MS responses versus nominal concentration,
+overlaid with a Bayesian calibration curve. One plot displays the axes in the original unit and 
+one displays the axes in log-10 scale.
 }
 \description{
-This function plots the measurements of a compound with calibration curves
-from ultracentrifugation data. Users can use the returned plots for a reality
-check on the data collected and the Bayesian results, see if they are as expected.
-Data are read from a "Level2" text file.
+This function generates two scatter plots of mass spectrometry (MS) responses 
+by nominal concentration for one chemical, overlaid with Bayesian calibration curves.
+The MS responses were collected from measurement of fraction unbound in plasma (Fup)
+using ultracentrifugation (UC). The two scatter plots are differentiated by the unit of axes. 
+One plot uses axes in the original unit and one plot uses axes in log-10 scale. 
+Users can use the returned plots for a reality check on the data collected and the 
+Bayesian results, see if the data behave as expected.
 }
 \author{
 John Wambaugh
