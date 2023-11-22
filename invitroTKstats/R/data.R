@@ -12,7 +12,7 @@
 #' @docType data
 #' @format A data.frame 23,021 rows and 15 variables: \describe{
 #' \item{\code{Preferred.Name}}{}
-#' \item{\code{CAS}}{}
+#' \item{\code{CAS}}{CAS Registry Number of the test compound.}
 #' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
 #' \item{\code{Sample.Name}}{Sample name used by the laboratory.}
 #' \item{\code{Name}}{}
@@ -53,8 +53,8 @@
 #' @format A data.frame 520 rows and 14 variables: \describe{
 #' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
 #' \item{\code{PREFERRED_NAME}}{Preferred name for a test compound.}
-#' \item{\code{CASRN}}{}
-#' \item{\code{MOLECULAR_FORMULA}}{}
+#' \item{\code{CASRN}}{CAS Registry Number of the test compound.}
+#' \item{\code{MOLECULAR_FORMULA}}{Molecular formula of the test compound.}
 #' \item{\code{AVERAGE_MASS}}{}
 #' \item{\code{QSAR_READY_SMILES}}{}
 #' \item{\code{LC}}{Logical variable if liquid chromatography-mass spectrometry was used.}
@@ -83,7 +83,7 @@
 #' @docType data
 #' @format A data.frame 17,689 rows and 14 variables: \describe{
 #' \item{\code{Preferred.Name}}{Preferred name used for a test compound.}
-#' \item{\code{CAS}}{}
+#' \item{\code{CAS}}{CAS Registry Number of the test compound.}
 #' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
 #' \item{\code{SampleName}}{Sample name used by the laboratory.}
 #' \item{\code{CompoundName}}{}

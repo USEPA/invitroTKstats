@@ -9,8 +9,8 @@
 A data.frame 520 rows and 14 variables: \describe{
 \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
 \item{\code{PREFERRED_NAME}}{Preferred name for a test compound.}
-\item{\code{CASRN}}{}
-\item{\code{MOLECULAR_FORMULA}}{}
+\item{\code{CASRN}}{CAS Registry Number of the test compound.}
+\item{\code{MOLECULAR_FORMULA}}{Molecular formula of the test compound.}
 \item{\code{AVERAGE_MASS}}{}
 \item{\code{QSAR_READY_SMILES}}{}
 \item{\code{LC}}{Logical variable if liquid chromatography-mass spectrometry was used.}

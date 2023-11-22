@@ -20,7 +20,7 @@ scientific_10 <- function(x) {
 #'
 #' @param threshold (Numeric) A threshold value used to compare to elements in \code{x}. (Defaults to 0.)
 #'
-#' @return A vector of 1 and 0, 1 indicates the element in \code{x} is larger or equal to the threshold.
+#' @return A vector of 1 and 0 in which 1 indicates the element in \code{x} is larger or equal to the threshold.
 #'
 #'
 Heaviside <- function(x, threshold=0)
@@ -32,9 +32,9 @@ Heaviside <- function(x, threshold=0)
 
 #' Convert a runjags-class object to a list
 #'
-#' @param runjagsdata.in (\code{runjags} Object) MCMC results from autorun.jags.
+#' @param runjagsdata.in (\code{runjags} Object) MCMC results from \code{autorun.jags}.
 #'
-#' @return List object containing MCMC results from the provided runjags object.
+#' @return A list object containing MCMC results from the provided runjags object.
 #'
 #'
 runjagsdata.to.list <- function(runjagsdata.in)

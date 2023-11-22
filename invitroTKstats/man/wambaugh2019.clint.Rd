@@ -7,7 +7,7 @@
 \format{
 A data.frame 23,021 rows and 15 variables: \describe{
 \item{\code{Preferred.Name}}{}
-\item{\code{CAS}}{}
+\item{\code{CAS}}{CAS Registry Number of the test compound.}
 \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
 \item{\code{Sample.Name}}{Sample name used by the laboratory.}
 \item{\code{Name}}{}

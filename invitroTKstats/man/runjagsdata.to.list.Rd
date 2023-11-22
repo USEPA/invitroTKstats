@@ -7,10 +7,10 @@
 runjagsdata.to.list(runjagsdata.in)
 }
 \arguments{
-\item{runjagsdata.in}{(\code{runjags} Object) MCMC results from autorun.jags.}
+\item{runjagsdata.in}{(\code{runjags} Object) MCMC results from \code{autorun.jags}.}
 }
 \value{
-List object containing MCMC results from the provided runjags object.
+A list object containing MCMC results from the provided runjags object.
 }
 \description{
 Convert a runjags-class object to a list
