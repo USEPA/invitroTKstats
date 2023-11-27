@@ -12,7 +12,8 @@
 #' @param dat (Data Frame) Level-2 Ultracentrifugation (UC) Fup assays data. 
 #' This should be the same Level-2 data used to generate \code{bayes}.
 #'
-#' @param bayes (List) MCMC results returned from \code{calc_fup_uc}.
+#' @param bayes (List of \code{runjags} Objects) MCMC results returned as \code{coda} as part 
+#' of the results from \code{calc_fup_uc}.
 #'
 #' @param compound (Character) Name of the compound to be plotted.
 #'
@@ -31,7 +32,7 @@
 #' @param name.col (Character) Column name from \code{dat} containing compound names. 
 #' (Defaults to "Compound.Name".)
 #'
-#' @param uc.dilute (Numeric) Number of times the sample was diluted before MS 
+#' @param uc.dilute (Numeric) Number of times the Ultracentrifugation samples were diluted before MS 
 #' analysis. (Defaults to 5.)
 #'
 #' @param af.dilute (Numeric) Number of times the Aqueous Fraction samples were diluted before MS 
