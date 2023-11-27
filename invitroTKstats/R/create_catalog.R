@@ -44,10 +44,11 @@
 #' 
 #' @example 
 #' create_catalog(
-#'   file = "testME.xlsx",sheet = 3,skip.rows = NA,
-#'   date = "092723",compound = "80-05-7",
-#'   istd = NA,sample = "ABC",type = "CC",
-#'   peak = NA,istd.peak = NA,conc = 34,analysis.param = "clint"
+#'   file = "testME.xlsx",sheet = "3",skip.rows = 0,
+#'   date = "112723",compound = "80-05-7",
+#'   istd = "Chemical A",sample = "Sample.Name",type = "Type",
+#'   peak = "Response.Area",istd.peak = "ISTD.Peak.Area",
+#'   conc = "Intended.Concentration",analysis.param = "A,B,C"
 #' )
 #' 
 #' @export
@@ -97,8 +98,8 @@ create_catalog <- function(
   # build the base catalog
   catalog <- cbind.data.frame(
     file,sheet,skip.rows,
-    date,compound,istd,sample,istd.peak,
-    type,peak,conc,analysis.param
+    date,compound,istd,sample,type,
+    peak,istd.peak,conc,analysis.param
   )
   colnames(catalog) <- std.catcols
   
