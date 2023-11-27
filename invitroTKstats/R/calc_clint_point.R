@@ -197,8 +197,8 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   
   # satdecay - This function calculates the test compound concentration at time t, 
   # using a model of exponential decay with time while considering a saturation probability. 
-  # C(t) = C_0*e^{-m*sat*t}. C_0 is the test compound concentration at time 0, m is a rate 
-  # constant (argument k_elim), and t is the incubation time in hours. 
+  # C(t) = C_0*e^{-m*sat*t}. C_0 is the test compound concentration at time 0, m is the elimination 
+  # rate constant (argument k_elim), and t is the incubation time in hours. 
   # sat is the probability of saturation, defined as observing a lower clearance at a higher 
   # concentration. At 1 uM, sat is 1, meaning saturation is unlikely at the current concentration 
   # and is going to be observed at a higher concentration. At 10 uM, sat is between 0 and 1, 
