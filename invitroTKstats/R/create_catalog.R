@@ -42,7 +42,7 @@
 #' 
 #' @seealso merge_level0
 #' 
-#' @example 
+#' @examples 
 #' create_catalog(
 #'   file = "testME.xlsx",sheet = "3",skip.rows = 0,
 #'   date = "112723",compound = "80-05-7",
