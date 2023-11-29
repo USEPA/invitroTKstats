@@ -1,5 +1,5 @@
 ---
-title: "plotting-invitroTKstats"
+title: "invitroTKstats Plotting Functions Demonstration"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{plotting-invitroTKstats}
@@ -25,7 +25,7 @@ The goal of this vignette is to showcase the two plotting functions in `invitroT
 ## plot_clint.R
 `plot_clint` generates a time-versus-responses scatter plot for one specified chemical. The data set used in this example is `kreutz2023.clint` from `Kreutz2023.RData`. 
 
-```{r example clint, warning=FALSE}
+```{r example clint, warning=FALSE, fig.height=4.5, fig.width=7}
 # Load data in 
 level2.clint <- invitroTKstats::kreutz2023.clint
 
@@ -61,7 +61,7 @@ for (id in unique(subset$DTXSID)[1:4]) {
 ## plot_fup_uc.R
 `plot_fup_uc` generates a responses by sample type plot for one specified chemical. The data set used in this example is `kreutz2023.uc` from `Kreutz2023.RData`. 
 
-```{r example fup_uc, warning=FALSE}
+```{r example fup_uc, warning=FALSE, fig.height=4.5, fig.width=7}
 # load in data
 level2.uc <- invitroTKstats::kreutz2023.uc
 
