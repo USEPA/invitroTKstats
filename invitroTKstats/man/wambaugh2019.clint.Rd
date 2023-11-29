@@ -6,21 +6,17 @@
 \title{Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Hepatocyte Incubations}
 \format{
 A data.frame 23,021 rows and 15 variables: \describe{
-\item{\code{Preferred.Name}}{}
+\item{\code{Preferred.Name}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD).}
 \item{\code{CAS}}{CAS Registry Number of the test compound.}
 \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
 \item{\code{Sample.Name}}{Sample name used by the laboratory.}
-\item{\code{Name}}{}
-\item{\code{Transition}}{}
-\item{\code{Area}}{The test compound MS peak area.}
-\item{\code{ISTD.Area}}{MS peak area for the internal standard.}
-\item{\code{ISTDResponseRatio}}{}
-\item{\code{ln...Remaining}}{}
+\item{\code{Name}}{Compound names used by the laboratory.}
+\item{\code{Area}}{Mass spectrometry peak area for the test compound.}
+\item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
+\item{\code{ISTDResponseRatio}}{The ratio between \code{Area} (area for the tested compound) to \code{ISTD.Area} (area for the internal standard).}
 \item{\code{Time..mins.}}{Time in minues between when the incubation started and when the sample was taken.}
-\item{\code{Conc}}{Test compound concentration.}
-\item{\code{TaskOrder}}{}
-\item{\code{FileName}}{}
-\item{\code{X}}{}
+\item{\code{Conc}}{Concentration used in the assay.}
+\item{\code{FileName}}{Name of the level 0 file that contained the data.}
 }
 }
 \source{
