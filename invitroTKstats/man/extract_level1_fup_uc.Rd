@@ -26,45 +26,64 @@ extract_level1_fup_uc(
 )
 }
 \arguments{
-\item{data.set}{A data frame containing a sheet of data for conversion}
+\item{data.set}{(Data Frame) A data frame containing a sheet of data for conversion.}
 
-\item{chem.name}{A string giving the lab name of the chemical analyzed}
+\item{chem.name}{(Character) A string giving the lab name of the chemical analyzed. The
+value provided is used for all rows in the output data frame.}
 
-\item{area.col.num}{An integer indicating which column of data.set contains
-the MS feature area for the chemical}
+\item{area.col.num}{(Numeric) An integer indicating which column of data.set contains
+the MS feature area for the chemical.}
 
-\item{ISTD.name}{A string indicating the internal standard used}
+\item{ISTD.name}{(Character) A string indicating the internal standard used. The
+value provided is used for all rows in the output data frame.}
 
-\item{ISTD.offset}{An integer indicating how many columns difference there
-is between the chemical of study MS area and the ISTD MS area (defaults to 2)}
+\item{ISTD.offset}{(Numeric) An integer indicating how many columns difference there
+is between the chemical of study MS area and the ISTD MS area. (Defaults to 2.)}
 
-\item{analysis.method}{A string describing the chemical analysis method 
-(Defaults to "GC", that is gas chromatography)}
+\item{analysis.method}{(Character) A string describing the chemical analysis method. The
+value provided is used for all rows in the output data frame. 
+(Defaults to "GC", that is gas chromatography.)}
 
-\item{instrument}{A string describing the instrument used for chemical 
-analysis (Defaults to "Something or Other 3000",}
+\item{instrument}{(Character) A string describing the instrument used for chemical 
+analysis. The value provided is used for all rows in the output data frame. 
+(Defaults to "Something or Other 3000".)}
 
-\item{inst.param.offset}{An integer indicating the difference in the number 
-of columns between the MS peak area and the column giving the instrument 
-parameters (Defaults to -3)}
+\item{inst.param.offset}{(Numeric) An integer indicating the difference in the number
+of columns between the MS peak area and the column giving the instrument
+parameters. (Defaults to -3.)}
 
-\item{conc.offset}{An integer indicating the difference in the number 
+\item{conc.offset}{(Numeric) An integer indicating the difference in the number
 of columns between the MS peak area and the column giving the intended
-concentration for calibration curves (Defaults to -2)}
+concentration for calibration curves. (Defaults to -2.)}
 
-\item{area.base}{A character string used for forming the name of MS
-feature area column names (used for both test chemical and ISTD) (Defaults to
-"Area..."}
+\item{area.base}{(Character) A character string used for forming the name of MS
+feature area column names (used for both test chemical and ISTD). (Defaults to
+"Area...".)}
 
-\item{inst.param.base}{A character string used for forming the name of the
-chemical analysis instrument parameter column name (Defaults to "RT...")}
+\item{inst.param.base}{(Character) A character string used for forming the name of the
+chemical analysis instrument parameter column name. (Defaults to "RT...".)}
 
-\item{conc.base}{A character string used for forming the name of the 
-calibration curve intended concentration column name (Defaults to 
-"Final Conc....")}
+\item{conc.base}{(Character) A character string used for forming the name of the
+calibration curve intended concentration column name. (Defaults to
+"Final Conc....".)}
 
-\item{id.cols}{A vector of character strings used for identifying each
-sample (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time")}
+\item{id.cols}{(Character Vector) A vector of character strings used for identifying each
+sample. (Defaults to c("Name", "Data File", "Type", "Acq. Date-Time").)}
+
+\item{type.indicator.col}{(Character) A character string indicating which column of 
+data.set contains the type of observation. (Defaults to "Name".)}
+
+\item{AF.type.str}{(Character) String used to annotate observation of this type: Aqueous Fraction. 
+(Defaults to "AF".)}
+
+\item{T1.type.str}{(Character) String used to annotate observation of this type: Whole Plasma T1h Sample. 
+(Defaults to "T1".)}
+
+\item{T5.type.str}{(Character) String used to annotate observation of this type: Whole Plasma T5h Sample. 
+(Defaults to "T5".)}
+
+\item{CC.type.str}{(Character) String used to annotate observation of this type: Calibration Curve. 
+(Defaults to "CC".)}
 }
 \value{
 \item{data.frame}{A data.frame in standardized "level1" format}
@@ -85,13 +104,11 @@ of these types:
 }
 \examples{
 library(invitroTKstats)
-level0 <- 
+level0 <-
 
 }
 \references{
-Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
-lipoproteins by density-gradient ultracentrifugation." Analytical 
-Biochemistry 65.1-2 (1975): 42-49.#'
+\insertRef{redgrave1975separation}{invitroTKstats}
 }
 \author{
 John Wambaugh

@@ -2,11 +2,11 @@
 % Please edit documentation in R/format_clint.R
 \name{format_clint}
 \alias{format_clint}
-\title{Creates a standardized data table reporting hepatocyte clearance data}
+\title{Creates a Standardized Data Table with Hepatocyte Clearance Data (Level-1)}
 \usage{
 format_clint(
-  data.in,
   FILENAME = "MYDATA",
+  data.in,
   sample.col = "Lab.Sample.Name",
   date = NULL,
   date.col = "Date",
@@ -22,8 +22,8 @@ format_clint(
   cal.col = "Cal",
   dilution = NULL,
   dilution.col = "Dilution.Factor",
-  time.col = "Time",
   time = 2,
+  time.col = "Time",
   istd.col = "ISTD.Area",
   istd.name = NULL,
   istd.name.col = "ISTD.Name",
@@ -41,161 +41,195 @@ format_clint(
   analysis.parameters = NULL,
   analysis.parameters.col = "Analysis.Parameters",
   note.col = "Note",
-  level0.file.col = "Level0.File",
   level0.file = NULL,
-  level0.sheet.col = "Level0.Sheet",
-  level0.sheet = NULL
+  level0.file.col = "Level0.File",
+  level0.sheet = NULL,
+  level0.sheet.col = "Level0.Sheet"
 )
 }
 \arguments{
-\item{data.in}{A data frame containing mass-spectrometry peak areas,
+\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
+"<FILENAME>-Clint-Level1.tsv". (Defaults to "MYDATA").}
+
+\item{data.in}{(Data Frame) A Level-0 data frame or a matrix containing mass-spectrometry peak areas,
 indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
-\item{FILENAME}{A string used to identify outputs of the function call.
-(defaults to "MYDATA")}
+\item{sample.col}{(Character) Column name of \code{data.in} containing the unique mass
+spectrometry (MS) sample name used by the laboratory. (Defaults to
+"Lab.Sample.Name".)}
 
-\item{sample.col}{Which column of input.data indicates the unique mass 
-spectrometry (MS) sample name used by the laboratory. (Defaults to 
-"Lab.Sample.Name")}
+\item{date}{(Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+(Note: Single entry only, 
+use only if all data were collected on the same date.)}
 
-\item{date.col}{Which column of input.data indicates the laboratory measurement
-date (Defaults to "Date")}
+\item{date.col}{(Character) Column name containing \code{date} information. (Defaults to "Date".)
+(Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{date}.)}
 
-\item{compound.col}{Which column of input.data indicates the test compound
-(Defaults to "Compound.Name")}
+\item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
+(Defaults to "Compound.Name".)}
 
-\item{dtxsid.col}{Which column of input.data indicates EPA's DSSTox Structure 
-ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
+\item{dtxsid.col}{(Character) Column name of \code{data.in} containing EPA's DSSTox Structure
+ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{lab.compound.col}{Which column of input.data indicates The test compound 
-name used by the laboratory (Defaults to "Lab.Compound.Name")}
+\item{lab.compound.col}{(Character) Column name of \code{data.in} containing the test compound
+name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 
-\item{type.col}{Which column of input.data indicates the direction of the 
-measurements (either "AtoB" for apical to basolateral or "BtoA" for vice 
-versa) (Defaults to "Direction")}
+\item{type.col}{(Character) Column name of \code{data.in} containing the sample type (see table
+under Details). (Defaults to "Sample.Type".)}
 
-\item{density.col}{A single value to be used for all samples indicating
-the density of hepatocytes in suspension (10^6 hepatocytes / mL) 
-(Defaults to NULL)}
+\item{density}{(Numeric) The density (units of
+millions of hepatocytes per mL) hepatocytes in the in vitro incubation. 
+(Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if all tested compounds have the same density.)}
 
-\item{cal}{If this argument is used (defaults to NULL) every observation in
-the table is assigned the value of the argument and the corresponding
-column in input.table (if present) is ignored.
+\item{density.col}{(Character) Column name containing \code{density} 
+information. (Defaults to "Hep.Density".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{density}.)}
 
-#param compound.conc.col Which column indicates the intended concentration 
-of the test chemical for calibration curves (Defaults to "Standard.Conc")}
+\item{compound.conc}{(Numeric) The concentration 
+of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if all tested compounds have the same concentration for calibration curves.)}
 
-\item{cal.col}{Which column of input.data indicates the MS calibration -- for
-instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")}
+\item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
+information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{compound.conc}.)}
 
-\item{dilution}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
+indices or dates to represent if the analyses were done on different machines on 
+the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
+(Note: Single entry only, 
+use only if all data were collected based on the same calibration.)}
 
-\item{dilution.col}{Which column of data.in indicates how many times the
-sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
+\item{cal.col}{(Character) Column name containing \code{cal} 
+information. (Defaults to "Cal".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{cal}.)}
 
-\item{time.col}{Which column of data.in indicates the intended
-time of the measurment (in minutes) since the test chemical was introduced
-into the hepatocyte incubation (Defaults to "Time")}
+\item{dilution}{(Numeric) Number of times the sample was diluted before MS 
+analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+samples underwent the same number of dilutions.)}
 
-\item{istd.col}{Which column of input.data indicates the MS peak area for the
-internal standard (Defaults to "ISTD.Area")}
+\item{dilution.col}{(Character) Column name containing \code{dilution} 
+information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{dilution}.)}
 
-\item{istd.name}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{time}{(Numeric) Time of the measurement (in minutes) since the test 
+chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)}
 
-\item{istd.name.col}{Which column of input.data indicates identity of the 
-internal standard (Defaults to "ISTD.Name")}
+\item{time.col}{(Character) Column name containing \code{time} 
+information. (Defaults to "Time".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{time}.)}
 
-\item{istd.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{istd.col}{(Character) Column name of \code{data.in} containing the
+MS peak area for the internal standard. (Defaults to "ISTD.Area".)}
 
-\item{istd.conc.col}{Which column of input.data indicates the concentration of
-the internal standard (Defaults to "ISTD.Conc")}
+\item{istd.name}{(Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if all tested compounds use the same internal standard.)}
 
-\item{area.col}{Which column of input.data indicates the target analyte (that 
-is, the test compound) MS peak area (Defaults to "Area")}
+\item{istd.name.col}{(Character) Column name containing \code{istd.name} information. 
+(Defaults to "ISTD.Name".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{istd.name}.)}
 
-\item{analysis.method}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{istd.conc}{(Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if all tested compounds have the same 
+internal standard concentration.)}
 
-\item{analysis.method.col}{Which column of input.data indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
-"Analysis.Method")}
+\item{istd.conc.col}{(Character) Column name containing \code{istd.conc} information. 
+(Defaults to "ISTD.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{istd.conc}.)}
 
-\item{analysis.instrument}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{std.conc}{(Numeric) The standard test chemical concentration for 
+the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if the same standard concentration was used for all tested compounds.)}
 
-\item{analysis.instrument.col}{Which column of input.data indicates the 
-instrument used for chemical analysis, for example 
-"Agilent 6890 GC with model 5973 MS" (Defaults to 
-"Analysis.Instrument")}
+\item{std.conc.col}{(Character) Column name containing \code{std.conc} 
+information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{std.conc}.)}
 
-\item{analysis.parameters}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{clint.assay.conc}{(Numeric) The initial test chemical concentration for 
+the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if the same initial concentration was used for all tested compounds.)}
 
-\item{analysis.parameters.col}{Which column of input.data indicates the 
-parameters used to identify the compound on the chemical analysis instrument,
-for example 
-"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-(Defaulys to "Analysis.Paramaters").}
+\item{clint.assay.conc.col}{(Character) Column name containing \code{clint.assay.conc} 
+information. (Defaults to "Clint.Assay.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{clint.assay.conc}.)}
 
-\item{level0.file.col}{Which column of PPB.data indicates the file from
-which the data were obtained (for example "MyWorkbook.xlsx").}
+\item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
+is, the test compound) MS peak area. (Defaults to "Area".)}
 
-\item{level0.file}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{analysis.method}{(Character) The analytical chemistry analysis method, 
+typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
+(Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if the same method was used for all tested compounds.)}
 
-\item{level0.sheet.col}{Which column of PPB.data indicates the specific 
-sheet containing the data if the file is an Excel workbook}
+\item{analysis.method.col}{(Character) Column name containing \code{analysis.method} 
+information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{analysis.method}.)}
 
-\item{level0.sheet}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{analysis.instrument}{(Character) The instrument used for chemical analysis, 
+for example "Waters Xevo TQ-S micro (QEB0036)". (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if the same instrument was used for all tested compounds.)}
 
-\item{conc.col}{Which column of data.in indicates the intended
-test chemical concentration 
-(units if uM) of
-at time zero (Defaults to "Conc")}
+\item{analysis.instrument.col}{(Character) Column name containing \code{analysis.instrument} 
+information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{analysis.instrument}.)}
 
-\item{input.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identity, and measurement type. The data frame should
-contain columns with names specified by the following arguments:}
+\item{analysis.parameters}{(Numeric) The parameters used to identify the 
+compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if the same parameters were used for all tested compounds.)}
 
-\item{series.col}{Which column of PPB.data indicates the "series", that is
-a simultaneous replicate with the same analytical chemistry 
-(Defaults to "Series")}
+\item{analysis.parameters.col}{(Character) Column name containing \code{analysis.parameters} 
+information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{analysis.parameters}.)}
 
-\item{series}{If this argument is used (defaults to NULL) every observation 
-in the table is assigned the value of the argument and the corresponding
-column in input.table (if present) is ignored.}
+\item{note.col}{(Character) Column name of \code{data.in} containing additional notes on 
+test compounds. (Defaults to "Note").}
 
-\item{nominal.test.conc.col}{Which column of input.data indicates the intended
-test chemical concentration at time zero in the dosing solution (added to the
-donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
+\item{level0.file}{(Character) The Level-0 file from which the \code{data.in} were obtained.
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+were obtained from the same Level-0 file.)}
 
-\item{nominal.test.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{level0.file.col}{(Character) Column name containing \code{level0.file} information. 
+(Defaults to "Level0.File".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{level0.file}.)}
+
+\item{level0.sheet}{(Character) The specific sheet name of Level-0 file from which the 
+\code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+were obtained from the same sheet in the same Level-0 file.)}
+
+\item{level0.sheet.col}{(Character) Column name containing \code{level0.sheet} information.
+(Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{level0.sheet}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized "level1" format}
+A Level-1 data frame with a standardized format containing a  
+standardized set of columns and column names with hepatic
+clearance data for a variety of chemicals.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
 from samples collected as part of in vitro measurement of chemical stability
-when incubated with suspended hepatocytes (Shibata, 2000). Disappearance of 
-the chemical over time is assumed to be due to metabolism by the hepatocytes.
-An input data frame is organized into a standard set of columns and is written
+when incubated with suspended hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
+Disappearance of the chemical over time is assumed to be due to metabolism
+by the hepatocytes.
+The input data frame is organized into a standard set of columns and is written
 to a tab-separated text file.
 }
 \details{
@@ -207,7 +241,9 @@ of these types:
   Inactivated Hepatocytes \tab Inactive\cr
   Calibration Curve \tab CC\cr
 }
-Chemical concentration is calculated qualitatively as a response:
+
+Chemical concentration is calculated qualitatively as a response and 
+returned as a column in the output data frame:
 
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }

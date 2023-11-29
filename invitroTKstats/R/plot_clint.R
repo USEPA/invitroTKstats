@@ -1,27 +1,23 @@
-#' Plot Mass Spec. Response for Measurement of Fraction Unbound in Plasma (UC)
+#' Plot Mass Spectrometry Responses from Measurements of Intrinsic
+#' Hepatic Clearance
 #'
-#' This function use describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats}.
-#' Data are read from a "Level2" text file that should have been formatted and created
-#' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-#' should have been curated and had a column added with the value "Y" indicating
-#' that each row is verified as usable for analysis (that is, the Level2 file).
+#' This function generates a response-versus-time plot of mass spectrometry (MS) 
+#' responses collected from measurements of intrinsic hepatic clearance for a chemical.
+#' Responses from different measurements/calibrations are labeled with different colors, 
+#' and responses from various sample types are labeled with different shapes.  
 #'
-#' The should be annotated according to
-#' of these types:
-#' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
-#'   Plasma well concentration \tab Plasma\cr
-#'   Phosphate-buffered well concentration\tab PBS\cr
-#'   Time zero plasma concentration \tab T0\cr
-#' }
-#' @param level2 A data.frame containing level2 data for fraction unbound in
-#' plasma measured by ultracentrifugation.
+#' The function requires "Level-2" data for plotting. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_clint}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for plotting.  
+#' 
+#' @param level2 (Data Frame) A data frame containing Level-2 data with a measure
+#' of chemical clearance over time when incubated with suspended hepatocytes.
+#' 
+#' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
 #'
-#' @param dtxsid Which chemical to be plotted.
-#'
-#' @return \item{ggplot2}{A figure of mass spec. response for different sample types}
+#' @return \item{ggplot2}{A figure of mass spectrometry responses over time for
+#' various sample types.}
 #'
 #' @author John Wambaugh
 #'

@@ -4,7 +4,7 @@
 \name{kreutz2023.clint}
 \alias{kreutz2023.clint}
 \alias{Kreutz2023.clint}
-\title{Kreutz 2023 intrinsic hepatic clearance data set}
+\title{\insertCite{kreutz2023category;textual}{invitroTKstats} intrinsic hepatic clearance data set}
 \format{
 A level 2 data.frame with 5800 rows 24 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -38,12 +38,14 @@ kreutz2023.clint
 }
 \description{
 Mass Spectrometry measurements of intrinsic hepatic clearance for
-cryopreserved pooled human hepatocytes. Chemicals were per- and 
+cryopreserved pooled human hepatocytes. Chemicals were per- and
 'poly-fluorinated alkyl substance
-(PFAS) samples. The experiments were 
+(PFAS) samples. The experiments were
 led by Dr.s Anna Kreutz and Barbara Wetmore.
 }
 \references{
 \insertRef{shibata2002prediction}{invitroTKstats}
+
+\insertRef{kreutz2023category}{invitroTKstats}
 }
 \keyword{datasets}

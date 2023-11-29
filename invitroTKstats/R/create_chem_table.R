@@ -1,21 +1,28 @@
-#' Creates a standardized data table of chemical identities
+#' Creates a Standardized Data Table of Chemical Identities
 #'
-#' This function extracts the chemical analysis methods from a set of MS data.
+#' This function creates a data frame summarizing chemical identifiers used for 
+#' each tested chemical in MS data. Each row in the resulting data frame provides 
+#' EPA's DSSTox Structure ID (dtxsid), preferred compound name, and the name used 
+#' by the laboratory.
 #'
-#' @param input.table A data frame containing mass-spectrometry peak areas,
+#' @param input.table (Data Frame) A data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and analytical chemistry methods.
 #' It should contain columns with names specified by the following arguments:
 #' 
-#' @param dtxsid.col Which column of input.table indicates EPA's DSSTox Structure 
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' @param dtxsid.col (Character) Column name of \code{input.table} containing
+#' EPA's DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard}).
+#' (Defaults to "DTXSID".)
 #' 
-#' @param compound.col Which column of input.table indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param compound.col (Character) Column name of \code{input.table} containing
+#' the test compound. (Defaults to "Compound.Name".)
 #' 
-#' @param lab.compound.col Which column of PPB.data indicates The test compound 
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' @param lab.compound.col (Character) Column name of \code{input.table} containing the test compound 
+#' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
 #' 
-#' @return A data.frame with one row per method 
+#' @return A data frame containing the chemical identifiers for all unique
+#' chemicals in the input data frame.  Each row per maps a unique chemical,
+#' indicated by the DTXSID, to all the preferred compound names
+#' and all chemical names used by the laboratory referenced in the input data frame.   
 #'
 #' @author John Wambaugh
 #'
@@ -28,16 +35,6 @@
 #'
 #' # Kreutz et al. (2020) data:
 #' create_chem_table(kreutz2020,compound.col="Name")
-#'
-#' # Wambaugh et al. (2019) data:
-#' # Strip out protein conc information from compound names:
-#' wambaugh2019.red$CompoundName <- gsub("-100P","",wambaugh2019.red$CompoundName)
-#' wambaugh2019.red$CompoundName <- gsub("-30P","",wambaugh2019.red$CompoundName)
-#' wambaugh2019.red$CompoundName <- gsub("-10P","",wambaugh2019.red$CompoundName)
-#'
-#' wambaugh2019.redchems <- create_chem_table(wambaugh2019.red,
-#'    compound.col="Preferred.Name",
-#'    lab.compound.col="CompoundName")
 #'
 #' @export create_chem_table
 create_chem_table <- function(input.table,

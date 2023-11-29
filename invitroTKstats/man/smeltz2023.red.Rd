@@ -4,7 +4,7 @@
 \name{smeltz2023.red}
 \alias{smeltz2023.red}
 \alias{Smeltz2023.red}
-\title{Smeltz 2023 rapid equlibriation dialysis dat set}
+\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equlibriation dialysis data set}
 \format{
 A level 2 data.frame with 3897 rows 25 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -38,11 +38,13 @@ A level 2 data.frame with 3897 rows 25 variables: \describe{
 smeltz2023.red
 }
 \description{
-Mass Spectrometry measurements of plasma protein binding measured by 
+Mass Spectrometry measurements of plasma protein binding measured by
 rapid equlibriation dialysis for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 }
 \references{
 \insertRef{waters2008validation}{invitroTKstats}
+
+\insertRef{smeltz2023plasma}{invitroTKstats}
 }
 \keyword{data}

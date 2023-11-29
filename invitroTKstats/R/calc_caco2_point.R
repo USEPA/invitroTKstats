@@ -19,14 +19,17 @@
 #'   Receiver compartment at end of experiment\tab R2\cr
 #' }
 #'
-#' Apparent membrane permeability (Papp) is calculated from MS responses as:
+#' Apparent membrane permeability (\eqn{P_{app}}) is calculated from MS responses as:
 #'
-#' P_app = (dQ/dt) / C_0 / A
 #'
-#' The rate of permeation, dQ/dt (peak area/s) is calculated as:
+#' \eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
 #'
-#' dQ/dt = max(0,(mean(PBS Response * Dilution.Factor) -
-#'   mean(Blank Response * Dilution.Factor)))
+#' The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
+#'
+#' \eqn{\frac{dQ}{dt} = \max\left(0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}\right)}
+#'
+#' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
+#' \eqn{n_P} is the number of PBS Responses, and \eqn{n_B} is the number of Blank Responses.
 #'
 #' @param FILENAME A string used to identify the input file, whatever the
 #' argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")
@@ -86,6 +89,8 @@
 #'
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
+#'
+#' @import Rdpack
 #'
 #' @export calc_caco2_point
 calc_caco2_point <- function(FILENAME, good.col="Verified")
