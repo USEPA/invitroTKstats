@@ -95,6 +95,8 @@
 #' @references
 #'  \insertRef{waters2008validation}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export calc_fup_red_point
 calc_fup_red_point <- function(FILENAME, good.col="Verified")
 {

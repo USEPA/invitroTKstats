@@ -2,16 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{runjagsdata.to.list}
 \alias{runjagsdata.to.list}
-\title{Convert a runjags object to a list}
+\title{Convert a runjags-class object to a list}
 \usage{
 runjagsdata.to.list(runjagsdata.in)
 }
 \arguments{
-\item{runjagsdata.in}{result from autorun.jags(), an object of class runjags}
+\item{runjagsdata.in}{MCMC results from autorun.jags(), object of class runjags}
 }
 \value{
-a list contains data from the input runjags object
+List object containing MCMC results from the provided runjags object.
 }
 \description{
-Convert a runjags object to a list
+Convert a runjags-class object to a list
 }

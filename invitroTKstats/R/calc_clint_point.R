@@ -95,6 +95,8 @@
 #'
 #' @importFrom stats4 mle coef AIC
 #'
+#' @import Rdpack
+#'
 #' @export calc_clint_point
 calc_clint_point <- function(FILENAME, good.col="Verified")
 {

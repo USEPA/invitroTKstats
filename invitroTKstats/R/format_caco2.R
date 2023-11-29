@@ -212,6 +212,8 @@
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export format_caco2
 format_caco2 <- function(
   FILENAME = "MYDATA",

@@ -187,6 +187,8 @@
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export format_fup_uc
 format_fup_uc <- function(
   FILENAME = "MYDATA",  

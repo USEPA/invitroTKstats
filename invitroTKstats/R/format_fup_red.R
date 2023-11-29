@@ -228,6 +228,8 @@
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export format_fup_red
 format_fup_red <- function(
   FILENAME = "MYDATA",
