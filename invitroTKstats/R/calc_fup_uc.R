@@ -161,56 +161,6 @@ calc_fup_uc <- function(
   JAGS.PATH = NA
   )
 {
-
-# local function to give each chain it's own starting values:
-  initfunction <- function(chain)
-  {
-    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
-    set.seed(seed)
-    cal.coeff <- lm(
-      mydata$Response.obs[1:mydata$Num.cc.obs]~
-      mydata$Conc[1:mydata$Num.cc.obs])[["coefficients"]]
-    slope <- as.numeric(cal.coeff[2])
-    intercept <- as.numeric(cal.coeff[1])
-    
-# We need a vector with NA's for all the values that are not sampled, but 
-# initial values for the concentrations that are inferred (the T1's):
-    init.Conc <- rep(NA,mydata$Num.cc.obs+mydata$Num.series*3)
-    # Set initial values for the T1's:
-    init.Conc[(mydata$Num.cc.obs+1):
-               (mydata$Num.cc.obs+mydata$Num.series)] <- 
-      mydata$Test.Nominal.Conc
-      
-    return(list(
-      .RNG.seed=seed,
-      .RNG.name="base::Super-Duper",
-# Parameters that may vary between calibrations:
-#      log.const.analytic.sd =runif(mydata$Num.cal,0.5,1),
-#      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-3),
-      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
-      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
-# Average across all the calibrations (the sampler will vary these):
-      C.thresh = rep(
-                     min(
-                         max(10^-8,abs(intercept)/slope),
-                         mydata$Test.Nominal.Conc/10,na.rm=TRUE),
-                     mydata$Num.cal),
-      background = rep(0,mydata$Num.cal),
-      log.calibration = rep(max(
-                                min(-2.95,
-                                    log10(max(0,
-                                              slope))),
-                                              1.95),
-                                              mydata$Num.cal),
-# There is only one Fup per chemical:
-      log.Fup = log10(runif(1,0,1)),
-# There is only one Fstable per chemical:
-      log.Floss = runif(1,-4,-2),
-# Set the initial concentrations:
-      Conc = init.Conc
-    ))
-  }
-        
   if (!is.null(TEMP.DIR)) 
   {
     current.dir <- getwd()
@@ -359,107 +309,25 @@ calc_fup_uc <- function(
           any(MS.data[,type.col]=="T5") &
           any(MS.data[,type.col]=="AF"))
       {
-        all.cal <- unique(MS.data[,cal.col])
-        Num.cal <- length(all.cal)        
-  #
-  #
-  #
+       
         CC.data <- MS.data[MS.data[,type.col]=="CC",]
-        Num.cc.obs <- dim(CC.data)[1]
-        CC.data$Obs.Conc <- seq(1,Num.cc.obs)
-        Conc <- CC.data[,std.conc.col]
-        Dilution.Factor <- CC.data[,dilution.col]
-  #
-  #
-  #  Each series contains T1, T5, and AF data
         T1.data <- MS.data[MS.data[,type.col]=="T1",]
-        Num.T1.obs <- dim(T1.data)[1]
         T5.data <- MS.data[MS.data[,type.col]=="T5",]
-        Num.T5.obs <- dim(T5.data)[1]
         AF.data <- MS.data[MS.data[,type.col]=="AF",]
-        Num.AF.obs <- dim(AF.data)[1]
-        Num.series <- 0
-        all.series <- NULL
-        Test.Nominal.Conc <- NULL
-        for (i in 1:Num.cal)
-        {
-          these.series <- unique(T5.data[
-            T5.data[,cal.col]==all.cal[i],
-            series.col])
-          Num.series <- Num.series + length(these.series) 
-          T1.data[
-            T1.data[,cal.col]==all.cal[i],
-            series.col] <- paste(all.cal[i],
-             T1.data[                          
-               T1.data[,cal.col]==all.cal[i],
-               series.col],
-             sep="-")
-          T5.data[
-            T5.data[,cal.col]==all.cal[i],
-            series.col] <- paste(all.cal[i],
-             T5.data[                          
-               T5.data[,cal.col]==all.cal[i],
-               series.col],
-             sep="-")
-          AF.data[
-            AF.data[,cal.col]==all.cal[i],
-            series.col] <- paste(all.cal[i],
-             AF.data[
-               AF.data[,cal.col]==all.cal[i],
-               series.col],
-             sep="-")
-          all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
-          Test.Nominal.Conc[i] <- mean(T1.data[
-            T1.data[,cal.col]==all.cal[i],
-            uc.assay.conc.col],na.rm=T)
-        }
-        # There is one initial concentration per series, even if there are
-        # multiple observations of that series:
-        for (i in 1:Num.series)
-        {
-          T1.data[T1.data$Series==all.series[i],"Obs.Conc"] <- 
-            Num.cc.obs + i
-          T5.data[T5.data$Series==all.series[i],"Obs.Conc"] <- 
-            Num.cc.obs + 1*Num.series + i
-          AF.data[AF.data$Series==all.series[i],"Obs.Conc"] <-   
-            Num.cc.obs + 2*Num.series + i
-        }
-        # There are three total concentrations per series (T1, T5, and AF):
-        Conc <- c(Conc,rep(NA,3*Num.series))
-  #
-  #
-  #
-        UC.obs <- rbind(CC.data,T1.data,T5.data,AF.data)
-        Num.obs <- dim(UC.obs)[1]
-        for (i in 1:Num.cal)
-        {
-          UC.obs[UC.obs[,cal.col]==all.cal[i],"Obs.Cal"] <- i
-        }
-  #
-  #
-  #
-        mydata <- list(   
-          'Num.cal' = Num.cal,            
-          'Num.obs' = Num.obs,
-          "Response.obs" = UC.obs[,"Response"],
-          "obs.conc" = UC.obs[,"Obs.Conc"],
-          "obs.cal" = UC.obs[,"Obs.Cal"],
-          "Conc" = Conc,
-          "Num.cc.obs" = Num.cc.obs,
-          "Num.series" = Num.series,
-          "Dilution.Factor" = UC.obs[,"Dilution.Factor"],
-          "Test.Nominal.Conc" = Test.Nominal.Conc
-        )
-      
-        save(this.compound,mydata,UC_PPB_model,initfunction,
+        mydata <- build_mydata_fup_uc(MS.data, CC.data, T1.data, T5.data, AF.data)
+        
+        init_vals <- function(chain) initfunction_fup_uc(mydata=mydata, chain = chain)
+        # write out arguments to runjags:
+        save(this.compound,mydata,UC_PPB_model,init_vals,
           file=paste(FILENAME,"-Fup-UC-PREJAGS.RData",sep=""))  
+        
         coda.out[[this.compound]] <- autorun.jags(
           UC_PPB_model, 
           n.chains = NUM.CHAINS,
           method="parallel", 
           cl=CPU.cluster,
           summarise=T,
-          inits = initfunction,
+          inits = init_vals,
           startburnin = 50000, 
           startsample = 50000, 
           max.time="1h",

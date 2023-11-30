@@ -249,174 +249,6 @@ calc_fup_red <- function(
   Physiological.Protein.Conc = 70/(66.5*1000)*1000000 # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
   )
 {
-# Internal function for constructing data object given to JAGS:
-  build_mydata <- function(this.data)
-  {
-    #mg/mL -> g/L is 1:1
-    #kDa -> g/mol is *1000
-    #g/mol -> M is g/L/MW
-    #M <- uM is /1000000
-    Test.Nominal.Conc <- unique(this.data$Test.Nominal.Conc) # uM frank parent concentration
-    if (length(Test.Nominal.Conc)>1) stop("Multiple test concentrations.")
-# Each calibration could be a unique string (such as a date):
-    unique.cal <- sort(unique(this.data[,"Calibration"]))
-    Num.cal <- length(unique.cal)
-# TIME ZERO
-    T0.data <- subset(this.data,Sample.Type=="T0")
-    T0.df <- unique(T0.data[,"Dilution.Factor"])
-    if (length(T0.df)>1) stop("Multiple T0 dilution factors.")
-    T0.obs <- T0.data[,"Response"]
-# Convert calibrations to sequential integers:
-    T0.cal <- sapply(T0.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.T0.obs <- length(T0.obs)
-# Calibration Curve
-    CC.data <- subset(this.data,Sample.Type=="CC")
-    CC.df <- unique(CC.data[,"Dilution.Factor"])
-    if (length(CC.df)>1) stop("Multiple CC dilution factors.")
-    CC.obs <- CC.data[,"Response"]
-# Convert calibrations to sequential integers:
-    CC.cal <- sapply(CC.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    CC.conc <- CC.data[,"Std.Conc"]
-    Num.CC.obs <- length(CC.obs)
-# PBS
-    PBS.data <- subset(this.data,Sample.Type=="PBS")
-    PBS.df <- unique(PBS.data[,"Dilution.Factor"])
-    if (length(PBS.df)>1) stop("Multiple PBS dilution factors.")
-    PBS.obs <-PBS.data[,"Response"]
-# Convert calibrations to sequential integers:
-    PBS.cal <- sapply(PBS.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.PBS.obs <- length(PBS.obs)
-# PLASMA
-    Plasma.data <- subset(this.data,Sample.Type=="Plasma")
-    Plasma.df <- unique(Plasma.data[,"Dilution.Factor"])
-    if (length(Plasma.df)>1) stop("Multiple plasma dilution factors.")
-    Plasma.obs <- Plasma.data[,"Response"]
-# Convert calibrations to sequential integers:
-    Plasma.cal <- sapply(Plasma.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.Plasma.obs <- length(Plasma.obs)
-# Match the PBS and Plasma replicate measurments:
-    PBS.rep <- paste0(PBS.data[,"Calibration"],PBS.data[,"Replicate"])
-    Plasma.rep <- paste0(Plasma.data[,"Calibration"],Plasma.data[,"Replicate"])
-    unique.rep <- sort(unique(c(PBS.rep,Plasma.rep)))
-    Num.rep <- length(unique.rep)
-# Convert replicates to sequential integers:
-    PBS.rep <- sapply(PBS.rep, function(x) which(unique.rep %in% x))
-    Plasma.rep <- sapply(Plasma.rep, function(x) which(unique.rep %in% x))
-    Assay.Protein.Percent <- Plasma.data[!duplicated(Plasma.data$Replicate),
-                              "Percent.Physiologic.Plasma"]
-# NO PLASMA BLANK
-    NoPlasma.Blank.data <- subset(this.data, Sample.Type=="NoPlasma.Blank")
-    NoPlasma.Blank.df <- unique(NoPlasma.Blank.data[,"Dilution.Factor"])
-    if (length(NoPlasma.Blank.df)>1) stop("Multiple blank dilution factors.")
-    NoPlasma.Blank.obs <- NoPlasma.Blank.data[,"Response"]
-# Convert calibrations to sequential integers:
-    NoPlasma.Blank.cal <- sapply(NoPlasma.Blank.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.NoPlasma.Blank.obs <- length(NoPlasma.Blank.obs)
-    if (Num.NoPlasma.Blank.obs == 0) {
-      NoPlasma.Blank.df <- 0
-      NoPlasma.Blank.obs <- 0
-      NoPlasma.Blank.cal <- 0
-    }
-# PLASMA BLANK
-    Plasma.Blank.data <- subset(this.data, Sample.Type=="Plasma.Blank")
-    Plasma.Blank.df <- unique(Plasma.Blank.data[,"Dilution.Factor"])
-    if (length(Plasma.Blank.df)>1) stop("Multiple blank dilution factors.")
-    Plasma.Blank.obs <- Plasma.Blank.data[,"Response"]
-# Convert calibrations to sequential integers:
-    Plasma.Blank.cal <- sapply(Plasma.Blank.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.Plasma.Blank.obs <- length(Plasma.Blank.obs)
-    if (!any(is.na(Plasma.Blank.data[,"Replicate"])))
-    {
-      Plasma.Blank.rep <- paste0(Plasma.Blank.data[,"Calibration"],
-                                 Plasma.Blank.data[,"Replicate"])
-# Convert replicates to sequential integers:
-      Plasma.Blank.rep <- sapply(Plasma.Blank.rep, function(x)
-                               which(unique.rep %in% x))
-    } else if(length(unique(Plasma.Blank.data[,"Percent.Physiologic.Plasma"]))==1)
-    {
-      Plasma.Blank.rep <- rep(1, Num.Plasma.Blank.obs)
-    } else browser()
-
-    return(list(
-# Describe assay:
-      'Test.Nominal.Conc' = Test.Nominal.Conc,
-      'Num.cal' = Num.cal,
-      'Physiological.Protein.Conc' = Physiological.Protein.Conc,
-      'Assay.Protein.Percent' = Assay.Protein.Percent,
-# Blank data:
-      'Num.Plasma.Blank.obs' = Num.Plasma.Blank.obs,
-      'Plasma.Blank.obs' = Plasma.Blank.obs,
-      'Plasma.Blank.cal' = Plasma.Blank.cal,
-      'Plasma.Blank.df' = Plasma.Blank.df,
-      'Plasma.Blank.rep' = Plasma.Blank.rep,
-      'Num.NoPlasma.Blank.obs' = Num.NoPlasma.Blank.obs,
-      'NoPlasma.Blank.obs' = NoPlasma.Blank.obs,
-      'NoPlasma.Blank.cal' = NoPlasma.Blank.cal,
-      'NoPlasma.Blank.df' = NoPlasma.Blank.df,
-## Callibration.curve.data:
-      'Num.CC.obs' = Num.CC.obs,
-      'CC.conc' = CC.conc,
-      'CC.obs' = CC.obs,
-      'CC.cal' = CC.cal,
-      'CC.df' = CC.df,
-## Stability data:
-      'Num.T0.obs' = Num.T0.obs,
-      'T0.obs' = T0.obs,
-      'T0.cal' = T0.cal,
-      'T0.df' = T0.df,
-#       'Stability.data' = Stability.data[,"ISTDResponseRatio"],
-#      'Num.Stability.obs' = Num.Stability.obs,
-## Equilibriation data:
-#      'EQ1.data' = EQ1.data[,"ISTDResponseRatio"],
-#      'Num.EQ1.obs' = Num.EQ1.obs,
-#      'EQ2.data' = EQ2.data[,"ISTDResponseRatio"],
-#      'Num.EQ2.obs' = Num.EQ2.obs,
-# RED data:
-      'Num.rep' = Num.rep,
-# PBS data:
-      'Num.PBS.obs' = Num.PBS.obs,
-      'PBS.obs' = PBS.obs,
-      'PBS.cal' = PBS.cal,
-      'PBS.df' = PBS.df,
-      'PBS.rep' = PBS.rep,
-# Plasma data:
-      'Num.Plasma.obs' = Num.Plasma.obs,
-      'Plasma.obs' = Plasma.obs,
-      'Plasma.cal' = Plasma.cal,
-      'Plasma.df' = Plasma.df,
-      'Plasma.rep' = Plasma.rep
-    ))
-  }
-
-  initfunction <- function(chain)
-  {
-    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
-    set.seed(seed)
-
-    return(list(
-# Random number seed:
-      .RNG.seed=seed,
-      .RNG.name="base::Super-Duper",
-# Parameters that may vary between calibrations:
-#      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
-#      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
-      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
-      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
-      background = rep(0,mydata$Num.cal),
-      C.thresh = runif(mydata$Num.cal, 0, 0.1),
-      log.calibration = rep(0,mydata$Num.cal),
-      log.Plasma.Interference = log10(runif(mydata$Num.cal,0,0.1)),
-# Statistics characterizing the measurement:
-      log.Kd= runif(1,-8,4),
-      C.missing = runif(mydata$Num.rep,0,mydata[["Test.Nominal.Conc"]])
-    ))
-  }
 
   if (!is.null(TEMP.DIR))
   {
@@ -545,14 +377,15 @@ calc_fup_red <- function(
       REQUIRED.DATA.TYPES <- c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank")
       if (all(REQUIRED.DATA.TYPES %in% this.subset[,type.col]))
       {
-        mydata <- build_mydata(this.subset)
+        mydata <- build_mydata_fup_red(this.subset, Physiological.Protein.Conc)
         if (!is.null(mydata))
         {
           # Use random number seed for reproducibility
           set.seed(RANDOM.SEED)
 
+          init_vals <- function(chain) initfunction_fup_red(mydata=mydata, chain = chain)
           # write out arguments to runjags:
-          save(this.compound, mydata ,initfunction,
+          save(this.compound, mydata ,init_vals,
             file=paste(FILENAME,"-fup-RED-PREJAGS.RData",sep=""))
 
           # Run JAGS:
@@ -562,7 +395,7 @@ calc_fup_red <- function(
             method="parallel",
             cl=CPU.cluster,
             summarise=T,
-            inits = initfunction,
+            inits = init_vals,
             startburnin = 25000,
             startsample = 25000,
             max.time="5m",
