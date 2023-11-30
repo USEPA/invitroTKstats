@@ -14,10 +14,10 @@ A data.frame 17,689 rows and 14 variables: \describe{
 \item{\code{CompoundName}}{Compound name used by the laboratory.}
 \item{\code{Area}}{Mass spectrometry peak area for the test compound.}
 \item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
-\item{\code{ISTDResponseRatio}}{The ratio between \code{Area} (area for the tested compound) to \code{ISTD.Area} (area for the internal standard).}
-\item{\code{Dilution.Factor}}{How many times a sample was diluted.}
+\item{\code{ISTDResponseRatio}}{The ratio between \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
+\item{\code{Dilution.Factor}}{The number of times a samples was diluted.}
 \item{\code{Protein}}{The percent of physiological protein concentration used for the assay.}
-\item{\code{RawDataSet}}{Name of the level 0 file that contained the data.}
+\item{\code{RawDataSet}}{Name of the level 0 file containing the data.}
 }
 }
 \source{
