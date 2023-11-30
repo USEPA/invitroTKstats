@@ -516,6 +516,11 @@ calc_fup_red <- function(
   } else {
     Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
   }
+  
+  # Safety check for parallel computation 
+  MAX.CORES <- detectCores(logical = F) - 2
+  if (NUM.CORES > MAX.CORES) stop("You are using too many cores that may bog down your machine!")
+  if (NUM.CHAINS > 10) stop("You are using too many chains that may take excessive time to run.")
 
   # Make a cluster if using multiple cores:
   if (NUM.CORES>1)
