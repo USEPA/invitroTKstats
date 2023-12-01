@@ -13,11 +13,11 @@ A data.frame 520 rows and 14 variables: \describe{
 \item{\code{MOLECULAR_FORMULA}}{Molecular formula of the test compound.}
 \item{\code{AVERAGE_MASS}}{Molecular weight of the compound in daltons.}
 \item{\code{QSAR_READY_SMILES}}{SMILES (Simplified molecular-input line-entry system) chemical structure description.}
-\item{\code{LC}}{Logical variable whether liquid chromatography-mass spectrometry was used.}
+\item{\code{LC}}{Logical variable indicating whether liquid chromatography-mass spectrometry was used.}
 \item{\code{Agilent.QQQ}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Agilent.QQQ instrument.}
 \item{\code{Water.s.Xevo}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Water.s.Xevo instrument.}
 \item{\code{AB.Sciex.Qtrap}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the AB.Sciex.Qtrap instrument.}
-\item{\code{GC}}{Logical variable whether gas chromatography-mass spectrometry was used.}
+\item{\code{GC}}{Logical variable indicating whether gas chromatography-mass spectrometry was used.}
 \item{\code{Agilent.GCMS}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Agilent.GCMS instrument.}
 \item{\code{GCTOF}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the GCTOF instrument.}
 \item{\code{Comment}}{Any additional comments for the test compound.}

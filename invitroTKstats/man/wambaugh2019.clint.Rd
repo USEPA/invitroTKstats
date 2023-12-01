@@ -13,7 +13,7 @@ A data.frame 23,021 rows and 15 variables: \describe{
 \item{\code{Name}}{Compound names used by the laboratory.}
 \item{\code{Area}}{Mass spectrometry peak area for the test compound.}
 \item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
-\item{\code{ISTDResponseRatio}}{The ratio between \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
+\item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
 \item{\code{Time..mins.}}{Time in minutes between the start of incubation and when the sample was taken.}
 \item{\code{Conc}}{Concentration used in the assay.}
 \item{\code{FileName}}{Name of the level 0 file containing the data.}
