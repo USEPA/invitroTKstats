@@ -173,7 +173,14 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table <-NULL
   num.chem <- 0
   num.cal <- 0
+  
+  # decay - This function calculates the test compound concentration at time t, using a model of
+  # exponential decay with time C(t) = C_0*e^{-mt}, where C_0 is the 
+  # test compound concentration at time 0, m is a rate constant (argument k_elim),
+  # and t is the incubation time in hour.
   decay <- function(time.hours,conc,cal,k_elim) cal*conc*exp(-k_elim*time.hours)
+  
+  # Negative log-likelihood of the linear regression fit
   lldecay <- function(cal,k_elim,sigma)
   {
     if (sigma < 0.0001) sigma <- 0.0001
@@ -189,7 +196,18 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     if (is.na(ll)) browser()
     return(-ll)
   }
+  
+  # satdecay - This function calculates the test compound concentration at time t, 
+  # using a model of exponential decay with time while considering a saturation probability. 
+  # C(t) = C_0*e^{-m*sat*t}. C_0 is the test compound concentration at time 0, m is the elimination 
+  # rate constant (argument k_elim), and t is the incubation time in hours. 
+  # sat is the probability of saturation, defined as observing a lower clearance at a higher 
+  # concentration. At 1 uM, sat is 1, meaning saturation is unlikely at the current concentration 
+  # and is going to be observed at a higher concentration. At 10 uM, sat is between 0 and 1, 
+  # meaning full saturation may or may not have been reached.
   satdecay <- function(time.hours,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.hours)
+  
+  # Negative log-likelihood of the linear regression fit
   llsatdecay <- function(cal,k_elim,sigma,sat)
   {
     if (sigma < 0.0001) sigma <- 0.0001
@@ -242,7 +260,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       this.fit <- try(mle(lldecay,
         start=list(cal=1, k_elim=0.1, sigma=0.1),
         lower=list(cal=0,k_elim=0,sigma = 0.0001)))
-      this.null <- try(mle(lldecay,
+      this.null <- try(mle(lldecay, 
         start=list(cal=1, sigma=0.1),
         lower=list(cal=0, sigma = 0.0001),
         fixed=list(k_elim=0)))
