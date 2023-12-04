@@ -11,21 +11,17 @@
 #' @aliases wambaugh2019.clint
 #' @docType data
 #' @format A data.frame 23,021 rows and 15 variables: \describe{
-#' \item{\code{Preferred.Name}}{}
-#' \item{\code{CAS}}{}
-#' \item{\code{DTXSID}}{}
-#' \item{\code{Sample.Name}}{}
-#' \item{\code{Name}}{}
-#' \item{\code{Transition}}{}
-#' \item{\code{Area}}{}
-#' \item{\code{ISTD.Area}}{}
-#' \item{\code{ISTDResponseRatio}}{}
-#' \item{\code{ln...Remaining}}{}
-#' \item{\code{Time..mins.}}{}
-#' \item{\code{Conc}}{}
-#' \item{\code{TaskOrder}}{}
-#' \item{\code{FileName}}{}
-#' \item{\code{X}}{}
+#' \item{\code{Preferred.Name}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD).}
+#' \item{\code{CAS}}{CAS Registry Number of the test compound.}
+#' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+#' \item{\code{Sample.Name}}{Sample name used by the laboratory.}
+#' \item{\code{Name}}{Compound names used by the laboratory.}
+#' \item{\code{Area}}{Mass spectrometry peak area for the test compound.}
+#' \item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
+#' \item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
+#' \item{\code{Time..mins.}}{Time in minutes between the start of incubation and when the sample was taken.}
+#' \item{\code{Conc}}{Concentration used in the assay.}
+#' \item{\code{FileName}}{Name of the level 0 file containing the data.}
 #' }
 #'
 #' @references
@@ -51,20 +47,20 @@
 #' @aliases Wambaugh2019.methods
 #' @docType data
 #' @format A data.frame 520 rows and 14 variables: \describe{
-#' \item{\code{DTXSID}}{}
-#' \item{\code{PREFERRED_NAME}}{}
-#' \item{\code{CASRN}}{}
-#' \item{\code{MOLECULAR_FORMULA}}{}
-#' \item{\code{AVERAGE_MASS}}{}
-#' \item{\code{QSAR_READY_SMILES}}{}
-#' \item{\code{LC}}{}
-#' \item{\code{Agilent.QQQ}}{}
-#' \item{\code{Water.s.Xevo}}{}
-#' \item{\code{AB.Sciex.Qtrap}}{}
-#' \item{\code{GC}}{}
-#' \item{\code{Agilent.GCMS}}{}
-#' \item{\code{GCTOF}}{}
-#' \item{\code{Comment}}{}
+#' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+#' \item{\code{PREFERRED_NAME}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD).}
+#' \item{\code{CASRN}}{CAS Registry Number of the test compound.}
+#' \item{\code{MOLECULAR_FORMULA}}{Molecular formula of the test compound.}
+#' \item{\code{AVERAGE_MASS}}{Molecular weight of the compound in daltons.}
+#' \item{\code{QSAR_READY_SMILES}}{SMILES (Simplified molecular-input line-entry system) chemical structure description.}
+#' \item{\code{LC}}{Logical variable indicating whether liquid chromatography-mass spectrometry was used.}
+#' \item{\code{Agilent.QQQ}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Agilent.QQQ instrument.}
+#' \item{\code{Water.s.Xevo}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Water.s.Xevo instrument.}
+#' \item{\code{AB.Sciex.Qtrap}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the AB.Sciex.Qtrap instrument.}
+#' \item{\code{GC}}{Logical variable indicating whether gas chromatography-mass spectrometry was used.}
+#' \item{\code{Agilent.GCMS}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Agilent.GCMS instrument.}
+#' \item{\code{GCTOF}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the GCTOF instrument.}
+#' \item{\code{Comment}}{Any additional comments for the test compound.}
 #'   }
 #' @references
 #' \insertRef{wambaugh2019assessing}{invitroTKstats}
@@ -82,20 +78,17 @@
 #' @aliases Wambaugh2019.red
 #' @docType data
 #' @format A data.frame 17,689 rows and 14 variables: \describe{
-#' \item{\code{Preferred.Name}}{}
-#' \item{\code{CAS}}{}
-#' \item{\code{DTXSID}}{}
-#' \item{\code{SampleName}}{}
-#' \item{\code{CompoundName}}{}
-#' \item{\code{Transition}}{}
-#' \item{\code{Area}}{}
-#' \item{\code{ISTD.Area}}{}
-#' \item{\code{ISTDResponseRatio}}{}
-#' \item{\code{Dilution.Factor}}{}
-#' \item{\code{Protein}}{}
-#' \item{\code{Task.Order}}{}
-#' \item{\code{RawDataSet}}{}
-#' \item{\code{CyprotexEPASetNumber}}{}
+#' \item{\code{Preferred.Name}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD).}
+#' \item{\code{CAS}}{CAS Registry Number of the test compound.}
+#' \item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+#' \item{\code{SampleName}}{Sample name used by the laboratory.}
+#' \item{\code{CompoundName}}{Compound name used by the laboratory.}
+#' \item{\code{Area}}{Mass spectrometry peak area for the test compound.}
+#' \item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
+#' \item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
+#' \item{\code{Dilution.Factor}}{The number of times a sample was diluted.}
+#' \item{\code{Protein}}{The percent of physiological protein concentration used for the assay.}
+#' \item{\code{RawDataSet}}{Name of the level 0 file containing the data.}
 #' }
 #'
 #' @references

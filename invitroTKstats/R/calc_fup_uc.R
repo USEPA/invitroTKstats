@@ -251,7 +251,14 @@ calc_fup_uc <- function(
   } else {
     Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
   }
-
+  
+  # Safety check for parallel computation 
+  MAX.CORES <- detectCores(logical = F) - 1
+  if (NUM.CORES > MAX.CORES) stop(paste0("Specified NUM.CORES = ", NUM.CORES, " cores for parallel computing exceeds the allowable number of cores, that is ",
+                                         MAX.CORES, 
+                                         ", and may bog down your machine! (Max cores is based on the total number of available computing cores minus one for overhead.)"))
+  if (NUM.CHAINS > 10) warning("Specified number of chains is greater than 10 and may be excessive for computational time.")
+  
   if (NUM.CORES>1)
   {
     CPU.cluster <- makeCluster(min(NUM.CORES,NUM.CHAINS))
