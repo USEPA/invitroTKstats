@@ -4,7 +4,12 @@
 \alias{calc_clint_point}
 \title{Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)}
 \usage{
-calc_clint_point(FILENAME, good.col = "Verified")
+calc_clint_point(
+  FILENAME,
+  good.col = "Verified",
+  output.res = TRUE,
+  TEMP.DIR = NULL
+)
 }
 \arguments{
 \item{FILENAME}{A string used to identify the input Level-2 file.
@@ -13,6 +18,14 @@ calc_clint_point(FILENAME, good.col = "Verified")
 \item{good.col}{(Character) Column name indicating which rows have been
 verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-3) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{TEMP.DIR}{(Character) Alternative directory to save output files. By
+default, i.e. unspecified, all files will be exported to the user's current
+working directory. (Defaults to \code{NULL}.)}
 }
 \value{
 A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 

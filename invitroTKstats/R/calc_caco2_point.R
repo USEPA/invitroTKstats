@@ -31,11 +31,20 @@
 #' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
 #' \eqn{n_P} is the number of PBS Responses, and \eqn{n_B} is the number of Blank Responses.
 #'
-#' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")
+#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' "<FILENAME>-Caco-2-Level2.tsv".
 #'
-#' @param good.col Name of a column indicating which rows have been verified for
-#' analysis, indicated by a "Y" (Defaults to "Verified")
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param TEMP.DIR (Character) Alternative directory to save output files. By
+#' default, i.e. unspecified, all files will be exported to the user's current
+#' working directory. (Defaults to \code{NULL}.)
 #'
 #' @return \item{data.frame}{A data.frame in standardized format}
 #' \tabular{rrr}{
@@ -93,7 +102,7 @@
 #' @import Rdpack
 #'
 #' @export calc_caco2_point
-calc_caco2_point <- function(FILENAME, good.col="Verified")
+calc_caco2_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEMP.DIR = NULL)
 {
   # These are the required data types as indicated by type.col.
   # In order to calculate the parameter a chemical must have peak areas for each
@@ -248,13 +257,28 @@ calc_caco2_point <- function(FILENAME, good.col="Verified")
   out.table[,"Papp_B2A"] <- signif(as.numeric(out.table[,"Papp_B2A"]),3)
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
   out.table <- as.data.frame(out.table)
+  
+  if (!is.null(TEMP.DIR)) 
+  {
+    current.dir <- getwd()
+    setwd(TEMP.DIR)
+  }
 
-# Write out a "level 3" file (data organized into a standard format):
+  if (output.res) {
+  # Write out a "level 3" file (data organized into a standard format):
   write.table(out.table,
     file=paste(FILENAME,"-Caco-2-Level3.tsv",sep=""),
     sep="\t",
     row.names=F,
     quote=F)
+  print(paste("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", " has been exported to the following
+              directory: ", getwd(), sep = ""))
+  }
+  
+  if (!is.null(TEMP.DIR)) 
+  {
+    setwd(current.dir)
+  }
 
   print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))
   print(paste("Basal to apical permeability calculated for",num.b2a,"chemicals."))

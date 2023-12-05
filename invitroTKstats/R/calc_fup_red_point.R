@@ -39,6 +39,14 @@
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for analysis are indicated with a "Y".
 #' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param TEMP.DIR (Character) Alternative directory to save output files. By
+#' default, i.e. unspecified, all files will be exported to the user's current
+#' working directory. (Defaults to \code{NULL}.)
 #'
 #' @return A data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
@@ -98,7 +106,7 @@
 #' @import Rdpack
 #'
 #' @export calc_fup_red_point
-calc_fup_red_point <- function(FILENAME, good.col="Verified")
+calc_fup_red_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEMP.DIR=NULL)
 {
   MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
     sep="\t",header=T)
@@ -254,13 +262,28 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     out.table <- as.data.frame(out.table)
     out.table$Fup <- as.numeric(out.table$Fup)
   }
+  
+  if (!is.null(TEMP.DIR)) 
+  {
+    current.dir <- getwd()
+    setwd(TEMP.DIR)
+  }
+  
+  if (output.res) {
+    # Write out a "level 3" file (data organized into a standard format):
+    write.table(out.table,
+      file=paste(FILENAME,"-fup-RED-Level3.tsv",sep=""),
+      sep="\t",
+      row.names=F,
+      quote=F)
+    print(paste("A Level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", " has been exported to the following
+              directory: ", getwd(), sep = ""))
+  }
 
-# Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-fup-RED-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (!is.null(TEMP.DIR)) 
+  {
+    setwd(current.dir)
+  }
 
   print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))
   print(paste("Fraction unbound values calculated for",num.cal,"measurements."))

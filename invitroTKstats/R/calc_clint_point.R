@@ -26,6 +26,14 @@
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for analysis are indicated with a "Y".
 #' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param TEMP.DIR (Character) Alternative directory to save output files. By
+#' default, i.e. unspecified, all files will be exported to the user's current
+#' working directory. (Defaults to \code{NULL}.)
 #'
 #' @return A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
 #' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
@@ -98,7 +106,7 @@
 #' @import Rdpack
 #'
 #' @export calc_clint_point
-calc_clint_point <- function(FILENAME, good.col="Verified")
+calc_clint_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEMP.DIR=NULL)
 {
   clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
     sep="\t",header=T)
@@ -329,12 +337,27 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
   out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
 
-# Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-Clint-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (!is.null(TEMP.DIR)) 
+  {
+    current.dir <- getwd()
+    setwd(TEMP.DIR)
+  }
+  
+  if (output.res) {
+    # Write out a "level 3" file (data organized into a standard format):
+    write.table(out.table,
+      file=paste(FILENAME,"-Clint-Level3.tsv",sep=""),
+      sep="\t",
+      row.names=F,
+      quote=F)
+    print(paste("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", " has been exported to the following
+              directory: ", getwd(), sep = ""))
+  }
+
+  if (!is.null(TEMP.DIR)) 
+  {
+    setwd(current.dir)
+  }
 
   print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))
   print(paste("Intrinsic clearance (Clint) calculated for",num.cal,"measurements."))
