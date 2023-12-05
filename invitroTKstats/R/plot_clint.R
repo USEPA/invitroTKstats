@@ -74,10 +74,11 @@ plot_clint <- function(level2,dtxsid)
   level2 <- subset(level2, DTXSID==dtxsid)
 
   out <- ggplot(level2, aes(x=Time, y=Response)) +
+    ggtitle(paste(level2[1,"Compound.Name"]," (",level2[1,"DTXSID"],")",sep="")) +
     geom_point(mapping = aes(
       fill = factor(Sample.Type),
       shape = factor(Sample.Type),
       color=factor(Calibration)), size = 5)
-  print(out)
+
   return(out)
 }

@@ -110,7 +110,6 @@ plot_fup_uc <- function(level2,dtxsid, good.col="Verified")
       fill=guide_legend(title="Calibration"),
       shape=guide_legend(title="Calibration"),
       color=guide_legend(title="Calibration"))
-  print(out)
 
   return(out)
 }
