@@ -257,27 +257,23 @@ calc_caco2_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEM
   out.table[,"Papp_B2A"] <- signif(as.numeric(out.table[,"Papp_B2A"]),3)
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
   out.table <- as.data.frame(out.table)
-  
-  if (!is.null(TEMP.DIR)) 
-  {
-    current.dir <- getwd()
-    setwd(TEMP.DIR)
-  }
 
   if (output.res) {
-  # Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-Caco-2-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-  print(paste("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", " has been exported to the following
-              directory: ", getwd(), sep = ""))
-  }
-  
-  if (!is.null(TEMP.DIR)) 
-  {
-    setwd(current.dir)
+    # Write out a "level 3" file (data organized into a standard format):
+    write.table(out.table,
+      file=paste(TEMP.DIR, "/", FILENAME,"-Caco-2-Level3.tsv",sep=""),
+      sep="\t",
+      row.names=F,
+      quote=F)
+    
+    if (!is.null(TEMP.DIR)) {
+      file.path <- TEMP.DIR
+    } else {
+      file.path <- getwd()
+    }
+    # Print notification message stating where the file was output to
+    print(paste("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
+                " has been exported to the following directory: ", file.path, sep = ""))
   }
 
   print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))

@@ -262,27 +262,23 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified", output.res=TRUE, T
     out.table <- as.data.frame(out.table)
     out.table$Fup <- as.numeric(out.table$Fup)
   }
-  
-  if (!is.null(TEMP.DIR)) 
-  {
-    current.dir <- getwd()
-    setwd(TEMP.DIR)
-  }
-  
+
   if (output.res) {
     # Write out a "level 3" file (data organized into a standard format):
     write.table(out.table,
-      file=paste(FILENAME,"-fup-RED-Level3.tsv",sep=""),
-      sep="\t",
-      row.names=F,
-      quote=F)
-    print(paste("A Level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", " has been exported to the following
-              directory: ", getwd(), sep = ""))
-  }
-
-  if (!is.null(TEMP.DIR)) 
-  {
-    setwd(current.dir)
+                file=paste(TEMP.DIR, "/", FILENAME,"-fup-RED-Level3.tsv",sep=""),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    
+    if (!is.null(TEMP.DIR)) {
+      file.path <- TEMP.DIR
+    } else {
+      file.path <- getwd()
+    }
+    # Print notification message stating where the file was output to
+    print(paste("A Level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", 
+                " has been exported to the following directory: ", file.path, sep = ""))
   }
 
   print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))

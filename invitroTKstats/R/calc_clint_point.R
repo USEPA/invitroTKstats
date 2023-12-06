@@ -337,26 +337,22 @@ calc_clint_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEM
   out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
   out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
 
-  if (!is.null(TEMP.DIR)) 
-  {
-    current.dir <- getwd()
-    setwd(TEMP.DIR)
-  }
-  
   if (output.res) {
     # Write out a "level 3" file (data organized into a standard format):
     write.table(out.table,
-      file=paste(FILENAME,"-Clint-Level3.tsv",sep=""),
-      sep="\t",
-      row.names=F,
-      quote=F)
-    print(paste("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", " has been exported to the following
-              directory: ", getwd(), sep = ""))
-  }
-
-  if (!is.null(TEMP.DIR)) 
-  {
-    setwd(current.dir)
+                file=paste(TEMP.DIR, "/", FILENAME,"-Clint-Level3.tsv",sep=""),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    
+    if (!is.null(TEMP.DIR)) {
+      file.path <- TEMP.DIR
+    } else {
+      file.path <- getwd()
+    }
+    # Print notification message stating where the file was output to
+    print(paste("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
+                " has been exported to the following directory: ", file.path, sep = ""))
   }
 
   print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))
