@@ -183,6 +183,10 @@
 #' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{analysis.parameters}.)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-1) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
 #'
 #' @return A Level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with membrane permeability data
@@ -252,7 +256,8 @@ format_caco2 <- function(
   analysis.instrument=NULL,
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
-  analysis.parameters.col="Analysis.Parameters"
+  analysis.parameters.col="Analysis.Parameters",
+  output.res = TRUE
   )
 {
   # These are the required data types as indicated by type.col.
@@ -379,12 +384,17 @@ format_caco2 <- function(
   data.out[,"Response"] <- signif(data.out[,area.col] /
      data.out[,istd.col] *  data.out[,istd.conc.col], 4)
 
-# Write out a "level 1" file (data organized into a standard format):
-  write.table(data.out,
-    file=paste(FILENAME,"-Caco-2-Level1.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 1" file (data organized into a standard format):
+    file.path <- getwd()
+    write.table(data.out,
+                file=paste(FILENAME,"-Caco-2-Level1.tsv",sep=""),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    print(paste("A Level-1 file named ",FILENAME,"-Caco-2-Level1.tsv", 
+                " has been exported to the following directory: ", file.path, sep = ""))
+  }
 
   summarize_table(data.out,
     req.types=req.types)

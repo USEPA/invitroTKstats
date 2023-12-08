@@ -193,6 +193,10 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{level0.sheet}.)
 #' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-1) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#'
 #' @return A Level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with plasma protein
 #' binding (PPB) data from an rapid equilibrium dialysis (RED) assay. 
@@ -271,7 +275,8 @@ format_fup_red <- function(
   level0.file=NULL,
   level0.file.col="Level0.File",
   level0.sheet=NULL,
-  level0.sheet.col="Level0.Sheet"
+  level0.sheet.col="Level0.Sheet", 
+  output.res = TRUE
   )
 {
   data.in <- as.data.frame(data.in)
@@ -421,12 +426,17 @@ format_fup_red <- function(
   data.out[,"Response"] <- signif(data.out[,area.col] /
      data.out[,istd.col] * data.out[,istd.conc.col], 4)
 
-# Write out a "level 1" file (data organized into a standard format):
-  write.table(data.out,
-    file=paste(FILENAME,"-fup-RED-Level1.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 1" file (data organized into a standard format):
+    file.path <- getwd()
+    write.table(data.out,
+                file=paste(FILENAME,"-fup-RED-Level1.tsv",sep=""),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    print(paste("A Level-1 file named ",FILENAME,"-fup-RED-Level1.tsv", 
+                " has been exported to the following directory: ", file.path, sep = ""))
+  }
 
   summarize_table(data.out,
     req.types=c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank"))

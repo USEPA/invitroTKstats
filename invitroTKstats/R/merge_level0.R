@@ -146,6 +146,14 @@
 #' @param chem.dtxsid.col (Character) `chem.ids` column name containing EPA's
 #'  DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard})
 #'  (Defaults to "DTXSID") 
+#'  
+#' @param catalog.out (Logical) When set to \code{TRUE}, the data frame 
+#' specified in \code{level0.catalog} will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-0) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
 #' 
 #' @return \item{data.frame}{A data.frame in standardized "level1" format} 
 #'
@@ -184,7 +192,9 @@ merge_level0 <- function(data.label="MYDATA",
   chem.ids,
   chem.lab.id.col="Chem.Lab.ID",
   chem.name.col="Compound",
-  chem.dtxsid.col="DTXSID"
+  chem.dtxsid.col="DTXSID",
+  catalog.out = TRUE,
+  output.res = TRUE
   )
 {
   level0.catalog <- as.data.frame(level0.catalog)
@@ -370,13 +380,28 @@ merge_level0 <- function(data.label="MYDATA",
     out.data <- rbind(out.data, this.data[,1:(13+length(additional.colname.cols))])  
   }
 
-# Write out a "Catalog" file that explains how level 0 data were mapped to level 1
-  write.table(level0.catalog, 
-    file=paste(data.label,"-level0-Catalog.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (catalog.out) {
+    # Write out a "Catalog" file that explains how level 0 data were mapped to level 1
+    write.table(level0.catalog, 
+                file=paste(data.label,"-level0-Catalog.tsv",sep=""),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    print(paste("A Level-0 Catalog file named ",data.label,"-level0-Catalog.tsv", 
+                " has been exported to the following directory: ", file.path, sep = ""))
+  }
 
+  if (output.res) {
+    # Write out the merged Level-0 file
+    write.table(out.data, 
+                file=paste(data.label,"-level0.tsv",sep=""),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    print(paste("A Level-0 file named ",data.label,"-level0.tsv", 
+                " has been exported to the following directory: ", file.path, sep = ""))
+  }
+ 
   return(out.data)  
 }
 
