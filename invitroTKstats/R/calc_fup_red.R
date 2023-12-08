@@ -202,6 +202,9 @@ model {
 #' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
 #' According to Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa,
 #' assume all protein is albumin to estimate default in uM.) 
+#' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
+#' to the current directory as an .RData file. (Defaults to \code{FALSE}.)
 #'
 #' @return A list of two objects: 
 #' \enumerate{
@@ -246,7 +249,8 @@ calc_fup_red <- function(
   RANDOM.SEED=1111,
   good.col="Verified",
   JAGS.PATH = NA,
-  Physiological.Protein.Conc = 70/(66.5*1000)*1000000 # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
+  Physiological.Protein.Conc = 70/(66.5*1000)*1000000, # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
+  save.MCMC = FALSE
   )
 {
 
@@ -484,6 +488,11 @@ calc_fup_red <- function(
   View(Results)
   save(Results,
     file=paste(FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData",sep=""))
+  
+  if (save.MCMC){
+    save(coda.out,
+         file=paste(FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+  }
 
   return(list(Results=Results,coda=coda.out))
 }

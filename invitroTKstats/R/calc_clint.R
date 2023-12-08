@@ -179,6 +179,9 @@ model {
 #'
 #' @param degrade.prob (Numeric) Prior probability that a chemical will be unstable
 #' (that is, degrade abiotically) in the assay. (defaults to 0.05.)
+#' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
+#' to the current directory as an .RData file. (Defaults to \code{FALSE}.)
 #'
 #' @return A list of two objects: 
 #' \enumerate{
@@ -247,7 +250,8 @@ calc_clint <- function(
   JAGS.PATH = NA,
   decrease.prob = 0.5,
   saturate.prob = 0.25,
-  degrade.prob = 0.05)
+  degrade.prob = 0.05,
+  save.MCMC = FALSE)
 {
   MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
     sep="\t",header=T)
@@ -504,6 +508,11 @@ calc_clint <- function(
   View(Results)
   save(Results,
     file=paste(FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))
+  
+  if (save.MCMC){
+    save(coda.out,
+         file=paste(FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+  }
 
   return(list(Results=Results,coda=coda.out))
 }

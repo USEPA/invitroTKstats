@@ -113,6 +113,9 @@ model {
 #' @param JAGS.PATH (Character) Computer specific file path to JAGS software.
 #' (Defaults to `NA`.)
 #' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
+#' to the current directory as an .RData file. (Defaults to \code{FALSE}.)
+#' 
 #' @return A list of two objects: 
 #' \enumerate{
 #'    \item{Results: A data frame with Bayesian estimated fraction unbound
@@ -158,7 +161,8 @@ calc_fup_uc <- function(
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
-  JAGS.PATH = NA
+  JAGS.PATH = NA,
+  save.MCMC = FALSE
   )
 {
   if (!is.null(TEMP.DIR)) 
@@ -417,6 +421,11 @@ calc_fup_uc <- function(
   View(Results)
   save(Results,
     file=paste(FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
+  
+  if (save.MCMC){
+    save(coda.out,
+         file=paste(FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+  }
 
   return(list(Results=Results,coda=coda.out))  
 }
