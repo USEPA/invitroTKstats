@@ -39,7 +39,7 @@ plot_clint <- function(level2,dtxsid)
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   density.col <- "Hep.Density"
-  conc.col <- "Conc"
+  std.conc.col <- "Std.Conc"
   time.col <- "Time"
   area.col <- "Area"
   analysis.method.col <- "Analysis.Method"
@@ -60,7 +60,7 @@ plot_clint <- function(level2,dtxsid)
     istd.conc.col,
     istd.col,
     density.col,
-    conc.col,
+    std.conc.col,
     time.col,
     area.col)
 
@@ -72,13 +72,23 @@ plot_clint <- function(level2,dtxsid)
   }
 
   level2 <- subset(level2, DTXSID==dtxsid)
+  # Remove data with missing Time (i.e. Blank and CC samples)
+  level2 <- subset(level2, !is.na(Time))
 
   out <- ggplot(level2, aes(x=Time, y=Response)) +
-    ggtitle(paste(level2[1,"Compound.Name"]," (",level2[1,"DTXSID"],")",sep="")) +
+    ggtitle(level2[1,"Compound.Name"], subtitle = level2[1,"DTXSID"]) +
     geom_point(mapping = aes(
-      fill = factor(Sample.Type),
+      #fill = factor(Calibration),
       shape = factor(Sample.Type),
-      color=factor(Calibration)), size = 5)
+      color=factor(Calibration)), size = 3, alpha = 0.6) +
+      scale_color_brewer(palette = "Set1") +
+      #scale_colour_viridis_d() +
+      guides(color=guide_legend(title="Calibrations"),
+             shape=guide_legend(title="Sample Types")) + 
+      #theme(legend.position="bottom",legend.box="vertical", legend.margin=margin()) +
+      theme(plot.title = element_text(size=12),
+            legend.title = element_text(size = 5),
+            legend.text = element_text(size = 5))
 
   return(out)
 }
