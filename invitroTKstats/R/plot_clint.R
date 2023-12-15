@@ -16,8 +16,8 @@
 #' 
 #' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
 #' 
-#' @param color.palette (Character) \code{RColorBrewer} palette used for the plot. 
-#' (Defaults to "Set1".)
+#' @param color.palette (Character) \code{viridis} R package color palette to be used for the plot. 
+#' (Defaults to "viridis".)
 #'
 #' @return \item{ggplot2}{A figure of mass spectrometry responses over time for
 #' various sample types.}
@@ -26,7 +26,7 @@
 #'
 #' @export plot_clint
 #' @import ggplot2
-plot_clint <- function(level2,dtxsid,color.palette = "Set1")
+plot_clint <- function(level2,dtxsid,color.palette = "viridis", l.size = 3)
 {
 # We need all these columns in clint.data
 # Standardize the column names:
@@ -79,19 +79,20 @@ plot_clint <- function(level2,dtxsid,color.palette = "Set1")
   level2 <- subset(level2, !is.na(Time))
 
   out <- ggplot(level2, aes(x=Time, y=Response)) +
-    ggtitle(level2[1,"Compound.Name"], subtitle = level2[1,"DTXSID"]) +
+    labs(title = str_wrap(level2[1,"Compound.Name"],30), 
+            subtitle = level2[1,"DTXSID"]) +
     geom_point(mapping = aes(
       #fill = factor(Calibration),
       shape = factor(Sample.Type),
       color=factor(Calibration)), size = 3, alpha = 0.6) +
-      scale_color_brewer(palette = color.palette) +
-      #scale_colour_viridis_d() +
+      #scale_color_brewer(palette = color.palette) +
       guides(color=guide_legend(title="Calibrations"),
              shape=guide_legend(title="Sample Types")) + 
+      scale_colour_viridis_d(option = color.palette) +
       #theme(legend.position="bottom",legend.box="vertical", legend.margin=margin()) +
       theme(plot.title = element_text(size=12),
             legend.title = element_text(size = 5),
-            legend.text = element_text(size = 5))
+            legend.text = element_text(size = 5)) 
 
   return(out)
 }
