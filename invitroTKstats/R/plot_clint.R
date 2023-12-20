@@ -15,6 +15,9 @@
 #' of chemical clearance over time when incubated with suspended hepatocytes.
 #' 
 #' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
+#' 
+#' @param color.palette (Character) A character string indicating which 
+#' \code{viridis} R package color map option to use. (Defaults to "viridis".) 
 #'
 #' @return \item{ggplot2}{A figure of mass spectrometry responses over time for
 #' various sample types.}
@@ -23,7 +26,7 @@
 #'
 #' @export plot_clint
 #' @import ggplot2
-plot_clint <- function(level2,dtxsid)
+plot_clint <- function(level2,dtxsid,color.palette = "viridis")
 {
 # We need all these columns in clint.data
 # Standardize the column names:
@@ -39,7 +42,7 @@ plot_clint <- function(level2,dtxsid)
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   density.col <- "Hep.Density"
-  conc.col <- "Conc"
+  std.conc.col <- "Std.Conc"
   time.col <- "Time"
   area.col <- "Area"
   analysis.method.col <- "Analysis.Method"
@@ -60,7 +63,7 @@ plot_clint <- function(level2,dtxsid)
     istd.conc.col,
     istd.col,
     density.col,
-    conc.col,
+    std.conc.col,
     time.col,
     area.col)
 
@@ -72,13 +75,21 @@ plot_clint <- function(level2,dtxsid)
   }
 
   level2 <- subset(level2, DTXSID==dtxsid)
+  # Remove data with missing Time (i.e. Blank and CC samples)
+  level2 <- subset(level2, !is.na(Time))
 
   out <- ggplot(level2, aes(x=Time, y=Response)) +
-    ggtitle(paste(level2[1,"Compound.Name"]," (",level2[1,"DTXSID"],")",sep="")) +
+    labs(title = level2[1,"DTXSID"], 
+         caption = level2[1,"Compound.Name"]) +
     geom_point(mapping = aes(
-      fill = factor(Sample.Type),
+      #fill = factor(Calibration),
       shape = factor(Sample.Type),
-      color=factor(Calibration)), size = 5)
+      color=factor(Calibration)), size = 3, alpha = 0.6) +
+      #scale_color_brewer(palette = color.palette) +
+    guides(color=guide_legend(title="Calibrations"),
+           shape=guide_legend(title="Sample Types")) + 
+    scale_colour_viridis_d(option = color.palette, end = 0.75) + 
+    theme(plot.caption = element_text(hjust = 0.5))
 
   return(out)
 }
