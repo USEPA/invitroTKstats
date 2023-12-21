@@ -17,8 +17,15 @@
 #' 
 #' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
 #' 
+#' @param compare (Character) A string indicating the plot is for 
+#' comparing the responses across sample types ("type") or across calibrations ("cal").
+#' (Defaults to "type".) 
+#' 
 #' @param good.col (Character) Column name containg verification information,
 #' data rows valid for plotting are indicated with a "Y". (Defaults to "Verified".)
+#' 
+#' @param color.palette (Character) A character string indicating which 
+#' \code{viridis} R package color map option to use. (Defaults to "viridis".) 
 #'
 #' @return \item{ggplot2}{A figure of mass spectrometry responses for
 #' various sample types.}
@@ -28,7 +35,7 @@
 #' @import ggplot2
 #' 
 #' @export plot_fup_uc
-plot_fup_uc <- function(level2,dtxsid, good.col="Verified")
+plot_fup_uc <- function(level2,dtxsid, compare = "type",good.col="Verified", color.palette = "viridis")
 {
 # We need all these columns in uc data
   # Standardize the column names:
@@ -96,20 +103,40 @@ plot_fup_uc <- function(level2,dtxsid, good.col="Verified")
   }
   frac$Sample.Type = "Rough Fup"
   level2 <- rbind(level2,frac)
-
+  if (compare == "type"){
   out <- ggplot(level2, aes(x=factor(Sample.Type), y=Response*Dilution.Factor)) +
-    geom_point(mapping = aes(
-      fill = factor(Calibration),
-      shape = factor(Calibration),
-      color=factor(Calibration)), size = 5)+
-    scale_y_log10() +
+    geom_boxplot(mapping = aes(
+      #fill = factor(Calibration),
+      #shape = factor(Calibration),
+      color=factor(Calibration)))+
+    geom_point(aes(x = factor(Sample.Type), colour = factor(Calibration)), position = position_jitterdodge()) +
+    guides(
+      #fill=guide_legend(title="Calibrations"),
+      #shape=guide_legend(title="Calibrations"),
+      color=guide_legend(title="Calibrations"),
+      x =  guide_axis(angle = 45)) 
+  } else {
+    out <- ggplot(level2, aes(x=factor(Calibration), y=Response*Dilution.Factor)) +
+      geom_boxplot(mapping = aes(
+        #fill = factor(Sample.Type),
+        #shape = factor(Sample.Type),
+        color=factor(Sample.Type))) +
+      geom_point(aes(x = factor(Calibration), colour = factor(Sample.Type)), position = position_jitterdodge()) +
+      guides(
+        #fill=guide_legend(title="Sample Types"),
+        #shape=guide_legend(title="Sample Types"),
+        color=guide_legend(title="Sample Types"),
+        x =  guide_axis(angle = 45))
+  }
+  
+  out <- out + 
+    labs(title = level2[1,"DTXSID"], 
+                    caption = level2[1,"Compound.Name"]) +
+    scale_y_continuous(trans=scales::pseudo_log_trans(base = 10)) +
     ylab("Mass Spec. Intensity / Fraction Unbound") +
     xlab("Sample Type") +
-    ggtitle(paste(level2[1,"Compound.Name"]," (",level2[1,"DTXSID"],")",sep="")) +
-    guides(
-      fill=guide_legend(title="Calibration"),
-      shape=guide_legend(title="Calibration"),
-      color=guide_legend(title="Calibration"))
-
+    scale_colour_viridis_d(option = color.palette, end = 0.75) +
+    theme(plot.caption = element_text(hjust = 0.5))
+    
   return(out)
 }
