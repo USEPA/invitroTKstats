@@ -154,7 +154,7 @@ model {
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "-Clint-Level2.tsv".
 #'
-#' @param TEMP.DIR (Character) Alternative directory to save output files. 
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
 #' If \code{NULL}, all files will be written to the current working directory. 
 #' (Defaults to \code{NULL}.)
 #' 
@@ -180,8 +180,20 @@ model {
 #' @param degrade.prob (Numeric) Prior probability that a chemical will be unstable
 #' (that is, degrade abiotically) in the assay. (defaults to 0.05.)
 #' 
-#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
-#' to the current directory as an .RData file. (Defaults to \code{FALSE}.)
+#'@param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-4) will be exported as a .RData file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results 
+#' as an .RData file. (Defaults to \code{FALSE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
 #'
 #' @return A list of two objects: 
 #' \enumerate{
@@ -251,12 +263,28 @@ calc_clint <- function(
   decrease.prob = 0.5,
   saturate.prob = 0.25,
   degrade.prob = 0.05,
-  save.MCMC = FALSE)
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR=NULL, 
+  OUTPUT.DIR = NULL
+  )
 {
-  MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  
+  if (!is.null(INPUT.DIR)) {
+    MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
+                        sep="\t",header=T)
+  } else {
+    MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+                        sep="\t",header=T)
+  }
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
+  
+  if (!is.null(TEMP.DIR)) 
+  {
+    current.dir <- getwd()
+    setwd(TEMP.DIR)
+  }
 
 # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
@@ -502,18 +530,41 @@ calc_clint <- function(
           quote=F)
       }
     }
+  
+  if (!is.null(TEMP.DIR)) 
+  {
+    setwd(current.dir)
+  }
 
   stopCluster(CPU.cluster)
 
   View(Results)
-  save(Results,
-    file=paste(FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))
   
-  if (save.MCMC){
-    save(coda.out,
-         file=paste(FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+  if (output.res) {
+    # Write out a "level 4" result table:
+    # Determine the path for output
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    save(Results,
+      file=paste(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))
+    
+    print(paste("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
+                " has been exported to the following directory: ", file.path, sep = ""))
+    if (save.MCMC){
+      if (length(coda.out) != 0) {
+      save(coda.out,
+           file=paste(file.path, "/", FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+      } else {
+        print("No MCMC results to be saved.")
+      }
+    }
   }
-
+  
   return(list(Results=Results,coda=coda.out))
 }
 

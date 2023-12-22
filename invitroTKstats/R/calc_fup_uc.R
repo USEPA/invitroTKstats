@@ -92,11 +92,11 @@ model {
 #' We don't currently use the T1 data, but CC, AF, and T5 data are required.
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
-#' "<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results")
+#' "<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results".)
 #'
-#' @param TEMP.DIR (Character) Alternative directory to save output files. By
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. By
 #' default, i.e. unspecified, all files will be exported to the user's current
-#' working directory. (Defaults to `NULL`.)
+#' working directory. (Defaults to \code{NULL}.)
 #'
 #' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
@@ -113,8 +113,20 @@ model {
 #' @param JAGS.PATH (Character) Computer specific file path to JAGS software.
 #' (Defaults to `NA`.)
 #' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-4) will be exported as a .RData file. 
+#' (Defaults to \code{TRUE}.)
+#' 
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
-#' to the current directory as an .RData file. (Defaults to \code{FALSE}.)
+#' as an .RData file. (Defaults to \code{FALSE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
 #' 
 #' @return A list of two objects: 
 #' \enumerate{
@@ -162,20 +174,30 @@ calc_fup_uc <- function(
   RANDOM.SEED=1111,
   good.col="Verified",
   JAGS.PATH = NA,
-  save.MCMC = FALSE
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR=NULL, 
+  OUTPUT.DIR = NULL
   )
 {
+  
+  if (!is.null(INPUT.DIR)) {
+    PPB.data <- read.csv(file=paste(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv",sep=""), 
+                         sep="\t",header=T)  
+  } else {
+    PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
+                         sep="\t",header=T)  
+  }
+  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
+  PPB.data <- subset(PPB.data,!is.na(Response))
+  
+  
   if (!is.null(TEMP.DIR)) 
   {
     current.dir <- getwd()
     setwd(TEMP.DIR)
   }
   
-  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
-    sep="\t",header=T)  
-  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
-  PPB.data <- subset(PPB.data,!is.na(Response))
-
   # Standardize the column names:
     sample.col <- "Lab.Sample.Name"
     date.col <- "Date"
@@ -419,14 +441,33 @@ calc_fup_uc <- function(
     quote=F)
   
   View(Results)
-  save(Results,
-    file=paste(FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
   
-  if (save.MCMC){
-    save(coda.out,
-         file=paste(FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
-  }
-
+  if (output.res) {
+    # Write out a "level 4" result table:
+    # Determine the path for output
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    save(Results,
+      file=paste(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
+    
+    print(paste("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
+                " has been exported to the following directory: ", file.path, sep = ""))
+    # Write out the MCMC results separately 
+    if (save.MCMC){
+      if (length(coda.out) != 0) {
+      save(coda.out,
+           file=paste(file.path, "/", FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+        } else {
+          print("No MCMC results to be saved.")
+        }
+      }
+    }
+  
   return(list(Results=Results,coda=coda.out))  
 }
 
