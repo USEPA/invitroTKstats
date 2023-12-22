@@ -187,6 +187,14 @@
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
 #' table (Level-1) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
+#' If \code{NULL}, looking for the input level-0 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A Level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with membrane permeability data
@@ -257,18 +265,30 @@ format_caco2 <- function(
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
-  output.res = TRUE
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
   )
 {
   # These are the required data types as indicated by type.col.
   # In order to calculate the parameter a chemical must have peak areas for each
   # of these measurements:
   req.types=c("Blank","D0","D2","R2")
-
-  data.out <- as.data.frame(data.in)
-  # Force code to throw error if data.in accessed after this point:
-  rm(data.in)
-
+  
+  if (!missing(data.in)) {
+    data.out <- as.data.frame(data.in)
+    # Force code to throw error if data.in accessed after this point:
+    rm(data.in)
+  } else {
+    if (!is.null(INPUT.DIR)) {
+      data.out <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Caco-2-Level0.tsv",sep=""),
+                              sep="\t",header=T)
+    } else {
+      data.out <- read.csv(file=paste(FILENAME,"-Caco-2-Level0.tsv",sep=""),
+                              sep="\t",header=T)
+    }
+  }
+  
 # These arguments allow the user to specify a single value for every observation
 # in the table:
   if (!is.null(cal)) data.out[,cal.col] <- cal
@@ -386,9 +406,17 @@ format_caco2 <- function(
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
-    file.path <- getwd()
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
     write.table(data.out,
-                file=paste(FILENAME,"-Caco-2-Level1.tsv",sep=""),
+                file=paste(file.path, "/", FILENAME,"-Caco-2-Level1.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)

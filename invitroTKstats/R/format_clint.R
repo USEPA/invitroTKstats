@@ -195,6 +195,14 @@
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
 #' table (Level-1) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
+#' If \code{NULL}, looking for the input level-0 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A Level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with hepatic
@@ -272,18 +280,24 @@ format_clint <- function(
   level0.file.col="Level0.File",
   level0.sheet=NULL,
   level0.sheet.col="Level0.Sheet",
-  output.res = TRUE
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
   )
 {
-  data.in <- as.data.frame(data.in)
-
-  # Write out a "level 0" file (data as the function received it):
-  write.table(data.in,
-    file=paste(FILENAME,"-Clint-Level0.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-
+  
+  if (!missing(data.in)) {
+    data.in <- as.data.frame(data.in)
+  } else {
+    if (!is.null(INPUT.DIR)) {
+      data.in <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level0.tsv",sep=""),
+                           sep="\t",header=T)
+    } else {
+      data.in <- read.csv(file=paste(FILENAME,"-Clint-Level0.tsv",sep=""),
+                           sep="\t",header=T)
+    }
+  }
+  
   if (is.null(note.col))
   {
     data.in[,"Note"] <- ""
@@ -423,9 +437,17 @@ format_clint <- function(
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
-    file.path <- getwd()
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
     write.table(data.out,
-                file=paste(FILENAME,"-Clint-Level1.tsv",sep=""),
+                file=paste(file.path, "/", FILENAME,"-Clint-Level1.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)
