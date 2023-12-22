@@ -28,7 +28,7 @@
 #' Columns with names ending in ".ColName" indicate the columns to be extracted
 #' from the specified Excel file and sheet containing level 0 data.
 #'
-#' @param data.label (Character) A string used to identify outputs of the function call.
+#' @param FILENAME (Character) A string used to identify outputs of the function call.
 #' (Default to "MYDATA")
 #' 
 #' @param level0.catalog A data frame describing which columns of which sheets
@@ -162,7 +162,7 @@
 #' @import readxl
 #' 
 #' @export merge_level0
-merge_level0 <- function(data.label="MYDATA",
+merge_level0 <- function(FILENAME="MYDATA",
   level0.catalog,
   file.col="File",
   sheet=NULL,
@@ -194,7 +194,8 @@ merge_level0 <- function(data.label="MYDATA",
   chem.name.col="Compound",
   chem.dtxsid.col="DTXSID",
   catalog.out = TRUE,
-  output.res = TRUE
+  output.res = TRUE,
+  OUTPUT.DIR = NULL
   )
 {
   level0.catalog <- as.data.frame(level0.catalog)
@@ -380,25 +381,33 @@ merge_level0 <- function(data.label="MYDATA",
     out.data <- rbind(out.data, this.data[,1:(13+length(additional.colname.cols))])  
   }
 
+  
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+  } else {
+    file.path <- getwd()
+  }
+
+  ## Keep outputting level-0 catalog for now but this functionality may be deprecated later
   if (catalog.out) {
     # Write out a "Catalog" file that explains how level 0 data were mapped to level 1
     write.table(level0.catalog, 
-                file=paste(data.label,"-level0-Catalog.tsv",sep=""),
+                file=paste(file.path, "/", FILENAME,"-level0-Catalog.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)
-    print(paste("A Level-0 Catalog file named ",data.label,"-level0-Catalog.tsv", 
+    print(paste("A Level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
                 " has been exported to the following directory: ", file.path, sep = ""))
   }
 
   if (output.res) {
     # Write out the merged Level-0 file
     write.table(out.data, 
-                file=paste(data.label,"-level0.tsv",sep=""),
+                file=paste(file.path, "/", FILENAME,"-level0.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)
-    print(paste("A Level-0 file named ",data.label,"-level0.tsv", 
+    print(paste("A Level-0 file named ",FILENAME,"-level0.tsv", 
                 " has been exported to the following directory: ", file.path, sep = ""))
   }
  
