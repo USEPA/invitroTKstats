@@ -44,9 +44,13 @@
 #' table (Level-3) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
-#' @param TEMP.DIR (Character) Alternative directory to save output files. By
-#' default, i.e. unspecified, all files will be exported to the user's current
-#' working directory. (Defaults to \code{NULL}.)
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
@@ -106,10 +110,16 @@
 #' @import Rdpack
 #'
 #' @export calc_fup_red_point
-calc_fup_red_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEMP.DIR=NULL)
+calc_fup_red_point <- function(FILENAME, good.col="Verified", output.res=TRUE, INPUT.DIR=NULL, OUTPUT.DIR = NULL)
 {
-  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  if (!is.null(INPUT.DIR)) {
+    MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv",sep=""),
+                        sep="\t",header=T)
+  } else {
+    MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
+                        sep="\t",header=T)
+  }
+  
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
 
@@ -265,17 +275,22 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified", output.res=TRUE, T
 
   if (output.res) {
     # Write out a "level 3" file (data organized into a standard format):
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
     write.table(out.table,
-                file=paste(TEMP.DIR, "/", FILENAME,"-fup-RED-Level3.tsv",sep=""),
+                file=paste(file.path, "/", FILENAME,"-fup-RED-Level3.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)
     
-    if (!is.null(TEMP.DIR)) {
-      file.path <- TEMP.DIR
-    } else {
-      file.path <- getwd()
-    }
+  
     # Print notification message stating where the file was output to
     print(paste("A Level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", 
                 " has been exported to the following directory: ", file.path, sep = ""))

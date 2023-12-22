@@ -31,9 +31,13 @@
 #' table (Level-3) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
-#' @param TEMP.DIR (Character) Alternative directory to save output files. By
-#' default, i.e. unspecified, all files will be exported to the user's current
-#' working directory. (Defaults to \code{NULL}.)
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
 #' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
@@ -106,10 +110,15 @@
 #' @import Rdpack
 #'
 #' @export calc_clint_point
-calc_clint_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEMP.DIR=NULL)
+calc_clint_point <- function(FILENAME, good.col="Verified", output.res=TRUE, INPUT.DIR=NULL, OUTPUT.DIR = NULL)
 {
-  clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  if (!is.null(INPUT.DIR)) {
+    clint.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
+                           sep="\t",header=T)
+    } else {
+    clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+                           sep="\t",header=T)
+    }
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
 
@@ -338,18 +347,22 @@ calc_clint_point <- function(FILENAME, good.col="Verified", output.res=TRUE, TEM
   out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
 
   if (output.res) {
-    # Write out a "level 3" file (data organized into a standard format):
+    # Write out a "level 3" file:
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
     write.table(out.table,
-                file=paste(TEMP.DIR, "/", FILENAME,"-Clint-Level3.tsv",sep=""),
+                file=paste(file.path, "/", FILENAME,"-Clint-Level3.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)
     
-    if (!is.null(TEMP.DIR)) {
-      file.path <- TEMP.DIR
-    } else {
-      file.path <- getwd()
-    }
     # Print notification message stating where the file was output to
     print(paste("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
                 " has been exported to the following directory: ", file.path, sep = ""))
