@@ -115,7 +115,7 @@ plot_fup_uc <- function(level2,dtxsid, compare = "type",good.col="Verified", col
       #shape=guide_legend(title="Calibrations"),
       color=guide_legend(title="Calibrations"),
       x =  guide_axis(angle = 45)) 
-  } else {
+  } else if (compare == "cal") {
     out <- ggplot(level2, aes(x=factor(Calibration), y=Response*Dilution.Factor)) +
       geom_boxplot(mapping = aes(
         #fill = factor(Sample.Type),
