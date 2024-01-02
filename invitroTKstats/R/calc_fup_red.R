@@ -498,12 +498,6 @@ calc_fup_red <- function(
   }
   stopCluster(CPU.cluster)
 
-  write.table(ignored.data,
-    file=paste(FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-
   View(Results)
   
   if (output.res) {
@@ -522,6 +516,13 @@ calc_fup_red <- function(
     
     print(paste("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
                 " has been exported to the following directory: ", file.path, sep = ""))
+    
+    write.table(ignored.data,
+                file=paste(file.path, "/", FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    
     # Write out the MCMC results separately 
     if (save.MCMC){
       if (length(coda.out) != 0) {
