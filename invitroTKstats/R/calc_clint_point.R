@@ -22,6 +22,9 @@
 #'
 #' @param FILENAME A string used to identify the input Level-2 file.
 #' "<FILENAME>-Clint-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame or a matrix containing 
+#' mass-spectrometry peak areas, indication of chemical identity, and measurement type. 
 #'
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for analysis are indicated with a "Y".
@@ -110,17 +113,29 @@
 #' @import Rdpack
 #'
 #' @export calc_clint_point
-calc_clint_point <- function(FILENAME, good.col="Verified", output.res=TRUE, INPUT.DIR=NULL, OUTPUT.DIR = NULL)
+calc_clint_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified", 
+    output.res=TRUE, 
+    INPUT.DIR=NULL, 
+    OUTPUT.DIR = NULL)
 {
-  if (!is.null(INPUT.DIR)) {
-    clint.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
-                           sep="\t",header=T)
+  
+  if (!missing(data.in)) {
+    clint.data <- as.data.frame(data.in)
+  } else {
+    if (!is.null(INPUT.DIR)) {
+      clint.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
+                             sep="\t",header=T)
     } else {
-    clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
-                           sep="\t",header=T)
+      clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+                             sep="\t",header=T)
     }
+  }
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
+  
 
 # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
@@ -364,8 +379,8 @@ calc_clint_point <- function(FILENAME, good.col="Verified", output.res=TRUE, INP
                 quote=F)
     
     # Print notification message stating where the file was output to
-    print(paste("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
   }
 
   print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))

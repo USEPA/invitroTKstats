@@ -451,8 +451,8 @@ format_clint <- function(
                 sep="\t",
                 row.names=F,
                 quote=F)
-    print(paste("A Level-1 file named ",FILENAME,"-Clint-Level1.tsv", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-1 file named ",FILENAME,"-Clint-Level1.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
   }
   
   summarize_table(data.out,

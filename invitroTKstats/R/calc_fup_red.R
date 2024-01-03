@@ -181,6 +181,10 @@ model {
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-fup-RED-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type.
 #'
 #' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
 #' If \code{NULL}, all files will be written to the current working directory. 
@@ -255,6 +259,7 @@ model {
 #' @export calc_fup_red
 calc_fup_red <- function(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5,
   NUM.CORES=2,
@@ -268,13 +273,19 @@ calc_fup_red <- function(
   OUTPUT.DIR = NULL
   )
 {
-  if (!is.null(INPUT.DIR)) {
+  
+  if (!missing(data.in)) {
+    MS.data <- as.data.frame(data.in)
+  } else {
+    if (!is.null(INPUT.DIR)) {
     MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv",sep=""),
                         sep="\t",header=T)
   } else {
     MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
                         sep="\t",header=T)
+    }
   }
+  
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
   
@@ -488,7 +499,7 @@ calc_fup_red <- function(
             quote=F)
         }
       } else {
-        ignored.data <- rbind(ignored.data, MSdata)
+        ignored.data <- rbind(ignored.data, this.subset)
       }
     }
 
@@ -514,14 +525,20 @@ calc_fup_red <- function(
     save(Results,
       file=paste(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData",sep=""))
     
-    print(paste("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
-                " has been exported to the following directory: ", file.path, sep = ""))
-    
-    write.table(ignored.data,
+    cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
+                " has been exported to the following directory: ", file.path), "\n")
+   
+    # Save ignored data if there is any
+    if (!is.null(ignored.data)) {
+      write.table(ignored.data,
                 file=paste(file.path, "/", FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)
+      cat(paste0("A subset of ignored data named ",FILENAME,"-fup-RED-Level2-ignoredbayes.tsv", 
+               " has been exported to the following directory: ", file.path), "\n")
+    
+    }
     
     # Write out the MCMC results separately 
     if (save.MCMC){
@@ -529,7 +546,7 @@ calc_fup_red <- function(
         save(coda.out,
              file=paste(file.path, "/", FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
       } else {
-        print("No MCMC results to be saved.")
+        cat("No MCMC results to be saved.\n")
       }
     }
   }

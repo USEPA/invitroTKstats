@@ -154,6 +154,10 @@ model {
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "-Clint-Level2.tsv".
 #'
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type.
+#'
 #' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
 #' If \code{NULL}, all files will be written to the current working directory. 
 #' (Defaults to \code{NULL}.)
@@ -254,6 +258,7 @@ model {
 #' @export calc_clint
 calc_clint <- function(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5,
   NUM.CORES=2,
@@ -269,13 +274,16 @@ calc_clint <- function(
   OUTPUT.DIR = NULL
   )
 {
-  
-  if (!is.null(INPUT.DIR)) {
-    MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
-                        sep="\t",header=T)
+  if (!missing(data.in)) {
+    MS.data <- as.data.frame(data.in)
   } else {
-    MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
-                        sep="\t",header=T)
+    if (!is.null(INPUT.DIR)) {
+      MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
+                          sep="\t",header=T)
+    } else {
+      MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+                          sep="\t",header=T)
+    }
   }
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
@@ -553,14 +561,14 @@ calc_clint <- function(
     save(Results,
       file=paste(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))
     
-    print(paste("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
+                " has been exported to the following directory: ", file.path), "\n")
     if (save.MCMC){
       if (length(coda.out) != 0) {
       save(coda.out,
            file=paste(file.path, "/", FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
       } else {
-        print("No MCMC results to be saved.")
+        cat("No MCMC results to be saved.\n")
       }
     }
   }

@@ -93,6 +93,10 @@ model {
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results".)
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type.
 #'
 #' @param TEMP.DIR (Character) Temporary directory to save intermediate files. By
 #' default, i.e. unspecified, all files will be exported to the user's current
@@ -168,6 +172,7 @@ model {
 #' @export calc_fup_uc
 calc_fup_uc <- function(
   FILENAME = "UC_Model_Results",
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5, 
   NUM.CORES=2,
@@ -180,14 +185,18 @@ calc_fup_uc <- function(
   OUTPUT.DIR = NULL
   )
 {
-  
-  if (!is.null(INPUT.DIR)) {
+  if (!missing(data.in)) {
+    PPB.data <- as.data.frame(data.in)
+  } else {
+    if (!is.null(INPUT.DIR)) {
     PPB.data <- read.csv(file=paste(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv",sep=""), 
                          sep="\t",header=T)  
   } else {
     PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
                          sep="\t",header=T)  
+    }
   }
+  
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
   
@@ -449,14 +458,19 @@ calc_fup_uc <- function(
     save(Results,
       file=paste(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
     
-    print(paste("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
+                " has been exported to the following directory: ", file.path), "\n")
     
-    write.table(ignored.data, 
+    # Save ignored data if there is any
+    if (!is.null(ignored.data)) {
+      write.table(ignored.data, 
                 file=paste(file.path, "/", FILENAME,"-fup-UC-Level2-ignoredbayes.tsv",sep=""),
                 sep="\t",
                 row.names=F,
                 quote=F)
+      cat(paste0("A subset of ignored data named ",FILENAME,"-fup-UC-Level2-ignoredbayes.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
     
     # Write out the MCMC results separately 
     if (save.MCMC){
@@ -464,7 +478,7 @@ calc_fup_uc <- function(
       save(coda.out,
            file=paste(file.path, "/", FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
         } else {
-          print("No MCMC results to be saved.")
+          cat("No MCMC results to be saved.\n")
         }
       }
     }

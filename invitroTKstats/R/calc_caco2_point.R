@@ -33,7 +33,11 @@
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-Caco-2-Level2.tsv".
-#'
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type. 
+#' 
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for analysis are indicated with a "Y".
 #' (Defaults to "Verified".)
@@ -106,20 +110,31 @@
 #' @import Rdpack
 #'
 #' @export calc_caco2_point
-calc_caco2_point <- function(FILENAME, good.col="Verified", output.res=TRUE, INPUT.DIR=NULL, OUTPUT.DIR = NULL)
+calc_caco2_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified", 
+    output.res=TRUE, 
+    INPUT.DIR=NULL,
+    OUTPUT.DIR = NULL)
 {
   # These are the required data types as indicated by type.col.
   # In order to calculate the parameter a chemical must have peak areas for each
   # of these measurements:
   req.types=c("Blank","D0","D2","R2")
 
-  if (!is.null(INPUT.DIR)) {
+  if (!missing(data.in)) {
+    input.table <- as.data.frame(data.in)
+  } else {
+    if (!is.null(INPUT.DIR)) {
     input.table <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv",sep=""),
                             sep="\t",header=T)
   } else {
     input.table <- read.csv(file=paste(FILENAME,"-Caco-2-Level2.tsv",sep=""),
                             sep="\t",header=T)
+    }
   }
+  
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
 
@@ -285,8 +300,8 @@ calc_caco2_point <- function(FILENAME, good.col="Verified", output.res=TRUE, INP
       quote=F)
    
     # Print notification message stating where the file was output to
-    print(paste("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
   }
 
   print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))

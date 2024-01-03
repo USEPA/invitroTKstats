@@ -31,6 +31,10 @@
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-fup-UC-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type.
 #'
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for analysis are indicated with a "Y".
@@ -83,15 +87,27 @@
 #' @import Rdpack
 #'
 #' @export calc_fup_uc_point
-calc_fup_uc_point <- function(FILENAME, good.col="Verified", output.res=TRUE, INPUT.DIR=NULL, OUTPUT.DIR = NULL)
+calc_fup_uc_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified", 
+    output.res=TRUE, 
+    INPUT.DIR=NULL, 
+    OUTPUT.DIR = NULL)
 {
-  if (!is.null(INPUT.DIR)) {
+  
+  if (!missing(data.in)) {
+    PPB.data <- as.data.frame(data.in)
+  } else {
+    if (!is.null(INPUT.DIR)) {
     PPB.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-UC-Level2.tsv",sep=""),
                          sep="\t",header=T)
     } else {
     PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""),
                          sep="\t",header=T)
     }
+  }
+  
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
 
@@ -226,8 +242,8 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified", output.res=TRUE, IN
                 quote=F)
     
     # Print notification message stating where the file was output to
-    print(paste("A Level-3 file named ",FILENAME,"-fup-UC-Level3.tsv", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-3 file named ",FILENAME,"-fup-UC-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
   }
   
 

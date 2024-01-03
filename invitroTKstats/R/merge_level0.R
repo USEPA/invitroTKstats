@@ -148,14 +148,18 @@
 #'  (Defaults to "DTXSID") 
 #'  
 #' @param catalog.out (Logical) When set to \code{TRUE}, the data frame 
-#' specified in \code{level0.catalog} will be exported the current directory as a .tsv file. 
-#' (Defaults to \code{TRUE}.)
+#' specified in \code{level0.catalog} will be exported the current directory 
+#' or \code{OUTPUT.DIR} as a .tsv file. (Defaults to \code{TRUE}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-0) will be exported the current directory as a .tsv file. 
-#' (Defaults to \code{TRUE}.)
+#' table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
+#' as a .tsv file. (Defaults to \code{TRUE}.)
 #' 
-#' @return \item{data.frame}{A data.frame in standardized "level1" format} 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @return \item{data.frame}{A data.frame in standardized Level-0 format} 
 #'
 #' @author John Wambaugh
 #' 
@@ -396,8 +400,8 @@ merge_level0 <- function(FILENAME="MYDATA",
                 sep="\t",
                 row.names=F,
                 quote=F)
-    print(paste("A Level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
+                " has been exported to the following directory: ", file.path),"\n")
   }
 
   if (output.res) {
@@ -407,8 +411,8 @@ merge_level0 <- function(FILENAME="MYDATA",
                 sep="\t",
                 row.names=F,
                 quote=F)
-    print(paste("A Level-0 file named ",FILENAME,"-level0.tsv", 
-                " has been exported to the following directory: ", file.path, sep = ""))
+    cat(paste0("A Level-0 file named ",FILENAME,"-level0.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
   }
  
   return(out.data)  
