@@ -458,7 +458,7 @@ format_fup_red <- function(
       file.path <- getwd()
     }
     write.table(data.out,
-                file=paste(file.path, "/", FILENAME,"-fup-RED-Level1.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-fup-RED-Level1.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)

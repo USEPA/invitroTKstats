@@ -456,7 +456,7 @@ calc_fup_uc <- function(
       file.path <- getwd()
     }
     save(Results,
-      file=paste(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
+      file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData"))
     
     cat(paste0("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
                 " has been exported to the following directory: ", file.path), "\n")
@@ -464,7 +464,7 @@ calc_fup_uc <- function(
     # Save ignored data if there is any
     if (!is.null(ignored.data)) {
       write.table(ignored.data, 
-                file=paste(file.path, "/", FILENAME,"-fup-UC-Level2-ignoredbayes.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-fup-UC-Level2-ignoredbayes.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
@@ -476,7 +476,7 @@ calc_fup_uc <- function(
     if (save.MCMC){
       if (length(coda.out) != 0) {
       save(coda.out,
-           file=paste(file.path, "/", FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+           file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData"))
         } else {
           cat("No MCMC results to be saved.\n")
         }

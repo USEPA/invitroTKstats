@@ -447,7 +447,7 @@ format_clint <- function(
       file.path <- getwd()
     }
     write.table(data.out,
-                file=paste(file.path, "/", FILENAME,"-Clint-Level1.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-Clint-Level1.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)

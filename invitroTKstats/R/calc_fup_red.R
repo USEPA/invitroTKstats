@@ -278,10 +278,10 @@ calc_fup_red <- function(
     MS.data <- as.data.frame(data.in)
   } else {
     if (!is.null(INPUT.DIR)) {
-    MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv",sep=""),
+    MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
                         sep="\t",header=T)
   } else {
-    MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
+    MS.data <- read.csv(file=paste0(FILENAME,"-fup-RED-Level2.tsv"),
                         sep="\t",header=T)
     }
   }
@@ -361,8 +361,8 @@ calc_fup_red <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-fup-RED-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-fup-RED-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -373,7 +373,7 @@ calc_fup_red <- function(
   MS.data[MS.data$Response<0,"Response"] <- 0
 
   # Because of the possibility of crashes we save the results one chemical at a time:
-  OUTPUT.FILE <- paste(FILENAME,"-fup-RED-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste0(FILENAME,"-fup-RED-Level4.tsv")
 
   # Check to see if we crashed earlier, if so, don't redo something that already is done
   if (!file.exists(OUTPUT.FILE))
@@ -523,7 +523,7 @@ calc_fup_red <- function(
     }
     
     save(Results,
-      file=paste(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData",sep=""))
+      file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
     
     cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
                 " has been exported to the following directory: ", file.path), "\n")
@@ -531,7 +531,7 @@ calc_fup_red <- function(
     # Save ignored data if there is any
     if (!is.null(ignored.data)) {
       write.table(ignored.data,
-                file=paste(file.path, "/", FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-fup-RED-Level2-ignoredbayes.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
@@ -544,7 +544,7 @@ calc_fup_red <- function(
     if (save.MCMC){
       if (length(coda.out) != 0) {
         save(coda.out,
-             file=paste(file.path, "/", FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+             file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData"))
       } else {
         cat("No MCMC results to be saved.\n")
       }

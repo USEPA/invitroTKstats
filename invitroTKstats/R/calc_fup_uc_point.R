@@ -236,7 +236,7 @@ calc_fup_uc_point <- function(
       file.path <- getwd()
     }
     write.table(out.table,
-                file=paste(file.path, "/", FILENAME,"-fup-UC-Level3.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-fup-UC-Level3.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)

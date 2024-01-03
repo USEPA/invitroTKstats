@@ -412,7 +412,7 @@ format_fup_uc <- function(
       file.path <- getwd()
     }
     write.table(data.out,
-                file=paste(file.path, "/", FILENAME,"-fup-UC-Level1.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-fup-UC-Level1.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)

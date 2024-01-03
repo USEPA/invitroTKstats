@@ -396,7 +396,7 @@ merge_level0 <- function(FILENAME="MYDATA",
   if (catalog.out) {
     # Write out a "Catalog" file that explains how level 0 data were mapped to level 1
     write.table(level0.catalog, 
-                file=paste(file.path, "/", FILENAME,"-level0-Catalog.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-level0-Catalog.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
@@ -407,7 +407,7 @@ merge_level0 <- function(FILENAME="MYDATA",
   if (output.res) {
     # Write out the merged Level-0 file
     write.table(out.data, 
-                file=paste(file.path, "/", FILENAME,"-level0.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-level0.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)

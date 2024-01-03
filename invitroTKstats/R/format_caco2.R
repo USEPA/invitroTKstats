@@ -416,7 +416,7 @@ format_caco2 <- function(
       file.path <- getwd()
     }
     write.table(data.out,
-                file=paste(file.path, "/", FILENAME,"-Caco-2-Level1.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-Caco-2-Level1.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
