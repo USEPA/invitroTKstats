@@ -103,28 +103,21 @@ plot_fup_uc <- function(level2,dtxsid, compare = "type",good.col="Verified", col
   }
   frac$Sample.Type = "Rough Fup"
   level2 <- rbind(level2,frac)
+  
   if (compare == "type"){
   out <- ggplot(level2, aes(x=factor(Sample.Type), y=Response*Dilution.Factor)) +
     geom_boxplot(mapping = aes(
-      #fill = factor(Calibration),
-      #shape = factor(Calibration),
       color=factor(Calibration)))+
-    geom_point(aes(x = factor(Sample.Type), colour = factor(Calibration)), position = position_jitterdodge()) +
+    geom_point(aes(x = factor(Sample.Type), colour = factor(Calibration)), alpha = 0.6, position = position_jitterdodge()) +
     guides(
-      #fill=guide_legend(title="Calibrations"),
-      #shape=guide_legend(title="Calibrations"),
       color=guide_legend(title="Calibrations"),
       x =  guide_axis(angle = 45)) 
   } else if (compare == "cal") {
     out <- ggplot(level2, aes(x=factor(Calibration), y=Response*Dilution.Factor)) +
       geom_boxplot(mapping = aes(
-        #fill = factor(Sample.Type),
-        #shape = factor(Sample.Type),
         color=factor(Sample.Type))) +
-      geom_point(aes(x = factor(Calibration), colour = factor(Sample.Type)), position = position_jitterdodge()) +
+      geom_point(aes(x = factor(Calibration), colour = factor(Sample.Type)), alpha = 0.6, position = position_jitterdodge()) +
       guides(
-        #fill=guide_legend(title="Sample Types"),
-        #shape=guide_legend(title="Sample Types"),
         color=guide_legend(title="Sample Types"),
         x =  guide_axis(angle = 45))
   }
