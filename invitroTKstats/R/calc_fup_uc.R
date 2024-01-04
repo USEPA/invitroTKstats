@@ -187,12 +187,12 @@ calc_fup_uc <- function(
 {
   if (!missing(data.in)) {
     PPB.data <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-    PPB.data <- read.csv(file=paste(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv",sep=""), 
+    PPB.data <- read.csv(file=paste0(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv"), 
                          sep="\t",header=T)  
   } else {
-    PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
+    PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"), 
                          sep="\t",header=T)  
     }
   }
@@ -267,8 +267,8 @@ calc_fup_uc <- function(
   
   # Only used verified data:
   unverified.data <- subset(PPB.data, PPB.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-fup-UC-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-fup-UC-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -277,7 +277,7 @@ calc_fup_uc <- function(
   PPB.data <- as.data.frame(PPB.data)
   all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
   
-  OUTPUT.FILE <- paste(FILENAME,"-fup-UC-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste0(FILENAME,"-fup-UC-Level4.tsv")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
@@ -361,7 +361,7 @@ calc_fup_uc <- function(
         init_vals <- function(chain) initfunction_fup_uc(mydata=mydata, chain = chain)
         # write out arguments to runjags:
         save(this.compound,mydata,UC_PPB_model,init_vals,
-          file=paste(FILENAME,"-Fup-UC-PREJAGS.RData",sep=""))  
+          file=paste0(FILENAME,"-Fup-UC-PREJAGS.RData"))  
         
         coda.out[[this.compound]] <- autorun.jags(
           UC_PPB_model, 
@@ -428,7 +428,7 @@ calc_fup_uc <- function(
         Results <- rbind(Results,new.results)
     
         write.table(Results, 
-          file=paste(OUTPUT.FILE,sep=""),
+          file=paste0(OUTPUT.FILE),
           sep="\t",
           row.names=F,
           quote=F)

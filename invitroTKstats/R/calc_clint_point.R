@@ -124,12 +124,12 @@ calc_clint_point <- function(
   
   if (!missing(data.in)) {
     clint.data <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-      clint.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
+      clint.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
                              sep="\t",header=T)
     } else {
-      clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+      clint.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
                              sep="\t",header=T)
     }
   }
@@ -373,7 +373,7 @@ calc_clint_point <- function(
       file.path <- getwd()
     }
     write.table(out.table,
-                file=paste(file.path, "/", FILENAME,"-Clint-Level3.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-Clint-Level3.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)

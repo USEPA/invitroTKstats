@@ -245,12 +245,12 @@ format_fup_uc <- function(
 
   if (!missing(data.in)) {
     data.in <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-      data.in <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-UC-Level0.tsv",sep=""),
+      data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-UC-Level0.tsv"),
                           sep="\t",header=T)
     } else {
-      data.in <- read.csv(file=paste(FILENAME,"-fup-UC-Level0.tsv",sep=""),
+      data.in <- read.csv(file=paste0(FILENAME,"-fup-UC-Level0.tsv"),
                           sep="\t",header=T)
     }
   }

@@ -98,12 +98,12 @@ calc_fup_uc_point <- function(
   
   if (!missing(data.in)) {
     PPB.data <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-    PPB.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-UC-Level2.tsv",sep=""),
+    PPB.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-UC-Level2.tsv"),
                          sep="\t",header=T)
     } else {
-    PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""),
+    PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"),
                          sep="\t",header=T)
     }
   }

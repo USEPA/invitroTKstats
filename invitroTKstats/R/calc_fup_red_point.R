@@ -125,12 +125,12 @@ calc_fup_red_point <- function(
   
   if (!missing(data.in)) {
     MS.data <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-    MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv",sep=""),
+    MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
                         sep="\t",header=T)
   } else {
-    MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
+    MS.data <- read.csv(file=paste0(FILENAME,"-fup-RED-Level2.tsv"),
                         sep="\t",header=T)
     }
   }
@@ -300,7 +300,7 @@ calc_fup_red_point <- function(
       file.path <- getwd()
     }
     write.table(out.table,
-                file=paste(file.path, "/", FILENAME,"-fup-RED-Level3.tsv",sep=""),
+                file=paste0(file.path, "/", FILENAME,"-fup-RED-Level3.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)

@@ -276,7 +276,7 @@ calc_fup_red <- function(
   
   if (!missing(data.in)) {
     MS.data <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
     MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
                         sep="\t",header=T)
@@ -427,7 +427,7 @@ calc_fup_red <- function(
           init_vals <- function(chain) initfunction_fup_red(mydata=mydata, chain = chain)
           # write out arguments to runjags:
           save(this.compound, mydata ,init_vals,
-            file=paste(FILENAME,"-fup-RED-PREJAGS.RData",sep=""))
+            file=paste0(FILENAME,"-fup-RED-PREJAGS.RData"))
 
           # Run JAGS:
           coda.out[[this.compound]] <- autorun.jags(
@@ -493,7 +493,7 @@ calc_fup_red <- function(
           Results <- rbind(Results,new.results)
 
           write.table(Results,
-            file=paste(OUTPUT.FILE,sep=""),
+            file=paste0(OUTPUT.FILE),
             sep="\t",
             row.names=F,
             quote=F)

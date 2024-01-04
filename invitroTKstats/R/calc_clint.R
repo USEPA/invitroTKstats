@@ -276,12 +276,12 @@ calc_clint <- function(
 {
   if (!missing(data.in)) {
     MS.data <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-      MS.data <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv",sep=""),
+      MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
                           sep="\t",header=T)
     } else {
-      MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
+      MS.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
                           sep="\t",header=T)
     }
   }
@@ -345,8 +345,8 @@ calc_clint <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-Clint-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-Clint-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -418,7 +418,7 @@ calc_clint <- function(
         init_vals <- function(chain) initfunction_clint(mydata=mydata, chain = chain)
         # write out arguments to runjags:
         save(this.compound,mydata,init_vals,
-        file=paste(FILENAME,"-Clint-PREJAGS.RData",sep=""))
+        file=paste0(FILENAME,"-Clint-PREJAGS.RData"))
 
         # Run JAGS:
         coda.out[[this.compound]] <-  autorun.jags(
@@ -532,7 +532,7 @@ calc_clint <- function(
         Results <- rbind(Results,new.results)
 
         write.table(Results,
-          file=paste(OUTPUT.FILE,sep=""),
+          file=paste0(OUTPUT.FILE),
           sep="\t",
           row.names=F,
           quote=F)
@@ -559,14 +559,14 @@ calc_clint <- function(
       file.path <- getwd()
     }
     save(Results,
-      file=paste(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))
+      file=paste0(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData"))
     
     cat(paste0("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
                 " has been exported to the following directory: ", file.path), "\n")
     if (save.MCMC){
       if (length(coda.out) != 0) {
       save(coda.out,
-           file=paste(file.path, "/", FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData",sep=""))
+           file=paste0(file.path, "/", FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData"))
       } else {
         cat("No MCMC results to be saved.\n")
       }

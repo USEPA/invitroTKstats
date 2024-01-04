@@ -291,22 +291,15 @@ format_fup_red <- function(
 {
   if (!missing(data.in)) {
     data.in <- as.data.frame(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-      data.in <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-fup-RED-Level0.tsv",sep=""),
+      data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level0.tsv"),
                           sep="\t",header=T)
     } else {
-      data.in <- read.csv(file=paste(FILENAME,"-fup-RED-Level0.tsv",sep=""),
+      data.in <- read.csv(file=paste0(FILENAME,"-fup-RED-Level0.tsv"),
                           sep="\t",header=T)
     }
   }
-
-  # Write out a "level 0" file (data as the function received it):
-  write.table(data.in,
-    file=paste(FILENAME,"-fup-RED-Level0.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
 
   if (is.null(note.col))
   {

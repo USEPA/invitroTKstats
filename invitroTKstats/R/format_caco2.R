@@ -279,12 +279,12 @@ format_caco2 <- function(
     data.out <- as.data.frame(data.in)
     # Force code to throw error if data.in accessed after this point:
     rm(data.in)
-  } else {
+  } else if (missing(data.in)) {
     if (!is.null(INPUT.DIR)) {
-      data.out <- read.csv(file=paste(INPUT.DIR, "/", FILENAME,"-Caco-2-Level0.tsv",sep=""),
+      data.out <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level0.tsv"),
                               sep="\t",header=T)
     } else {
-      data.out <- read.csv(file=paste(FILENAME,"-Caco-2-Level0.tsv",sep=""),
+      data.out <- read.csv(file=paste0(FILENAME,"-Caco-2-Level0.tsv"),
                               sep="\t",header=T)
     }
   }
