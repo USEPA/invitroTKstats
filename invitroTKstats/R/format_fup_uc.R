@@ -245,19 +245,17 @@ format_fup_uc <- function(
 
   if (!missing(data.in)) {
     data.in <- as.data.frame(data.in)
-  } else if (missing(data.in)) {
-    if (!is.null(INPUT.DIR)) {
-      data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-UC-Level0.tsv"),
-                          sep="\t",header=T)
+  } else if (!is.null(INPUT.DIR)) {
+    data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-UC-Level0.tsv"),
+                        sep="\t",header=T)
     } else {
-      data.in <- read.csv(file=paste0(FILENAME,"-fup-UC-Level0.tsv"),
-                          sep="\t",header=T)
+    data.in <- read.csv(file=paste0(FILENAME,"-fup-UC-Level0.tsv"),
+                        sep="\t",header=T)
     }
-  }
   
   if (is.null(note.col)) data.in[,"Note"] <- ""
 
-# These arguments allow the user to specify a single value for every obseration
+# These arguments allow the user to specify a single value for every observation
 # in the table:
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution

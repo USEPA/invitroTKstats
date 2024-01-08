@@ -276,15 +276,14 @@ calc_clint <- function(
 {
   if (!missing(data.in)) {
     MS.data <- as.data.frame(data.in)
-  } else if (missing(data.in)) {
-    if (!is.null(INPUT.DIR)) {
+    } else if (!is.null(INPUT.DIR)) {
       MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
                           sep="\t",header=T)
-    } else {
-      MS.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
+      } else {
+        MS.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
                           sep="\t",header=T)
-    }
-  }
+        }
+  
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
   

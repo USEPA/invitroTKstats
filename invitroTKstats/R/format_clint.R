@@ -288,15 +288,13 @@ format_clint <- function(
   
   if (!missing(data.in)) {
     data.in <- as.data.frame(data.in)
-  } else if (missing(data.in)) {
-    if (!is.null(INPUT.DIR)) {
-      data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level0.tsv"),
-                           sep="\t",header=T)
+  } else if (!is.null(INPUT.DIR)) {
+    data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level0.tsv"),
+                        sep="\t",header=T)
     } else {
       data.in <- read.csv(file=paste0(FILENAME,"-Clint-Level0.tsv"),
                            sep="\t",header=T)
     }
-  }
   
   if (is.null(note.col))
   {

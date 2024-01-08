@@ -124,15 +124,13 @@ calc_clint_point <- function(
   
   if (!missing(data.in)) {
     clint.data <- as.data.frame(data.in)
-  } else if (missing(data.in)) {
-    if (!is.null(INPUT.DIR)) {
+  } else if (!is.null(INPUT.DIR)) {
       clint.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
                              sep="\t",header=T)
     } else {
       clint.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
                              sep="\t",header=T)
     }
-  }
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
   

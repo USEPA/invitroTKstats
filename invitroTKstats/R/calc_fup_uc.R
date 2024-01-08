@@ -187,15 +187,13 @@ calc_fup_uc <- function(
 {
   if (!missing(data.in)) {
     PPB.data <- as.data.frame(data.in)
-  } else if (missing(data.in)) {
-    if (!is.null(INPUT.DIR)) {
-    PPB.data <- read.csv(file=paste0(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv"), 
+    } else if (!is.null(INPUT.DIR)) {
+      PPB.data <- read.csv(file=paste0(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv"), 
                          sep="\t",header=T)  
-  } else {
-    PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"), 
+      } else {
+        PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"), 
                          sep="\t",header=T)  
-    }
-  }
+        }
   
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))

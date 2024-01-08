@@ -125,15 +125,13 @@ calc_caco2_point <- function(
 
   if (!missing(data.in)) {
     input.table <- as.data.frame(data.in)
-  } else if (missing(data.in)) {
-    if (!is.null(INPUT.DIR)) {
-    input.table <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv"),
+    } else if (!is.null(INPUT.DIR)) {
+      input.table <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv"),
                             sep="\t",header=T)
-  } else {
-    input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
+      } else {
+        input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
                             sep="\t",header=T)
-    }
-  }
+        }
   
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
