@@ -7,46 +7,45 @@ verification_fup_red <- function(
     OUTPUT.DIR = NULL
     ){
   
-  if (missing(data.in)) {
-    if (!is.null(INPUT.DIR)) {
-      data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level1.tsv"),
-                          sep="\t",header=T)
+  if (!missing(data.in)) {
+    data.out <- as.data.frame(data.in)
+    rm(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+    data.out <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level1.tsv"),
+                     sep="\t",header=T)
     } else {
-      data.in <- read.csv(file=paste0(FILENAME,"-fup-RED-Level1.tsv"),
-                        sep="\t",header=T)
+    data.out <- read.csv(file=paste0(FILENAME,"-fup-RED-Level1.tsv"),
+                          sep="\t",header=T)  
     }
-  } 
   
   # add a column with all "Y"
-  data.in$Verified <- "Y"
+  data.out$Verified <- "Y"
   
   # option 1
   # Check if the naming of each list match the column name
-  if (!(all(names(exclusion.list) %in% colnames(data.in)))) 
-    cat("error.\n")
+  if (!(all(names(exclusion.list) %in% colnames(data.out)))) 
+    stop("Name(s) of the list(s) do not match the column names of the level-1 data.")
   
-  for (i in length(exclusion.list)) {
+  for (i in 1:length(exclusion.list)) {
     column <- names(exclusion.list)[i]
     criteria <- exclusion.list[[i]][["criteria"]]
     
     if (length(criteria) == 1) {
-      which.rows <- data.in[, column] == exclusion.list[[i]][[column]][k]
+      which.rows <- data.out[, column] %in% exclusion.list[[i]][[column]]
       which.rows[is.na(which.rows)] <- FALSE
-      data.in[which.rows,"Verified"] <- criteria[k]
-    } else if (length(criteria) == exclusion.list[[i]][[column]]) {
-      for (k in length(exclusion.list[[i]][[column]]))
+      data.out[which.rows,"Verified"] <- criteria
+    } else if (length(criteria) == length(exclusion.list[[i]][[column]])) {
+      for (k in 1:length(exclusion.list[[i]][[column]]))
       {
-        which.rows <- data.in[, column] == exclusion.list[[i]][[column]][k]
+        which.rows <- data.out[, column] == exclusion.list[[i]][[column]][k]
         which.rows[is.na(which.rows)] <- FALSE
-        data.in[which.rows,"Verified"] <- criteria[k]
+        data.out[which.rows,"Verified"] <- criteria[k]
       }
       
+    } else {
+      stop(paste("Length of",column,"criteria must be either 1 or as the same as the length of the", column, "exclusion list."))
     }
     
-    
-    # which.rows <- data.in[, column] %in% exclusion.list[[i]][[column]]
-    # which.rows[is.na(which.rows)] <- FALSE
-    # data.in[which.rows,"Verified"] <- exclusion.list[[i]][["criteria"]]
     
     # which.rows <- grepl(pattern, data.in[, column])
     # data.in[which.rows,"Verified"] <- exclusion.list[[i]][["criteria"]]
