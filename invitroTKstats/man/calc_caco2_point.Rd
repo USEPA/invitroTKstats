@@ -4,14 +4,28 @@
 \alias{calc_caco2_point}
 \title{Calculate a point estimate of apparent membrane permeability from Caco-2 data}
 \usage{
-calc_caco2_point(FILENAME, good.col = "Verified")
+calc_caco2_point(
+  FILENAME,
+  good.col = "Verified",
+  output.res = TRUE,
+  TEMP.DIR = NULL
+)
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"<FILENAME>-Caco-2-Level2.tsv".}
 
-\item{good.col}{Name of a column indicating which rows have been verified for
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-3) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{TEMP.DIR}{(Character) Alternative directory to save output files. By
+default, i.e. unspecified, all files will be exported to the user's current
+working directory. (Defaults to \code{NULL}.)}
 }
 \value{
 \item{data.frame}{A data.frame in standardized format}

@@ -31,12 +31,29 @@
 #' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
 #' \eqn{n_P} is the number of PBS Responses, and \eqn{n_B} is the number of Blank Responses.
 #'
-#' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")
-#'
-#' @param good.col Name of a column indicating which rows have been verified for
-#' analysis, indicated by a "Y" (Defaults to "Verified")
-#'
+#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' "<FILENAME>-Caco-2-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type. 
+#' 
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
+#' 
 #' @return \item{data.frame}{A data.frame in standardized format}
 #' \tabular{rrr}{
 #'   C0_A2B \tab Time zero donor concentration \tab Mass Spec Response Ratio (RR) \cr
@@ -93,15 +110,29 @@
 #' @import Rdpack
 #'
 #' @export calc_caco2_point
-calc_caco2_point <- function(FILENAME, good.col="Verified")
+calc_caco2_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified", 
+    output.res=TRUE, 
+    INPUT.DIR=NULL,
+    OUTPUT.DIR = NULL)
 {
   # These are the required data types as indicated by type.col.
   # In order to calculate the parameter a chemical must have peak areas for each
   # of these measurements:
   req.types=c("Blank","D0","D2","R2")
 
-  input.table <- read.csv(file=paste(FILENAME,"-Caco-2-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  if (!missing(data.in)) {
+    input.table <- as.data.frame(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+      input.table <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv"),
+                            sep="\t",header=T)
+      } else {
+        input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
+                            sep="\t",header=T)
+        }
+  
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
 
@@ -249,12 +280,27 @@ calc_caco2_point <- function(FILENAME, good.col="Verified")
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
   out.table <- as.data.frame(out.table)
 
-# Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-Caco-2-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 3" file (data organized into a standard format):
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    write.table(out.table,
+      file=paste0(file.path, "/", FILENAME,"-Caco-2-Level3.tsv"),
+      sep="\t",
+      row.names=F,
+      quote=F)
+   
+    # Print notification message stating where the file was output to
+    cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
 
   print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))
   print(paste("Basal to apical permeability calculated for",num.b2a,"chemicals."))

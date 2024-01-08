@@ -167,6 +167,18 @@
 #' information. (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled
 #' with the value specified in \code{level0.sheet}.)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-1) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
+#' If \code{NULL}, looking for the input level-0 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A Level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with plasma protein binding
@@ -224,21 +236,26 @@ format_fup_uc <- function(
   level0.file=NULL,
   level0.file.col="Level0.File",
   level0.sheet=NULL,
-  level0.sheet.col="Level0.Sheet"
+  level0.sheet.col="Level0.Sheet",
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
   )
 {
-  data.in <- as.data.frame(data.in)
 
-# Write out a "level 0" file (data the function received it):
-  write.table(data.in,
-    file=paste(FILENAME,"-fup-UC-Level0.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-
+  if (!missing(data.in)) {
+    data.in <- as.data.frame(data.in)
+  } else if (!is.null(INPUT.DIR)) {
+    data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-UC-Level0.tsv"),
+                        sep="\t",header=T)
+    } else {
+    data.in <- read.csv(file=paste0(FILENAME,"-fup-UC-Level0.tsv"),
+                        sep="\t",header=T)
+    }
+  
   if (is.null(note.col)) data.in[,"Note"] <- ""
 
-# These arguments allow the user to specify a single value for every obseration
+# These arguments allow the user to specify a single value for every observation
 # in the table:
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
@@ -383,12 +400,24 @@ format_fup_uc <- function(
   data.out[,"Response"] <- signif(as.numeric(data.out[,area.col]) /
      as.numeric(data.out[,istd.col]) * as.numeric(data.out[,istd.conc.col]),4)
 
-# Write out a "level 1" file (data organized into a standard format):
-  write.table(data.out,
-    file=paste(FILENAME,"-fup-UC-Level1.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 1" file (data organized into a standard format):
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    write.table(data.out,
+                file=paste0(file.path, "/", FILENAME,"-fup-UC-Level1.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    cat(paste0("A Level-1 file named ",FILENAME,"-fup-UC-Level1.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
+
 
   summarize_table(data.out,
     req.types=c("CC","T1","T5","AF"))

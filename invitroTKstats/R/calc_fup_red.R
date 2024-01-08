@@ -181,27 +181,46 @@ model {
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-fup-RED-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type.
 #'
-#' @param TEMP.DIR (Character) Alternative directory to save output files. 
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
 #' If \code{NULL}, all files will be written to the current working directory. 
-#' (Defaults to \code{NULL})
+#' (Defaults to \code{NULL}.)
 #'
-#' @param JAGS.PATH (Character) Computer specific file path to JAGS software. (Defaults to \code{NA})
+#' @param JAGS.PATH (Character) Computer specific file path to JAGS software. (Defaults to \code{NA}.)
 #'
-#' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5)
+#' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
-#' @param NUM.CORES (Numeric) The number of processors to use for parallel computing. (Defaults to 2)
+#' @param NUM.CORES (Numeric) The number of processors to use for parallel computing. (Defaults to 2.)
 #'
 #' @param RANDOM.SEED The seed used by the random number generator.
-#' (Defaults to 1111)
+#' (Defaults to 1111.)
 #'
 #' @param good.col (Character) Column name indicating which rows have been 
-#' verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified")
+#' verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified".)
 #'
 #' @param Physiological.Protein.Conc (Numeric) The assumed physiological protein concentration 
 #' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
 #' According to Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa,
 #' assume all protein is albumin to estimate default in uM.) 
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-4) will be exported as a .RData file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
+#' as an .RData file. (Defaults to \code{FALSE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
 #'
 #' @return A list of two objects: 
 #' \enumerate{
@@ -240,26 +259,39 @@ model {
 #' @export calc_fup_red
 calc_fup_red <- function(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5,
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
   JAGS.PATH = NA,
-  Physiological.Protein.Conc = 70/(66.5*1000)*1000000 # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
+  Physiological.Protein.Conc = 70/(66.5*1000)*1000000, # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR=NULL, 
+  OUTPUT.DIR = NULL
   )
 {
-
+  
+  if (!missing(data.in)) {
+    MS.data <- as.data.frame(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+      MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
+                        sep="\t",header=T)
+      } else {
+        MS.data <- read.csv(file=paste0(FILENAME,"-fup-RED-Level2.tsv"),
+                        sep="\t",header=T)
+        }
+  
+  MS.data <- subset(MS.data,!is.na(Compound.Name))
+  MS.data <- subset(MS.data,!is.na(Response))
+  
   if (!is.null(TEMP.DIR))
   {
     current.dir <- getwd()
     setwd(TEMP.DIR)
   }
-
-  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
-    sep="\t",header=T)
-  MS.data <- subset(MS.data,!is.na(Compound.Name))
-  MS.data <- subset(MS.data,!is.na(Response))
 
 # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
@@ -327,8 +359,8 @@ calc_fup_red <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-fup-RED-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-fup-RED-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -339,7 +371,7 @@ calc_fup_red <- function(
   MS.data[MS.data$Response<0,"Response"] <- 0
 
   # Because of the possibility of crashes we save the results one chemical at a time:
-  OUTPUT.FILE <- paste(FILENAME,"-fup-RED-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste0(FILENAME,"-fup-RED-Level4.tsv")
 
   # Check to see if we crashed earlier, if so, don't redo something that already is done
   if (!file.exists(OUTPUT.FILE))
@@ -393,7 +425,7 @@ calc_fup_red <- function(
           init_vals <- function(chain) initfunction_fup_red(mydata=mydata, chain = chain)
           # write out arguments to runjags:
           save(this.compound, mydata ,init_vals,
-            file=paste(FILENAME,"-fup-RED-PREJAGS.RData",sep=""))
+            file=paste0(FILENAME,"-fup-RED-PREJAGS.RData"))
 
           # Run JAGS:
           coda.out[[this.compound]] <- autorun.jags(
@@ -459,13 +491,13 @@ calc_fup_red <- function(
           Results <- rbind(Results,new.results)
 
           write.table(Results,
-            file=paste(OUTPUT.FILE,sep=""),
+            file=paste0(OUTPUT.FILE),
             sep="\t",
             row.names=F,
             quote=F)
         }
       } else {
-        ignored.data <- rbind(ignored.data, MSdata)
+        ignored.data <- rbind(ignored.data, this.subset)
       }
     }
 
@@ -475,16 +507,48 @@ calc_fup_red <- function(
   }
   stopCluster(CPU.cluster)
 
-  write.table(ignored.data,
-    file=paste(FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-
   View(Results)
-  save(Results,
-    file=paste(FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData",sep=""))
-
+  
+  if (output.res) {
+    # Write out a "level 4" result table:
+    # Determine the path for output
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    
+    save(Results,
+      file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
+    
+    cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
+                " has been exported to the following directory: ", file.path), "\n")
+   
+    # Save ignored data if there is any
+    if (!is.null(ignored.data)) {
+      write.table(ignored.data,
+                file=paste0(file.path, "/", FILENAME,"-fup-RED-Level2-ignoredbayes.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+      cat(paste0("A subset of ignored data named ",FILENAME,"-fup-RED-Level2-ignoredbayes.tsv", 
+               " has been exported to the following directory: ", file.path), "\n")
+    
+    }
+    
+    # Write out the MCMC results separately 
+    if (save.MCMC){
+      if (length(coda.out) != 0) {
+        save(coda.out,
+             file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData"))
+      } else {
+        cat("No MCMC results to be saved.\n")
+      }
+    }
+  }
+  
   return(list(Results=Results,coda=coda.out))
 }
 

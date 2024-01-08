@@ -92,11 +92,15 @@ model {
 #' We don't currently use the T1 data, but CC, AF, and T5 data are required.
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
-#' "<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results")
+#' "<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results".)
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type.
 #'
-#' @param TEMP.DIR (Character) Alternative directory to save output files. By
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. By
 #' default, i.e. unspecified, all files will be exported to the user's current
-#' working directory. (Defaults to `NULL`.)
+#' working directory. (Defaults to \code{NULL}.)
 #'
 #' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
@@ -112,6 +116,21 @@ model {
 #' 
 #' @param JAGS.PATH (Character) Computer specific file path to JAGS software.
 #' (Defaults to `NA`.)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-4) will be exported as a .RData file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
+#' as an .RData file. (Defaults to \code{FALSE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
 #' 
 #' @return A list of two objects: 
 #' \enumerate{
@@ -153,25 +172,39 @@ model {
 #' @export calc_fup_uc
 calc_fup_uc <- function(
   FILENAME = "UC_Model_Results",
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5, 
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
-  JAGS.PATH = NA
+  JAGS.PATH = NA,
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR=NULL, 
+  OUTPUT.DIR = NULL
   )
 {
+  if (!missing(data.in)) {
+    PPB.data <- as.data.frame(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+      PPB.data <- read.csv(file=paste0(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv"), 
+                         sep="\t",header=T)  
+      } else {
+        PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"), 
+                         sep="\t",header=T)  
+        }
+  
+  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
+  PPB.data <- subset(PPB.data,!is.na(Response))
+  
+  
   if (!is.null(TEMP.DIR)) 
   {
     current.dir <- getwd()
     setwd(TEMP.DIR)
   }
   
-  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
-    sep="\t",header=T)  
-  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
-  PPB.data <- subset(PPB.data,!is.na(Response))
-
   # Standardize the column names:
     sample.col <- "Lab.Sample.Name"
     date.col <- "Date"
@@ -232,8 +265,8 @@ calc_fup_uc <- function(
   
   # Only used verified data:
   unverified.data <- subset(PPB.data, PPB.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-fup-UC-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-fup-UC-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -242,7 +275,7 @@ calc_fup_uc <- function(
   PPB.data <- as.data.frame(PPB.data)
   all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
   
-  OUTPUT.FILE <- paste(FILENAME,"-fup-UC-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste0(FILENAME,"-fup-UC-Level4.tsv")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
@@ -326,7 +359,7 @@ calc_fup_uc <- function(
         init_vals <- function(chain) initfunction_fup_uc(mydata=mydata, chain = chain)
         # write out arguments to runjags:
         save(this.compound,mydata,UC_PPB_model,init_vals,
-          file=paste(FILENAME,"-Fup-UC-PREJAGS.RData",sep=""))  
+          file=paste0(FILENAME,"-Fup-UC-PREJAGS.RData"))  
         
         coda.out[[this.compound]] <- autorun.jags(
           UC_PPB_model, 
@@ -393,7 +426,7 @@ calc_fup_uc <- function(
         Results <- rbind(Results,new.results)
     
         write.table(Results, 
-          file=paste(OUTPUT.FILE,sep=""),
+          file=paste0(OUTPUT.FILE),
           sep="\t",
           row.names=F,
           quote=F)
@@ -408,16 +441,46 @@ calc_fup_uc <- function(
   }
   stopCluster(CPU.cluster)
 
-  write.table(ignored.data, 
-    file=paste(FILENAME,"-fup-UC-Level2-ignoredbayes.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-  
   View(Results)
-  save(Results,
-    file=paste(FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
-
+  
+  if (output.res) {
+    # Write out a "level 4" result table:
+    # Determine the path for output
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    save(Results,
+      file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData"))
+    
+    cat(paste0("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
+                " has been exported to the following directory: ", file.path), "\n")
+    
+    # Save ignored data if there is any
+    if (!is.null(ignored.data)) {
+      write.table(ignored.data, 
+                file=paste0(file.path, "/", FILENAME,"-fup-UC-Level2-ignoredbayes.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+      cat(paste0("A subset of ignored data named ",FILENAME,"-fup-UC-Level2-ignoredbayes.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
+    
+    # Write out the MCMC results separately 
+    if (save.MCMC){
+      if (length(coda.out) != 0) {
+      save(coda.out,
+           file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData"))
+        } else {
+          cat("No MCMC results to be saved.\n")
+        }
+      }
+    }
+  
   return(list(Results=Results,coda=coda.out))  
 }
 

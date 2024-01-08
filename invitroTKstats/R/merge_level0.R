@@ -28,7 +28,7 @@
 #' Columns with names ending in ".ColName" indicate the columns to be extracted
 #' from the specified Excel file and sheet containing level 0 data.
 #'
-#' @param data.label (Character) A string used to identify outputs of the function call.
+#' @param FILENAME (Character) A string used to identify outputs of the function call.
 #' (Default to "MYDATA")
 #' 
 #' @param level0.catalog A data frame describing which columns of which sheets
@@ -146,15 +146,27 @@
 #' @param chem.dtxsid.col (Character) `chem.ids` column name containing EPA's
 #'  DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard})
 #'  (Defaults to "DTXSID") 
+#'  
+#' @param catalog.out (Logical) When set to \code{TRUE}, the data frame 
+#' specified in \code{level0.catalog} will be exported the current directory 
+#' or \code{OUTPUT.DIR} as a .tsv file. (Defaults to \code{TRUE}.)
 #' 
-#' @return \item{data.frame}{A data.frame in standardized "level1" format} 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
+#' as a .tsv file. (Defaults to \code{TRUE}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @return \item{data.frame}{A data.frame in standardized Level-0 format} 
 #'
 #' @author John Wambaugh
 #' 
 #' @import readxl
 #' 
 #' @export merge_level0
-merge_level0 <- function(data.label="MYDATA",
+merge_level0 <- function(FILENAME="MYDATA",
   level0.catalog,
   file.col="File",
   sheet=NULL,
@@ -184,7 +196,10 @@ merge_level0 <- function(data.label="MYDATA",
   chem.ids,
   chem.lab.id.col="Chem.Lab.ID",
   chem.name.col="Compound",
-  chem.dtxsid.col="DTXSID"
+  chem.dtxsid.col="DTXSID",
+  catalog.out = TRUE,
+  output.res = TRUE,
+  OUTPUT.DIR = NULL
   )
 {
   level0.catalog <- as.data.frame(level0.catalog)
@@ -370,13 +385,36 @@ merge_level0 <- function(data.label="MYDATA",
     out.data <- rbind(out.data, this.data[,1:(13+length(additional.colname.cols))])  
   }
 
-# Write out a "Catalog" file that explains how level 0 data were mapped to level 1
-  write.table(level0.catalog, 
-    file=paste(data.label,"-level0-Catalog.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+  } else {
+    file.path <- getwd()
+  }
 
+  ## Keep outputting level-0 catalog for now but this functionality may be deprecated later
+  if (catalog.out) {
+    # Write out a "Catalog" file that explains how level 0 data were mapped to level 1
+    write.table(level0.catalog, 
+                file=paste0(file.path, "/", FILENAME,"-level0-Catalog.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    cat(paste0("A Level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
+                " has been exported to the following directory: ", file.path),"\n")
+  }
+
+  if (output.res) {
+    # Write out the merged Level-0 file
+    write.table(out.data, 
+                file=paste0(file.path, "/", FILENAME,"-level0.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    cat(paste0("A Level-0 file named ",FILENAME,"-level0.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
+ 
   return(out.data)  
 }
 

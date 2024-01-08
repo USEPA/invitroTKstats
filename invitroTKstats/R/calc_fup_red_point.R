@@ -35,10 +35,26 @@
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-fup-RED-Level2.tsv".
-#'
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame containing
+#' mass-spectrometry peak areas, indication of chemical identity,
+#' and measurement type. 
+#' 
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for analysis are indicated with a "Y".
 #' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
@@ -98,10 +114,26 @@
 #' @import Rdpack
 #'
 #' @export calc_fup_red_point
-calc_fup_red_point <- function(FILENAME, good.col="Verified")
+calc_fup_red_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified",
+    output.res=TRUE, 
+    INPUT.DIR=NULL, 
+    OUTPUT.DIR = NULL)
 {
-  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  
+  if (!missing(data.in)) {
+    MS.data <- as.data.frame(data.in)
+  } else if (!is.null(INPUT.DIR)) {
+    MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
+                        sep="\t",header=T)
+    } else {
+      MS.data <- read.csv(file=paste0(FILENAME,"-fup-RED-Level2.tsv"),
+                        sep="\t",header=T)
+      }
+
+  
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
 
@@ -255,12 +287,28 @@ calc_fup_red_point <- function(FILENAME, good.col="Verified")
     out.table$Fup <- as.numeric(out.table$Fup)
   }
 
-# Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-fup-RED-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 3" file (data organized into a standard format):
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    write.table(out.table,
+                file=paste0(file.path, "/", FILENAME,"-fup-RED-Level3.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    
+  
+    # Print notification message stating where the file was output to
+    cat(paste0("A Level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
 
   print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))
   print(paste("Fraction unbound values calculated for",num.cal,"measurements."))
