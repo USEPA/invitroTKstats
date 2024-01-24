@@ -44,7 +44,7 @@
 #' 
 #' @examples 
 #' level2 <- invitroTKstats::kreutz2023.clint
-#' level1 <- dplyr::select(level2, -c(Verified))
+#' level1 <- dplyr::select(level2, -c(Verifed, Verified))
 #' 
 #' exclusion_list <- data.frame(
 #' Variable = c("DTXSID", "Lab.Sample.Name", "Compound.Name"),
