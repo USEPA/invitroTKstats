@@ -188,6 +188,11 @@
 #' table (Level-1) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
+#' @param save.bad.types (Logical) When set to \code{TRUE}, export
+#' any data being removed due to having inappropriate sample types. 
+#' See the Detail section for the required sample types. 
+#' (Defaults to \code{FALSE}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
 #' If \code{NULL}, looking for the input level-0 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -266,6 +271,7 @@ format_caco2 <- function(
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
   output.res = TRUE,
+  save.bad.types = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
   )
@@ -273,7 +279,6 @@ format_caco2 <- function(
   # These are the required data types as indicated by type.col.
   # In order to calculate the parameter a chemical must have peak areas for each
   # of these measurements:
-  req.types=c("Blank","D0","D2","R2")
   
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
@@ -286,6 +291,15 @@ format_caco2 <- function(
     data.out <- read.csv(file=paste0(FILENAME,"-Caco-2-Level0.tsv"),
                          sep="\t",header=T)
     }
+  
+  # determine the path for output files 
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+  } else if (!is.null(INPUT.DIR)) {
+    file.path <- INPUT.DIR
+  } else {
+    file.path <- getwd()
+  }
   
 # These arguments allow the user to specify a single value for every observation
 # in the table:
@@ -339,8 +353,25 @@ format_caco2 <- function(
   }
 
   # Only include the data types used:
+  req.types=c("Blank","D0","D2","R2")
   data.out <- subset(data.out,data.out[,type.col] %in% req.types)
-
+  data.in.badtype <- subset(data.out,!(data.out[,type.col] %in% req.types))
+  
+  # Option to export data with bad types
+  if (nrow(data.in.badtype) != 0) {
+    if (save.bad.types) {
+      write.table(data.in.badtype,
+                file=paste0(file.path, "/", FILENAME,"-Caco-2-Level0-badtype.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+      cat(paste0("Data with inappropriate sample types are being removed and exported as ",
+                 FILENAME,"-Caco-2-Level0-badtype.tsv", " to the following directory: ", file.path), "\n")
+    } else {
+      warning("Some data with inappropriate sample types are being removed.\n")
+    }
+  }
+  
   # Organize the columns:
   data.out <- data.out[,cols]
 
@@ -404,22 +435,13 @@ format_caco2 <- function(
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
-    # Determine the path for output
-    
-    if (!is.null(OUTPUT.DIR)) {
-      file.path <- OUTPUT.DIR
-    } else if (!is.null(INPUT.DIR)) {
-      file.path <- INPUT.DIR
-    } else {
-      file.path <- getwd()
-    }
     write.table(data.out,
                 file=paste0(file.path, "/", FILENAME,"-Caco-2-Level1.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
     cat(paste0("A Level-1 file named ",FILENAME,"-Caco-2-Level1.tsv", 
-                " has been exported to the following directory: ", file.path), "\n")
+               " has been exported to the following directory: ", file.path), "\n")
   }
 
   summarize_table(data.out,
