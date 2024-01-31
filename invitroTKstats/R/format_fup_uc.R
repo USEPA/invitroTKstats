@@ -172,6 +172,10 @@
 #' table (Level-1) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
+#' @param save.bad.types (Logical) When set to \code{TRUE}, export data removed 
+#' due to inappropriate sample types. See the Detail section for the required sample types. 
+#' (Defaults to \code{FALSE}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
 #' If \code{NULL}, looking for the input level-0 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -238,6 +242,7 @@ format_fup_uc <- function(
   level0.sheet=NULL,
   level0.sheet.col="Level0.Sheet",
   output.res = TRUE,
+  save.bad.types = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
   )
@@ -254,6 +259,15 @@ format_fup_uc <- function(
     }
   
   if (is.null(note.col)) data.in[,"Note"] <- ""
+  
+  # determine the path for output files 
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+  } else if (!is.null(INPUT.DIR)) {
+    file.path <- INPUT.DIR
+  } else {
+    file.path <- getwd()
+  }
 
 # These arguments allow the user to specify a single value for every observation
 # in the table:
@@ -303,18 +317,28 @@ format_fup_uc <- function(
   }
 
   # Check for sample types we don't know what to do with:
-  data.in.badtype <- subset(data.in,!(data.in[,type.col] %in%
-                             c("CC","T1","T5","AF")))
-  # Write out a "level 0" file identifying those observations we threw out:
-  write.table(data.in.badtype,
-    file=paste(FILENAME,"-fup-UC-Level0-badtype.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  req.types=c("CC","T1","T5","AF")
   # Only include the data types used:
-  data.out <- subset(data.in,data.in[,type.col] %in% c("CC","T1","T5","AF"))
+  data.out <- subset(data.in,data.in[,type.col] %in% req.types))
+  data.in.badtype <- subset(data.in,!(data.in[,type.col] %in% req.types))
+  
   # Force code to throw error if data.in accessed after this point:
   rm(data.in)
+  
+  # Option to export data with bad types
+  if (nrow(data.in.badtype) != 0) {
+    if (save.bad.types) {
+      write.table(data.in.badtype,
+                  file=paste0(file.path, "/", FILENAME,"-fup-UC-Level0-badtype.tsv"),
+                  sep="\t",
+                  row.names=F,
+                  quote=F)
+      cat(paste0("Data with inappropriate sample types were removed. Removed samples were exported to ",
+                 FILENAME,"-fup-UC-Level0-badtype.tsv", " in the following directory: ", file.path), "\n")
+    } else {
+      warning("Data with inappropriate sample types were removed.")
+    }
+  }
 
   # Organize the columns:
   data.out <- data.out[,cols]
@@ -402,13 +426,6 @@ format_fup_uc <- function(
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
-    if (!is.null(OUTPUT.DIR)) {
-      file.path <- OUTPUT.DIR
-    } else if (!is.null(INPUT.DIR)) {
-      file.path <- INPUT.DIR
-    } else {
-      file.path <- getwd()
-    }
     write.table(data.out,
                 file=paste0(file.path, "/", FILENAME,"-fup-UC-Level1.tsv"),
                 sep="\t",
