@@ -1,13 +1,13 @@
-#' Creates a Data Frame with a Verification Column (Level-2)
+#' Add Sample Verification Column (Level-2)
 #'
 #' This function takes in a Level-1 data frame and an exclusion list and 
 #' returns a Level-2 data frame with a verification column. The
 #' verification column contains either "Y", indicating the row is good for analysis,
 #' or messages contained in the exclusion list for why the data rows are excluded. 
-#' If an exclusion list is not provided, all rows are assumed to be verified 
-#' and are good to use in the analysis. 
+#' If an exclusion list is not provided, all rows are assumed to be good for use 
+#' in further analyses and are verified with "Y".
 #' 
-#' The `exclusion.list` should be a data frame with the following columns:
+#' The `exclusion.info` should be a data frame with the following columns:
 #' \tabular{rr}{
 #'   Variable \tab Level-1 variable used to filter rows for exclusion\cr
 #'   Value \tab Value to exclude\cr
@@ -19,7 +19,7 @@
 #'
 #' @param data.in (Data Frame) A Level-1 data frame from the format functions.
 #'
-#' @param exclusion.list (Data Frame) A data frame containing the variables and 
+#' @param exclusion.info (Data Frame) A data frame containing the variables and 
 #' values of the corresponding variables to exclude rows. 
 #' See details for full explanation.
 #' 
@@ -44,21 +44,40 @@
 #' 
 #' @examples 
 #' level2 <- invitroTKstats::kreutz2023.clint
+#' 
+#' # Data sets in the package are level-2 data. For demonstration purposes,
+#' # remove the verification columns from the data and use it as level-1.
 #' level1 <- dplyr::select(level2, -c(Verifed, Verified))
 #' 
-#' exclusion_list <- data.frame(
+#' # scenario 1: input data is in the R session
+#' # create a exclusion criteria data frame
+#' exclusion_criteria <- data.frame(
 #' Variable = c("DTXSID", "Lab.Sample.Name", "Compound.Name"),
 #' Value = c("DTXSID00380798","G4-Ametryn Hep052521 T0a", "Nonafluoropentanamide"), 
 #' Message = c("bad id #1","bad sample", "bad compound")
 #' )
 #' 
-#' my.level2 <- verification_function(FILENAME="kreutz", 
-#' data.in=level1, exclusion_list, assay="Clint")
+#' my.level2 <- sample_verification(FILENAME="kreutz", 
+#' data.in=level1, exclusion_criteria, assay="Clint")
 #' 
-verification_function <- function(
+#' # scenario 2: import 'tsv' as input data
+#' 
+#' # Write the level-1 file to some folder
+#' write.table(data.out,
+#' file="~/invitrotkstats/invitroTKstats/data-raw/kreutz-Clint-Level1.tsv",
+#' sep="\t",
+#' row.names=F,
+#' quote=F)
+#' 
+#' # import level-1 with INPUT.DIR 
+#' my.level2 <- sample_verification(FILENAME="kreutz", 
+#' exclusion_criteria, assay="Clint", INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw")
+#' 
+#' 
+sample_verification <- function(
     FILENAME, 
     data.in, 
-    exclusion.list,
+    exclusion.info,
     assay,
     output.res = TRUE,
     INPUT.DIR = NULL,
@@ -68,31 +87,36 @@ verification_function <- function(
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
     rm(data.in)
-    } else if (!is.null(INPUT.DIR)) {
-    data.out <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-", assay, "-Level1.tsv"),
+    } else if (!missing(assay) & !missing(FILENAME)) {
+      if (!is.null(INPUT.DIR)) {
+        data.out <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-", assay, "-Level1.tsv"),
                      sep="\t",header=T)
-    } else {
-    data.out <- read.csv(file=paste0(FILENAME,"-", assay, "-Level1.tsv"),
+        } else {
+          data.out <- read.csv(file=paste0(FILENAME,"-", assay, "-Level1.tsv"),
                           sep="\t",header=T)  
+          }
+      } else {
+      stop("Missing either FILENAME and/or assay. Unable to import data from the 'tsv' without a FILENAME and assay.")
     }
   
   # add a column with all "Y"
   data.out$Verified <- "Y"
   
-  if (!missing(exclusion.list)) {
-    if (!all(unique(exclusion.list[, "Variable"]) %in% colnames(data.out))) 
+  if (!missing(exclusion.info)) {
+    if (!all(unique(exclusion.info[, "Variable"]) %in% colnames(data.out))) 
       stop("Name(s) of the list(s) do not match the column names of the level-1 data.")
        
-    for (i in 1:nrow(exclusion.list)) {
-      this.variable <- exclusion.list[i ,"Variable"]
-      this.value <- exclusion.list[i, "Value"]
+    for (i in 1:nrow(exclusion.info)) {
+      this.variable <- exclusion.info[i ,"Variable"]
+      this.value <- exclusion.info[i, "Value"]
       which.rows <- data.out[, this.variable] == this.value
       which.rows[is.na(which.rows)] <- FALSE
-      data.out[which.rows,"Verified"] <- exclusion.list[i, "Message"]
+      data.out[which.rows,"Verified"] <- exclusion.info[i, "Message"]
     }
   }
   
   if (output.res) {
+    if (!missing(assay) & !missing(FILENAME)) stop("Missing either FILENAME and/or assay. Unable to export data to a 'tsv' without a FILENAME and assay.")
     if (!is.null(OUTPUT.DIR)) {
       file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
