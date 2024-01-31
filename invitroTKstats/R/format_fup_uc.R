@@ -172,9 +172,8 @@
 #' table (Level-1) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
-#' @param save.bad.types (Logical) When set to \code{TRUE}, export
-#' any data being removed due to having inappropriate sample types. 
-#' See the Detail section for the required sample types. 
+#' @param save.bad.types (Logical) When set to \code{TRUE}, export data removed 
+#' due to inappropriate sample types. See the Detail section for the required sample types. 
 #' (Defaults to \code{FALSE}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
@@ -334,10 +333,10 @@ format_fup_uc <- function(
                   sep="\t",
                   row.names=F,
                   quote=F)
-      cat(paste0("Data with inappropriate sample types are being removed and exported as ",
-                 FILENAME,"-fup-UC-Level0-badtype.tsv", " to the following directory: ", file.path), "\n")
+      cat(paste0("Data with inappropriate sample types were removed. Removed samples were exported to ",
+                 FILENAME,"-fup-UC-Level0-badtype.tsv", " in the following directory: ", file.path), "\n")
     } else {
-      warning("Some data with inappropriate sample types are being removed.\n")
+      warning("Data with inappropriate sample types were removed.")
     }
   }
 
