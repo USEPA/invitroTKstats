@@ -221,35 +221,48 @@ calc_fup_red_point <- function(
     if (dim(this.plasma)[1]==0) warning(paste0(
         "No plasma data for chemical ", this.chem))
     this.plasma.blank <- subset(this.subset,Sample.Type=="Plasma.Blank")
-    if (dim(this.plasma.blank)[1]==0) warning(paste0(
-        "No plasma blank data for chemical ", this.chem))
+    if (dim(this.plasma.blank)[1]==0) {
+      warning(paste0("No plasma blank data for chemical ", this.chem,
+                     ". For point estimate calculation, assume the plasma blank adjustment to be 0.\n"))
+      plasma.blank.mean <- 0
+      df.plasma.blank <- 0
+    } else {
+      plasma.blank.mean <- mean(this.plasma.blank$Response)
+      if (length(unique(this.plasma.blank$Dilution.Factor))>1) browser()
+      df.plasma.blank <- this.plasma.blank$Dilution.Factor[1]
+    }
     this.noplasma.blank <- subset(this.subset,Sample.Type=="NoPlasma.Blank")
-    if (dim(this.noplasma.blank)[1]==0) warning(paste0(
-        "No non-plasma blank data for chemical ", this.chem))
+    if (dim(this.noplasma.blank)[1]==0){
+      warning(paste0(
+        "No non-plasma blank data for chemical ", this.chem, 
+        ". For point estimate calculation, assume the non-plasma blank adjustment to be 0.\n"))
+      noplasma.blank.mean <- 0
+      df.noplasma.blank <- 0
+    } else {
+      noplasma.blank.mean <- mean(this.noplasma.blank$Response)
+      if (length(unique(this.noplasma.blank$Dilution.Factor))>1) browser()
+      df.noplasma.blank <- this.noplasma.blank$Dilution.Factor[1]
+    }
+    
     if (length(unique(this.pbs$Dilution.Factor))>1) browser()
     df.pbs <- this.pbs$Dilution.Factor[1]
     if (length(unique(this.plasma$Dilution.Factor))>1) browser()
     df.plasma <- this.plasma$Dilution.Factor[1]
-    if (length(unique(this.plasma.blank$Dilution.Factor))>1) browser()
-    df.plasma.blank <- this.plasma.blank$Dilution.Factor[1]
-    if (length(unique(this.noplasma.blank$Dilution.Factor))>1) browser()
-    df.noplasma.blank <- this.noplasma.blank$Dilution.Factor[1]
 
   # Check to make sure there are data for PBS and plasma:
     if (dim(this.pbs)[1]> 0 &
-        dim(this.plasma)[1] > 0 &
-        dim(this.plasma.blank)[1] > 0)
+        dim(this.plasma)[1] > 0)
     {
       num.chem <- num.chem + 1
       this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
-        df.noplasma.blank*mean(this.noplasma.blank$Response))) /
+        df.noplasma.blank*noplasma.blank.mean)) /
         (df.plasma*(mean(this.plasma$Response) -
-        df.plasma.blank*mean(this.plasma.blank$Response))),4)
+        df.plasma.blank*plasma.blank.mean)),4)
       out.table <- rbind(out.table, this.row)
       print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
   # If fup is NA something is wrong, stop and figure it out:
       if(is.na(this.row$Fup)) browser()
-  # If there are multiple measrument days, do separate calculations:
+  # If there are multiple measurement days, do separate calculations:
       if (length(unique(this.subset[,cal.col]))>1)
       {
         for (this.calibration in unique(this.subset[,cal.col]))
@@ -260,18 +273,33 @@ calc_fup_red_point <- function(
           this.pbs <- subset(this.cal.subset,Sample.Type=="PBS")
           this.plasma <- subset(this.cal.subset,Sample.Type=="Plasma")
           this.plasma.blank <- subset(this.cal.subset,Sample.Type=="Plasma.Blank")
+          if (dim(this.plasma.blank)[1]==0){
+            warning(paste0("No plasma blank data for chemical ", this.chem, 
+                           "on this date/calibration ", this.calibration, 
+                           ". For Fup calculation of this calibration, assume the plasma blank adjustment to be 0.\n"))
+            plasma.blank.mean <- 0
+          } else {
+            plasma.blank.mean <- mean(this.plasma.blank$Response)
+          }
           this.noplasma.blank <- subset(this.cal.subset,Sample.Type=="NoPlasma.Blank")
+          if (dim(this.noplasma.blank)[1]==0){
+            warning(paste0("No non-plasma blank data for chemical ", this.chem, 
+            "on this date/calibration ", this.calibration, 
+            ". For Fup calculation of this calibration, assume the non-plasma blank adjustment to be 0.\n"))
+            noplasma.blank.mean <- 0
+          } else {
+            noplasma.blank.mean <- mean(this.noplasma.blank$Response)
+          }
        # Check to make sure there are data for PBS and plasma:
           if (dim(this.pbs)[1]> 0 &
-              dim(this.plasma)[1] > 0 &
-              dim(this.plasma.blank)[1] > 0 &
-              dim(this.noplasma.blank)[1] > 0)
+              dim(this.plasma)[1] > 0)
           {
             this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
-              df.noplasma.blank*mean(this.noplasma.blank$Response))) /
+              df.noplasma.blank*noplasma.blank.mean)) /
               (df.plasma*(mean(this.plasma$Response) -
-              df.plasma.blank*mean(this.plasma.blank$Response))),4)
+              df.plasma.blank*plasma.blank.mean)),4)
             out.table <- rbind(out.table, this.row)
+            print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,3)))
             num.cal <- num.cal + 1
           }
         }
