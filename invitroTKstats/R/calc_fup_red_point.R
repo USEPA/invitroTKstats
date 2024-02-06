@@ -286,14 +286,14 @@ calc_fup_red_point <- function(
             # Check to see if there are any blanks data
             if (dim(this.plasma.blank)[1]==0){
               plasma.blank.mean <- 0
-              plasma.na.chem <- c(plasma.na.chem, paste(this.chem, this.calibration, sep = "-"))
+              plasma.blanks.na.chem <- c(plasma.blanks.na.chem, paste(this.chem, "Calibration", this.calibration))
             } else {
               plasma.blank.mean <- mean(this.plasma.blank$Response)
             }
             
             if (dim(this.noplasma.blank)[1]==0){
               noplasma.blank.mean <- 0
-              nonplasma.na.chem <- c(nonplasma.na.chem, paste(this.chem, this.calibration, sep = "-"))
+              nonplasma.blanks.na.chem <- c(nonplasma.blanks.na.chem, paste(this.chem, "Calibration", this.calibration))
             } else {
               noplasma.blank.mean <- mean(this.noplasma.blank$Response)
             }
@@ -305,7 +305,7 @@ calc_fup_red_point <- function(
             out.table <- rbind(out.table, this.row)
             print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,3)))
             num.cal <- num.cal + 1
-          } else ignored.chem <- c(ignored.chem, paste(this.chem, this.calibration, sep = "-"))
+          } else ignored.chem <- c(ignored.chem, paste(this.chem, "Calibration", this.calibration))
         }
       } else num.cal <- num.cal + 1
     } else ignored.chem <- c(ignored.chem, this.chem)
@@ -313,11 +313,15 @@ calc_fup_red_point <- function(
   
   ## issue notification messages
   if (!is.null(ignored.chem)) warning(paste0("The following chemical(s) was/were ignroed due to missing PBS and/or Plasma data: ", paste(ignored.chem, collapse = ", "),"\n"))
-  if (!is.null(nonplasma.blanks.na.chem)) warning(paste0("No Non-plasma blank data for chemical(s): ", paste(nonplasma.blanks.na.chem, collapse = ", "),
+  missingboth <- intersect(nonplasma.blanks.na.chem, plasma.blanks.na.chem)
+  if (length(missingboth)!=0) warning(paste0("Missing blanks samples for the following chemical(s): ", paste(missingboth, collapse = ", "), 
+                                             ". For point estimate calculation, assumed the blank adjustment to be 0.\n"))
+  plasma.blanks.na.chem <- setdiff(plasma.blanks.na.chem, missingboth)
+  nonplasma.blanks.na.chem <- setdiff(nonplasma.blanks.na.chem, missingboth)
+  if (length(nonplasma.blanks.na.chem)!=0) warning(paste0("No Non-plasma blank data for chemical(s): ", paste(nonplasma.blanks.na.chem, collapse = ", "),
                                                          ". For point estimate calculation, assumed the plasma blank adjustment to be 0.\n"))
-  if (!is.null(plasma.blanks.na.chem)) warning(paste0("No plasma blank data for chemical(s): ", paste(plasma.blanks.na.chem, collapse = ", "),
+  if (length(plasma.blanks.na.chem)!=0) warning(paste0("No plasma blank data for chemical(s): ", paste(plasma.blanks.na.chem, collapse = ", "),
                                                       ". For point estimate calculation, assumed the plasma blank adjustment to be 0.\n"))
-  
 
   if (!is.null(out.table))
   {
