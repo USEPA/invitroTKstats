@@ -16,7 +16,7 @@
 #'
 #' @param FILENAME (Character) A string used to identify the output Level-1 file.
 #' "<FILENAME>-<assay>-Level1.tsv". 
-#'
+#' 
 #' @param data.in (Data Frame) A Level-1 data frame from the format functions.
 #'
 #' @param exclusion.info (Data Frame) A data frame containing the variables and 
@@ -24,7 +24,9 @@
 #' See details for full explanation.
 #' 
 #' @param assay (Character) A string indicating what assay data the input file is. Valid 
-#' input is one of the following: "Clint", "fup-UC", "fup-RED", or "Caco2".
+#' input is one of the following: "Clint", "fup-UC", "fup-RED", or "Caco2". 
+#' This argument only needs to be specified when importing input data set with \code{FILENAME} 
+#' or exporting a data file.
 #'
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
 #' data frame (Level-2) will be exported as a .tsv file to the current directory. 
@@ -116,7 +118,7 @@ sample_verification <- function(
   }
   
   if (output.res) {
-    if (!missing(assay) & !missing(FILENAME)) stop("Missing either FILENAME and/or assay. Unable to export data to a 'tsv' without a FILENAME and assay.")
+    if (missing(assay) | missing(FILENAME)) stop("Missing either FILENAME and/or assay. Unable to export data to a 'tsv' without a FILENAME and assay.")
     if (!is.null(OUTPUT.DIR)) {
       file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
