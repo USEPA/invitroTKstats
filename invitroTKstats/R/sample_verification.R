@@ -98,7 +98,9 @@ sample_verification <- function(
                           sep="\t",header=T)  
           }
       } else {
-      stop("Missing either FILENAME and/or assay. Unable to import data from the 'tsv' without a FILENAME and assay.")
+      stop(strwrap("A valid input data must be provided. If using a data frame, data.in is not specified.
+                   If importing a data file, missing either FILENAME and/or assay. 
+                   Unable to import data from the 'tsv' without both FILENAME and assay."))
     }
   
   # add a column with all "Y"
