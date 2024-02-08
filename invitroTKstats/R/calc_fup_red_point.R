@@ -312,10 +312,10 @@ calc_fup_red_point <- function(
   }
   
   ## issue notification messages
-  if (!is.null(ignored.chem)) warning(paste0("The following chemical(s) were ignroed due to missing PBS and/or Plasma data: ", paste(ignored.chem, collapse = ", "),"\n"))
+  if (!is.null(ignored.chem)) warning(paste0("The following chemical(s) were ignored due to missing PBS and/or Plasma data: ", paste(ignored.chem, collapse = ", "),"\n"))
   missingboth <- intersect(nonplasma.blanks.na.chem, plasma.blanks.na.chem)
   if (length(missingboth)!=0) warning(paste0("Plasma and non-plasma blank samples are missing for the following chemical(s): ", paste(missingboth, collapse = ", "), 
-                                             ". For point estimate calculation, assumed the blank adjustment to be 0.\n"))
+                                             ". Point estimations for these cases assume the blank adjustment is 0.\n"))
   plasma.blanks.na.chem <- setdiff(plasma.blanks.na.chem, missingboth)
   nonplasma.blanks.na.chem <- setdiff(nonplasma.blanks.na.chem, missingboth)
   if (length(nonplasma.blanks.na.chem)!=0) warning(paste0("Missing non-plasma blanks for chemical(s): ", paste(nonplasma.blanks.na.chem, collapse = ", "),
