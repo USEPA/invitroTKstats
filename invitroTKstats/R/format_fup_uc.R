@@ -319,7 +319,7 @@ format_fup_uc <- function(
   # Check for sample types we don't know what to do with:
   req.types=c("CC","T1","T5","AF")
   # Only include the data types used:
-  data.out <- subset(data.in,data.in[,type.col] %in% req.types))
+  data.out <- subset(data.in,data.in[,type.col] %in% req.types)
   data.in.badtype <- subset(data.in,!(data.in[,type.col] %in% req.types))
   
   # Force code to throw error if data.in accessed after this point:
