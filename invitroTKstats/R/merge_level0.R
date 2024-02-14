@@ -155,6 +155,10 @@
 #' table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
 #' as a .tsv file. (Defaults to \code{TRUE}.)
 #' 
+#' @param INPUT.DIR (Character) Path to the directory where the Excels files 
+#' containing data need to be extracted exist. If not specified, looking for the files
+#' in the current working directory. (Defaults to \code{NULL}.)
+#' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -199,6 +203,7 @@ merge_level0 <- function(FILENAME="MYDATA",
   chem.dtxsid.col="DTXSID",
   catalog.out = TRUE,
   output.res = TRUE,
+  INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
   )
 {
@@ -290,6 +295,7 @@ merge_level0 <- function(FILENAME="MYDATA",
   colnames(level0.catalog) <- std.colnames
 
   out.data <- NULL
+  if (is.null(INPUT.DIR)) INPUT.DIR <- getwd()
   for (this.row in 1:dim(level0.catalog)[1])
   {
     this.file <- as.character(level0.catalog[this.row,"File"])
@@ -314,7 +320,7 @@ merge_level0 <- function(FILENAME="MYDATA",
     this.type.col <- as.character(level0.catalog[this.row, "Type.ColName"])
     this.analysis.param.col <- as.character(level0.catalog[this.row, "AnalysisParam.ColName"])
 # Read the data:
-    this.data <- as.data.frame(read_excel(this.file, sheet=this.sheet, skip=this.skip))
+    this.data <- as.data.frame(read_excel(paste0(INPUT.DIR,"/",this.file), sheet=this.sheet, skip=this.skip))
 # Trim the data if num.rows.col specified:
     if (!is.null(num.rows.col))
     {
