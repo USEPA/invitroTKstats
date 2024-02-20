@@ -86,6 +86,11 @@ sample_verification <- function(
     OUTPUT.DIR = NULL
     ){
   
+  approved_assays <- c("Clint", "Caco2", "fup-UC", "fup-RED")
+  # if either importing or exporting data file, check if the assay given is valid.
+  if ((missing(data.in) |  output.res) & !(assay %in% approved_assays)) 
+    stop("Invalid assay. ", "Use one of the approved assays: ", paste(approved_assays, collapse = ", "), ".")
+  
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
     rm(data.in)
@@ -98,9 +103,9 @@ sample_verification <- function(
                           sep="\t",header=T)  
           }
       } else {
-      stop(strwrap("A valid input data must be provided. If using a data frame, data.in is not specified.
-                   If importing a data file, missing either FILENAME and/or assay. 
-                   Unable to import data from the 'tsv' without both FILENAME and assay."))
+        stop(strwrap("A valid input data must be provided. If using a data frame, data.in is not specified. 
+                           If importing a data file, missing either FILENAME and/or assay. 
+                           Unable to import data from the 'tsv' without both FILENAME and assay."))
     }
   
   # add a column with all "Y"
@@ -121,6 +126,7 @@ sample_verification <- function(
   
   if (output.res) {
     if (missing(assay) | missing(FILENAME)) stop("Missing either FILENAME and/or assay. Unable to export data to a 'tsv' without a FILENAME and assay.")
+    
     if (!is.null(OUTPUT.DIR)) {
       file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
