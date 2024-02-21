@@ -155,8 +155,8 @@
 #' table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
 #' as a .tsv file. (Defaults to \code{TRUE}.)
 #' 
-#' @param INPUT.DIR (Character) Path to the directory where the Excels files 
-#' containing data need to be extracted exist. If not specified, looking for the files
+#' @param INPUT.DIR (Character) Path to the directory where the Excel files 
+#' with Level-0 data exist. If not specified, looking for the files
 #' in the current working directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
