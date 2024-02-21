@@ -23,8 +23,9 @@
 #' @param FILENAME A string used to identify the input Level-2 file.
 #' "<FILENAME>-Clint-Level2.tsv".
 #' 
-#' @param data.in (Data Frame) A Level-2 data frame or a matrix containing 
-#' mass-spectrometry peak areas, indication of chemical identity, and measurement type. 
+#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' \code{format_clint} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed. 
 #'
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified, data rows valid for analysis are indicated with a "Y".

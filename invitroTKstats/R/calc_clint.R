@@ -154,9 +154,9 @@ model {
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "-Clint-Level2.tsv".
 #'
-#' @param data.in (Data Frame) A Level-2 data frame containing
-#' mass-spectrometry peak areas, indication of chemical identity,
-#' and measurement type.
+#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' \code{format_clint} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed.
 #'
 #' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
 #' If \code{NULL}, all files will be written to the current working directory. 
