@@ -94,9 +94,9 @@ model {
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
 #' "<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results".)
 #' 
-#' @param data.in (Data Frame) A Level-2 data frame containing
-#' mass-spectrometry peak areas, indication of chemical identity,
-#' and measurement type.
+#' @param data.in A Level-2 data frame generated from the 
+#' \code{format_fup_uc} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed.
 #'
 #' @param TEMP.DIR (Character) Temporary directory to save intermediate files. By
 #' default, i.e. unspecified, all files will be exported to the user's current
