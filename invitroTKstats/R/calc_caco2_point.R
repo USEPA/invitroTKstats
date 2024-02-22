@@ -78,11 +78,11 @@
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
 #' \dontrun{
-#' write.table(level2,
-#'   file="invitroTKstats/data-raw/EPACyprotex2021-Caco-2-Level2.tsv",
-#'   sep="\t",
-#'   row.names=FALSE,
-#'   quote=FALSE)
+#' level1 <- invitroTKstats::caco2.level1
+#' level2 <- sample_verification(FILENAME = "EPACyprotex2021",
+#'                               data.in = level1,
+#'                               assay = "Caco-2",
+#'                               OUTPUT.DIR = "invitroTKstats/data-raw")
 #' 
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR

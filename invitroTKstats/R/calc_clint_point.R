@@ -61,11 +61,12 @@
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
 #' \dontrun{
-#' write.table(level2,
-#'   file="invitroTKstats/data-raw/kreutz-Clint-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
+#' ## remove the previous Verification column and use it as a Level-1 data set
+#' level1 <- dplyr::select(level2, -c(Verifed, Verified))
+#' level2 <- sample_verification(FILENAME = "kreutz",
+#'                               data.in = level1,
+#'                               assay = "Clint",
+#'                               OUTPUT.DIR = "invitroTKstats/data-raw")
 #' 
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR
