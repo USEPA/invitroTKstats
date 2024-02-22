@@ -73,7 +73,7 @@
 #'
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
-#' 
+#' \dontrun{
 #' write.table(level2,
 #'   file="invitroTKstats/data-raw/smeltz-fup-RED-Level2.tsv",
 #'   sep="\t",
@@ -84,6 +84,7 @@
 #' ## the result table will be saved to the directory specified in INPUT.DIR
 #' level3 <- calc_fup_red_point(FILENAME="smeltz", 
 #' INPUT.DIR = "invitroTKstats/data-raw")
+#' }
 #'
 #' @references
 #'  \insertRef{waters2008validation}{invitroTKstats}

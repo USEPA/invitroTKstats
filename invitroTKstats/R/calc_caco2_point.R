@@ -77,18 +77,18 @@
 #'
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
-#' 
+#' \dontrun{
 #' write.table(level2,
 #'   file="invitroTKstats/data-raw/EPACyprotex2021-Caco-2-Level2.tsv",
 #'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
+#'   row.names=FALSE,
+#'   quote=FALSE)
 #' 
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR
 #' level3 <- calc_caco2_point(FILENAME="EPACyprotex2021", 
 #' INPUT.DIR = "invitroTKstats/data-raw")
-#'
+#' }
 #'
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
