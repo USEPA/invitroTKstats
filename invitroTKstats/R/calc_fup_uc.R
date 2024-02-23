@@ -150,17 +150,31 @@ model {
 #' @author John Wambaugh and Chantel Nicolas
 #' 
 #' @examples 
-#' # Level-2 file
-#' write.table(level2,
-#'   file="KreutzPFAS-fup-UC-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
+#' ## Example 1: loading level-2 using data.in
+#' level2 <- invitroTKstats::kreutz2023.uc
+#' 
+#' \dontrun{
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' level4 <- calc_fup_uc(data.in = level2,
+#'                       NUM.CORES=2,
+#'                       JAGS.PATH="<path.to.JAGS>",
+#'                       output.res = FALSE)
+#' }
+#' 
+#' ## Example 2: importing level-2 from a .tsv file
+#' \dontrun{
+#' # level-2 was exported to a directory
+#' level2 <- sample_verification(data.in = level1,
+#'                               FILENAME = "kreutz",
+#'                               assay = "fup-UC",
+#'                               OUTPUT.DIR = "<directory.path>")
 #' 
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
-#' level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
-#'                        NUM.CORES=8,
-#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+#' level4 <- calc_fup_uc(FILENAME="kreutz",
+#'                       NUM.CORES=2,
+#'                       JAGS.PATH="<path.to.JAGS>",
+#'                       INPUT.DIR = "<directory.path>")
+#' }
 #' 
 #' @import parallel 
 #' @import runjags
