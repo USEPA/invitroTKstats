@@ -257,13 +257,13 @@ model {
 #' level2 <- sample_verification(data.in = level1,
 #'                               FILENAME = "SmeltzPFAS",
 #'                               assay = "fup-RED",
-#'                               OUTPUT.DIR = "<directory.path>")
+#'                               OUTPUT.DIR = "invitroTKstats/data-raw")
 #' 
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
 #'                        NUM.CORES=2,
 #'                        JAGS.PATH="<path.to.JAGS>",
-#'                        INPUT.DIR = "<directory.path>")
+#'                        INPUT.DIR = "invitroTKstats/data-raw")
 #' }
 #'
 #' @import coda
