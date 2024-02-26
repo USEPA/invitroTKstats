@@ -103,6 +103,9 @@ calc_fup_red_point <- function(
     OUTPUT.DIR = NULL)
 {
   
+  #assigning global variables
+  Compound.Name <- Response <- Sample.Type <- Direction <- NULL
+  
   if (!missing(data.in)) {
     MS.data <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {

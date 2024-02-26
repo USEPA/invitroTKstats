@@ -114,6 +114,9 @@ calc_caco2_point <- function(
   # of these measurements:
   req.types=c("Blank","D0","D2","R2")
   
+  #assigning global variables
+  Compound.Name <- Response <- Sample.Type <- Direction <- NULL
+
   if (!missing(data.in)) {
     input.table <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {

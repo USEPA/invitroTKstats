@@ -269,6 +269,11 @@ calc_clint <- function(
   OUTPUT.DIR = NULL
   )
 {
+  
+  #assigning global variables
+  Compound.Name <- Response <- Sample.Type <- NULL
+  
+  
   if (!missing(data.in)) {
     if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
     MS.data <- as.data.frame(data.in)

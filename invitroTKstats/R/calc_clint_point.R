@@ -91,6 +91,10 @@ calc_clint_point <- function(
     OUTPUT.DIR = NULL)
 {
   
+  #assigning global variables
+  Compound.Name <- Response <- Sample.Type <- Time <- NULL
+  
+  
   if (!missing(data.in)) {
     clint.data <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {

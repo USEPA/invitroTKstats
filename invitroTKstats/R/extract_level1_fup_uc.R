@@ -108,6 +108,9 @@ extract_level1_fup_uc <- function(
   CC.type.str="CC"
   )
 {
+  #assigning global variables
+  Type <- NULL
+  
   area.col <- paste(area.base,area.col.num,sep="")
   instr.param.col <- paste(inst.param.base,area.col.num+inst.param.offset,sep="")
   conc.col <- paste(conc.base,area.col.num+conc.offset,sep="")

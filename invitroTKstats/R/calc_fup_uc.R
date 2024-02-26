@@ -201,6 +201,10 @@ calc_fup_uc <- function(
   OUTPUT.DIR = NULL
   )
 {
+  
+  #assigning global variables
+  Compound.Name <- Response <- NULL
+  
   if (!missing(data.in)) {
     if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
     PPB.data <- as.data.frame(data.in)
