@@ -176,6 +176,8 @@
 #' @author John Wambaugh
 #' 
 #' @import readxl
+#' @importFrom methods is 
+#' @importFrom utils head
 #' 
 #' @export merge_level0
 merge_level0 <- function(FILENAME="MYDATA",

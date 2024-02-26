@@ -181,10 +181,9 @@ model {
 #' 
 #' @import parallel 
 #' @import runjags
-#' 
 #' @import coda
-#'
 #' @import Rdpack
+#' 
 #'
 #' @export calc_fup_uc
 calc_fup_uc <- function(
@@ -446,7 +445,7 @@ calc_fup_uc <- function(
   }
   stopCluster(CPU.cluster)
 
-  View(Results)
+  #View(Results)
   
   # Write out a "level 4" result table:
   # Determine the path for output

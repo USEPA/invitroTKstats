@@ -246,6 +246,7 @@ model {
 #' 
 #'
 #' @import Rdpack
+#' @importFrom utils read.csv write.table read.table
 #'
 #' @import coda
 #'
@@ -535,7 +536,7 @@ calc_clint <- function(
 
   stopCluster(CPU.cluster)
 
-  View(Results)
+  #View(Results)
   
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR

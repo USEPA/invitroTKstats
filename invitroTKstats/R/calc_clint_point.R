@@ -76,6 +76,7 @@
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @importFrom stats4 mle coef AIC
+#' @importFrom utils read.csv write.table
 #'
 #' @import Rdpack
 #'
@@ -241,7 +242,7 @@ calc_clint_point <- function(
         lower=list(cal=0, sigma = 0.0001),
         fixed=list(k_elim=0)))
 
-      if (class(this.fit)!="try-error" & class(this.null)!="try-error")
+      if (!inherits(this.fit, "try-error") & !inherits(this.null, "try-error"))
       {
         # k_elim has units 1/h, convert to uL/min/10^6 hepatocytes
         # hep density is 10^6 hepatocytes/mL
@@ -260,7 +261,7 @@ calc_clint_point <- function(
             start=list(cal=1, k_elim=0.1, sigma=0.1, sat=0.5),
             lower=list(cal=0, k_elim=0, sigma = 0.0001, sat=0),
             upper=list(sat=1)))
-          if (class(this.sat.fit)!="try-error")
+          if (!inherits(this.sat.fit, "try-error"))
           {
             this.row$Clint.1 <- 1000*coef(this.sat.fit)["k_elim"]/hep.density/60
             this.row$Clint.10 <- 1000*coef(this.sat.fit)["k_elim"]*

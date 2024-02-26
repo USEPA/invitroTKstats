@@ -97,6 +97,7 @@
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
 #'
 #' @import Rdpack
+#' @importFrom utils read.csv write.table
 #'
 #' @export calc_caco2_point
 calc_caco2_point <- function(

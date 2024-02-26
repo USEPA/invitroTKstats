@@ -90,6 +90,7 @@
 #'  \insertRef{waters2008validation}{invitroTKstats}
 #'
 #' @import Rdpack
+#' @importFrom utils read.csv write.table
 #'
 #' @export calc_fup_red_point
 calc_fup_red_point <- function(
