@@ -253,12 +253,7 @@ model {
 #' 
 #' ## Example 2: importing level-2 from a .tsv file
 #' \dontrun{
-#' # level-2 was exported to a directory
-#' level2 <- sample_verification(data.in = level1,
-#'                               FILENAME = "SmeltzPFAS",
-#'                               assay = "fup-RED",
-#'                               OUTPUT.DIR = "invitroTKstats/data-raw")
-#' 
+#' # Refer to sample_verification help file for how to export level-2 data to a directory.
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
 #'                        NUM.CORES=2,
