@@ -315,3 +315,71 @@
 #' \insertRef{kreutz2023category}{invitroTKstats}
 "kreutz2023.clint"
 
+#' Caco2 Example Data Set Level-0
+#'
+#' A subset of Caco2 data from a Caco2 data file provided by Cyprotex. This subset
+#' contains data for 3 compounds from the Excel file. Direction, Vol.Donor, Vol.Receiver 
+#' and Dilution.Factor are not pre-existing columns, but are manually filled with information found in the file.  
+#' 
+#' @name caco2_L0
+#' @aliases caco2_L0
+#' @docType data
+#' @format A level 0 data.frame with 48 rows 17 variables: \describe{
+#' \item{\code{Compound}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.ID}}{Compound ID used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Sample}}{Sample Name}
+#' \item{\code{Type}}{Type of Caco2 sample}
+#' \item{\code{Compound.Conc}}{Test concentration (uM)}
+#' \item{\code{Peak.Area}}{Peak area of analyte (target compound)}
+#' \item{\code{ISTD.Peak.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{Analysis.Params}}{General description of chemical analysis method}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
+#' \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+#' \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' }
+#'
+"caco2_L0"
+
+#' Caco2 Example Data Set Level-1
+#'
+#' A subset of Caco2 data from a Caco2 data file provided by Cyprotex. This subset
+#' contains data for 3 compounds from the Excel file and had been processed into a standard 
+#' format with \code{format_caco2}.
+#' 
+#' @name caco2_L1
+#' @aliases caco2_L1
+#' @docType data
+#' @format A level 1 data.frame with 48 rows 24 variables: \describe{
+#' \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of Caco2 sample}
+#' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{Series}}{Identier for replicate series of measurements}
+#' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Test.Target.Conc}}{Test concentration of chemical (uM)}
+#' \item{\code{Time}}{Time point sample measured (h)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Membrane.Area}}{The area of the Caco-2 monolayer.}
+#' \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+#' \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' }
+#'
+"caco2_L1"
