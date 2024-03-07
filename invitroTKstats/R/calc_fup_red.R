@@ -204,7 +204,7 @@ model {
 #'
 #' @param Physiological.Protein.Conc (Numeric) The assumed physiological protein concentration 
 #' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
-#' According to Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa,
+#' According to \insertCite{berg2011pathology;textual}{invitroTKstats}: 60-80 mg/mL, albumin is 66.5 kDa,
 #' assume all protein is albumin to estimate default in uM.) 
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
