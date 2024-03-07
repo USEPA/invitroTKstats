@@ -35,7 +35,7 @@ package 'readxl' was built under R version 4.2.3
 > level0.catalog <- data.frame(File = rep("Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm", 3),
 +                              Sheet = rep("Raw Data", 3),
 +                              Skip.Rows = c(0, 26, 52),
-+                              Date = rep("02 Mar 2017", 3),
++                              Date = rep("03 Oct 2017", 3),
 +                              Chemical.ID = c("BF175258","BF175270","EV0000613"),
 +                              ISTD.Name = rep("ISTD Name", 3),
 +                              Sample.ColName = rep("SampleName", 3),
@@ -47,14 +47,17 @@ package 'readxl' was built under R version 4.2.3
 + )
 > 
 > ## Build chem.ids table 
-> chem.ids <- data.frame(Compound = c("compound 1","compound 2","compound 3"),
+> ## Use placeholders chemical identifiers before finding the true identifiers for the chemical lab IDs
+> chem.ids <- data.frame(Compound = c("Compound 1","Compound 2","Compound 3"),
 +                        DTXSID = c("ID 1", "ID 2", "ID 3"),
 +                        Chem.Lab.ID = c("BF175258","BF175270","EV0000613"))
 > 
 > ## Specify the path to the Excel file 
+> ## The Excel file is not tracked with the package. When re-creating the data
+> ## retrieve the file from the Jira ticket and place it in the appropriate directory/update the path if needed.
 > path <- "~/invitrotkstats/invitroTKstats/data-raw/Caco2"
 > ## Compile level-0 data 
-> level0 <- merge_level0(level0.catalog = level0.catalog,
+> caco2_L0 <- merge_level0(level0.catalog = level0.catalog,
 +                        ## each compound has 16 samples 
 +                        num.rows=16,
 +                        num.rows.col="Num.rows",
@@ -71,28 +74,35 @@ Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw 
 Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw Data, BF175270
 Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw Data, EV0000613
 > 
+> ## There are some additional columns needed for caco2_L0 to go to level-1.
+> ## But currently these columns cannot be handled/added by merge_level0 or 
+> ## additional utility functions. Need to manually add them in. 
 > 
-> # Add direction column
-> level0[, "Direction"] <- NA
-> level0[grep("_A_B", level0$Sample), "Direction"] <- "AtoB"
-> level0[grep("_B_A", level0$Sample), "Direction"] <- "BtoA"
+> ## Add direction column
+> caco2_L0[, "Direction"] <- NA
+> caco2_L0[grep("_A_B", caco2_L0$Sample), "Direction"] <- "AtoB"
+> caco2_L0[grep("_B_A", caco2_L0$Sample), "Direction"] <- "BtoA"
 > 
 > ## Add Vol.Receiver and Vol.Donor columns 
-> level0[, "Vol.Receiver"] <- NA
-> level0[level0$Direction == "AtoB","Vol.Receiver"] <- 0.25
-> level0[level0$Direction == "BtoA","Vol.Receiver"] <- 0.075
+> ## The amounts can be found in the Volume column (column K)
+> ## in the original Excel file, in sheet 'Raw Data'.
+> caco2_L0[, "Vol.Receiver"] <- NA
+> caco2_L0[caco2_L0$Direction == "AtoB","Vol.Receiver"] <- 0.25
+> caco2_L0[caco2_L0$Direction == "BtoA","Vol.Receiver"] <- 0.075
 > 
-> level0[, "Vol.Donor"] <- NA
-> level0[level0$Direction == "AtoB","Vol.Donor"] <- 0.075
-> level0[level0$Direction == "BtoA","Vol.Donor"] <- 0.25
+> caco2_L0[, "Vol.Donor"] <- NA
+> caco2_L0[caco2_L0$Direction == "AtoB","Vol.Donor"] <- 0.075
+> caco2_L0[caco2_L0$Direction == "BtoA","Vol.Donor"] <- 0.25
 > 
 > ## Add Dilution column
-> level0[, "Dilution.Factor"] <- NA
-> level0[level0$Type == "Blank", "Dilution.Factor"] <- 1
-> level0[is.na(level0$Dilution.Factor), "Dilution.Factor"] <- 4
+> ## Dilution information can be found in the original Excel file, in sheet 'Raw Data'
+> ## in a row says 'Dilution' at the end of each compound section.
+> caco2_L0[, "Dilution.Factor"] <- NA
+> caco2_L0[caco2_L0$Type == "Blank", "Dilution.Factor"] <- 1
+> caco2_L0[is.na(caco2_L0$Dilution.Factor), "Dilution.Factor"] <- 4
 > 
 > ## Run through the format function 
-> level1 <- format_caco2(data.in = level0,
+> caco2_L1 <- format_caco2(data.in = caco2_L0,
 +                        sample.col="Sample",
 +                        lab.compound.col = "Lab.Compound.ID",
 +                        compound.col = "Compound",
@@ -119,11 +129,17 @@ Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw 
 48 observations of 3 chemicals based on 3 separate measurements (calibrations).
 > 
 > ## Confirmed that all rows with missing responses are Blank samples
-> ## Replace NA with 0 for blank adjustment
-> level1[is.na(level1$Response), "Response"] <- 0
+> all(caco2_L1[is.na(caco2_L1$Response), "Sample.Type"] == "Blank")
+[1] TRUE
+> 
+> ## Rows with NA responses will be dropped in calc_caco2_point (level-3 function), 
+> ## in this example data, it is equivalent to dropping all Blank samples.
+> ## Blank samples are needed for the calculation, so 
+> ## need to replace NA with 0 for blank adjustment.
+> caco2_L1[is.na(caco2_L1$Response), "Response"] <- 0
 > 
 > ## Save level-0 and level-1 data to use for function demo/example documentation 
-> save(level0, level1, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
+> save(caco2_L0, caco2_L1, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
 > 
 > ## Include session info
 > utils::sessionInfo()
@@ -158,4 +174,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   1.62    1.23    4.18 
+   0.82    0.62    7.57 
