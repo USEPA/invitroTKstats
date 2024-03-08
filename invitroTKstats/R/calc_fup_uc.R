@@ -155,9 +155,11 @@ model {
 #' 
 #' \dontrun{
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' path.to.JAGS <- findJAGS()
 #' level4 <- calc_fup_uc(data.in = level2,
 #'                       NUM.CORES=2,
-#'                       JAGS.PATH="<path.to.JAGS>",
+#'                       JAGS.PATH=path.to.JAGS,
 #'                       output.res = FALSE)
 #' }
 #' 
@@ -165,10 +167,12 @@ model {
 #' \dontrun{
 #' # Refer to sample_verification help file for how to export level-2 data to a directory.
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
-#' level4 <- calc_fup_uc(FILENAME="kreutz",
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
 #'                       NUM.CORES=2,
-#'                       JAGS.PATH="<path.to.JAGS>",
-#'                       INPUT.DIR = "invitroTKstats/data-raw")
+#'                       JAGS.PATH=path.to.JAGS,
+#'                       INPUT.DIR = "invitroTKstats/vignettes")
 #' }
 #' 
 #' @import parallel 
