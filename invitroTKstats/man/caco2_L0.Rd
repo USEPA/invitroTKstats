@@ -3,9 +3,9 @@
 \docType{data}
 \name{caco2_L0}
 \alias{caco2_L0}
-\title{Caco2 Example Data Set Level-0}
+\title{Caco2 Level 0 Example Data set}
 \format{
-A level 0 data.frame with 48 rows 17 variables: \describe{
+A level 0 data.frame with 48 rows and 17 variables: \describe{
 \item{\code{Compound}}{Compound name}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.ID}}{Compound ID used in the laboratory}
@@ -29,8 +29,7 @@ A level 0 data.frame with 48 rows 17 variables: \describe{
 caco2_L0
 }
 \description{
-A subset of Caco2 data from a Caco2 data file provided by Cyprotex. This subset
-contains data for 3 compounds from the Excel file. Direction, Vol.Donor, Vol.Receiver 
-and Dilution.Factor are not pre-existing columns, but are manually filled with information found in the file.
+A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
+This subset contains samples for 3 test analytes/compounds.
 }
 \keyword{datasets}

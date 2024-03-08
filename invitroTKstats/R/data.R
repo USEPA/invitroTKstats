@@ -315,16 +315,15 @@
 #' \insertRef{kreutz2023category}{invitroTKstats}
 "kreutz2023.clint"
 
-#' Caco2 Example Data Set Level-0
+#' Caco2 Level 0 Example Data set
 #'
-#' A subset of Caco2 data from a Caco2 data file provided by Cyprotex. This subset
-#' contains data for 3 compounds from the Excel file. Direction, Vol.Donor, Vol.Receiver 
-#' and Dilution.Factor are not pre-existing columns, but are manually filled with information found in the file.  
+#' A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
+#' This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L0
 #' @aliases caco2_L0
 #' @docType data
-#' @format A level 0 data.frame with 48 rows 17 variables: \describe{
+#' @format A level 0 data.frame with 48 rows and 17 variables: \describe{
 #' \item{\code{Compound}}{Compound name}
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.ID}}{Compound ID used in the laboratory}
@@ -346,16 +345,15 @@
 #'
 "caco2_L0"
 
-#' Caco2 Example Data Set Level-1
+#' Caco2 Level 1 Example Data set
 #'
-#' A subset of Caco2 data from a Caco2 data file provided by Cyprotex. This subset
-#' contains data for 3 compounds from the Excel file and had been processed into a standard 
-#' format with \code{format_caco2}.
+#' A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
+#' This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L1
 #' @aliases caco2_L1
 #' @docType data
-#' @format A level 1 data.frame with 48 rows 24 variables: \describe{
+#' @format A level 1 data.frame with 48 rows and 24 variables: \describe{
 #' \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
 #' \item{\code{Date}}{Date sample was acquired}
 #' \item{\code{Compound.Name}}{Compound name}

@@ -3,9 +3,9 @@
 \docType{data}
 \name{caco2_L1}
 \alias{caco2_L1}
-\title{Caco2 Example Data Set Level-1}
+\title{Caco2 Level 1 Example Data set}
 \format{
-A level 1 data.frame with 48 rows 24 variables: \describe{
+A level 1 data.frame with 48 rows and 24 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}
@@ -36,8 +36,7 @@ A level 1 data.frame with 48 rows 24 variables: \describe{
 caco2_L1
 }
 \description{
-A subset of Caco2 data from a Caco2 data file provided by Cyprotex. This subset
-contains data for 3 compounds from the Excel file and had been processed into a standard 
-format with \code{format_caco2}.
+A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
+This subset contains samples for 3 test analytes/compounds.
 }
 \keyword{datasets}
