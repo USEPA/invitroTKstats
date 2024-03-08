@@ -2,7 +2,13 @@
 ## R CMD BATCH data-raw/building-Caco2-data.R
 
 ## Script used to create data examples for Caco2 to use for function documentations and vignette
-## The Excel file containing the raw data can be tracked under the Jira ticket IVTKS-75
+## The original Excel file containing the raw data can be found in the following directory: 
+## "<...>\CCTE_ExpoCast\ExpoCast2019\HTTKNewData\EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary.xlsm"
+
+## The actual file used for this script is an edited version of the original Excel file. 
+## Edits were made to add information required for merge_level0.
+## Edits include: added headers (column names) to the beginning of each compound chunk 
+## and added a 'Test Concentration' column and a 'Type' column.
 
 ## load necessary package
 library(readxl)
@@ -30,8 +36,9 @@ chem.ids <- data.frame(Compound = c("Compound 1","Compound 2","Compound 3"),
                        Chem.Lab.ID = c("BF175258","BF175270","EV0000613"))
 
 ## Specify the path to the Excel file 
-## The Excel file is not tracked with the package. When re-creating the data
-## retrieve the file from the Jira ticket and place it in the appropriate directory/update the path if needed.
+## The Excel file is not tracked with the package. When re-creating the data,
+## retrieve the file from the directory mentioned above and save it to the path below.
+## Make necessary adjustments if needed. 
 path <- "~/invitrotkstats/invitroTKstats/data-raw/Caco2"
 ## Compile level-0 data 
 caco2_L0 <- merge_level0(level0.catalog = level0.catalog,
