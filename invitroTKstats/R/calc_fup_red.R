@@ -241,16 +241,16 @@ model {
 #'
 #' @examples
 #' ## Example 1: loading level-2 using data.in
+#' \dontrun{
 #' level2 <- invitroTKstats::smeltz2023.red
 #' 
-#' \dontrun{
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
 #' path.to.JAGS <- findJAGS()
 #' level4 <- calc_fup_red(data.in = level2,
 #'                        NUM.CORES=2,
-#'                        JAGS.PATH=path.to.JAGS,
-#'                        output.res = FALSE)
+#'                        JAGS.PATH=path.to.JAGS)
 #' }
 #' 
 #' ## Example 2: importing level-2 from a .tsv file
@@ -258,6 +258,7 @@ model {
 #' # Refer to sample_verification help file for how to export level-2 data to a directory.
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
 #' path.to.JAGS <- findJAGS()
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
 #'                        NUM.CORES=2,
