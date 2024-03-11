@@ -24,7 +24,7 @@
 #' See details for full explanation.
 #' 
 #' @param assay (Character) A string indicating what assay data the input file is. Valid 
-#' input is one of the following: "Clint", "fup-UC", "fup-RED", or "Caco2". 
+#' input is one of the following: "Clint", "fup-UC", "fup-RED", or "Caco-2". 
 #' This argument only needs to be specified when importing input data set with \code{FILENAME} 
 #' or exporting a data file.
 #'
@@ -86,7 +86,7 @@ sample_verification <- function(
     OUTPUT.DIR = NULL
     ){
   
-  approved_assays <- c("Clint", "Caco2", "fup-UC", "fup-RED")
+  approved_assays <- c("Clint", "Caco-2", "fup-UC", "fup-RED")
   # if either importing or exporting data file, check if the assay given is valid.
   if ((missing(data.in) |  output.res) & !(assay %in% approved_assays)) 
     stop("Invalid assay. ", "Use one of the approved assays: ", paste(approved_assays, collapse = ", "), ".")
