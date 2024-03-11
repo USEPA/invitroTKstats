@@ -179,8 +179,10 @@ model {
 #' }
 #'
 #'
-#' @param FILENAME (Character) A string used to identify the input Level-2 file.
-#' "<FILENAME>-fup-RED-Level2.tsv".
+#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' "<FILENAME>-fup-RED-Level2.tsv", and to name the exported model results. 
+#' This argument is required no matter which method of specifying input data is used. 
+#' (Defaults to \code{NULL}.)
 #' 
 #' @param data.in (Data Frame) A Level-2 data frame generated from the 
 #' \code{format_fup_red} function with a verification column added by 
@@ -206,10 +208,6 @@ model {
 #' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
 #' According to Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa,
 #' assume all protein is albumin to estimate default in uM.) 
-#' 
-#' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-4) will be exported as a .RData file. 
-#' (Defaults to \code{TRUE}.)
 #' 
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
@@ -267,7 +265,6 @@ calc_fup_red <- function(
   good.col="Verified",
   JAGS.PATH = NA,
   Physiological.Protein.Conc = 70/(66.5*1000)*1000000, # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
-  output.res = TRUE,
   save.MCMC = FALSE,
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
@@ -275,6 +272,7 @@ calc_fup_red <- function(
 {
   
   if (!missing(data.in)) {
+    if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
     MS.data <- as.data.frame(data.in)
     } else if (!is.null(INPUT.DIR)) {
       MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
@@ -509,46 +507,43 @@ calc_fup_red <- function(
 
   View(Results)
   
-  if (output.res) {
-    # Write out a "level 4" result table:
-    # Determine the path for output
-    if (!is.null(OUTPUT.DIR)) {
-      file.path <- OUTPUT.DIR
+
+  # Write out a "level 4" result table:
+  # Determine the path for output
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
       file.path <- INPUT.DIR
-    } else {
-      file.path <- getwd()
-    }
+      } else {
+        file.path <- getwd()
+        }
     
-    save(Results,
-      file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
-    
-    cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
-                " has been exported to the following directory: ", file.path), "\n")
+  save(Results,
+    file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
+  cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
+             " has been exported to the following directory: ", file.path), "\n")
    
-    # Save ignored data if there is any
-    if (!is.null(ignored.data)) {
-      write.table(ignored.data,
+  # Save ignored data if there is any
+  if (!is.null(ignored.data)) {
+    write.table(ignored.data,
                 file=paste0(file.path, "/", FILENAME,"-fup-RED-Level2-ignoredbayes.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
-      cat(paste0("A subset of ignored data named ",FILENAME,"-fup-RED-Level2-ignoredbayes.tsv", 
+    cat(paste0("A subset of ignored data named ",FILENAME,"-fup-RED-Level2-ignoredbayes.tsv", 
                " has been exported to the following directory: ", file.path), "\n")
-    
     }
     
-    # Write out the MCMC results separately 
-    if (save.MCMC){
-      if (length(coda.out) != 0) {
-        save(coda.out,
-             file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData"))
+  # Write out the MCMC results separately 
+  if (save.MCMC){
+    if (length(coda.out) != 0) {
+      save(coda.out,
+           file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData"))
       } else {
         cat("No MCMC results to be saved.\n")
       }
     }
-  }
-  
+
   return(list(Results=Results,coda=coda.out))
 }
 
