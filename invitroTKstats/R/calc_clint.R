@@ -151,8 +151,10 @@ model {
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
 #' MS response as a function of time.
 #'
-#' @param FILENAME (Character) A string used to identify the input Level-2 file.
-#' "-Clint-Level2.tsv".
+#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' "<FILENAME>-Clint-Level2.tsv", and to name the exported model results. 
+#' This argument is required no matter which method of specifying input data is used. 
+#' (Defaults to \code{NULL}.)
 #'
 #' @param data.in (Data Frame) A Level-2 data frame generated from the 
 #' \code{format_clint} function with a verification column added by 
@@ -183,10 +185,6 @@ model {
 #'
 #' @param degrade.prob (Numeric) Prior probability that a chemical will be unstable
 #' (that is, degrade abiotically) in the assay. (defaults to 0.05.)
-#' 
-#'@param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-4) will be exported as a .RData file. 
-#' (Defaults to \code{TRUE}.)
 #' 
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results 
 #' as an .RData file. (Defaults to \code{FALSE}.)
@@ -268,13 +266,13 @@ calc_clint <- function(
   decrease.prob = 0.5,
   saturate.prob = 0.25,
   degrade.prob = 0.05,
-  output.res = TRUE,
   save.MCMC = FALSE,
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
   )
 {
   if (!missing(data.in)) {
+    if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
     MS.data <- as.data.frame(data.in)
     } else if (!is.null(INPUT.DIR)) {
       MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
@@ -547,30 +545,27 @@ calc_clint <- function(
 
   View(Results)
   
-  if (output.res) {
-    # Write out a "level 4" result table:
-    # Determine the path for output
-    if (!is.null(OUTPUT.DIR)) {
-      file.path <- OUTPUT.DIR
-    } else if (!is.null(INPUT.DIR)) {
-      file.path <- INPUT.DIR
-    } else {
-      file.path <- getwd()
-    }
-    save(Results,
-      file=paste0(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData"))
-    
-    cat(paste0("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
-                " has been exported to the following directory: ", file.path), "\n")
-    if (save.MCMC){
-      if (length(coda.out) != 0) {
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+  } else if (!is.null(INPUT.DIR)) {
+    file.path <- INPUT.DIR
+  } else {
+    file.path <- getwd()
+  }
+  
+  save(Results,
+       file=paste0(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData"))
+  cat(paste0("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
+             " has been exported to the following directory: ", file.path), "\n")
+  
+  if (save.MCMC){
+    if (length(coda.out) != 0) {
       save(coda.out,
            file=paste0(file.path, "/", FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData"))
       } else {
         cat("No MCMC results to be saved.\n")
       }
     }
-  }
   
   return(list(Results=Results,coda=coda.out))
 }
