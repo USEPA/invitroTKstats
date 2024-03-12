@@ -117,6 +117,13 @@ all(caco2_L1[is.na(caco2_L1$Response), "Sample.Type"] == "Blank")
 ## need to replace NA with 0 for blank adjustment.
 caco2_L1[is.na(caco2_L1$Response), "Response"] <- 0
 
+## Set every sample in the data as verified and export level-2 as a .tsv to 
+## the vignette directory for use of function example and vignette.
+caco2_L2 <- sample_verification(FILENAME = "Examples", 
+                                data.in = caco2_L1, 
+                                assay = "Caco-2", 
+                                OUTPUT.DIR="~/invitrotkstats/invitroTKstats/vignettes")
+
 ## Save level-0 and level-1 data to use for function demo/example documentation 
 save(caco2_L0, caco2_L1, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
 
