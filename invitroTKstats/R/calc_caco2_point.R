@@ -69,7 +69,10 @@
 #'
 #' @examples
 #' ## Load example level-2 data
-#' level2 <- invitroTKstats::caco2.level2
+#' ## Assume the level-1 went through the verification process and 
+#' ## every sample in the data is verified 
+#' level2 <- invitroTKstats::caco2_L1
+#' level2$Verified <- "Y"
 #' 
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table
@@ -78,16 +81,11 @@
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
 #' \dontrun{
-#' level1 <- invitroTKstats::caco2.level1
-#' level2 <- sample_verification(FILENAME = "EPACyprotex2021",
-#'                               data.in = level1,
-#'                               assay = "Caco-2",
-#'                               OUTPUT.DIR = "invitroTKstats/data-raw")
-#' 
+#' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
-#' ## the result table will be saved to the directory specified in INPUT.DIR
-#' level3 <- calc_caco2_point(FILENAME="EPACyprotex2021", 
-#' INPUT.DIR = "invitroTKstats/data-raw")
+#' ## the result table will be saved to the directory specified in INPUT.DIR.
+#' level3 <- calc_caco2_point(FILENAME="Examples", 
+#'                            INPUT.DIR = "invitroTKstats/vignettes")
 #' }
 #'
 #' @references

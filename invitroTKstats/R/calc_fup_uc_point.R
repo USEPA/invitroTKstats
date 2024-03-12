@@ -70,17 +70,11 @@
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
 #' \dontrun{
-#' ## remove the previous Verification column and use it as a Level-1 data set
-#' level1 <- dplyr::select(level2, -Verified)
-#' level2 <- sample_verification(FILENAME = "kreutz",
-#'                               data.in = level1,
-#'                               assay = "fup-UC",
-#'                               OUTPUT.DIR = "invitroTKstats/data-raw")
-#' 
+#' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
-#' ## the result table will be saved to the directory specified in INPUT.DIR
-#' level3 <- calc_fup_uc_point(FILENAME="kreutz", 
-#' INPUT.DIR = "invitroTKstats/data-raw")
+#' ## the result table will be saved to the directory specified in INPUT.DIR.
+#' level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS", 
+#'                             INPUT.DIR = "invitroTKstats/vignettes")
 #' }
 #'
 #' @references
