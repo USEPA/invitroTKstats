@@ -342,32 +342,41 @@ format_fup_red <- function(
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
 
-# We need all these columns in data.in
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    test.nominal.conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+# # We need all these columns in data.in
+#   cols <-c(
+#     sample.col,
+#     date.col,
+#     compound.col,
+#     dtxsid.col,
+#     lab.compound.col,
+#     type.col,
+#     dilution.col,
+#     replicate.col,
+#     cal.col,
+#     istd.name.col,
+#     istd.conc.col,
+#     istd.col,
+#     std.conc.col,
+#     test.nominal.conc.col,
+#     plasma.percent.col,
+#     time.col,
+#     area.col,
+#     analysis.method.col,
+#     analysis.instrument.col,
+#     analysis.parameters.col,
+#     note.col,
+#     level0.file.col,
+#     level0.sheet.col
+#     )
+  
+  fup.red.cols <- c(std.cols,
+                    replicate.col = "Replicate",
+                    std.conc.col = "Std.Conc",
+                    test.nominal.conc.col = "Test.Nominal.Conc",
+                    plasma.percent.col = "Percent.Physiologic.Plasma"
+  )
+  
+  cols <- unlist(mget(names(fup.red.cols)))
 
   if (!(all(cols %in% colnames(data.in))))
   {
@@ -402,65 +411,42 @@ format_fup_red <- function(
 
   # Organize the columns:
   data.out <- data.out[,cols]
+  
+  colnames(data.out) <- fup.red.cols
 
-  # Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  replicate.col <- "Replicate"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  std.conc.col <- "Std.Conc"
-  test.nominal.conc.col <- "Test.Nominal.Conc"
-  plasma.percent.col <- "Percent.Physiologic.Plasma"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    test.nominal.conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+  # colnames(data.out) <- c(
+  #   sample.col,
+  #   date.col,
+  #   compound.col,
+  #   dtxsid.col,
+  #   lab.compound.col,
+  #   type.col,
+  #   dilution.col,
+  #   replicate.col,
+  #   cal.col,
+  #   istd.name.col,
+  #   istd.conc.col,
+  #   istd.col,
+  #   std.conc.col,
+  #   test.nominal.conc.col,
+  #   plasma.percent.col,
+  #   time.col,
+  #   area.col,
+  #   analysis.method.col,
+  #   analysis.instrument.col,
+  #   analysis.parameters.col,
+  #   note.col,
+  #   level0.file.col,
+  #   level0.sheet.col
+  #   )
 
   # Set reasonable sig figs:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
   
   # calculate the response:
-  data.out[,"Response"] <- signif(data.out[,area.col] /
-     data.out[,istd.col] * data.out[,istd.conc.col], 4)
+  data.out[,"Response"] <- signif(data.out[,"Area"] /
+     data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"], 4)
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):

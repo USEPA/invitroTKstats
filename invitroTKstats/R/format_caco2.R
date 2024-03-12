@@ -269,6 +269,11 @@ format_caco2 <- function(
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
+  note.col="Note",
+  level0.file=NULL,
+  level0.file.col="Level0.File",
+  level0.sheet=NULL,
+  level0.sheet.col="Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
   INPUT.DIR = NULL,
@@ -317,34 +322,16 @@ format_caco2 <- function(
   if (!is.null(series)) data.out[,series.col] <- series
   if (!is.null(meas.time)) data.out[,meas.time.col] <- meas.time
   if (!is.null(compound.conc)) data.out[,compound.conc.col] <- compound.conc
+  
+  caco2.cols <- c(std.cols, 
+                  direction.col="Direction",
+                  membrane.area.col="Membrane.Area",
+                  receiver.vol.col="Vol.Receiver",
+                  donor.vol.col="Vol.Donor"
+  )
 
-# We need all these columns in data.out
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    direction.col,
-    dilution.col,
-    cal.col,
-    series.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    meas.time.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    area.col,
-    membrane.area.col,
-    donor.vol.col,
-    receiver.vol.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col
-    )
 
+  cols <- unlist(mget(names(caco2.cols)))
   if (!(all(cols %in% colnames(data.out))))
   {
     stop(paste("Missing columns named:",
@@ -371,67 +358,19 @@ format_caco2 <- function(
     }
   }
   
+                  
   # Organize the columns:
   data.out <- data.out[,cols]
 
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    direction.col <- "Direction"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    series.col <- "Series"
-    compound.conc.col <- "Standard.Conc"
-    nominal.test.conc.col <- "Test.Target.Conc"
-    meas.time.col <- "Time"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    area.col <- "Area"
-    membrane.area.col <- "Membrane.Area"
-    donor.vol.col <- "Vol.Donor"
-    recevier.vol.col <- "Vol.Receiver"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    direction.col,
-    dilution.col,
-    cal.col,
-    series.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    meas.time.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    area.col,
-    membrane.area.col,
-    donor.vol.col,
-    receiver.vol.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col
-    )
+  colnames(data.out) <- caco2.cols
 
   # calculate the response:
-  data.out[,area.col] <- signif(as.numeric(data.out[,area.col]), 5)
-  data.out[,istd.col] <- signif(as.numeric(data.out[,istd.col]), 5)
-  data.out[,istd.conc.col] <- as.numeric(data.out[,istd.conc.col])
-  data.out[,"Response"] <- signif(data.out[,area.col] /
-     data.out[,istd.col] *  data.out[,istd.conc.col], 4)
-
+  data.out[,"Area"] <- signif(as.numeric(data.out[,"Area"]), 5)
+  data.out[,"ISTD.Area"] <- signif(as.numeric(data.out[,"ISTD.Area"]), 5)
+  data.out[,"ISTD.Conc"] <- as.numeric(data.out[,"ISTD.Conc"])
+  data.out[,"Response"] <- signif(data.out[,"Area"] /
+                                    data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"], 4)
+  
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
     write.table(data.out,

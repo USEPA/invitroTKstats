@@ -316,8 +316,8 @@ format_clint <- function(
       data.in[,std.conc.col] <- std.conc
     }
   }
-  
-  # determine the path for output files 
+
+  # determine the path for output files
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR
   } else if (!is.null(INPUT.DIR)) {
@@ -349,32 +349,13 @@ format_clint <- function(
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
 
 # We need all these columns in data.in
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    density.col,
-    compound.conc.col,
-    std.conc.col,
-    clint.assay.conc.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+  clint.cols <- c(std.cols,
+                  std.conc.col = "Std.Conc",
+                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  density.col = "Hep.Density"
+                  )
 
+  cols <- unlist(mget(names(clint.cols)))
   if (!(all(cols %in% colnames(data.in))))
   {
     stop(paste("Missing columns named:",
@@ -385,10 +366,10 @@ format_clint <- function(
   req.types=c("Blank","Cvst","CC","Inactive")
   data.out <- subset(data.in,data.in[,type.col] %in% req.types)
   data.in.badtype <- subset(data.in,!(data.in[,type.col] %in% req.types))
-  
+
   # Force code to throw error if data.in accessed after this point:
   rm(data.in)
-  
+
   # Option to export data with bad types
   if (nrow(data.in.badtype) != 0) {
     if (save.bad.types) {
@@ -407,62 +388,15 @@ format_clint <- function(
   # Organize the columns:
   data.out <- data.out[,cols]
 
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  density.col <- "Hep.Density"
-  std.conc.col <- "Std.Conc"
-  clint.assay.conc.col <- "Clint.Assay.Conc"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    density.col,
-    std.conc.col,
-    clint.assay.conc.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+  colnames(data.out) <- clint.cols
 
   # Set reasonable significant figures:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
 
   # calculate the response:
-  data.out[,"Response"] <- signif(data.out[,area.col] /
-     data.out[,istd.col] * data.out[,istd.conc.col], 4)
+  data.out[,"Response"] <- signif(data.out[,"Area"] /
+     data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"], 4)
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
@@ -471,10 +405,10 @@ format_clint <- function(
                 sep="\t",
                 row.names=F,
                 quote=F)
-    cat(paste0("A Level-1 file named ",FILENAME,"-Clint-Level1.tsv", 
+    cat(paste0("A Level-1 file named ",FILENAME,"-Clint-Level1.tsv",
                 " has been exported to the following directory: ", file.path), "\n")
   }
-  
+
   summarize_table(data.out,
     req.types=c("Blank","Cvst"))
 
