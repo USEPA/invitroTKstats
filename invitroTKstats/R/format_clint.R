@@ -80,7 +80,7 @@
 #' use only if all data were collected based on the same calibration.)
 #' 
 #' @param cal.col (Character) Column name containing \code{cal} 
-#' information. (Defaults to "Cal".) (Note: \code{data.in} does not
+#' information. (Defaults to "Calibration".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{cal}.)
 #' 
@@ -94,7 +94,8 @@
 #' specified in \code{dilution}.)
 #' 
 #' @param time (Numeric) Time of the measurement (in minutes) since the test 
-#' chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)
+#' chemicals was introduced into the hepatocyte incubation. (Defaults to \code{NULL}.)
+#' (Note: Single entry only, use only if all measurements were taken after the same amount of time.)
 #' 
 #' @param time.col (Character) Column name containing \code{time} 
 #' information. (Defaults to "Time".) (Note: \code{data.in} does not
@@ -258,10 +259,10 @@ format_clint <- function(
   compound.conc=NULL,
   compound.conc.col="Nominal.Conc",
   cal=NULL,
-  cal.col="Cal",
+  cal.col="Calibration",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  time = 2,
+  time = NULL,
   time.col="Time",
   istd.col="ISTD.Area",
   istd.name=NULL,
@@ -349,7 +350,7 @@ format_clint <- function(
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
 
 # We need all these columns in data.in
-  clint.cols <- c(std.cols,
+  clint.cols <- c(L1.common.cols,
                   std.conc.col = "Std.Conc",
                   clint.assay.conc.col = "Clint.Assay.Conc",
                   density.col = "Hep.Density"
