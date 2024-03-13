@@ -122,10 +122,10 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{dilution}.)
 #' 
-#' @param meas.time (Numeric) The amount of time (in hours) before the receiver and donor 
+#' @param time (Numeric) The amount of time (in hours) before the receiver and donor 
 #' compartments are measured. (Defaults to 2.)
 #' 
-#' @param meas.time.col (Character) Column name containing \code{meas.time} 
+#' @param time.col (Character) Column name containing \code{meas.time} 
 #' information. (Defaults to "Time".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{meas.time}.)
@@ -183,6 +183,28 @@
 #' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{analysis.parameters}.)
+#' 
+#' @param note.col (Character) Column name of \code{data.in} containing additional notes on 
+#' test compounds. (Defaults to "Note").
+#' 
+#' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' were obtained from the same Level-0 file.) 
+#' 
+#' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
+#' (Defaults to "Level0.File".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.file}.)
+#' 
+#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
+#' \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+#' were obtained from the same sheet in the same Level-0 file.) 
+#' 
+#' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
+#' (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.sheet}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
 #' table (Level-1) will be exported the current directory as a .tsv file. 
@@ -255,8 +277,8 @@ format_caco2 <- function(
   cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  meas.time = 2,
-  meas.time.col="Time",
+  time = 2,
+  time.col="Time",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
@@ -320,10 +342,10 @@ format_caco2 <- function(
     analysis.parameters
   if (!is.null(membrane.area)) data.out[,membrane.area.col] <- membrane.area
   if (!is.null(series)) data.out[,series.col] <- series
-  if (!is.null(meas.time)) data.out[,meas.time.col] <- meas.time
+  if (!is.null(time)) data.out[,time.col] <- time
   if (!is.null(compound.conc)) data.out[,compound.conc.col] <- compound.conc
   
-  caco2.cols <- c(std.cols, 
+  caco2.cols <- c(L1.common.cols, 
                   direction.col="Direction",
                   membrane.area.col="Membrane.Area",
                   receiver.vol.col="Vol.Receiver",
