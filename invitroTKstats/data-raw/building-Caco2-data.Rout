@@ -154,7 +154,7 @@ Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw 
 A Level-2 file named Examples-Caco-2-Level2.tsv has been exported to the following directory: ~/invitrotkstats/invitroTKstats/vignettes 
 > 
 > ## Save level-0 and level-1 data to use for function demo/example documentation 
-> save(caco2_L0, caco2_L1, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
+> save(caco2_L0, caco2_L1, caco2_L2, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
 > 
 > ## Include session info
 > utils::sessionInfo()
@@ -189,4 +189,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   1.93    1.92    5.62 
+   1.37    1.29    4.06 

@@ -125,7 +125,7 @@ caco2_L2 <- sample_verification(FILENAME = "Examples",
                                 OUTPUT.DIR="~/invitrotkstats/invitroTKstats/vignettes")
 
 ## Save level-0 and level-1 data to use for function demo/example documentation 
-save(caco2_L0, caco2_L1, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
+save(caco2_L0, caco2_L1, caco2_L2, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
 
 ## Include session info
 utils::sessionInfo()
