@@ -212,42 +212,33 @@ model {
 #' @author John Wambaugh
 #'
 #' @examples
-#'
-#' library(invitroTKstats)
-#'
-#' clint <- wambaugh2019.clint
-#' clint$Date <- "2019"
-#' clint$Sample.Type <- "Blank"
-#' clint$Time..mins. <- as.numeric(clint$Time..mins.)
-#' clint[!is.na(clint$Time..mins.),"Sample.Type"] <- "Cvst"
-#' clint$ISTD.Name <- "Bucetin, Propranolol, and Diclofenac"
-#' clint$ISTD.Conc <- 1
-#' clint$Dilution.Factor <- 1
-#' clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
-#' clint$Hep.Density <- 0.5
-#' clint$Analysis.Method <- "LC or GC"
-#' clint$Analysis.Instrument <- "No Idea"
-#' clint$Analysis.Parameters <- "None"
-#'
-#' level1 <- format_clint(clint,
-#'   FILENAME="Wambaugh2019",
-#'   sample.col="Sample.Name",
-#'   compound.col="Preferred.Name",
-#'   lab.compound.col="Name",
-#'   time.col="Time..mins.",
-#'   cal.col="FileName")
-#'
-#' level2 <- level1
-#' level2$Verified <- "Y"
-#'
-#' # All data (allows test for saturation):
-#' write.table(level2,
-#'   file="Wambaugh2019-Clint-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level4 <- calc_clint_point(FILENAME="Wambaugh2019")
+#' ## Example 1: loading level-2 using data.in
+#' \dontrun{
+#' level2 <- invitroTKstats::kreutz2023.clint
+#' 
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_clint(data.in = level2,
+#'                      NUM.CORES=2,
+#'                      JAGS.PATH=path.to.JAGS)
+#' }
+#' 
+#' ## Example 2: importing level-2 from a .tsv file
+#' \dontrun{
+#' # Refer to sample_verification help file for how to export level-2 data to a directory.
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_clint(FILENAME="KreutzPFAS",
+#'                      NUM.CORES=2,
+#'                      JAGS.PATH=path.to.JAGS,
+#'                      INPUT.DIR = "invitroTKstats/vignettes")
+#' }
+#' 
+#' 
 #'
 #' @import Rdpack
 #'

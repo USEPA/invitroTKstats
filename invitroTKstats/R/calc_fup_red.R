@@ -238,17 +238,31 @@ model {
 #' @author John Wambaugh and Chantel Nicolas
 #'
 #' @examples
-#' # Level-2 file
-#' write.table(smeltz2023.red,
-#'   file="SmeltzPFAS-fup-RED-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
+#' ## Example 1: loading level-2 using data.in
+#' \dontrun{
+#' level2 <- invitroTKstats::smeltz2023.red
 #' 
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_fup_red(data.in = level2,
+#'                        NUM.CORES=2,
+#'                        JAGS.PATH=path.to.JAGS)
+#' }
+#' 
+#' ## Example 2: importing level-2 from a .tsv file
+#' \dontrun{
+#' # Refer to sample_verification help file for how to export level-2 data to a directory.
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
-#'                        NUM.CORES=8,
-#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+#'                        NUM.CORES=2,
+#'                        JAGS.PATH=path.to.JAGS,
+#'                        INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #'
 #' @import coda
 #'
