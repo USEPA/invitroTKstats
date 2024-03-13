@@ -69,10 +69,7 @@
 #'
 #' @examples
 #' ## Load example level-2 data
-#' ## Assume the level-1 went through the verification process and 
-#' ## every sample in the data is verified 
-#' level2 <- invitroTKstats::caco2_L1
-#' level2$Verified <- "Y"
+#' level2 <- invitroTKstats::caco2_L2
 #' 
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table
