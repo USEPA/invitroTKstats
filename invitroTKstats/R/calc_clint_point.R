@@ -181,7 +181,7 @@ calc_clint_point <- function(
 #     analysis.parameters.col,
 #     note.col
 #     )
-  clint.cols <- c(std.cols,
+  clint.cols <- c(L1.common.cols,
                     std.conc.col = "Std.Conc",
                     clint.assay.conc.col = "Clint.Assay.Conc",
                     density.col = "Hep.Density"

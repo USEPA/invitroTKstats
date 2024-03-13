@@ -136,57 +136,67 @@ calc_caco2_point <- function(
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
 
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    series.col <- "Series"
-    compound.conc.col <- "Standard.Conc"
-    nominal.test.conc.col <- "Test.Target.Conc"
-    meas.time.col="Time"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    membrane.area.col <- "Membrane.Area"
-    donor.vol.col <- "Vol.Donor"
-    receiver.vol.col <- "Vol.Receiver"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    series.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    meas.time.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    membrane.area.col,
-    donor.vol.col,
-    receiver.vol.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col
-    )
+#   # Standardize the column names:
+#     sample.col <- "Lab.Sample.Name"
+#     date.col <- "Date"
+#     compound.col <- "Compound.Name"
+#     dtxsid.col <- "DTXSID"
+#     lab.compound.col <- "Lab.Compound.Name"
+#     type.col <- "Sample.Type"
+#     dilution.col <- "Dilution.Factor"
+#     cal.col <- "Calibration"
+#     series.col <- "Series"
+#     compound.conc.col <- "Standard.Conc"
+#     nominal.test.conc.col <- "Test.Target.Conc"
+#     meas.time.col="Time"
+#     istd.name.col <- "ISTD.Name"
+#     istd.conc.col <- "ISTD.Conc"
+#     istd.col <- "ISTD.Area"
+#     series.col <- "Series"
+#     area.col <- "Area"
+#     membrane.area.col <- "Membrane.Area"
+#     donor.vol.col <- "Vol.Donor"
+#     receiver.vol.col <- "Vol.Receiver"
+#     analysis.method.col <- "Analysis.Method"
+#     analysis.instrument.col <- "Analysis.Instrument"
+#     analysis.parameters.col <- "Analysis.Parameters"
+# 
+# # For a properly formatted level 2 file we should have all these columns:
+#   cols <-c(
+#     sample.col,
+#     date.col,
+#     compound.col,
+#     dtxsid.col,
+#     lab.compound.col,
+#     type.col,
+#     dilution.col,
+#     cal.col,
+#     series.col,
+#     compound.conc.col,
+#     nominal.test.conc.col,
+#     meas.time.col,
+#     istd.name.col,
+#     istd.conc.col,
+#     istd.col,
+#     series.col,
+#     area.col,
+#     membrane.area.col,
+#     donor.vol.col,
+#     receiver.vol.col,
+#     analysis.method.col,
+#     analysis.instrument.col,
+#     analysis.parameters.col
+#     )
+  
+  caco2.cols <- c(L1.common.cols, 
+                  direction.col="Direction",
+                  membrane.area.col="Membrane.Area",
+                  receiver.vol.col="Vol.Receiver",
+                  donor.vol.col="Vol.Donor"
+  )
+  
+  list2env(as.list(caco2.cols), envir = environment())
+  cols <- unlist(mget(names(caco2.cols)))
 
   if (!(all(cols %in% colnames(input.table))))
   {
@@ -210,7 +220,7 @@ calc_caco2_point <- function(
     this.subset <- subset(input.table, input.table[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- cbind(this.subset[1,
-      c(compound.col, dtxsid.col, meas.time.col, membrane.area.col)],
+      c(compound.col, dtxsid.col, time.col, membrane.area.col)],
       data.frame(Calibration="All Data",
         C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN,
         C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Refflux=NaN))
