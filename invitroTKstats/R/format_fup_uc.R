@@ -286,30 +286,36 @@ format_fup_uc <- function(
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
 
 # We need all these columns in data.in
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    std.conc.col,
-    uc.assay.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
-
+  # cols <-c(
+  #   sample.col,
+  #   date.col,
+  #   compound.col,
+  #   dtxsid.col,
+  #   lab.compound.col,
+  #   type.col,
+  #   dilution.col,
+  #   cal.col,
+  #   std.conc.col,
+  #   uc.assay.conc.col,
+  #   istd.name.col,
+  #   istd.conc.col,
+  #   istd.col,
+  #   series.col,
+  #   area.col,
+  #   analysis.method.col,
+  #   analysis.instrument.col,
+  #   analysis.parameters.col,
+  #   note.col,
+  #   level0.file.col,
+  #   level0.sheet.col
+  #   )
+  
+  fup.uc.cols <- c(L1.common.cols,
+                   std.conc.col = "Standard.Conc",
+                   uc.assay.conc.col = "UC.Assay.T1.Conc",
+                   series.col = "Series"
+  )
+  cols <- unlist(mget(names(fup.uc.cols)))
   if (!(all(cols %in% colnames(data.in))))
   {
     stop(paste("Missing columns named:",
@@ -343,52 +349,7 @@ format_fup_uc <- function(
   # Organize the columns:
   data.out <- data.out[,cols]
 
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    std.conc.col <- "Standard.Conc"
-    uc.assay.conc.col <- "UC.Assay.T1.Conc"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-    note.col <- "Note"
-    level0.file.col <- "Level0.File"
-    level0.sheet.col <- "Level0.Sheet"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    std.conc.col,
-    uc.assay.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+  colnames(data.out) <- fup.uc.cols
 
   # Blanks don't always have internal standard -- add average ISTD.Area
   # First identify the blanks (have to deal with NA standard.concs:
@@ -421,8 +382,8 @@ format_fup_uc <- function(
     data.out[,this.col] <- signif(data.out[,this.col], 5)
 
   # calculate the response:
-  data.out[,"Response"] <- signif(as.numeric(data.out[,area.col]) /
-     as.numeric(data.out[,istd.col]) * as.numeric(data.out[,istd.conc.col]),4)
+  data.out[,"Response"] <- signif(as.numeric(data.out[,"Area"]) /
+     as.numeric(data.out[,"ISTD.Area"]) * as.numeric(data.out[,"ISTD.Conc"]),4)
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):

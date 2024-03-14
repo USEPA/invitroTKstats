@@ -123,7 +123,7 @@
 #' specified in \code{dilution}.)
 #' 
 #' @param time (Numeric) The amount of time (in hours) before the receiver and donor 
-#' compartments are measured. (Defaults to 2.)
+#' compartments are measured. (Defaults to \code{NULL}.)
 #' 
 #' @param time.col (Character) Column name containing \code{meas.time} 
 #' information. (Defaults to "Time".) (Note: \code{data.in} does not
@@ -277,7 +277,7 @@ format_caco2 <- function(
   cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  time = 2,
+  time = NULL,
   time.col="Time",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
@@ -346,7 +346,11 @@ format_caco2 <- function(
   if (!is.null(compound.conc)) data.out[,compound.conc.col] <- compound.conc
   
   caco2.cols <- c(L1.common.cols, 
+                  series.col="Series",
+                  time.col = "Time",
                   direction.col="Direction",
+                  compound.conc.col="Nominal.Conc",
+                  nominal.test.conc.col="Test.Target.Conc",
                   membrane.area.col="Membrane.Area",
                   receiver.vol.col="Vol.Receiver",
                   donor.vol.col="Vol.Donor"

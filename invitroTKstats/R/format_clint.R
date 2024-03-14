@@ -351,6 +351,7 @@ format_clint <- function(
 
 # We need all these columns in data.in
   clint.cols <- c(L1.common.cols,
+                  time.col = "Time",
                   std.conc.col = "Std.Conc",
                   clint.assay.conc.col = "Clint.Assay.Conc",
                   density.col = "Hep.Density"

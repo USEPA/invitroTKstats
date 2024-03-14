@@ -85,7 +85,7 @@
 #' specified in \code{dilution}.)
 #'
 #' @param time (Numeric) Incubation time (in hours) - from the start of incubation to 
-#' when the sample measurements were taken. (Defaults to 4.) (Note: Single entry only, use only if all 
+#' when the sample measurements were taken. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
 #' samples were taken after the same amount of incubation time.)
 #'
 #' @param time.col (Character) Column name containing \code{time} information. 
@@ -263,7 +263,7 @@ format_fup_red <- function(
   replicate.col="Replicate",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  time = 4,
+  time = NULL,
   time.col="Time",
   istd.col="ISTD.Area",
   istd.name=NULL,
@@ -369,8 +369,9 @@ format_fup_red <- function(
 #     level0.sheet.col
 #     )
   
-  fup.red.cols <- c(std.cols,
+  fup.red.cols <- c(L1.common.cols,
                     replicate.col = "Replicate",
+                    time.col = "Time",
                     std.conc.col = "Std.Conc",
                     test.nominal.conc.col = "Test.Nominal.Conc",
                     plasma.percent.col = "Percent.Physiologic.Plasma"
