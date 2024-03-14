@@ -189,14 +189,18 @@ calc_caco2_point <- function(
 #     )
   
   caco2.cols <- c(L1.common.cols, 
+                  series.col="Series",
+                  time.col = "Time",
                   direction.col="Direction",
+                  compound.conc.col="Nominal.Conc",
+                  nominal.test.conc.col="Test.Target.Conc",
                   membrane.area.col="Membrane.Area",
                   receiver.vol.col="Vol.Receiver",
                   donor.vol.col="Vol.Donor"
   )
   
   list2env(as.list(caco2.cols), envir = environment())
-  cols <- unlist(mget(names(caco2.cols)))
+  cols <- c(unlist(mget(names(caco2.cols))), "Response", good.col)
 
   if (!(all(cols %in% colnames(input.table))))
   {

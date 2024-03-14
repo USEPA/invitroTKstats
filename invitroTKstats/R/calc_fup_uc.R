@@ -205,50 +205,58 @@ calc_fup_uc <- function(
     setwd(TEMP.DIR)
   }
   
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    std.conc.col <- "Standard.Conc"
-    uc.assay.conc.col <- "UC.Assay.T1.Conc"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters" 
-    note.col <- "Note"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    std.conc.col,
-    uc.assay.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    "Response",
-    good.col)
+#   # Standardize the column names:
+#     sample.col <- "Lab.Sample.Name"
+#     date.col <- "Date"
+#     compound.col <- "Compound.Name"
+#     dtxsid.col <- "DTXSID"
+#     lab.compound.col <- "Lab.Compound.Name"
+#     type.col <- "Sample.Type"
+#     dilution.col <- "Dilution.Factor"
+#     cal.col <- "Calibration"
+#     std.conc.col <- "Standard.Conc"
+#     uc.assay.conc.col <- "UC.Assay.T1.Conc"
+#     istd.name.col <- "ISTD.Name"
+#     istd.conc.col <- "ISTD.Conc"
+#     istd.col <- "ISTD.Area"
+#     series.col <- "Series"
+#     area.col <- "Area"
+#     analysis.method.col <- "Analysis.Method"
+#     analysis.instrument.col <- "Analysis.Instrument"
+#     analysis.parameters.col <- "Analysis.Parameters" 
+#     note.col <- "Note"
+# 
+# # For a properly formatted level 2 file we should have all these columns:
+#   cols <-c(
+#     sample.col,
+#     date.col,
+#     compound.col,
+#     dtxsid.col,
+#     lab.compound.col,
+#     type.col,
+#     dilution.col,
+#     cal.col,
+#     std.conc.col,
+#     uc.assay.conc.col,
+#     istd.name.col,
+#     istd.conc.col,
+#     istd.col,
+#     series.col,
+#     area.col,
+#     analysis.method.col,
+#     analysis.instrument.col,
+#     analysis.parameters.col,
+#     note.col,
+#     "Response",
+#     good.col)
+  
+  fup.uc.cols <- c(L1.common.cols,
+                   std.conc.col = "Standard.Conc",
+                   uc.assay.conc.col = "UC.Assay.T1.Conc",
+                   series.col = "Series"
+  )
+  list2env(as.list(fup.uc.cols), envir = environment())
+  cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
   if (!(all(cols %in% colnames(PPB.data))))
   {
     warning("Run format_fup_uc first (level 1) then curate to level 2.")
