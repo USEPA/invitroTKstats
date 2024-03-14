@@ -10,7 +10,6 @@ L1.common.cols <- c(
   type.col = "Sample.Type",
   dilution.col = "Dilution.Factor",
   cal.col = "Calibration",
-  time.col = "Time",
   istd.name.col = "ISTD.Name",
   istd.conc.col = "ISTD.Conc",
   istd.col = "ISTD.Area",

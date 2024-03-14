@@ -31,7 +31,6 @@ Type 'q()' to quit R.
 +   type.col = "Sample.Type",
 +   dilution.col = "Dilution.Factor",
 +   cal.col = "Calibration",
-+   time.col = "Time",
 +   istd.name.col = "ISTD.Name",
 +   istd.conc.col = "ISTD.Conc",
 +   istd.col = "ISTD.Area",
@@ -75,4 +74,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.75    0.23    2.23 
+   0.51    0.18    2.31 
