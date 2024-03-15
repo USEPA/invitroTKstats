@@ -108,21 +108,61 @@ sample_verification <- function(
                            Unable to import data from the 'tsv' without both FILENAME and assay."))
     }
   
-  # add a column with all "Y"
+  # Add the verification column with all "Y"
   data.out$Verified <- "Y"
   
   if (!missing(exclusion.info)) {
-    if (!all(unique(exclusion.info[, "Variable"]) %in% colnames(data.out))) 
-      stop("Name(s) of the list(s) do not match the column names of the level-1 data.")
-       
-    for (i in 1:nrow(exclusion.info)) {
-      this.variable <- exclusion.info[i ,"Variable"]
-      this.value <- exclusion.info[i, "Value"]
-      which.rows <- data.out[, this.variable] == this.value
-      which.rows[is.na(which.rows)] <- FALSE
-      data.out[which.rows,"Verified"] <- exclusion.info[i, "Message"]
-    }
+    # approach one
+    
+    # if (!all(unique(exclusion.info[, "primary_var"]) %in% colnames(data.out)) |
+    #     !all(unique(exclusion.info[, "secondary_var"]) %in% colnames(data.out))) 
+    #   stop("Name(s) of the list(s) do not match the column names of the level-1 data.")
+    #    
+    # for (i in 1:nrow(exclusion.info)) {
+    #   this.prim.variable <- exclusion.info[i ,"primary_var"]
+    #   this.prim.value <- exclusion.info[i, "primary_value"]
+    #   this.sec.variable <- exclusion.info[i, "secondary_var"]
+    #   this.sec.value <- exclusion.info[i, "secondary_value"]
+    #   which.rows <- data.out[, this.prim.variable] == this.prim.value
+    #   if (this.sec.variable != "")
+    #     which.rows <- (which.rows & data.out[, this.sec.variable] == this.sec.value)
+    #   
+    #   which.rows[is.na(which.rows)] <- FALSE
+    #   # append this message in case the sample is excluded for multiple reasons
+    #   data.out[which.rows,"Verified"] <- paste(exclusion.info[i, "message"], data.out[which.rows,"Verified"], sep = ", ")
+    # }
+    
+      ## approach two
+      for (i in 1:nrow(exclusion.info)) {
+        ## split the list, consider all possible separators
+        ## exclude period - period is used in column names 
+        var.list <- strsplit(exclusion.info[i, "primary_var"], "\\\\|[^.[:^punct:]]", perl = TRUE)[[1]]
+        var.list <- trimws(var.list)
+        value.list <- strsplit(exclusion.info[i, "primary_value"], "\\\\|[^.[:^punct:]]", perl = TRUE)[[1]]
+        value.list <- trimws(value.list)
+        ## check if every variable has a matched value 
+        if (length(var.list) != length(value.list))
+          stop("The lengths of variable list and value list do not match.")
+        ## check if the variable names are valid
+        if (!all(var.list %in% colnames(data.out))) 
+          stop("Names of the variables use to determine the exclusion criteria do not match the column names of the level-1 data.")
+        for (j in 1:length(var.list)) {
+          this.variable <- var.list[j]
+          this.value <- value.list[j]
+          if (j == 1)
+            which.rows <- data.out[, this.variable] == this.value
+          else
+            which.rows <- (which.rows & data.out[, this.variable] == this.value)
+        }
+        
+        which.rows[is.na(which.rows)] <- FALSE
+        # append this message in case the sample has multiple reasons to be excluded
+        data.out[which.rows,"Verified"] <- paste(exclusion.info[i, "message"], data.out[which.rows,"Verified"], sep = ", ")
+      }
   }
+  
+  ## clean up the format of messages
+  data.out[,"Verified"] <- gsub(", Y", "", data.out[,"Verified"])
   
   if (output.res) {
     if (missing(assay) | missing(FILENAME)) stop("Missing either FILENAME and/or assay. Unable to export data to a 'tsv' without a FILENAME and assay.")
