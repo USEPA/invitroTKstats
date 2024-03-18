@@ -342,33 +342,7 @@ format_fup_red <- function(
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
 
-# # We need all these columns in data.in
-#   cols <-c(
-#     sample.col,
-#     date.col,
-#     compound.col,
-#     dtxsid.col,
-#     lab.compound.col,
-#     type.col,
-#     dilution.col,
-#     replicate.col,
-#     cal.col,
-#     istd.name.col,
-#     istd.conc.col,
-#     istd.col,
-#     std.conc.col,
-#     test.nominal.conc.col,
-#     plasma.percent.col,
-#     time.col,
-#     area.col,
-#     analysis.method.col,
-#     analysis.instrument.col,
-#     analysis.parameters.col,
-#     note.col,
-#     level0.file.col,
-#     level0.sheet.col
-#     )
-  
+  # We need all these columns in data.in
   fup.red.cols <- c(L1.common.cols,
                     replicate.col = "Replicate",
                     time.col = "Time",
@@ -414,33 +388,7 @@ format_fup_red <- function(
   data.out <- data.out[,cols]
   
   colnames(data.out) <- fup.red.cols
-
-  # colnames(data.out) <- c(
-  #   sample.col,
-  #   date.col,
-  #   compound.col,
-  #   dtxsid.col,
-  #   lab.compound.col,
-  #   type.col,
-  #   dilution.col,
-  #   replicate.col,
-  #   cal.col,
-  #   istd.name.col,
-  #   istd.conc.col,
-  #   istd.col,
-  #   std.conc.col,
-  #   test.nominal.conc.col,
-  #   plasma.percent.col,
-  #   time.col,
-  #   area.col,
-  #   analysis.method.col,
-  #   analysis.instrument.col,
-  #   analysis.parameters.col,
-  #   note.col,
-  #   level0.file.col,
-  #   level0.sheet.col
-  #   )
-
+  
   # Set reasonable sig figs:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)

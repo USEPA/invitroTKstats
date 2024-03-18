@@ -80,7 +80,7 @@
 #' use only if all data were collected based on the same calibration.)
 #' 
 #' @param cal.col (Character) Column name containing \code{cal} 
-#' information. (Defaults to "Calibration".) (Note: \code{data.in} does not
+#' information. (Defaults to "Cal".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{cal}.)
 #' 
@@ -259,7 +259,7 @@ format_clint <- function(
   compound.conc=NULL,
   compound.conc.col="Nominal.Conc",
   cal=NULL,
-  cal.col="Calibration",
+  cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
   time = NULL,

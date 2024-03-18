@@ -285,31 +285,7 @@ format_fup_uc <- function(
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
 
-# We need all these columns in data.in
-  # cols <-c(
-  #   sample.col,
-  #   date.col,
-  #   compound.col,
-  #   dtxsid.col,
-  #   lab.compound.col,
-  #   type.col,
-  #   dilution.col,
-  #   cal.col,
-  #   std.conc.col,
-  #   uc.assay.conc.col,
-  #   istd.name.col,
-  #   istd.conc.col,
-  #   istd.col,
-  #   series.col,
-  #   area.col,
-  #   analysis.method.col,
-  #   analysis.instrument.col,
-  #   analysis.parameters.col,
-  #   note.col,
-  #   level0.file.col,
-  #   level0.sheet.col
-  #   )
-  
+  # We need all these columns in data.in
   fup.uc.cols <- c(L1.common.cols,
                    std.conc.col = "Standard.Conc",
                    uc.assay.conc.col = "UC.Assay.T1.Conc",

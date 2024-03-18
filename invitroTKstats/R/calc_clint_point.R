@@ -135,52 +135,6 @@ calc_clint_point <- function(
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
   
-
-# Standardize the column names:
-#   sample.col <- "Lab.Sample.Name"
-#   date.col <- "Date"
-#   compound.col <- "Compound.Name"
-#   dtxsid.col <- "DTXSID"
-#   lab.compound.col <- "Lab.Compound.Name"
-#   type.col <- "Sample.Type"
-#   dilution.col <- "Dilution.Factor"
-#   cal.col <- "Calibration"
-#   istd.name.col <- "ISTD.Name"
-#   istd.conc.col <- "ISTD.Conc"
-#   istd.col <- "ISTD.Area"
-#   density.col <- "Hep.Density"
-#   std.conc.col <- "Std.Conc"
-#   clint.assay.conc.col <- "Clint.Assay.Conc"
-#   time.col <- "Time"
-#   area.col <- "Area"
-#   analysis.method.col <- "Analysis.Method"
-#   analysis.instrument.col <- "Analysis.Instrument"
-#   analysis.parameters.col <- "Analysis.Parameters"
-#   note.col <- "Note"
-# 
-# # We need all these columns in clint.data
-#   cols <-c(
-#     sample.col,
-#     date.col,
-#     compound.col,
-#     dtxsid.col,
-#     lab.compound.col,
-#     type.col,
-#     dilution.col,
-#     cal.col,
-#     istd.name.col,
-#     istd.conc.col,
-#     istd.col,
-#     density.col,
-#     std.conc.col,
-#     clint.assay.conc.col,
-#     time.col,
-#     area.col,
-#     analysis.method.col,
-#     analysis.instrument.col,
-#     analysis.parameters.col,
-#     note.col
-#     )
   clint.cols <- c(L1.common.cols,
                   time.col = "Time",
                   std.conc.col = "Std.Conc",
