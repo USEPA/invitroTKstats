@@ -88,7 +88,8 @@ sample_verification <- function(
   
   approved_assays <- c("Clint", "Caco-2", "fup-UC", "fup-RED")
   # if either importing or exporting data file, check if the assay given is valid.
-  if ((missing(data.in) |  output.res) & !(assay %in% approved_assays)) 
+  if (missing(data.in) | output.res)
+    if (!(assay %in% approved_assays))
     stop("Invalid assay. ", "Use one of the approved assays: ", paste(approved_assays, collapse = ", "), ".")
   
   if (!missing(data.in)) {
@@ -112,52 +113,32 @@ sample_verification <- function(
   data.out$Verified <- "Y"
   
   if (!missing(exclusion.info)) {
-    # approach one
-    
-    # if (!all(unique(exclusion.info[, "primary_var"]) %in% colnames(data.out)) |
-    #     !all(unique(exclusion.info[, "secondary_var"]) %in% colnames(data.out))) 
-    #   stop("Name(s) of the list(s) do not match the column names of the level-1 data.")
-    #    
-    # for (i in 1:nrow(exclusion.info)) {
-    #   this.prim.variable <- exclusion.info[i ,"primary_var"]
-    #   this.prim.value <- exclusion.info[i, "primary_value"]
-    #   this.sec.variable <- exclusion.info[i, "secondary_var"]
-    #   this.sec.value <- exclusion.info[i, "secondary_value"]
-    #   which.rows <- data.out[, this.prim.variable] == this.prim.value
-    #   if (this.sec.variable != "")
-    #     which.rows <- (which.rows & data.out[, this.sec.variable] == this.sec.value)
-    #   
-    #   which.rows[is.na(which.rows)] <- FALSE
-    #   # append this message in case the sample is excluded for multiple reasons
-    #   data.out[which.rows,"Verified"] <- paste(exclusion.info[i, "message"], data.out[which.rows,"Verified"], sep = ", ")
-    # }
-    
-      ## approach two
-      for (i in 1:nrow(exclusion.info)) {
-        ## split the list, consider all possible separators
-        ## exclude period - period is used in column names 
-        var.list <- strsplit(exclusion.info[i, "primary_var"], "\\\\|[^.[:^punct:]]", perl = TRUE)[[1]]
-        var.list <- trimws(var.list)
-        value.list <- strsplit(exclusion.info[i, "primary_value"], "\\\\|[^.[:^punct:]]", perl = TRUE)[[1]]
-        value.list <- trimws(value.list)
-        ## check if every variable has a matched value 
-        if (length(var.list) != length(value.list))
-          stop("The lengths of variable list and value list do not match.")
-        ## check if the variable names are valid
-        if (!all(var.list %in% colnames(data.out))) 
-          stop("Names of the variables use to determine the exclusion criteria do not match the column names of the level-1 data.")
-        for (j in 1:length(var.list)) {
-          this.variable <- var.list[j]
-          this.value <- value.list[j]
-          if (j == 1)
-            which.rows <- data.out[, this.variable] == this.value
-          else
-            which.rows <- (which.rows & data.out[, this.variable] == this.value)
+    exclusion.info <- as.data.frame(exclusion.info)
+    for (i in 1:nrow(exclusion.info)) {
+      ## split the list, consider all possible separators
+      ## exclude period and underscore - period is used in column names and underscore can be used in sample names
+      var.list <- strsplit(exclusion.info[i, "Variables"], "\\\\|[^._[:^punct:]]", perl = TRUE)[[1]]
+      var.list <- trimws(var.list)
+      value.list <- strsplit(exclusion.info[i, "Values"], "\\\\|[^._[:^punct:]]", perl = TRUE)[[1]]
+      value.list <- trimws(value.list)
+      ## check if every variable has a matched value 
+      if (length(var.list) != length(value.list))
+        stop("The lengths of variable list and value list do not match.")
+      ## check if the variable names are valid
+      if (!all(var.list %in% colnames(data.out))) 
+        stop("Names of the variables use to determine the exclusion criteria do not match the column names of the level-1 data.")
+      for (j in 1:length(var.list)) {
+        this.variable <- var.list[j]
+        this.value <- value.list[j]
+        if (j == 1)
+          which.rows <- data.out[, this.variable] == this.value
+        else
+          which.rows <- (which.rows & data.out[, this.variable] == this.value)
         }
         
         which.rows[is.na(which.rows)] <- FALSE
         # append this message in case the sample has multiple reasons to be excluded
-        data.out[which.rows,"Verified"] <- paste(exclusion.info[i, "message"], data.out[which.rows,"Verified"], sep = ", ")
+        data.out[which.rows,"Verified"] <- paste(exclusion.info[i, "Message"], data.out[which.rows,"Verified"], sep = ", ")
       }
   }
   
