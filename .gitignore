@@ -1,3 +1,4 @@
+## Parent Files to Ignore ##
 # History files
 .Rhistory
 .Rapp.history
@@ -37,6 +38,16 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+## R package Sub-directory Files to Ignore ##
+# history files
+invitroTKstats/.Rhistory
+# R studio files
+invitroTKstats/.Rproj.user
+# session data files
+invitroTKstats/.RData
+# user-specific files
+invitroTKstats/.Ruserdata
 
 # Raw Example Data File 
 invitroTKstats/data-raw/Caco2
