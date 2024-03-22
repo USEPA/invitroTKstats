@@ -138,15 +138,20 @@ calc_fup_red_point <- function(
   MS.data <- subset(MS.data,!is.na(Response))
   
   fup.red.cols <- c(L1.common.cols,
-                    replicate.col = "Replicate",
                     time.col = "Time",
-                    std.conc.col = "Std.Conc",
+                    test.conc.col = "Test.Compound.Conc",
                     test.nominal.conc.col = "Test.Nominal.Conc",
                     plasma.percent.col = "Percent.Physiologic.Plasma"
-  )
+                    )
   list2env(as.list(fup.red.cols), envir = environment())
   cols <- c(unlist(mget(names(fup.red.cols))), "Response", good.col)
-# Throw error if not all columns present with expected names:
+  
+  # Throw error if not all columns present with expected names:
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_red first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")

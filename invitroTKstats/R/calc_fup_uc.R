@@ -206,12 +206,17 @@ calc_fup_uc <- function(
   }
   
   fup.uc.cols <- c(L1.common.cols,
-                   std.conc.col = "Standard.Conc",
-                   uc.assay.conc.col = "UC.Assay.T1.Conc",
-                   series.col = "Series"
+                   test.conc.col = "Test.Compound.Conc",
+                   uc.assay.conc.col = "UC.Assay.T1.Conc"
   )
   list2env(as.list(fup.uc.cols), envir = environment())
   cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(PPB.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_uc first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(PPB.data))))
   {
     warning("Run format_fup_uc first (level 1) then curate to level 2.")

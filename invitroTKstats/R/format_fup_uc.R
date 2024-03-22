@@ -46,22 +46,18 @@
 #'
 #' @param area.col (Character) Column name from \code{data.in} containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
-#'
-#' @param series.col (Character) Column name from \code{data.in} containing the number of 
-#' simultaneous replicates with the same analytical chemistry. 
-#' (Defaults to "Series".)
-#'
+#' 
 #' @param type.col (Character) Column name from \code{data.in} containing the sample type (see table
 #' under Details). (Defaults to "Sample.Type".)
 #' 
-#' @param std.conc (Numeric) The standard test chemical concentration for 
+#' @param test.conc (Numeric) The standard test chemical concentration for 
 #' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same standard concentration was used for all tested compounds.)
 #'
-#' @param std.conc.col (Character) Column name containing \code{std.conc} 
-#' information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
+#' @param test.conc.col (Character) Column name containing \code{test.conc} 
+#' information. (Defaults to Test.Compound.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be
-#' auto-filled with the value specified in \code{std.conc}.)
+#' auto-filled with the value specified in \code{test.conc}.)
 #' 
 #' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
 #' indices or dates to represent if the analyses were done on different machines on 
@@ -103,7 +99,7 @@
 #' information.  (Defaults to "ISTD.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be
 #' auto-filled with the value specified in \code{istd.conc}.)
-#'
+#' 
 #' @param uc.assay.conc (Numeric) The intended initial test chemical
 #' concentration in the UC assay in uM. (Defaults to \code{NULL}.)
 #' (Note: Single entry only,  use only if the intended initial concentration
@@ -113,6 +109,24 @@
 #' information. (Defaults to "UC.Assay.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled
 #' with the value specified in \code{uc.assay.conc}.)
+#' 
+#' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param biological.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled
+#' with the value specified in \code{biological.replicates}.)
+#' 
+#' @param technical.replicates (Character) Repeated measurements from one sample. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param technical.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled
+#' with the value specified in \code{technical.replicates}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
@@ -215,10 +229,9 @@ format_fup_uc <- function(
   date.col="Date",
   compound.col="Compound.Name",
   area.col="Area",
-  series.col="Series",
   type.col="Sample.Type",
-  std.conc=NULL,
-  std.conc.col="Standard.Conc",
+  test.conc=NULL,
+  test.conc.col="Test.Compound.Conc",
   cal=NULL,
   cal.col="Cal",
   dilution=NULL,
@@ -230,6 +243,10 @@ format_fup_uc <- function(
   istd.conc.col="ISTD.Conc",
   uc.assay.conc=NULL,
   uc.assay.conc.col="UC.Assay.Conc",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
   analysis.instrument=NULL,
@@ -275,7 +292,7 @@ format_fup_uc <- function(
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
-  if (!is.null(std.conc)) data.in[,std.conc.col] <- std.conc
+  if (!is.null(test.conc)) data.in[,test.conc.col] <- test.conc
   if (!is.null(uc.assay.conc)) data.in[,uc.assay.conc.col] <- uc.assay.conc
   if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
   if (!is.null(analysis.instrument)) data.in[,analysis.instrument.col] <-
@@ -284,13 +301,26 @@ format_fup_uc <- function(
     analysis.parameters
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
+  if (!is.null(biological.replicates)) data.in[,biological.replicates.col]<- biological.replicates
+  if (!is.null(technical.replicates)) data.in[,technical.replicates.col]<- technical.replicates
 
   # We need all these columns in data.in
   fup.uc.cols <- c(L1.common.cols,
-                   std.conc.col = "Standard.Conc",
-                   uc.assay.conc.col = "UC.Assay.T1.Conc",
-                   series.col = "Series"
+                   test.conc.col = "Test.Compound.Conc",
+                   uc.assay.conc.col = "UC.Assay.T1.Conc"
   )
+  
+  ## allow either one of the two, or both replicate columns in the data
+  if (biological.replicates.col %in% colnames(data.in))
+    fup.uc.cols <- c(fup.uc.cols, 
+                    biological.replicates.col = "Biological.Replicates")
+  if (technical.replicates.col %in% colnames(data.in))
+    fup.uc.cols <- c(fup.uc.cols, 
+                    technical.replicates.col = "Technical.Replicates")
+  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.in)))
+    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
+  
   cols <- unlist(mget(names(fup.uc.cols)))
   if (!(all(cols %in% colnames(data.in))))
   {

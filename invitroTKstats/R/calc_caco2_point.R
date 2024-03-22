@@ -137,7 +137,6 @@ calc_caco2_point <- function(
   input.table <- subset(input.table,!is.na(Response))
 
   caco2.cols <- c(L1.common.cols, 
-                  series.col="Series",
                   time.col = "Time",
                   direction.col="Direction",
                   compound.conc.col="Nominal.Conc",
@@ -149,7 +148,12 @@ calc_caco2_point <- function(
   
   list2env(as.list(caco2.cols), envir = environment())
   cols <- c(unlist(mget(names(caco2.cols))), "Response", good.col)
-
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(input.table)))
+    stop(paste0("Need at least one replicate columns: ", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+               ". Run format_caco2 first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(input.table))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")

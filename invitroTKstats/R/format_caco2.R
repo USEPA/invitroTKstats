@@ -49,16 +49,6 @@
 #'
 #' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
 #' date. (Defaults to "Date".)
-#' 
-#' @param series (Numeric) Index of simultaneous replicates with the same analytical chemistry. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
-#' use the same number of replicates.)
-#' 
-#' @param series.col (Character) Column name containing \code{series} information.
-#' (Defaults to "Series".) 
-#' (Note: \code{data.in} does not necessarily have this field. 
-#' If this field is missing, it can be auto-filled with the value 
-#' specified in \code{series}.)
 #'
 #' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -154,6 +144,24 @@
 #' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{nominal.test.conc}.)
+#' 
+#' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param biological.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".)
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{biological.replicates}.)
+#' 
+#' @param technical.replicates (Character) Repeated measurements from one sample. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param technical.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{technical.replicates}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
@@ -260,8 +268,6 @@ format_caco2 <- function(
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
   date.col="Date",
-  series=NULL,
-  series.col="Series",
   compound.col="Compound.Name",
   area.col="Area",
   istd.col="ISTD.Area",
@@ -285,6 +291,10 @@ format_caco2 <- function(
   istd.conc.col="ISTD.Conc",
   nominal.test.conc=NULL,
   nominal.test.conc.col="Test.Target.Conc",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
   analysis.instrument=NULL,
@@ -302,10 +312,7 @@ format_caco2 <- function(
   OUTPUT.DIR = NULL
   )
 {
-  # These are the required data types as indicated by type.col.
-  # In order to calculate the parameter a chemical must have peak areas for each
-  # of these measurements:
-  
+
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
     # Force code to throw error if data.in accessed after this point:
@@ -341,12 +348,13 @@ format_caco2 <- function(
   if (!is.null(analysis.parameters)) data.out[,analysis.parameters.col] <-
     analysis.parameters
   if (!is.null(membrane.area)) data.out[,membrane.area.col] <- membrane.area
-  if (!is.null(series)) data.out[,series.col] <- series
   if (!is.null(time)) data.out[,time.col] <- time
   if (!is.null(compound.conc)) data.out[,compound.conc.col] <- compound.conc
+  if (!is.null(biological.replicates)) data.out[,biological.replicates.col] <- biological.replicates
+  if (!is.null(technical.replicates)) data.out[,technical.replicates.col] <- technical.replicates
   
+  # Create a list of necessary columns
   caco2.cols <- c(L1.common.cols, 
-                  series.col="Series",
                   time.col = "Time",
                   direction.col="Direction",
                   compound.conc.col="Nominal.Conc",
@@ -356,7 +364,18 @@ format_caco2 <- function(
                   donor.vol.col="Vol.Donor"
   )
 
-
+  ## allow either one of the two, or both replicate columns in the data
+  if (biological.replicates.col %in% colnames(data.out))
+    caco2.cols <- c(caco2.cols, 
+                    biological.replicates.col = "Biological.Replicates")
+  if (technical.replicates.col %in% colnames(data.out))
+    caco2.cols <- c(caco2.cols, 
+                    technical.replicates.col = "Technical.Replicates")
+  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.out)))
+    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
+  
+  # check if all required columns are presented: 
   cols <- unlist(mget(names(caco2.cols)))
   if (!(all(cols %in% colnames(data.out))))
   {

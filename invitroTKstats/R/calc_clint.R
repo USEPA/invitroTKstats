@@ -295,13 +295,19 @@ calc_clint <- function(
 
   clint.cols <- c(L1.common.cols,
                   time.col = "Time",
-                  std.conc.col = "Std.Conc",
+                  test.conc.col = "Test.Compound.Conc",
                   clint.assay.conc.col = "Clint.Assay.Conc",
                   density.col = "Hep.Density"
   )
   list2env(as.list(clint.cols), envir = environment())
   cols <- c(unlist(mget(names(clint.cols))), "Response", good.col)
+  
   # Check for missing columns
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(clint.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_clint first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_clint first (level 1) then curate to (level 2).")
