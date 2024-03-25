@@ -19,21 +19,41 @@
 #'   Receiver compartment at end of experiment\tab R2\cr
 #' }
 #'
-#' Apparent membrane permeability (Papp) is calculated from MS responses as:
+#' Apparent membrane permeability (\eqn{P_{app}}) is calculated from MS responses as:
 #'
-#' P_app = (dQ/dt) / C_0 / A
 #'
-#' The rate of permeation, dQ/dt (peak area/s) is calculated as:
+#' \eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
 #'
-#' dQ/dt = max(0,(mean(PBS Response * Dilution.Factor) -
-#'   mean(Blank Response * Dilution.Factor)))
+#' The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
 #'
-#' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-Caco-2-Level2.tsv" is appended (defaults to "MYDATA")
+#' \eqn{\frac{dQ}{dt} = \max\left(0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}\right)}
 #'
-#' @param good.col Name of a column indicating which rows have been verified for
-#' analysis, indicated by a "Y" (Defaults to "Verified")
+#' where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is Blank Response,
+#' \eqn{n_P} is the number of PBS Responses, and \eqn{n_B} is the number of Blank Responses.
 #'
+#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' "<FILENAME>-Caco-2-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' \code{format_caco2} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed.
+#' 
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
+#' 
 #' @return \item{data.frame}{A data.frame in standardized format}
 #' \tabular{rrr}{
 #'   C0_A2B \tab Time zero donor concentration \tab Mass Spec Response Ratio (RR) \cr
@@ -87,71 +107,53 @@
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export calc_caco2_point
-calc_caco2_point <- function(FILENAME, good.col="Verified")
+calc_caco2_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified", 
+    output.res=TRUE, 
+    INPUT.DIR=NULL,
+    OUTPUT.DIR = NULL)
 {
   # These are the required data types as indicated by type.col.
   # In order to calculate the parameter a chemical must have peak areas for each
   # of these measurements:
   req.types=c("Blank","D0","D2","R2")
 
-  input.table <- read.csv(file=paste(FILENAME,"-Caco-2-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  if (!missing(data.in)) {
+    input.table <- as.data.frame(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+      input.table <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv"),
+                            sep="\t",header=T)
+      } else {
+        input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
+                            sep="\t",header=T)
+        }
+  
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
 
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    series.col <- "Series"
-    compound.conc.col <- "Standard.Conc"
-    nominal.test.conc.col <- "Test.Target.Conc"
-    meas.time.col="Time"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    membrane.area.col <- "Membrane.Area"
-    donor.vol.col <- "Vol.Donor"
-    receiver.vol.col <- "Vol.Receiver"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    series.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    meas.time.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    membrane.area.col,
-    donor.vol.col,
-    receiver.vol.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col
-    )
-
+  caco2.cols <- c(L1.common.cols, 
+                  time.col = "Time",
+                  direction.col="Direction",
+                  compound.conc.col="Nominal.Conc",
+                  nominal.test.conc.col="Test.Target.Conc",
+                  membrane.area.col="Membrane.Area",
+                  receiver.vol.col="Vol.Receiver",
+                  donor.vol.col="Vol.Donor"
+  )
+  
+  list2env(as.list(caco2.cols), envir = environment())
+  cols <- c(unlist(mget(names(caco2.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(input.table)))
+    stop(paste0("Need at least one replicate columns: ", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+               ". Run format_caco2 first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(input.table))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")
@@ -174,7 +176,7 @@ calc_caco2_point <- function(FILENAME, good.col="Verified")
     this.subset <- subset(input.table, input.table[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- cbind(this.subset[1,
-      c(compound.col, dtxsid.col, meas.time.col, membrane.area.col)],
+      c(compound.col, dtxsid.col, time.col, membrane.area.col)],
       data.frame(Calibration="All Data",
         C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN,
         C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Refflux=NaN))
@@ -244,12 +246,27 @@ calc_caco2_point <- function(FILENAME, good.col="Verified")
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
   out.table <- as.data.frame(out.table)
 
-# Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-Caco-2-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 3" file (data organized into a standard format):
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    write.table(out.table,
+      file=paste0(file.path, "/", FILENAME,"-Caco-2-Level3.tsv"),
+      sep="\t",
+      row.names=F,
+      quote=F)
+   
+    # Print notification message stating where the file was output to
+    cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
 
   print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))
   print(paste("Basal to apical permeability calculated for",num.b2a,"chemicals."))

@@ -61,206 +61,174 @@ model {
 }
 "
 
-#' Calculate fraction unbound in plasma from ultracentrifugation data
+#' Calculate the Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data
 #'
+#' This function estimates the fraction unbound in plasma (Fup) and credible
+#' intervals with a Bayesian modeling approach, via MCMC simulations.
+#' Data used in modeling is collected from Ultracentrifugation (UC) Fup assays.
+#' Fup and the credible interval are calculated from the MCMC posterior samples
+#' and the function returns a summary table along with the full set of
+#' MCMC results.
+#' 
+#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_fup_uc}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for analysis. 
+#' 
+#' Note: By default, this function writes files to the user's current working
+#' directory. Users must specify an alternative path with the `TEMP.DIR`
+#' argument if they want the files exported to another path. Exported files 
+#' include the summary table (.RData), JAGS model (.RData), and any "unverified" 
+#' data excluded from the analysis (.tsv).
+#' 
 #' The data frame of observations should be annotated according to
-#' of these types:
+#' these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab AF\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
-#' We don't currently use the T1 data, but you must have CC, AF, and T5 data.
+#' We don't currently use the T1 data, but CC, AF, and T5 data are required.
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "BASE_Model_Results")
+#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' "<FILENAME>-fup-UC-Level2.tsv", and to name the exported model results. 
+#' This argument is required no matter which method of specifying input data is used. 
+#' (Defaults to \code{NULL}.)
+#' 
+#' @param data.in A Level-2 data frame generated from the 
+#' \code{format_fup_uc} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed.
 #'
-#' @param TEMP.DIR An optional directory where file writing may be faster.
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. By
+#' default, i.e. unspecified, all files will be exported to the user's current
+#' working directory. (Defaults to \code{NULL}.)
 #'
-#' @param JAGS.PATH The file path to JAGS.
+#' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
-#' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
-#' of convergence according to Gelman and Rubin diagnostic.
+#' @param NUM.CORES (Numeric) The number of computer processors to use for
+#' parallel computing. (Defaults to 2.)
 #'
-#' @param NUM.CORES The number of processors to use (default 2)
-#'
-#' @param RANDOM.SEED The seed used by the random number generator 
-#' (default 1111)
-#' @param PPB.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identity, and measurement type. The data frame should
-#' contain columns with names specified by the following arguments:
+#' @param RANDOM.SEED (Numeric) The seed used by the random number generator.
+#' (Defaults to 1111.)
 #' 
-#' @param sample.col Which column of PPB.data indicates the unique mass 
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to 
-#' "Lab.Sample.Name")
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
 #' 
-#' @param lab.compound.col Which column of PPB.data indicates The test compound 
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
+#' @param JAGS.PATH (Character) Computer specific file path to JAGS software.
+#' (Defaults to `NA`.)
 #' 
-#' @param dtxsid.col Which column of PPB.data indicates EPA's DSSTox Structure 
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
+#' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
-#' @param date.col Which column of PPB.data indicates the laboratory measurement
-#' date (Defaults to "Date")
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
 #' 
-#' @param compound.col Which column of PPB.data indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
 #' 
-#' @param area.col Which column of PPB.data indicates the target analyte (that 
-#' is, the test compound) MS peak area (Defaults to "Area")
-#' 
-#' @param series.col Which column of PPB.data indicates the "series", that is
-#' a simultaneous replicate (Defaults to "Series")
-#' 
-#' @param type.col Which column of PPB.data indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
-#' 
-#' @param cal.col Which column of PPB.data indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
-#'
-#' #param std.conc.col Which column indicates the intended concentration 
-#' of the test chemical for calibration curves (Defaults to "Standard.Conc")
-#' 
-#' @param dilution.col Which column of PPB.data indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#' 
-#' @param istd.col Which column of PPB.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
-#' 
-#' @param istd.name.col Which column of PPB.data indicates identity of the 
-#' internal standard (Defaults to "ISTD.Name")
-#' 
-#' @param istd.conc.col Which column of PPB.data indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
-#' 
-#' @param uc.assay.conc.col Which column of PPB.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "UC.Assay.Conc") 
-#'
-#' @return A data.frame containing quunantiles of the Bayesian posteriors 
+#' @return A list of two objects: 
+#' \enumerate{
+#'    \item{Results: A data frame with Bayesian estimated fraction unbound
+#'    in plasma (Fup) and credible intervals for all compounds in the input file.
+#'    Column includes:
+#'    Compound.Name - compound name,
+#'    Lab.Compound.Name - compound name used by the laboratory,
+#'    DTXSID - EPA's DSSTox Structure ID,
+#'    Fup.point - point estimate of Fup,
+#'    Fup.Med - Posterior median,
+#'    Fup.Low - 2.5th quantile,
+#'    and Fup.High - 97.5th quantile.}
+#'    \item{coda: A runjags-class object containing results from JAGS model.}
+#' }
 #'
 #' @author John Wambaugh and Chantel Nicolas
+#' 
+#' @examples 
+#' ## Example 1: loading level-2 using data.in
+#' \dontrun{
+#' level2 <- invitroTKstats::kreutz2023.uc
+#' 
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_fup_uc(data.in = level2,
+#'                       NUM.CORES=2,
+#'                       JAGS.PATH=path.to.JAGS)
+#' }
+#' 
+#' ## Example 2: importing level-2 from a .tsv file
+#' \dontrun{
+#' # Refer to sample_verification help file for how to export level-2 data to a directory.
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
+#'                       NUM.CORES=2,
+#'                       JAGS.PATH=path.to.JAGS,
+#'                       INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #' 
 #' @import parallel 
 #' @import runjags
 #' 
+#' @import coda
+#'
+#' @import Rdpack
+#'
 #' @export calc_fup_uc
-calc_fup_uc <- function(PPB.data,
-  FILENAME = "UC_Model_Results",
+calc_fup_uc <- function(
+  FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5, 
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
-  JAGS.PATH = NA
+  JAGS.PATH = NA,
+  save.MCMC = FALSE,
+  INPUT.DIR=NULL, 
+  OUTPUT.DIR = NULL
   )
 {
-
-# local function to give each chain it's own starting values:
-  initfunction <- function(chain)
-  {
-    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
-    set.seed(seed)
-    cal.coeff <- lm(
-      mydata$Response.obs[1:mydata$Num.cc.obs]~
-      mydata$Conc[1:mydata$Num.cc.obs])[["coefficients"]]
-    slope <- as.numeric(cal.coeff[2])
-    intercept <- as.numeric(cal.coeff[1])
-    
-# We need a vector with NA's for all the values that are not sampled, but 
-# initial values for the concentrations that are inferred (the T1's):
-    init.Conc <- rep(NA,mydata$Num.cc.obs+mydata$Num.series*3)
-    # Set initial values for the T1's:
-    init.Conc[(mydata$Num.cc.obs+1):
-               (mydata$Num.cc.obs+mydata$Num.series)] <- 
-      mydata$Test.Nominal.Conc
-      
-    return(list(
-      .RNG.seed=seed,
-      .RNG.name="base::Super-Duper",
-# Parameters that may vary between calibrations:
-#      log.const.analytic.sd =runif(mydata$Num.cal,0.5,1),
-#      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-3),
-      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
-      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
-# Average across all the calibrations (the sampler will vary these):
-      C.thresh = rep(
-                     min(
-                         max(10^-8,abs(intercept)/slope),
-                         mydata$Test.Nominal.Conc/10,na.rm=TRUE),
-                     mydata$Num.cal),
-      background = rep(0,mydata$Num.cal),
-      log.calibration = rep(max(
-                                min(-2.95,
-                                    log10(max(0,
-                                              slope))),
-                                              1.95),
-                                              mydata$Num.cal),
-# There is only one Fup per chemical:
-      log.Fup = log10(runif(1,0,1)),
-# There is only one Fstable per chemical:
-      log.Floss = runif(1,-4,-2),
-# Set the initial concentrations:
-      Conc = init.Conc
-    ))
-  }
-        
+  if (!missing(data.in)) {
+    if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
+    PPB.data <- as.data.frame(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+      PPB.data <- read.csv(file=paste0(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv"), 
+                         sep="\t",header=T)  
+      } else {
+        PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"), 
+                         sep="\t",header=T)  
+        }
+  
+  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
+  PPB.data <- subset(PPB.data,!is.na(Response))
+  
+  
   if (!is.null(TEMP.DIR)) 
   {
     current.dir <- getwd()
     setwd(TEMP.DIR)
   }
   
-  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""), 
-    sep="\t",header=T)  
-  PPB.data <- subset(PPB.data,!is.na(Compound.Name))
-  PPB.data <- subset(PPB.data,!is.na(Response))
-
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    std.conc.col <- "Standard.Conc"
-    uc.assay.conc.col <- "UC.Assay.T1.Conc"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters" 
-    note.col <- "Note"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    std.conc.col,
-    uc.assay.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    "Response",
-    good.col)
+  fup.uc.cols <- c(L1.common.cols,
+                   test.conc.col = "Test.Compound.Conc",
+                   uc.assay.conc.col = "UC.Assay.T1.Conc"
+  )
+  list2env(as.list(fup.uc.cols), envir = environment())
+  cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(PPB.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_uc first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(PPB.data))))
   {
     warning("Run format_fup_uc first (level 1) then curate to level 2.")
@@ -277,8 +245,8 @@ calc_fup_uc <- function(PPB.data,
   
   # Only used verified data:
   unverified.data <- subset(PPB.data, PPB.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-fup-UC-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-fup-UC-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -287,7 +255,7 @@ calc_fup_uc <- function(PPB.data,
   PPB.data <- as.data.frame(PPB.data)
   all.blanks <- subset(PPB.data,!is.na(eval(area.col)))
   
-  OUTPUT.FILE <- paste(FILENAME,"-fup-UC-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste0(FILENAME,"-fup-UC-Level4.tsv")
 
   set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
@@ -296,7 +264,14 @@ calc_fup_uc <- function(PPB.data,
   } else {
     Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
   }
-
+  
+  # Safety check for parallel computation 
+  MAX.CORES <- detectCores(logical = F) - 1
+  if (NUM.CORES > MAX.CORES) stop(paste0("Specified NUM.CORES = ", NUM.CORES, " cores for parallel computing exceeds the allowable number of cores, that is ",
+                                         MAX.CORES, 
+                                         ", and may bog down your machine! (Max cores is based on the total number of available computing cores minus one for overhead.)"))
+  if (NUM.CHAINS > 10) warning("Specified number of chains is greater than 10 and may be excessive for computational time.")
+  
   if (NUM.CORES>1)
   {
     CPU.cluster <- makeCluster(min(NUM.CORES,NUM.CHAINS))
@@ -354,107 +329,25 @@ calc_fup_uc <- function(PPB.data,
           any(MS.data[,type.col]=="T5") &
           any(MS.data[,type.col]=="AF"))
       {
-        all.cal <- unique(MS.data[,cal.col])
-        Num.cal <- length(all.cal)        
-  #
-  #
-  #
+       
         CC.data <- MS.data[MS.data[,type.col]=="CC",]
-        Num.cc.obs <- dim(CC.data)[1]
-        CC.data$Obs.Conc <- seq(1,Num.cc.obs)
-        Conc <- CC.data[,std.conc.col]
-        Dilution.Factor <- CC.data[,dilution.col]
-  #
-  #
-  #  Each series contains T1, T5, and AF data
         T1.data <- MS.data[MS.data[,type.col]=="T1",]
-        Num.T1.obs <- dim(T1.data)[1]
         T5.data <- MS.data[MS.data[,type.col]=="T5",]
-        Num.T5.obs <- dim(T5.data)[1]
         AF.data <- MS.data[MS.data[,type.col]=="AF",]
-        Num.AF.obs <- dim(AF.data)[1]
-        Num.series <- 0
-        all.series <- NULL
-        Test.Nominal.Conc <- NULL
-        for (i in 1:Num.cal)
-        {
-          these.series <- unique(T5.data[
-            T5.data[,cal.col]==all.cal[i],
-            series.col])
-          Num.series <- Num.series + length(these.series) 
-          T1.data[
-            T1.data[,cal.col]==all.cal[i],
-            series.col] <- paste(all.cal[i],
-             T1.data[                          
-               T1.data[,cal.col]==all.cal[i],
-               series.col],
-             sep="-")
-          T5.data[
-            T5.data[,cal.col]==all.cal[i],
-            series.col] <- paste(all.cal[i],
-             T5.data[                          
-               T5.data[,cal.col]==all.cal[i],
-               series.col],
-             sep="-")
-          AF.data[
-            AF.data[,cal.col]==all.cal[i],
-            series.col] <- paste(all.cal[i],
-             AF.data[
-               AF.data[,cal.col]==all.cal[i],
-               series.col],
-             sep="-")
-          all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
-          Test.Nominal.Conc[i] <- mean(T1.data[
-            T1.data[,cal.col]==all.cal[i],
-            uc.assay.conc.col],na.rm=T)
-        }
-        # There is one initial concentration per series, even if there are
-        # multiple observations of that series:
-        for (i in 1:Num.series)
-        {
-          T1.data[T1.data$Series==all.series[i],"Obs.Conc"] <- 
-            Num.cc.obs + i
-          T5.data[T5.data$Series==all.series[i],"Obs.Conc"] <- 
-            Num.cc.obs + 1*Num.series + i
-          AF.data[AF.data$Series==all.series[i],"Obs.Conc"] <-   
-            Num.cc.obs + 2*Num.series + i
-        }
-        # There are three total concentrations per series (T1, T5, and AF):
-        Conc <- c(Conc,rep(NA,3*Num.series))
-  #
-  #
-  #
-        UC.obs <- rbind(CC.data,T1.data,T5.data,AF.data)
-        Num.obs <- dim(UC.obs)[1]
-        for (i in 1:Num.cal)
-        {
-          UC.obs[UC.obs[,cal.col]==all.cal[i],"Obs.Cal"] <- i
-        }
-  #
-  #
-  #
-        mydata <- list(   
-          'Num.cal' = Num.cal,            
-          'Num.obs' = Num.obs,
-          "Response.obs" = UC.obs[,"Response"],
-          "obs.conc" = UC.obs[,"Obs.Conc"],
-          "obs.cal" = UC.obs[,"Obs.Cal"],
-          "Conc" = Conc,
-          "Num.cc.obs" = Num.cc.obs,
-          "Num.series" = Num.series,
-          "Dilution.Factor" = UC.obs[,"Dilution.Factor"],
-          "Test.Nominal.Conc" = Test.Nominal.Conc
-        )
-      
-        save(this.compound,mydata,UC_PPB_model,initfunction,
-          file=paste(FILENAME,"-Fup-UC-PREJAGS.RData",sep=""))  
+        mydata <- build_mydata_fup_uc(MS.data, CC.data, T1.data, T5.data, AF.data)
+        
+        init_vals <- function(chain) initfunction_fup_uc(mydata=mydata, chain = chain)
+        # write out arguments to runjags:
+        save(this.compound,mydata,UC_PPB_model,init_vals,
+          file=paste0(FILENAME,"-Fup-UC-PREJAGS.RData"))  
+        
         coda.out[[this.compound]] <- autorun.jags(
           UC_PPB_model, 
           n.chains = NUM.CHAINS,
           method="parallel", 
           cl=CPU.cluster,
           summarise=T,
-          inits = initfunction,
+          inits = init_vals,
           startburnin = 50000, 
           startsample = 50000, 
           max.time="1h",
@@ -513,7 +406,7 @@ calc_fup_uc <- function(PPB.data,
         Results <- rbind(Results,new.results)
     
         write.table(Results, 
-          file=paste(OUTPUT.FILE,sep=""),
+          file=paste0(OUTPUT.FILE),
           sep="\t",
           row.names=F,
           quote=F)
@@ -528,16 +421,44 @@ calc_fup_uc <- function(PPB.data,
   }
   stopCluster(CPU.cluster)
 
-  write.table(ignored.data, 
-    file=paste(FILENAME,"-fup-UC-Level2-ignoredbayes.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-  
   View(Results)
+  
+  # Write out a "level 4" result table:
+  # Determine the path for output
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+      } else {
+        file.path <- getwd()
+        }
+  
   save(Results,
-    file=paste(FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",sep=""))
-
+    file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData"))
+  cat(paste0("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
+             " has been exported to the following directory: ", file.path), "\n")
+    
+  # Save ignored data if there is any
+  if (!is.null(ignored.data)) {
+    write.table(ignored.data, 
+                file=paste0(file.path, "/", FILENAME,"-fup-UC-Level2-ignoredbayes.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    cat(paste0("A subset of ignored data named ",FILENAME,"-fup-UC-Level2-ignoredbayes.tsv", 
+               " has been exported to the following directory: ", file.path), "\n")
+    }
+    
+  # Write out the MCMC results separately 
+  if (save.MCMC){
+    if (length(coda.out) != 0) {
+      save(coda.out,
+           file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData"))
+      } else {
+        cat("No MCMC results to be saved.\n")
+      }
+    }
+  
   return(list(Results=Results,coda=coda.out))  
 }
 

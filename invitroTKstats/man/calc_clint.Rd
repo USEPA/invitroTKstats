@@ -2,10 +2,11 @@
 % Please edit documentation in R/calc_clint.R
 \name{calc_clint}
 \alias{calc_clint}
-\title{Calculate intrinsic hepatic clearance}
+\title{Calculate Intrinsic Hepatic Clearance (Clint) with Bayesian Modeling (Level-4)}
 \usage{
 calc_clint(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS = 5,
   NUM.CORES = 2,
@@ -14,51 +15,93 @@ calc_clint(
   JAGS.PATH = NA,
   decrease.prob = 0.5,
   saturate.prob = 0.25,
-  degrade.prob = 0.05
+  degrade.prob = 0.05,
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-Clint-Level4Analysis.tsv" is appended (defaults to "MYDATA")}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"-Clint-Level2.tsv".}
 
-\item{TEMP.DIR}{An optional directory where file writing may be faster.}
+\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\code{format_clint} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
 
-\item{NUM.CHAINS}{The number of Markov Chains to use. This allows evaluation
-of convergence according to Gelman and Rubin diagnostic.}
+\item{TEMP.DIR}{(Character) Temporary directory to save intermediate files. 
+If \code{NULL}, all files will be written to the current working directory. 
+(Defaults to \code{NULL}.)}
 
-\item{NUM.CORES}{The number of processors to use (default 2)}
+\item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5.)}
 
-\item{RANDOM.SEED}{The seed used by the random number generator 
-(default 1111)}
+\item{NUM.CORES}{(Numeric) The number of processors to use for parallel computing. (Defaults to 2.)}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{RANDOM.SEED}{(Numeric) The seed used by the random number generator.
+(Defaults to 1111.)}
 
-\item{JAGS.PATH}{The file path to JAGS.}
+\item{good.col}{(Character) Column name indicating which rows have been 
+verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified".)}
 
-\item{decrease.prob}{Prior probability that a chemical will decrease in
-the assay (defaults to 0.5)}
+\item{JAGS.PATH}{(Character) Computer specific file path to JAGS software. 
+(Defaults to \code{NA}.)}
 
-\item{saturate.prob}{Prior probability that a chemicals rate of metabolism
-will decrease between 1 and 10 uM (defaults to 0.25)}
+\item{decrease.prob}{(Numeric) Prior probability that a chemical will decrease in
+the assay. (Defaults to 0.5.)}
 
-\item{degrade.prob}{Prior probability that a chemical will be unstable
-(that is, degrade abiotically) in the assay (defaults to 0.05)}
+\item{saturate.prob}{(Numeric) Prior probability that a chemicals rate of metabolism
+will decrease between 1 and 10 uM. (Defaults to 0.25.)}
+
+\item{degrade.prob}{(Numeric) Prior probability that a chemical will be unstable
+(that is, degrade abiotically) in the assay. (defaults to 0.05.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-4) will be exported as a .RData file. 
+(Defaults to \code{TRUE}.)}
+
+\item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results 
+as an .RData file. (Defaults to \code{FALSE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory. (Defaults to \code{NULL}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+A list of two objects: 
+\enumerate{
+   \item{Results: A Level-4 data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
+   for 1 and 10 uM and credible intervals for all compounds in the input file. Column includes:
+   Compound.Name - compound name, Lab.Compound.Name - compound name used by 
+   the laboratory, DTXSID - EPA's DSSTox Structure ID, Clint.1.Med/Clint.10.Med - posterior median, 
+   Clint.1.Low/Clint.10.Low - 2.5th quantile, Clint.1.High/Clint.10.High - 97.5th quantile, 
+   Clint.pValue, Sat.pValue, degrades.pValue - "p-values" estimated from the probabilities of 
+   observing decreases, saturations, and abiotic degradations in all posterior samples.}
+   \item{coda: A runjags-class object containing results from JAGS model.}
+}
 }
 \description{
-This function use describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical clearance
-as characterized by disappearance of parent compound over time when incubated
-with primary hepatocytes (Shibata et al., 2000)
+This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
+modeling on Hepatocyte Incubation data. Clint and the credible intervals,
+at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
+A summary table along with the full set of MCMC results is returned from
+the function.
 }
 \details{
-Data are read from a "Level2" text file that should have been formatted and created 
-by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-should have been curated and had a column added with the value "Y" indicating
-that each row is verified as usable for analysis (that is, the Level2 file).
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_clint}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
+
+Note: By default, this function writes files to the user's current working
+directory. Users must specify an alternative path with the `TEMP.DIR`
+argument if they want the files exported to another path. Exported files 
+include the summary table (.RData), JAGS model (.RData), and any "unverified" 
+data excluded from the analysis (.tsv).
 
 The data frame of observations should be annotated according to
 of these types:
@@ -86,7 +129,7 @@ clint$ISTD.Conc <- 1
 clint$Dilution.Factor <- 1
 clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
 clint$Hep.Density <- 0.5
-clint$Analysis.Method <- "LC or GC" 
+clint$Analysis.Method <- "LC or GC"
 clint$Analysis.Instrument <- "No Idea"
 clint$Analysis.Parameters <- "None"
 

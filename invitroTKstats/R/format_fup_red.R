@@ -1,14 +1,14 @@
-#' Creates a standardized data table reporting RED PPB data
+#' Creates a Standardized Data Frame with Rapid Equilibrium Dialysis (RED)
+#' Plasma Protein Binding (PPB) Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
 #' from samples collected as part of in vitro measurement of chemical fraction
 #' unbound in plasma using rapid equilibrium dialysis
 #' \insertCite{waters2008validation}{invitroTKstats}.
-#' An input data frame is organized into a standard set of columns and is written
+#' The input data frame is organized into a standard set of columns and written
 #' to a tab-separated text file.
 #'
-#' The data frame of observations should be annotated according to
-#' of these types:
+#' The data frame of observations should be annotated according to these types:
 #' \tabular{rrrrr}{
 #'   Blank (ignored) \tab Blank\cr
 #'   Plasma well concentration \tab Plasma\cr
@@ -19,100 +19,231 @@
 #'   Equilibrium Control Well 2 \tab EC2\cr
 #'   Calibration Curve \tab CC\cr
 #' }
-#' Chemical concentration is calculated qualitatively as a response:
+#' Chemical concentration is calculated qualitatively as a response and 
+#' returned as a column in the output data frame:
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "MYDATA")
+#' @param FILENAME (Character) A string used to identify the output Level-1 file.
+#' "<FILENAME>-fup-RED-Level1.tsv". (Defaults to "MYDATA".)
 #'
-#' @param data.in A data frame containing mass-spectrometry peak areas,
+#' @param data.in (Data Frame) A Level-0 data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
-#' @param sample.col Which column of data.in indicates the unique mass
+#' @param sample.col (Character) Column name of \code{data.in} containing the unique mass
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
-#' "Lab.Sample.Name")
-#'
-#' @param lab.compound.col Which column of data.in indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
-#'
-#' @param dtxsid.col Which column of data.in indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
+#' "Lab.Sample.Name".)
 #' 
-#' @param date.col Which column of data.in indicates the laboratory measurement
-#' date (Defaults to "Date")
+#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all data were collected on the same date.)
+#' 
+#' @param date.col (Character) Column name containing \code{date} information. 
+#' (Defaults to "Date".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{date}.)
+#' 
+#' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
+#' (Defaults to "Compound.Name".)
+#' 
+#' @param dtxsid.col (Character) Column name of \code{data.in} containing EPA's DSSTox Structure
+#' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
+#' 
+#' @param lab.compound.col (Character) Column name of \code{data.in} containing the test compound
+#' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
+#' 
+#' @param type.col (Character) Column name of \code{data.in} containing the sample type (see table
+#' under Details). (Defaults to "Sample.Type".)
+#' 
+#' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
+#' indices or dates to represent if the analyses were done on different machines on 
+#' the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, 
+#' use only if all data were collected based on the same calibration.)
+#' 
+#' @param cal.col (Character) Column name containing \code{cal} 
+#' information. (Defaults to "Cal".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{cal}.)
 #'
-#' @param compound.col Which column of data.in indicates the test compound
-#' (Defaults to "Compound.Name")
+#' @param dilution (Numeric) Number of times the sample was diluted before MS 
+#' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' samples underwent the same number of dilutions.)
+#' 
+#' @param dilution.col (Character) Column name containing \code{dilution} 
+#' information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{dilution}.)
 #'
-#' @param area.col Which column of data.in indicates the target analyte (that
-#' is, the test compound) MS peak area (Defaults to "Area")
+#' @param time (Numeric) Incubation time (in hours) - from the start of incubation to 
+#' when the sample measurements were taken. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
+#' samples were taken after the same amount of incubation time.)
 #'
-#' @param series.col Which column of data.in indicates the "series", that is
-#' a simultaneous replicate (Defaults to "Series")
+#' @param time.col (Character) Column name containing \code{time} information. 
+#' (Defaults to "Time".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{time}.)
+#' 
+#' @param istd.col (Character) Column name of \code{data.in} containing the
+#' MS peak area for the internal standard. (Defaults to "ISTD.Area".)
+#' 
+#' @param istd.name (Character) The identity of the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds use the same internal standard.) 
 #'
-#' @param type.col Which column of data.in indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
+#' @param istd.name.col (Character) Column name containing \code{istd.name} information. 
+#' (Defaults to "ISTD.Name".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{istd.name}.)
+#' 
+#' @param istd.conc (Numeric) The concentration for the internal standard. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all tested compounds have the same 
+#' internal standard concentration.) 
 #'
-#' @param cal.col Which column of data.in indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
+#' @param istd.conc.col (Character) Column name containing \code{istd.conc} information. 
+#' (Defaults to "ISTD.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{istd.conc}.)
+#' 
+#' @param test.nominal.conc (Numeric) The test chemical concentration 
+#' at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
+#' if all tested compounds used the same concentration at time zero.)
 #'
-#' @param dilution.col Which column of data.in indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
+#' @param test.nominal.conc.col (Character) Column name containing \code{test.nominal.conc} 
+#' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{test.nominal.conc}.)
 #'
-#' @param istd.col Which column of data.in indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
+#' @param plasma.percent (Numeric) The percent of the physiological plasma concentration 
+#' used in RED assay. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
+#' if all compounds were tested with the same plasma percent.)
+#' 
+#' @param plasma.percent.col (Character) Column name containing \code{plasma.percent} 
+#' information. (Defaults to "Plasma.Percent".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{plasma.percent}.)
 #'
-#' @param istd.name.col Which column of data.in indicates identity of the
-#' internal standard (Defaults to "ISTD.Name")
+#' @param test.conc (Numeric) The standard test chemical concentration for 
+#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same standard concentration was used for all tested compounds.)
+#' 
+#' @param test.conc.col (Character) Column name containing \code{test.conc} 
+#' information. (Defaults to "Test.Compound.Conc".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{test.conc}.)
 #'
-#' @param istd.conc.col Which column of data.in indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
+#' @param area.col (Character) Column name of \code{data.in} containing the target analyte (that
+#' is, the test compound) MS peak area. (Defaults to "Area".)
+#' 
+#' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param biological.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{biological.replicates}.)
+#' 
+#' @param technical.replicates (Character) Repeated measurements from one sample. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param technical.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{technical.replicates}.)
+#' 
+#' @param analysis.method (Character) The analytical chemistry analysis method, 
+#' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same method was used for all tested compounds.)
 #'
-#' @param Test.Nominal.Conc.col Which column of data.in indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")
+#' @param analysis.method.col (Character) Column name containing \code{analysis.method} 
+#' information. (Defaults to "Analysis.Method".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.method}.)
+#' 
+#' @param analysis.instrument (Character) The instrument used for chemical analysis, 
+#' for example "Waters ACQUITY I-Class UHPLC - Xevo TQ-S uTQMS". (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same instrument was used for all tested compounds.)
 #'
-#' @param analysis.method.col Which column of data.in indicates the analytical
-#' chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to
-#' "Analysis.Method")
+#' @param analysis.instrument.col (Character) Column name containing \code{analysis.instrument} 
+#' information. (Defaults to "Analysis.Instrument".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.instrument}.)
+#' 
+#' @param analysis.parameters (Character) The parameters used to identify the 
+#' compound on the chemical analysis instrument. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if the same parameters were used for all tested compounds.) 
 #'
-#' @param analysis.instrument.col Which column of data.in indicates the
-#' instrument used for chemical analysis, for example
-#' "Agilent 6890 GC with model 5973 MS" (Defaults to
-#' "Analysis.Instrument")
+#' @param analysis.parameters.col (Character) Column name containing \code{analysis.parameters} 
+#' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{analysis.parameters}.)
+#' 
+#' @param note.col (Character) Column name of \code{data.in} containing additional notes on 
+#' test compounds. (Defaults to "Note".)
+#' 
+#' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+#' were obtained from the same Level-0 file.)
+#' 
+#' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
+#' (Defaults to "Level0.File".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.file}.)
+#' 
+#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
+#' \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+#' were obtained from the same sheet in the same Level-0 file.)
+#' 
+#' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
+#' (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.sheet}.)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-1) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param save.bad.types (Logical) When set to \code{TRUE}, export data removed 
+#' due to inappropriate sample types. See the Detail section for the required sample types. 
+#' (Defaults to \code{FALSE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
+#' If \code{NULL}, looking for the input level-0 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
-#' @param analysis.parameters.col Which column of data.in indicates the
-#' parameters used to identify the compound on the chemical analysis instrument,
-#' for example
-#' "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-#' (Defaulys to "Analysis.Paramaters").
-#'
-#' @return \item{data.frame}{A data.frame in standardized "level1" format}
+#' @return A Level-1 data frame with a standardized format containing a  
+#' standardized set of columns and column names with plasma protein
+#' binding (PPB) data from an rapid equilibrium dialysis (RED) assay. 
 #'
 #' @author John Wambaugh
 #'
 #' @examples
 #' library(invitroTKstats)
-#'red <- wambaugh2019.red
-#'red$Date <- "2019"
-#'red$Sample.Type <- "Blank"
-#'red <- subset(red,!is.na(SampleName))
-#'red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-#'red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-#'red$Dilution.Factor <- NA
-#'red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-#'red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-#'red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-#'red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
+#' red <- wambaugh2019.red
+#' red$Date <- "2019"
+#' red$Sample.Type <- "Blank"
+#' red <- subset(red,!is.na(SampleName))
+#' red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
+#' red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
+#' red$Dilution.Factor <- NA
+#' red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
+#' red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
+#' red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
+#' red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
 #'
-#'red$Test.Target.Conc <- 5
-#'red$ISTD.Name <- "Bucetin and Diclofenac"
-#'red$ISTD.Conc <- 1
-#'red$Series <- 1
+#' red$Test.Target.Conc <- 5
+#' red$ISTD.Name <- "Bucetin and Diclofenac"
+#' red$ISTD.Conc <- 1
+#' red$Series <- 1
 #'
-#'level1 <- format_fup_red(red,
+#' level1 <- format_fup_red(red,
 #'  FILENAME="Wambaugh2019",
 #'  sample.col="SampleName",
 #'  compound.col="Preferred.Name",
@@ -122,9 +253,12 @@
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export format_fup_red
-format_fup_red <- function(data.in,
+format_fup_red <- function(
   FILENAME = "MYDATA",
+  data.in,
   sample.col="Lab.Sample.Name",
   date=NULL,
   date.col="Date",
@@ -134,12 +268,10 @@ format_fup_red <- function(data.in,
   type.col="Sample.Type",
   cal=NULL,
   cal.col="Cal",
-  replicate=NULL,
-  replicate.col="Replicate",
   dilution=NULL,
   dilution.col="Dilution.Factor",
+  time = NULL,
   time.col="Time",
-  time = 4,
   istd.col="ISTD.Area",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
@@ -149,9 +281,13 @@ format_fup_red <- function(data.in,
   test.nominal.conc.col="Test.Target.Conc",
   plasma.percent=NULL,
   plasma.percent.col="Plasma.Percent",
-  std.conc=NULL,
-  std.conc.col="Standard.Conc",
+  test.conc=NULL,
+  test.conc.col="Test.Compound.Conc",
   area.col="Area",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
   analysis.instrument=NULL,
@@ -159,36 +295,52 @@ format_fup_red <- function(data.in,
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
   note.col="Note",
-  level0.file.col="Level0.File",
   level0.file=NULL,
-  level0.sheet.col="Level0.Sheet",
-  level0.sheet=NULL
+  level0.file.col="Level0.File",
+  level0.sheet=NULL,
+  level0.sheet.col="Level0.Sheet", 
+  output.res = TRUE,
+  save.bad.types = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
   )
 {
-  data.in <- as.data.frame(data.in)
-
-  # Write out a "level 0" file (data as the function received it):
-  write.table(data.in,
-    file=paste(FILENAME,"-fup-RED-Level0.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (!missing(data.in)) {
+    data.in <- as.data.frame(data.in)
+  } else if (!is.null(INPUT.DIR)) {
+    data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level0.tsv"),
+                        sep="\t",header=T)
+    } else {
+    data.in <- read.csv(file=paste0(FILENAME,"-fup-RED-Level0.tsv"),
+                        sep="\t",header=T)
+    }
 
   if (is.null(note.col))
   {
     data.in[,"Note"] <- ""
     note.col <- "Note"
   }
+  
+  # determine the path for output files 
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+  } else if (!is.null(INPUT.DIR)) {
+    file.path <- INPUT.DIR
+  } else {
+    file.path <- getwd()
+  }
 
-# These arguments allow the user to specify a single value for every obseration
+# These arguments allow the user to specify a single value for every observation
 # in the table:
   if (!is.null(cal)) data.in[,cal.col] <- cal
+  if (!is.null(date)) data.in[,date.col] <- date
+  if (!is.null(time)) data.in[,time.col] <- time
   if (!is.null(replicate)) data.in[,replicate.col] <- replicate
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
-  if (!is.null(std.conc)) data.in[,std.conc.col] <-
-    std.conc
+  if (!is.null(test.conc)) data.in[,test.conc.col] <-
+    test.conc
   if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <-
     test.nominal.conc
   if (!is.null(plasma.percent)) data.in[,plasma.percent.col] <-
@@ -200,33 +352,29 @@ format_fup_red <- function(data.in,
     analysis.parameters
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
+  if (!is.null(biological.replicates)) data.in[,biological.replicates.col]<- biological.replicates
+  if (!is.null(technical.replicates)) data.in[,technical.replicates.col]<- technical.replicates
 
-# We need all these columns in data.in
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    test.nominal.conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+  # We need all these columns in data.in
+  fup.red.cols <- c(L1.common.cols,
+                    time.col = "Time",
+                    test.conc.col = "Test.Compound.Conc",
+                    test.nominal.conc.col = "Test.Nominal.Conc",
+                    plasma.percent.col = "Percent.Physiologic.Plasma"
+  )
+  
+  ## allow either one of the two, or both replicate columns in the data
+  if (biological.replicates.col %in% colnames(data.in))
+    fup.red.cols <- c(fup.red.cols, 
+                    biological.replicates.col = "Biological.Replicates")
+  if (technical.replicates.col %in% colnames(data.in))
+    fup.red.cols <- c(fup.red.cols, 
+                    technical.replicates.col = "Technical.Replicates")
+  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.in)))
+    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
+  
+  cols <- unlist(mget(names(fup.red.cols)))
 
   if (!(all(cols %in% colnames(data.in))))
   {
@@ -235,87 +383,53 @@ format_fup_red <- function(data.in,
   }
 
   # Only include the data types used:
-  data.out <- subset(data.in,data.in[,type.col] %in% c(
-    "Plasma",
-    "PBS",
-    "T0",
-    "Plasma.Blank",
-    "NoPlasma.Blank",
-    "CC",
-    "Stability",
-    "EQ1",
-    "EQ2"))
+  req.types = c("Plasma", "PBS", "T0", "Plasma.Blank", "NoPlasma.Blank",
+                "CC", "Stability", "EQ1", "EQ2")
+  
+  data.out <- subset(data.in,data.in[,type.col] %in% req.types)
+  data.in.badtype <- subset(data.in,!(data.in[,type.col] %in% req.types))
+  
   # Force code to throw error if data.in accessed after this point:
   rm(data.in)
+  
+  # Option to export data with bad types
+  if (nrow(data.in.badtype) != 0) {
+    if (save.bad.types) {
+      write.table(data.in.badtype,
+                  file=paste0(file.path, "/", FILENAME,"-fup-RED-Level0-badtype.tsv"),
+                  sep="\t",
+                  row.names=F,
+                  quote=F)
+      cat(paste0("Data with inappropriate sample types were removed. Removed samples were exported to ",
+                 FILENAME,"-fup-RED-Level0-badtype.tsv", " in the following directory: ", file.path), "\n")
+    } else {
+      warning("Data with inappropriate sample types were removed.")
+    }
+  }
 
   # Organize the columns:
   data.out <- data.out[,cols]
-
-  # Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  replicate.col <- "Replicate"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  std.conc.col <- "Std.Conc"
-  test.nominal.conc.col <- "Test.Nominal.Conc"
-  plasma.percent.col <- "Percent.Physiologic.Plasma"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    test.nominal.conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
-
+  
+  colnames(data.out) <- fup.red.cols
+  
   # Set reasonable sig figs:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
   
   # calculate the response:
-  data.out[,"Response"] <- signif(data.out[,area.col] /
-     data.out[,istd.col] * data.out[,istd.conc.col], 4)
+  data.out[,"Response"] <- signif(data.out[,"Area"] /
+     data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"], 4)
 
-# Write out a "level 1" file (data organized into a standard format):
-  write.table(data.out,
-    file=paste(FILENAME,"-fup-RED-Level1.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 1" file (data organized into a standard format):
+    write.table(data.out,
+                file=paste0(file.path, "/", FILENAME,"-fup-RED-Level1.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    cat(paste0("A Level-1 file named ",FILENAME,"-fup-RED-Level1.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
 
   summarize_table(data.out,
     req.types=c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank"))

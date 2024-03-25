@@ -5,7 +5,7 @@
 \title{Merge multiple level0 files into a single table for processing}
 \usage{
 merge_level0(
-  data.label = "MYDATA",
+  FILENAME = "MYDATA",
   level0.catalog,
   file.col = "File",
   sheet = NULL,
@@ -35,168 +35,165 @@ merge_level0(
   chem.ids,
   chem.lab.id.col = "Chem.Lab.ID",
   chem.name.col = "Compound",
-  chem.dtxsid.col = "DTXSID"
+  chem.dtxsid.col = "DTXSID",
+  catalog.out = TRUE,
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{data.label}{A string used to identify outputs of the function call.
-(defaults to "MYDATA")}
+\item{FILENAME}{(Character) A string used to identify outputs of the function call.
+(Default to "MYDATA")}
 
 \item{level0.catalog}{A data frame describing which columns of which sheets
 in which Excel files contain MS data for analysis. See details for full
 explanation.}
 
-\item{date.col}{Which column of input.data indicates the laboratory measurement
-date (Defaults to "Date")}
+\item{file.col}{(Character) Column name containing level 0 file names
+to pull data from.}
 
-\item{compound.col}{Which column of input.data indicates the test compound
-(Defaults to "Compound.Name")}
+\item{sheet}{(Character) Excel file sheet name/identifier containing
+level 0 where data is to be pulled from. (Defaults to `NULL`.) (Note: Single
+entry only, use only if all files have the same sheet identifier for
+level 0 data.)}
 
-\item{istd.col}{Which column of input.data indicates the MS peak area for the
-internal standard (Defaults to "ISTD.Area")}
+\item{sheet.col}{(Character) Catalog column name containing `sheet`
+information. (Default to "Sheet")}
 
-\item{dilution.col}{Which column of clint.data indicates how many times the
-sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
+\item{skip.rows}{(Numeric) Number of rows to skip when extracting level 0
+data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
+entry only, use only if all files need to skip the same number of rows
+for extracting level 0 data.)}
 
-\item{conc.col}{Which column of clint.data indicates the intended
-test chemical concentration 
-(units if uM) of
-at time zero (Defaults to "Conc")}
+\item{skip.rows.col}{(Character) Catalog column name containing `skip.rows`
+information. (Default to "Skip.Rows")}
 
-\item{time.col}{Which column of clint.data indicates the intended
-time of the measurement (in minutes) since the test chemical was introduced
-into the hepatocyte incubation (Defaults to "Time")}
+\item{num.rows}{(Numeric) Number of rows to pull when extracting level 0
+data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
+entry only, use only if all files need to pull the same number of rows for
+extracting level 0 data.)}
 
-\item{FILENAME}{A string used to identify outputs of the function call.
-(defaults to "MYDATA")}
+\item{num.rows.col}{(Character) Catalog column name containing `num.rows`
+information. (Default to `NULL`)}
 
-\item{input.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identity, and measurement type. The data frame should
-contain columns with names specified by the following arguments:}
+\item{date}{(Character) Date of laboratory measurements. Typical format
+"MMDDYY" ("MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year).
+(Defaults to `NULL`.) (Note: Single entry only, use only if all files have
+the same laboratory measurement date.)}
 
-\item{sample.col}{Which column of input.data indicates the unique mass 
-spectrometry (MS) sample name used by the laboratory. (Defaults to 
-"Lab.Sample.Name")}
+\item{date.col}{(Character) Catalog column name containing `date`
+information. (Defaults to "Date")}
 
-\item{density.col}{A single value to be used for all samples indicating
-the density of hepatocytes in suspension (10^6 hepatocytes / mL) 
-(Defaults to NULL)}
+\item{compound.col}{(Character) Column name of input.data (level0?) indicates the
+test compound. (Defaults to "Chemical.ID")}
 
-\item{lab.compound.col}{Which column of input.data indicates The test compound 
-name used by the laboratory (Defaults to "Lab.Compound.Name")}
+\item{istd.col}{(Character) Column name of input.data (level0?) indicating the
+MS peak area for the internal standard. (Defaults to "ISTD")}
 
-\item{dtxsid.col}{Which column of input.data indicates EPA's DSSTox Structure 
-ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
+\item{sample.colname}{(Character) Column name of level 0 data containing
+sample information. (Defaults to `NULL`.) (Note: Single entry only, use only
+if all files use the same column name for sample names when extracting
+level 0 data.)}
 
-\item{series.col}{Which column of PPB.data indicates the "series", that is
-a simultaneous replicate with the same analytical chemistry 
-(Defaults to "Series")}
+\item{sample.colname.col}{(Character) Catalog column name containing 
+`sample.colname` information. (Defaults to "Sample.ColName")}
 
-\item{series}{If this argument is used (defaults to NULL) every observation 
-in the table is assigned the value of the argument and the corresponding
-column in input.table (if present) is ignored.}
+\item{type.colname}{(Character) Column name of the level 0 data containing
+the type of sample. (Defaults to `NULL`.) (Note: Single entry only, use
+only if all files use the same column name for sample type information
+when extracting level 0 data.)}
 
-\item{area.col}{Which column of input.data indicates the target analyte (that 
-is, the test compound) MS peak area (Defaults to "Area")}
+\item{type.colname.col}{(Character) Catalog column name containing
+`type.colname` information. (Defaults to "Type".)}
 
-\item{type.col}{Which column of input.data indicates the direction of the 
-measurements (either "AtoB" for apical to basolateral or "BtoA" for vice 
-versa) (Defaults to "Direction")}
+\item{peak.colname}{(Character) Column name of the level 0 data containing
+the analyte Mass Spectrometry peak area. (Defaults to `NULL`.)
+(Note: Single entry only, use only if all files use the same column name
+for analyte peak area information when extracting level 0 data.)}
 
-\item{cal.col}{Which column of input.data indicates the MS calibration -- for
-instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")}
+\item{peak.colname.col}{(Character) Catalog column name containing
+`peak.colname` information. (Defaults to "Peak.ColName")}
 
-\item{cal}{If this argument is used (defaults to NULL) every observation in
-the table is assigned the value of the argument and the corresponding
-column in input.table (if present) is ignored.
+\item{istd.peak.colname}{(Character) Column name of the level 0 data
+containing the internal standard Mass Spectrometry peak area. (Note: Single
+entry only, use only if all files use the same column name for internal
+standard MS peak area information when extracting level 0 data.)}
 
-#param compound.conc.col Which column indicates the intended concentration 
-of the test chemical for calibration curves (Defaults to "Standard.Conc")}
+\item{istd.peak.colname.col}{(Character) Catalog column name containing
+`istd.peak.colname` information. (Defaults to "ISTD.Peak.ColName")}
 
-\item{dilution}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{conc.colname}{(Character) Column name of the level 0 data containing
+intended concentrations for calibration curves. (Defaults to `NULL`.)
+(Note: Single entry only, use only if all files use the same column name
+for intended concentration information when extracting level 0 data.)}
 
-\item{istd.name.col}{Which column of input.data indicates identity of the 
-internal standard (Defaults to "ISTD.Name")}
+\item{conc.colname.col}{(Character) Catalog column name containing 
+`conc.colname` information. (Defaults to "Conc.ColName")}
 
-\item{istd.name}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{analysis.param.colname}{(Character) Column name of the level 0 data
+containing Mass Spectrometry instrument parameters for the analyte.
+(Defaults to `NULL`.) (Note: Single entry only, use only if all files use
+the same column name for analysis parameter information when extracting
+level 0 data.)}
 
-\item{istd.conc.col}{Which column of input.data indicates the concentration of
-the internal standard (Defaults to "ISTD.Conc")}
+\item{analysis.param.colname.col}{(Character) Catalog column name containing
+`analysis.param.colname` information. (Defaults to "AnalysisParam.ColName")}
 
-\item{istd.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{additional.colnames}{Additional columns from the level 0 data files to
+pull information from when extracting level 0 data and include in the
+compiled level 0 returned from `merge_level0`. (Defaults to `NULL`.)}
 
-\item{nominal.test.conc.col}{Which column of input.data indicates the intended
-test chemical concentration at time zero in the dosing solution (added to the
-donor side of the Caco-2 test well) (Defaults to "Test.Target.Conc")}
+\item{additional.colname.cols}{Catalog column name(s) containing 
+`additional.colnames` information, (Defaults to `NULL`.)}
 
-\item{nominal.test.conc}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{chem.ids}{(Data frame) A data frame containing basic chemical
+identification information for tested chemicals.}
 
-\item{analysis.method.col}{Which column of input.data indicates the analytical
-chemistry analysis method, typically "LCMS" or "GCMS" (Defaults to 
-"Analysis.Method")}
+\item{chem.lab.id.col}{(Character) Column in `chem.ids` containing
+the compound/chemical identifier used by the laboratory in level 0 measured
+data. (Defaults to "Chem.Lab.ID")}
 
-\item{analysis.method}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{chem.name.col}{(Character) `chem.ids` column name containing the
+"standard" chemical name to use for annotation of the compiled level 0
+returned from `merge_level0`. (Defaults to "Compound")}
 
-\item{analysis.instrument.col}{Which column of input.data indicates the 
-instrument used for chemical analysis, for example 
-"Agilent 6890 GC with model 5973 MS" (Defaults to 
-"Analysis.Instrument")}
+\item{chem.dtxsid.col}{(Character) `chem.ids` column name containing EPA's
+DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard})
+(Defaults to "DTXSID")}
 
-\item{analysis.instrument}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{catalog.out}{(Logical) When set to \code{TRUE}, the data frame 
+specified in \code{level0.catalog} will be exported the current directory 
+or \code{OUTPUT.DIR} as a .tsv file. (Defaults to \code{TRUE}.)}
 
-\item{analysis.parameters.col}{Which column of input.data indicates the 
-parameters used to identify the compound on the chemical analysis instrument,
-for example 
-"Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0"
-(Defaults to "Analysis.Parameters").}
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
+as a .tsv file. (Defaults to \code{TRUE}.)}
 
-\item{analysis.parameters}{If this argument is used (defaults to NULL) every 
-observation in the table is assigned the value of the argument and the 
-corresponding column in input.table (if present) is ignored.}
+\item{INPUT.DIR}{(Character) Path to the directory where the Excel files 
+with Level-0 data exist. If not specified, looking for the files
+in the current working directory. (Defaults to \code{NULL}.)}
 
-\item{level0.file.col}{Which column of PPB.data indicates the file from
-which the data were obtained (for example "MyWorkbook.xlsx").}
-
-\item{level0.file}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
-
-\item{level0.sheet.col}{Which column of PPB.data indicates the specific 
-sheet containing the data if the file is an Excel workbook}
-
-\item{level0.sheet}{If this argument is used (defaults to NULL) every
-observation in the table is assigned the value of the argument and the
-corresponding column in input.table (if present) is ignored.}
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory. (Defaults to \code{NULL}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized "level1" format}
+\item{data.frame}{A data.frame in standardized Level-0 format}
 }
 \description{
 This function reads multiple Excel files containing mass-spectrometry (MS) data
 and extracts the chemical sample data from the specified
-sheets. The argument level0.catalog is a table that
+sheets. The argument `level0.catalog` is a table that
 provides the necessary information to find the data for each chemical. The
 primary data of interest are the analyte peak area, the internal standard
 peak area, and the target concentration for calibration curve (CC) samples.
-The argument data.label is used to annotate this particular mapping of level0
+The argument `data.label` is used to annotate this particular mapping of level0
 files into data ready to be organized into a level1 file.
 }
 \details{
 Unless specified to be a single value for all the files, for example sheet="Data",
-the argument level0.catalog should be a data frame with the following columns:
+the argument `level0.catalog` should be a data frame with the following columns:
 \tabular{rr}{
   File \tab The Excel filename to be loaded\cr
   Sheet \tab The name of the Sheet to examine within in the Excel file\cr
@@ -212,7 +209,7 @@ the argument level0.catalog should be a data frame with the following columns:
   AnalysisParam.ColName \tab The column name on the sheet that contains the MS instrument parameters for the analyte\cr
 }
 Columns with names ending in ".ColName" indicate the columns to be extracted
-from the specified file and sheet.
+from the specified Excel file and sheet containing level 0 data.
 }
 \author{
 John Wambaugh

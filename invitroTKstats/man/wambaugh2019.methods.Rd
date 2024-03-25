@@ -4,23 +4,23 @@
 \name{wambaugh2019.methods}
 \alias{wambaugh2019.methods}
 \alias{Wambaugh2019.methods}
-\title{Mass Spectrometry Methods for Wambaugh et al. (2019) Chemicals}
+\title{Mass Spectrometry Methods for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Chemicals}
 \format{
 A data.frame 520 rows and 14 variables: \describe{
-\item{\code{DTXSID}}{}
-\item{\code{PREFERRED_NAME}}{}
-\item{\code{CASRN}}{}
-\item{\code{MOLECULAR_FORMULA}}{}
-\item{\code{AVERAGE_MASS}}{}
-\item{\code{QSAR_READY_SMILES}}{}
-\item{\code{LC}}{}
-\item{\code{Agilent.QQQ}}{}
-\item{\code{Water.s.Xevo}}{}
-\item{\code{AB.Sciex.Qtrap}}{}
-\item{\code{GC}}{}
-\item{\code{Agilent.GCMS}}{}
-\item{\code{GCTOF}}{}
-\item{\code{Comment}}{}
+\item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+\item{\code{PREFERRED_NAME}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD).}
+\item{\code{CASRN}}{CAS Registry Number of the test compound.}
+\item{\code{MOLECULAR_FORMULA}}{Molecular formula of the test compound.}
+\item{\code{AVERAGE_MASS}}{Molecular weight of the compound in daltons.}
+\item{\code{QSAR_READY_SMILES}}{SMILES (Simplified molecular-input line-entry system) chemical structure description.}
+\item{\code{LC}}{Logical variable indicating whether liquid chromatography-mass spectrometry was used.}
+\item{\code{Agilent.QQQ}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Agilent.QQQ instrument.}
+\item{\code{Water.s.Xevo}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Water.s.Xevo instrument.}
+\item{\code{AB.Sciex.Qtrap}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the AB.Sciex.Qtrap instrument.}
+\item{\code{GC}}{Logical variable indicating whether gas chromatography-mass spectrometry was used.}
+\item{\code{Agilent.GCMS}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the Agilent.GCMS instrument.}
+\item{\code{GCTOF}}{A column of yes/no/blank factor identifying whether the compound could/could not/wasn't measured with the GCTOF instrument.}
+\item{\code{Comment}}{Any additional comments for the test compound.}
   }
 }
 \source{
@@ -30,12 +30,12 @@ Wambaugh et al. (2019)
 wambaugh2019.methods
 }
 \description{
-As reported in Wambaugh et al. (2019), contractor Cyprotex performed in vitro
+As reported in \insertCite{wambaugh2019assessing;textual}{invitroTKstats}, contractor Cyprotex performed in vitro
 toxicokinetic experiments requiring the development of analytical chemistry
 methods to quantitative concentration. 
 Liquid chromatography/mass spectrometry (LC/MS) was faster and 
 attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
-when LC/MS failed. For some chemicals the attempts to develop an 
+when LC/MS failed. For some chemicals the attempts to develop an
 analysis method failed for both LC/MS and GC/MS and no
 in vitro experiments were conducted.
 }

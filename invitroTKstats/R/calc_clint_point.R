@@ -1,33 +1,53 @@
-#' Calculate a point estimate of intrinsic hepatic clearance
+#' Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)
 #'
-#' This function use describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical clearance
-#' as characterized by disappearance of parent compound over time when incubated
-#' with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
+#' This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
+#' using mass spectrometry (MS) peak area data collected as part of in vitro measurement 
+#' of chemical clearance, as characterized by the disappearance of parent compound over 
+#' time when incubated with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 #'
-#' Data are read from a "Level2" text file that should have been formatted and created
-#' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-#' should have been curated and had a column added with the value "Y" indicating
-#' that each row is verified as usable for analysis (that is, the Level2 file).
-#'
+#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_clint}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for analysis. 
+#' 
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
-#'   Hepatocyte incubation concentration \tab Conc\cr
+#'   Hepatocyte incubation concentration vs. time \tab Cvst\cr
 #' }
 #'
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
 #' MS response as a function of time.
 #'
-#' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-Clint-Level3.tsv" is appended (defaults to "MYDATA")
+#' @param FILENAME A string used to identify the input Level-2 file.
+#' "<FILENAME>-Clint-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' \code{format_clint} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed. 
 #'
-#' @param good.col Name of a column indicating which rows have been verified for
-#' analysis, indicated by a "Y" (Defaults to "Verified")
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
-#' @return \item{data.frame}{A data.frame in standardized format}
-#'
+#' @return A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
+#' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
+#' the p-value and the Akaike Information Criterion (AIC) of the linear 
+#' regression fit for all chemicals in the input data frame. 
+#' 
 #' @author John Wambaugh
 #'
 #' @examples
@@ -91,72 +111,57 @@
 #'
 #' @importFrom stats4 mle coef AIC
 #'
+#' @import Rdpack
+#'
 #' @export calc_clint_point
-calc_clint_point <- function(FILENAME, good.col="Verified")
+calc_clint_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified", 
+    output.res=TRUE, 
+    INPUT.DIR=NULL, 
+    OUTPUT.DIR = NULL)
 {
-  clint.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  
+  if (!missing(data.in)) {
+    clint.data <- as.data.frame(data.in)
+  } else if (!is.null(INPUT.DIR)) {
+      clint.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
+                             sep="\t",header=T)
+    } else {
+      clint.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
+                             sep="\t",header=T)
+    }
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
-
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  density.col <- "Hep.Density"
-  std.conc.col <- "Std.Conc"
-  clint.assay.conc.col <- "Clint.Assay.Conc"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-
-# We need all these columns in clint.data
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    density.col,
-    std.conc.col,
-    clint.assay.conc.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col
-    )
-
+  
+  clint.cols <- c(L1.common.cols,
+                  time.col = "Time",
+                  test.conc.col = "Test.Compound.Conc",
+                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  density.col = "Hep.Density"
+  )
+  list2env(as.list(clint.cols), envir = environment())
+  cols <- c(unlist(mget(names(clint.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(clint.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_clint first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(clint.data))))
   {
     warning("Run format_clint first (level 1) then curate to (level 2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(clint.data))],collapse=", ")))
   }
+  
 
   # Only include the data types used:
   clint.data <- subset(clint.data,clint.data[,type.col] %in% c(
     "Blank","Cvst"))
 
-  # Only used verfied data:
+  # Only used verified data:
   clint.data <- subset(clint.data, clint.data[,good.col] == "Y")
 
   # Clean up data:
@@ -167,7 +172,14 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table <-NULL
   num.chem <- 0
   num.cal <- 0
+  
+  # decay - This function calculates the test compound concentration at time t, using a model of
+  # exponential decay with time C(t) = C_0*e^{-mt}, where C_0 is the 
+  # test compound concentration at time 0, m is a rate constant (argument k_elim),
+  # and t is the incubation time in hour.
   decay <- function(time.hours,conc,cal,k_elim) cal*conc*exp(-k_elim*time.hours)
+  
+  # Negative log-likelihood of the linear regression fit
   lldecay <- function(cal,k_elim,sigma)
   {
     if (sigma < 0.0001) sigma <- 0.0001
@@ -183,7 +195,18 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
     if (is.na(ll)) browser()
     return(-ll)
   }
+  
+  # satdecay - This function calculates the test compound concentration at time t, 
+  # using a model of exponential decay with time while considering a saturation probability. 
+  # C(t) = C_0*e^{-m*sat*t}. C_0 is the test compound concentration at time 0, m is the elimination 
+  # rate constant (argument k_elim), and t is the incubation time in hours. 
+  # sat is the probability of saturation, defined as observing a lower clearance at a higher 
+  # concentration. At 1 uM, sat is 1, meaning saturation is unlikely at the current concentration 
+  # and is going to be observed at a higher concentration. At 10 uM, sat is between 0 and 1, 
+  # meaning full saturation may or may not have been reached.
   satdecay <- function(time.hours,conc,cal,k_elim,sat) cal*conc*exp(-k_elim*ifelse(conc==10,sat,1)*time.hours)
+  
+  # Negative log-likelihood of the linear regression fit
   llsatdecay <- function(cal,k_elim,sigma,sat)
   {
     if (sigma < 0.0001) sigma <- 0.0001
@@ -236,7 +259,7 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
       this.fit <- try(mle(lldecay,
         start=list(cal=1, k_elim=0.1, sigma=0.1),
         lower=list(cal=0,k_elim=0,sigma = 0.0001)))
-      this.null <- try(mle(lldecay,
+      this.null <- try(mle(lldecay, 
         start=list(cal=1, sigma=0.1),
         lower=list(cal=0, sigma = 0.0001),
         fixed=list(k_elim=0)))
@@ -305,12 +328,27 @@ calc_clint_point <- function(FILENAME, good.col="Verified")
   out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
   out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
 
-# Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-Clint-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  if (output.res) {
+    # Write out a "level 3" file:
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    write.table(out.table,
+                file=paste0(file.path, "/", FILENAME,"-Clint-Level3.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    
+    # Print notification message stating where the file was output to
+    cat(paste0("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
 
   print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))
   print(paste("Intrinsic clearance (Clint) calculated for",num.cal,"measurements."))

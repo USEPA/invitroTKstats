@@ -1,13 +1,16 @@
-#' Calculate a point estimate of Fraction Unbound in Plasma (UC)
+#' Calculate Point Estimates of Fraction Unbound in Plasma with
+#' Ultracentrifugation (UC) Data 
 #'
-#' This function use describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical fraction
-#' unbound in plasma using ultracentrifugation
-#' \insertCite{redgrave1975separation}{invitroTKstats}.
-#' Data are read from a "Level2" text file that should have been formatted and created
-#' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-#' should have been curated and had a column added with the value "Y" indicating
-#' that each row is verified as usable for analysis (that is, the Level2 file).
+#' This function calculates the point estimates for the fraction unbound in
+#' plasma (Fup) using mass spectrometry (MS) peak areas from samples collected
+#' as part of in vitro measurements of chemical Fup using ultracentrifugation
+#' \insertCite{waters2008validation}{invitroTKstats}. See the Details section
+#' for the equation(s) used in the point estimate.
+#' 
+#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_fup_uc}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for analysis. 
 #'
 #' The should be annotated according to
 #' of these types:
@@ -18,17 +21,41 @@
 #'   Time zero plasma concentration \tab T0\cr
 #' }
 #'
-#' F_up is calculated from MS responses as:
+#' \eqn{f_{up}} is calculated from MS responses as:
 #'
-#' f_up = mean(AF Response * Dilution.Factor) / mean(T5 Response * Dilution Factor)
+#' \eqn{f_{up} = \frac{\sum_{i = 1}^{n_A} (r_A * c_{DF}) / n_A}{\sum_{i = 1}^{n_{T5}} (r_{T5} * c_{DF}) / n_{T5}}}
 #'
-#' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")
+#' where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
+#' \eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
+#' and \eqn{n_{T5}} is the number of T5 Responses.
 #'
-#' @param good.col Name of a column indicating which rows have been verified for
-#' analysis, indicated by a "Y" (Defaults to "Verified")
+#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' "<FILENAME>-fup-UC-Level2.tsv".
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' \code{format_fup_uc} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed. 
 #'
-#' @return \item{data.frame}{A data.frame in standardized format}
+#' @param good.col (Character) Column name indicating which rows have been
+#' verified, data rows valid for analysis are indicated with a "Y".
+#' (Defaults to "Verified".)
+#' 
+#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' (Defaults to \code{TRUE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
+#' 
+#' @return A data frame with one row per chemical, contains chemical identifiers 
+#' such as preferred compound name, compound name used by the laboratory, 
+#' EPA's DSSTox Structure ID, calibration, and point estimates for
+#' the fraction unbound in plasma (Fup) for all chemicals in the input data frame. 
 #'
 #' @author John Wambaugh
 #'
@@ -57,60 +84,43 @@
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #'
+#' @import Rdpack
+#'
 #' @export calc_fup_uc_point
-calc_fup_uc_point <- function(FILENAME, good.col="Verified")
+calc_fup_uc_point <- function(
+    FILENAME, 
+    data.in,
+    good.col="Verified", 
+    output.res=TRUE, 
+    INPUT.DIR=NULL, 
+    OUTPUT.DIR = NULL)
 {
-  PPB.data <- read.csv(file=paste(FILENAME,"-fup-UC-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  
+  if (!missing(data.in)) {
+    PPB.data <- as.data.frame(data.in)
+  } else if (!is.null(INPUT.DIR)) {
+    PPB.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-UC-Level2.tsv"),
+                         sep="\t",header=T)
+    } else {
+      PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"),
+                         sep="\t",header=T)
+      }
+  
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
-
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    std.conc.col <- "Standard.Conc"
-    uc.assay.conc.col <- "UC.Assay.T1.Conc"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-    note.col <- "Note"
-
-
-# For a properly formatted level 2 file we should have all these columns:
-# We need all these columns in PPB.data
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    std.conc.col,
-    uc.assay.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    "Response",
-    good.col)
+  
+  fup.uc.cols <- c(L1.common.cols,
+                   test.conc.col = "Test.Compound.Conc",
+                   uc.assay.conc.col = "UC.Assay.T1.Conc"
+  )
+  list2env(as.list(fup.uc.cols), envir = environment())
+  cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(PPB.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_uc first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(PPB.data))))
   {
     warning("Run format_fup_uc first (level 1) then curate to level 2.")
@@ -177,13 +187,29 @@ calc_fup_uc_point <- function(FILENAME, good.col="Verified")
   out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3)
   out.table <- as.data.frame(out.table)
   out.table$Fup <- as.numeric(out.table$Fup)
-
-# Write out a "level 3" file (data organized into a standard format):
-  write.table(out.table,
-    file=paste(FILENAME,"-fup-UC-Level3.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
+  
+  if (output.res) {
+    # Write out a "level 3" file (data organized into a standard format):
+    # Determine the path for output
+    
+    if (!is.null(OUTPUT.DIR)) {
+      file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+    } else {
+      file.path <- getwd()
+    }
+    write.table(out.table,
+                file=paste0(file.path, "/", FILENAME,"-fup-UC-Level3.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    
+    # Print notification message stating where the file was output to
+    cat(paste0("A Level-3 file named ",FILENAME,"-fup-UC-Level3.tsv", 
+                " has been exported to the following directory: ", file.path), "\n")
+  }
+  
 
   print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))
   print(paste("Fraction unbound values calculated for",num.cal,"measurements."))

@@ -151,8 +151,23 @@ model {
 }
 "
 
-#' Calculate fraction unbound in plasma from rapid equilibruim dialysis data
+#' Calculate Fraction Unbound in Plasma (Fup) From Rapid Equilibrium Dialysis (RED) Data
 #'
+#' This function estimates the fraction unbound in plasma (Fup) with Bayesian
+#' modeling on Rapid Equilibrium Dialysis (RED) data. Both Fup and
+#' the credible interval are estimated from posterior samples of the MCMC.
+#' A summary table along with the full set of MCMC results is returned from
+#' the function.
+#' 
+#' The input data should be "Level-2". Level-2 data is Level-1 data, formatted 
+#' with the \code{\link{format_fup_red}} function, and curated with a
+#' verification column where "Y" indicates a data row is valid for analysis. 
+#' 
+#' Note: By default, this function writes files to the user's current working directory 
+#' unless another path is specified in the \code{TEMP.DIR} argument. Files saved include 
+#' the summary table (.RData), JAGS model (.RData), and any "unverified" data 
+#' excluded from the analysis (.tsv).
+#' 
 #' The data frame of observations should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
@@ -163,72 +178,57 @@ model {
 #'   Equilibrium chemical in plasma well \tab Plasma\cr
 #' }
 #'
-#' @param MS.data A data frame containing mass-spectrometry peak areas,
-#' indication of chemical identity, and measurement type.
 #'
-#' @param this.conc The plasma protein concentration relative to physiologic
-#' levels (default 100\%)
+#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' "<FILENAME>-fup-RED-Level2.tsv", and to name the exported model results. 
+#' This argument is required no matter which method of specifying input data is used. 
+#' (Defaults to \code{NULL}.)
+#' 
+#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' \code{format_fup_red} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed.
 #'
-#' @param FILENAME A string used to identify outputs of the function call.
-#' (defaults to "BASE_Model_Results")
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
+#' If \code{NULL}, all files will be written to the current working directory. 
+#' (Defaults to \code{NULL}.)
 #'
-#' @param TEMP.DIR An optional directory where file writing may be faster.
+#' @param JAGS.PATH (Character) Computer specific file path to JAGS software. (Defaults to \code{NA}.)
 #'
-#' @param JAGS.PATH The file path to JAGS.
+#' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
-#' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
-#' of convergence according to Gelman and Rubin diagnostic.
+#' @param NUM.CORES (Numeric) The number of processors to use for parallel computing. (Defaults to 2.)
 #'
-#' @param NUM.CORES The number of processors to use (default 2)
+#' @param RANDOM.SEED The seed used by the random number generator.
+#' (Defaults to 1111.)
 #'
-#' @param RANDOM.SEED The seed used by the random number generator
-#' (default 1111)
+#' @param good.col (Character) Column name indicating which rows have been 
+#' verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified".)
 #'
-#' @param sample.col Which column of MS.data indicates the unique mass
-#' spectrometry (MS) sample name used by the laboratory. (Defaults to
-#' "Lab.Sample.Name")
+#' @param Physiological.Protein.Conc (Numeric) The assumed physiological protein concentration 
+#' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
+#' According to \insertCite{berg2011pathology;textual}{invitroTKstats}: 60-80 mg/mL, albumin is 66.5 kDa,
+#' assume all protein is albumin to estimate default in uM.) 
+#' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
+#' as an .RData file. (Defaults to \code{FALSE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
 #'
-#' @param lab.compound.col Which column of MS.data indicates The test compound
-#' name used by the laboratory (Defaults to "Lab.Compound.Name")
-#'
-#' @param dtxsid.col Which column of MS.data indicates EPA's DSSTox Structure
-#' ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")
-#'
-#' @param date.col Which column of MS.data indicates the laboratory measurment
-#' date (Defaults to "Date")
-#'
-#' @param compound.col Which column of MS.data indicates the test compound
-#' (Defaults to "Compound.Name")
-#'
-#' @param area.col Which column of MS.data indicates the target analyte (that
-#' is, the test compound) MS peak area (Defaults to "Area")
-#'
-#' @param series.col Which column of MS.data indicates the "series", that is
-#' a simultaneous replicate (Defaults to "Series")
-#'
-#' @param type.col Which column of MS.data indicates the sample type (see table
-#' above)(Defaults to "Sample.Type")
-#'
-#' @param cal.col Which column of MS.data indicates the MS calibration -- for
-#' instance different machines on the same day or different days with the same
-#' MS analyzer (Defaults to "Cal")
-#'
-#' @param dilution.col Which column of MS.data indicates how many times the
-#' sample was diluted before MS analysis (Defaults to "Dilution.Factor")
-#'
-#' @param istd.col Which column of MS.data indicates the MS peak area for the
-#' internal standard (Defaults to "ISTD.Area")
-#'
-#' @param istd.name.col Which column of MS.data indicates identity of the
-#' internal standard (Defaults to "ISTD.Name")
-#'
-#' @param istd.conc.col Which column of MS.data indicates the concentration of
-#' the internal standard (Defaults to "ISTD.Conc")
-#'
-#' @param Test.Nominal.Conc.col Which column of MS.data indicates the intended
-#' test chemical concentration at time zero (Defaults to "Test.Target.Conc")
-#'
-#' @return A data.frame containing quunantiles of the Bayesian posteriors
+#' @return A list of two objects: 
+#' \enumerate{
+#'    \item{Results: A data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
+#'    and credible interval for all compounds in the input file. Column includes:
+#'    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
+#'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
+#'    Fup.Med - posterior median, Fup.Low - 2.5th quantile, and Fup.High - 97.5th quantile}
+#'    \item{coda: A runjags-class object containing results from JAGS model.}
+#' }
 #'
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
@@ -238,263 +238,88 @@ model {
 #' @author John Wambaugh and Chantel Nicolas
 #'
 #' @examples
-#' write.table(smeltz2023.red,
-#'   file="SmeltzPFAS-fup-RED-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#'
-#' level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
+#' ## Example 1: loading level-2 using data.in
+#' \dontrun{
+#' level2 <- invitroTKstats::smeltz2023.red
+#' 
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_fup_red(data.in = level2,
+#'                        NUM.CORES=2,
+#'                        JAGS.PATH=path.to.JAGS)
+#' }
+#' 
+#' ## Example 2: importing level-2 from a .tsv file
+#' \dontrun{
+#' # Refer to sample_verification help file for how to export level-2 data to a directory.
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
 #' level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
-#'                        NUM.CORES=8,
-#'                        JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+#'                        NUM.CORES=2,
+#'                        JAGS.PATH=path.to.JAGS,
+#'                        INPUT.DIR = "invitroTKstats/vignettes")
+#' }
+#'
+#' @import coda
+#'
+#' @import Rdpack
 #'
 #' @export calc_fup_red
 calc_fup_red <- function(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5,
   NUM.CORES=2,
   RANDOM.SEED=1111,
   good.col="Verified",
   JAGS.PATH = NA,
-  Physiological.Protein.Conc = 70/(66.5*1000)*1000000 # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
+  Physiological.Protein.Conc = 70/(66.5*1000)*1000000, # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
+  save.MCMC = FALSE,
+  INPUT.DIR=NULL, 
+  OUTPUT.DIR = NULL
   )
 {
-# Internal function for constructing data object given to JAGS:
-  build_mydata <- function(this.data)
-  {
-    #mg/mL -> g/L is 1:1
-    #kDa -> g/mol is *1000
-    #g/mol -> M is g/L/MW
-    #M <- uM is /1000000
-    Test.Nominal.Conc <- unique(this.data$Test.Nominal.Conc) # uM frank parent concentration
-    if (length(Test.Nominal.Conc)>1) stop("Multiple test concentrations.")
-# Each calibration could be a unique string (such as a date):
-    unique.cal <- sort(unique(this.data[,"Calibration"]))
-    Num.cal <- length(unique.cal)
-# TIME ZERO
-    T0.data <- subset(this.data,Sample.Type=="T0")
-    T0.df <- unique(T0.data[,"Dilution.Factor"])
-    if (length(T0.df)>1) stop("Multiple T0 dilution factors.")
-    T0.obs <- T0.data[,"Response"]
-# Convert calibrations to sequential integers:
-    T0.cal <- sapply(T0.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.T0.obs <- length(T0.obs)
-# Calibration Curve
-    CC.data <- subset(this.data,Sample.Type=="CC")
-    CC.df <- unique(CC.data[,"Dilution.Factor"])
-    if (length(CC.df)>1) stop("Multiple CC dilution factors.")
-    CC.obs <- CC.data[,"Response"]
-# Convert calibrations to sequential integers:
-    CC.cal <- sapply(CC.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    CC.conc <- CC.data[,"Std.Conc"]
-    Num.CC.obs <- length(CC.obs)
-# PBS
-    PBS.data <- subset(this.data,Sample.Type=="PBS")
-    PBS.df <- unique(PBS.data[,"Dilution.Factor"])
-    if (length(PBS.df)>1) stop("Multiple PBS dilution factors.")
-    PBS.obs <-PBS.data[,"Response"]
-# Convert calibrations to sequential integers:
-    PBS.cal <- sapply(PBS.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.PBS.obs <- length(PBS.obs)
-# PLASMA
-    Plasma.data <- subset(this.data,Sample.Type=="Plasma")
-    Plasma.df <- unique(Plasma.data[,"Dilution.Factor"])
-    if (length(Plasma.df)>1) stop("Multiple plasma dilution factors.")
-    Plasma.obs <- Plasma.data[,"Response"]
-# Convert calibrations to sequential integers:
-    Plasma.cal <- sapply(Plasma.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.Plasma.obs <- length(Plasma.obs)
-# Match the PBS and Plasma replicate measurments:
-    PBS.rep <- paste0(PBS.data[,"Calibration"],PBS.data[,"Replicate"])
-    Plasma.rep <- paste0(Plasma.data[,"Calibration"],Plasma.data[,"Replicate"])
-    unique.rep <- sort(unique(c(PBS.rep,Plasma.rep)))
-    Num.rep <- length(unique.rep)
-# Convert replicates to sequential integers:
-    PBS.rep <- sapply(PBS.rep, function(x) which(unique.rep %in% x))
-    Plasma.rep <- sapply(Plasma.rep, function(x) which(unique.rep %in% x))
-    Assay.Protein.Percent <- Plasma.data[!duplicated(Plasma.data$Replicate),
-                              "Percent.Physiologic.Plasma"]
-# NO PLASMA BLANK
-    NoPlasma.Blank.data <- subset(this.data, Sample.Type=="NoPlasma.Blank")
-    NoPlasma.Blank.df <- unique(NoPlasma.Blank.data[,"Dilution.Factor"])
-    if (length(NoPlasma.Blank.df)>1) stop("Multiple blank dilution factors.")
-    NoPlasma.Blank.obs <- NoPlasma.Blank.data[,"Response"]
-# Convert calibrations to sequential integers:
-    NoPlasma.Blank.cal <- sapply(NoPlasma.Blank.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.NoPlasma.Blank.obs <- length(NoPlasma.Blank.obs)
-    if (Num.NoPlasma.Blank.obs == 0) {
-      NoPlasma.Blank.df <- 0
-      NoPlasma.Blank.obs <- 0
-      NoPlasma.Blank.cal <- 0
-    }
-# PLASMA BLANK
-    Plasma.Blank.data <- subset(this.data, Sample.Type=="Plasma.Blank")
-    Plasma.Blank.df <- unique(Plasma.Blank.data[,"Dilution.Factor"])
-    if (length(Plasma.Blank.df)>1) stop("Multiple blank dilution factors.")
-    Plasma.Blank.obs <- Plasma.Blank.data[,"Response"]
-# Convert calibrations to sequential integers:
-    Plasma.Blank.cal <- sapply(Plasma.Blank.data[,"Calibration"],
-                        function(x) which(unique.cal %in% x))
-    Num.Plasma.Blank.obs <- length(Plasma.Blank.obs)
-    if (!any(is.na(Plasma.Blank.data[,"Replicate"])))
-    {
-      Plasma.Blank.rep <- paste0(Plasma.Blank.data[,"Calibration"],
-                                 Plasma.Blank.data[,"Replicate"])
-# Convert replicates to sequential integers:
-      Plasma.Blank.rep <- sapply(Plasma.Blank.rep, function(x)
-                               which(unique.rep %in% x))
-    } else if(length(unique(Plasma.Blank.data[,"Percent.Physiologic.Plasma"]))==1)
-    {
-      Plasma.Blank.rep <- rep(1, Num.Plasma.Blank.obs)
-    } else browser()
-
-    return(list(
-# Describe assay:
-      'Test.Nominal.Conc' = Test.Nominal.Conc,
-      'Num.cal' = Num.cal,
-      'Physiological.Protein.Conc' = Physiological.Protein.Conc,
-      'Assay.Protein.Percent' = Assay.Protein.Percent,
-# Blank data:
-      'Num.Plasma.Blank.obs' = Num.Plasma.Blank.obs,
-      'Plasma.Blank.obs' = Plasma.Blank.obs,
-      'Plasma.Blank.cal' = Plasma.Blank.cal,
-      'Plasma.Blank.df' = Plasma.Blank.df,
-      'Plasma.Blank.rep' = Plasma.Blank.rep,
-      'Num.NoPlasma.Blank.obs' = Num.NoPlasma.Blank.obs,
-      'NoPlasma.Blank.obs' = NoPlasma.Blank.obs,
-      'NoPlasma.Blank.cal' = NoPlasma.Blank.cal,
-      'NoPlasma.Blank.df' = NoPlasma.Blank.df,
-## Callibration.curve.data:
-      'Num.CC.obs' = Num.CC.obs,
-      'CC.conc' = CC.conc,
-      'CC.obs' = CC.obs,
-      'CC.cal' = CC.cal,
-      'CC.df' = CC.df,
-## Stability data:
-      'Num.T0.obs' = Num.T0.obs,
-      'T0.obs' = T0.obs,
-      'T0.cal' = T0.cal,
-      'T0.df' = T0.df,
-#       'Stability.data' = Stability.data[,"ISTDResponseRatio"],
-#      'Num.Stability.obs' = Num.Stability.obs,
-## Equilibriation data:
-#      'EQ1.data' = EQ1.data[,"ISTDResponseRatio"],
-#      'Num.EQ1.obs' = Num.EQ1.obs,
-#      'EQ2.data' = EQ2.data[,"ISTDResponseRatio"],
-#      'Num.EQ2.obs' = Num.EQ2.obs,
-# RED data:
-      'Num.rep' = Num.rep,
-# PBS data:
-      'Num.PBS.obs' = Num.PBS.obs,
-      'PBS.obs' = PBS.obs,
-      'PBS.cal' = PBS.cal,
-      'PBS.df' = PBS.df,
-      'PBS.rep' = PBS.rep,
-# Plasma data:
-      'Num.Plasma.obs' = Num.Plasma.obs,
-      'Plasma.obs' = Plasma.obs,
-      'Plasma.cal' = Plasma.cal,
-      'Plasma.df' = Plasma.df,
-      'Plasma.rep' = Plasma.rep
-    ))
-  }
-
-  initfunction <- function(chain)
-  {
-    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
-    set.seed(seed)
-
-    return(list(
-# Random number seed:
-      .RNG.seed=seed,
-      .RNG.name="base::Super-Duper",
-# Parameters that may vary between calibrations:
-#      log.const.analytic.sd =runif(mydata$Num.cal,-5,-0.5),
-#      log.hetero.analytic.slope = runif(mydata$Num.cal,-5,-0.5),
-      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
-      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
-      background = rep(0,mydata$Num.cal),
-      C.thresh = runif(mydata$Num.cal, 0, 0.1),
-      log.calibration = rep(0,mydata$Num.cal),
-      log.Plasma.Interference = log10(runif(mydata$Num.cal,0,0.1)),
-# Statistics characterizing the measurement:
-      log.Kd= runif(1,-8,4),
-      C.missing = runif(mydata$Num.rep,0,mydata[["Test.Nominal.Conc"]])
-    ))
-  }
-
+  
+  if (!missing(data.in)) {
+    if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
+    MS.data <- as.data.frame(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+      MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
+                        sep="\t",header=T)
+      } else {
+        MS.data <- read.csv(file=paste0(FILENAME,"-fup-RED-Level2.tsv"),
+                        sep="\t",header=T)
+        }
+  
+  MS.data <- subset(MS.data,!is.na(Compound.Name))
+  MS.data <- subset(MS.data,!is.na(Response))
+  
   if (!is.null(TEMP.DIR))
   {
     current.dir <- getwd()
     setwd(TEMP.DIR)
   }
 
-  MS.data <- read.csv(file=paste(FILENAME,"-fup-RED-Level2.tsv",sep=""),
-    sep="\t",header=T)
-  MS.data <- subset(MS.data,!is.na(Compound.Name))
-  MS.data <- subset(MS.data,!is.na(Response))
-
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  replicate.col <- "Replicate"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  std.conc.col <- "Std.Conc"
-  Test.Nominal.Conc.col <- "Test.Nominal.Conc"
-  plasma.percent.col <- "Percent.Physiologic.Plasma"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    Test.Nominal.Conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col,
-    "Response",
-    good.col)
-# Throw error if not all columns present with expected names:
+  fup.red.cols <- c(L1.common.cols,
+                    time.col = "Time",
+                    test.conc.col = "Test.Compound.Conc",
+                    test.nominal.conc.col = "Test.Nominal.Conc",
+                    plasma.percent.col = "Percent.Physiologic.Plasma"
+  )
+  list2env(as.list(fup.red.cols), envir = environment())
+  cols <- c(unlist(mget(names(fup.red.cols))), "Response", good.col)
+  
+  # Throw error if not all columns present with expected names:
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_red first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")
@@ -508,8 +333,8 @@ calc_fup_red <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-fup-RED-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-fup-RED-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -520,7 +345,7 @@ calc_fup_red <- function(
   MS.data[MS.data$Response<0,"Response"] <- 0
 
   # Because of the possibility of crashes we save the results one chemical at a time:
-  OUTPUT.FILE <- paste(FILENAME,"-fup-RED-Level4.tsv",sep="")
+  OUTPUT.FILE <- paste0(FILENAME,"-fup-RED-Level4.tsv")
 
   # Check to see if we crashed earlier, if so, don't redo something that already is done
   if (!file.exists(OUTPUT.FILE))
@@ -529,6 +354,13 @@ calc_fup_red <- function(
   } else {
     Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
   }
+  
+  # Safety check for parallel computation 
+  MAX.CORES <- detectCores(logical = F) - 1
+  if (NUM.CORES > MAX.CORES) stop(paste0("Specified NUM.CORES = ", NUM.CORES, " cores for parallel computing exceeds the allowable number of cores, that is ",
+                                         MAX.CORES, 
+                                         ", and may bog down your machine! (Max cores is based on the total number of available computing cores minus one for overhead.)"))
+  if (NUM.CHAINS > 10) warning("Specified number of chains is greater than 10 and may be excessive for computational time.")
 
   # Make a cluster if using multiple cores:
   if (NUM.CORES>1)
@@ -558,15 +390,16 @@ calc_fup_red <- function(
       REQUIRED.DATA.TYPES <- c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank")
       if (all(REQUIRED.DATA.TYPES %in% this.subset[,type.col]))
       {
-        mydata <- build_mydata(this.subset)
+        mydata <- build_mydata_fup_red(this.subset, Physiological.Protein.Conc)
         if (!is.null(mydata))
         {
           # Use random number seed for reproducibility
           set.seed(RANDOM.SEED)
 
+          init_vals <- function(chain) initfunction_fup_red(mydata=mydata, chain = chain)
           # write out arguments to runjags:
-          save(this.compound, mydata ,initfunction,
-            file=paste(FILENAME,"-fup-RED-PREJAGS.RData",sep=""))
+          save(this.compound, mydata ,init_vals,
+            file=paste0(FILENAME,"-fup-RED-PREJAGS.RData"))
 
           # Run JAGS:
           coda.out[[this.compound]] <- autorun.jags(
@@ -575,7 +408,7 @@ calc_fup_red <- function(
             method="parallel",
             cl=CPU.cluster,
             summarise=T,
-            inits = initfunction,
+            inits = init_vals,
             startburnin = 25000,
             startsample = 25000,
             max.time="5m",
@@ -632,13 +465,13 @@ calc_fup_red <- function(
           Results <- rbind(Results,new.results)
 
           write.table(Results,
-            file=paste(OUTPUT.FILE,sep=""),
+            file=paste0(OUTPUT.FILE),
             sep="\t",
             row.names=F,
             quote=F)
         }
       } else {
-        ignored.data <- rbind(ignored.data, MSdata)
+        ignored.data <- rbind(ignored.data, this.subset)
       }
     }
 
@@ -648,15 +481,44 @@ calc_fup_red <- function(
   }
   stopCluster(CPU.cluster)
 
-  write.table(ignored.data,
-    file=paste(FILENAME,"-fup-RED-Level2-ignoredbayes.tsv",sep=""),
-    sep="\t",
-    row.names=F,
-    quote=F)
-
   View(Results)
+  
+
+  # Write out a "level 4" result table:
+  # Determine the path for output
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+    } else if (!is.null(INPUT.DIR)) {
+      file.path <- INPUT.DIR
+      } else {
+        file.path <- getwd()
+        }
+    
   save(Results,
-    file=paste(FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData",sep=""))
+    file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
+  cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
+             " has been exported to the following directory: ", file.path), "\n")
+   
+  # Save ignored data if there is any
+  if (!is.null(ignored.data)) {
+    write.table(ignored.data,
+                file=paste0(file.path, "/", FILENAME,"-fup-RED-Level2-ignoredbayes.tsv"),
+                sep="\t",
+                row.names=F,
+                quote=F)
+    cat(paste0("A subset of ignored data named ",FILENAME,"-fup-RED-Level2-ignoredbayes.tsv", 
+               " has been exported to the following directory: ", file.path), "\n")
+    }
+    
+  # Write out the MCMC results separately 
+  if (save.MCMC){
+    if (length(coda.out) != 0) {
+      save(coda.out,
+           file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4-MCMC-Results-",Sys.Date(),".RData"))
+      } else {
+        cat("No MCMC results to be saved.\n")
+      }
+    }
 
   return(list(Results=Results,coda=coda.out))
 }

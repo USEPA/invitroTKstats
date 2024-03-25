@@ -2,30 +2,61 @@
 % Please edit documentation in R/calc_fup_uc_point.R
 \name{calc_fup_uc_point}
 \alias{calc_fup_uc_point}
-\title{Calculate a point estimate of Fraction Unbound in Plasma (UC)}
+\title{Calculate Point Estimates of Fraction Unbound in Plasma with
+Ultracentrifugation (UC) Data}
 \usage{
-calc_fup_uc_point(FILENAME, good.col = "Verified")
+calc_fup_uc_point(
+  FILENAME,
+  data.in,
+  good.col = "Verified",
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
+)
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-PPB-UC-Level2.tsv" is appended (defaults to "MYDATA")}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"<FILENAME>-fup-UC-Level2.tsv".}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\code{format_fup_uc} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
+
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-3) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+A data frame with one row per chemical, contains chemical identifiers 
+such as preferred compound name, compound name used by the laboratory, 
+EPA's DSSTox Structure ID, calibration, and point estimates for
+the fraction unbound in plasma (Fup) for all chemicals in the input data frame.
 }
 \description{
-This function use describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using ultracentrifugation (Redgrave 1975?).
-Data are read from a "Level2" text file that should have been formatted and created 
-by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-should have been curated and had a column added with the value "Y" indicating
-that each row is verified as usable for analysis (that is, the Level2 file).
+This function calculates the point estimates for the fraction unbound in
+plasma (Fup) using mass spectrometry (MS) peak areas from samples collected
+as part of in vitro measurements of chemical Fup using ultracentrifugation
+\insertCite{waters2008validation}{invitroTKstats}. See the Details section
+for the equation(s) used in the point estimate.
 }
 \details{
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_fup_uc}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
+
 The should be annotated according to
 of these types:
 \tabular{rrrrr}{
@@ -35,13 +66,17 @@ of these types:
   Time zero plasma concentration \tab T0\cr
 }
 
-F_up is calculated from MS responses as:
+\eqn{f_{up}} is calculated from MS responses as:
 
-f_up = mean(AF Response * Dilution.Factor) / mean(T5 Response * Dilution Factor)
+\eqn{f_{up} = \frac{\sum_{i = 1}^{n_A} (r_A * c_{DF}) / n_A}{\sum_{i = 1}^{n_{T5}} (r_{T5} * c_{DF}) / n_{T5}}}
+
+where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
+\eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
+and \eqn{n_{T5}} is the number of T5 Responses.
 }
 \examples{
 level0 <- kreutz2020
-level0$Analysis.Method <- "GC" 
+level0$Analysis.Method <- "GC"
 level0$Analysis.Instrument <- "No Idea"
 level0$Analysis.Parameters <- "None"
 level1 <- format_fup_uc(level0,
@@ -59,13 +94,11 @@ write.table(level2,
   row.names=F,
   quote=F)
 
-level3 <- calc_fup_uc_point(FILENAME="Kreutz2020") 
+level3 <- calc_fup_uc_point(FILENAME="Kreutz2020")
 
 }
 \references{
-Redgrave, T. G., D. C. K. Roberts, and C. E. West. "Separation of plasma 
-lipoproteins by density-gradient ultracentrifugation." Analytical 
-Biochemistry 65.1-2 (1975): 42-49.#'
+\insertRef{redgrave1975separation}{invitroTKstats}
 }
 \author{
 John Wambaugh

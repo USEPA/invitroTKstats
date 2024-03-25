@@ -2,30 +2,61 @@
 % Please edit documentation in R/calc_fup_red_point.R
 \name{calc_fup_red_point}
 \alias{calc_fup_red_point}
-\title{Calculate a point estimate of Fraction Unbound in Plasma (RED)}
+\title{Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with
+Rapid Equilibrium Dialysis (RED) Data}
 \usage{
-calc_fup_red_point(FILENAME, good.col = "Verified")
+calc_fup_red_point(
+  FILENAME,
+  data.in,
+  good.col = "Verified",
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
+)
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-fup-RED-Level2.tsv" is appended (defaults to "MYDATA")}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"<FILENAME>-fup-RED-Level2.tsv".}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\code{format_fup_red} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
+
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-3) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+A data frame with one row per chemical, contains chemical identifiers 
+such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
+and point estimates for the fraction unbound in plasma (Fup)
+for all chemicals in the input data frame.
 }
 \description{
-This function uses mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical fraction
-unbound in plasma using rapid equilibrium dialysis (Waters, et al, 2008).
-Data are read from a "Level2" text file that should have been formatted and created 
-by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-should have been curated and had a column added with the value "Y" indicating
-that each row is verified as usable for analysis (that is, the Level2 file).
+This function calculates the point estimates for the fraction unbound in plasma
+(Fup) using mass spectrometry (MS) peak areas from samples collected as part
+in vitro measurements of chemical Fup using rapid equilibrium dialysis
+\insertCite{waters2008validation}{invitroTKstats}. See the Details section
+for the equation(s) used in point estimation.
 }
 \details{
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_fup_red}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
+
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
@@ -36,12 +67,16 @@ of these types:
   Equilibrium chemical in plasma well \tab Plasma\cr
 }
 
-F_up is calculated from MS responses as:
+\eqn{f_{up}} is calculated from MS responses as:
 
-f_up = max(0,(mean(PBS Response * Dilution.Factor) - 
-  mean(NoPlasma.Blank Response * Dilution.Factor))) / (
-  mean(Plasma Response * Dilution Factor) -
-  mean(Plasma.Blank Response * Dilution.Factor))
+
+\eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_{NPB}} (r_{NPB}*c_{DF})}{n_{NPB}}\right)}
+{\frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
+
+where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
+\eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
+\eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{B}} is Plasma Blank Response,
+and \eqn{n_B} is the number of Plasma Blank Responses.
 }
 \examples{
 red <- subset(wambaugh2019.red, Protein==100)
@@ -55,7 +90,7 @@ red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
 red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
 red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
 red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
-red$Analysis.Method <- "LC or GC" 
+red$Analysis.Method <- "LC or GC"
 red$Analysis.Instrument <- "No Idea"
 red$Analysis.Parameters <- "None"
 
@@ -85,14 +120,12 @@ write.table(level2,
   sep="\t",
   row.names=F,
   quote=F)
-  
+
 level3 <- calc_fup_red_point(FILENAME="Wambaugh2019")
 
 }
 \references{
-Waters, Nigel J., et al. "Validation of a rapid equilibrium dialysis 
-approach for the measurement of plasma protein binding." Journal of 
-Pharmaceutical Sciences 97.10 (2008): 4586-4595.
+\insertRef{waters2008validation}{invitroTKstats}
 }
 \author{
 John Wambaugh

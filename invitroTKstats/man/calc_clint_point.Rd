@@ -2,37 +2,64 @@
 % Please edit documentation in R/calc_clint_point.R
 \name{calc_clint_point}
 \alias{calc_clint_point}
-\title{Calculate a point estimate of intrinsic hepatic clearance}
+\title{Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)}
 \usage{
-calc_clint_point(FILENAME, good.col = "Verified")
+calc_clint_point(
+  FILENAME,
+  data.in,
+  good.col = "Verified",
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
+)
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input file, whatever the
-argument given, "-Clint-Level3.tsv" is appended (defaults to "MYDATA")}
+\item{FILENAME}{A string used to identify the input Level-2 file.
+"<FILENAME>-Clint-Level2.tsv".}
 
-\item{good.col}{Name of a column indicating which rows have been verified for 
-analysis, indicated by a "Y" (Defaults to "Verified")}
+\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\code{format_clint} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
+
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-3) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized format}
+A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
+clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
+the p-value and the Akaike Information Criterion (AIC) of the linear 
+regression fit for all chemicals in the input data frame.
 }
 \description{
-This function use describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical clearance
-as characterized by disappearance of parent compound over time when incubated
-with primary hepatocytes (Shibata et al., 2000)
+This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
+using mass spectrometry (MS) peak area data collected as part of in vitro measurement 
+of chemical clearance, as characterized by the disappearance of parent compound over 
+time when incubated with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \details{
-Data are read from a "Level2" text file that should have been formatted and created 
-by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-should have been curated and had a column added with the value "Y" indicating
-that each row is verified as usable for analysis (that is, the Level2 file).
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_clint}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
 
 The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Blank \tab Blank\cr
-  Hepatocyte incubation concentration \tab Conc\cr
+  Hepatocyte incubation concentration vs. time \tab Cvst\cr
 }
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of
@@ -52,7 +79,7 @@ clint$ISTD.Conc <- 1
 clint$Dilution.Factor <- 1
 clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
 clint$Hep.Density <- 0.5
-clint$Analysis.Method <- "LC or GC" 
+clint$Analysis.Method <- "LC or GC"
 clint$Analysis.Instrument <- "No Idea"
 clint$Analysis.Parameters <- "None"
 
@@ -75,7 +102,7 @@ write.table(level2,
   quote=F)
 
 level3 <- calc_clint_point(FILENAME="Wambaugh2019")
- 
+
 # Just 1 uM data:
 write.table(subset(level2,Conc==1),
   file="Wambaugh2019-1-Clint-Level2.tsv",
@@ -90,7 +117,7 @@ write.table(subset(level2,Conc==10),
   file="Wambaugh2019-10-Clint-Level2.tsv",
   sep="\t",
   row.names=F,
-  quote=F) 
+  quote=F)
 
 level3.10 <- calc_clint_point(FILENAME="Wambaugh2019-10")
 

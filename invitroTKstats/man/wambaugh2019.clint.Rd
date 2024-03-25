@@ -3,24 +3,20 @@
 \docType{data}
 \name{wambaugh2019.clint}
 \alias{wambaugh2019.clint}
-\title{Mass Spectrometry for Wambaugh et al. (2019) Hepatocyte Incubations}
+\title{Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Hepatocyte Incubations}
 \format{
 A data.frame 23,021 rows and 15 variables: \describe{
-\item{\code{Preferred.Name}}{}
-\item{\code{CAS}}{}
-\item{\code{DTXSID}}{}
-\item{\code{Sample.Name}}{}
-\item{\code{Name}}{}
-\item{\code{Transition}}{}
-\item{\code{Area}}{}
-\item{\code{ISTD.Area}}{}
-\item{\code{ISTDResponseRatio}}{}
-\item{\code{ln...Remaining}}{}
-\item{\code{Time..mins.}}{}
-\item{\code{Conc}}{}
-\item{\code{TaskOrder}}{}
-\item{\code{FileName}}{}
-\item{\code{X}}{} 
+\item{\code{Preferred.Name}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD).}
+\item{\code{CAS}}{CAS Registry Number of the test compound.}
+\item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
+\item{\code{Sample.Name}}{Sample name used by the laboratory.}
+\item{\code{Name}}{Compound names used by the laboratory.}
+\item{\code{Area}}{Mass spectrometry peak area for the test compound.}
+\item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
+\item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
+\item{\code{Time..mins.}}{Time in minutes between the start of incubation and when the sample was taken.}
+\item{\code{Conc}}{Concentration used in the assay.}
+\item{\code{FileName}}{Name of the level 0 file containing the data.}
 }
 }
 \source{
@@ -30,12 +26,13 @@ Wambaugh et al. (2019)
 wambaugh2019.clint
 }
 \description{
-Wambaugh et al. (2019) includes measurements for intrinsic hepatic clearance
+\insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes measurements for intrinsic hepatic clearance
 Clint measured using in vitro suspensions of pooled primary human hepatocytes
-(Shibata, et al. 2002).)
+\insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \references{
 \insertRef{shibata2002prediction}{invitroTKstats}
+
 \insertRef{wambaugh2019assessing}{invitroTKstats}
 }
 \keyword{data}

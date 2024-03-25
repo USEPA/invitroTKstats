@@ -2,99 +2,124 @@
 % Please edit documentation in R/calc_fup_uc.R
 \name{calc_fup_uc}
 \alias{calc_fup_uc}
-\title{Calculate fraction unbound in plasma from ultracentrifugation data}
+\title{Calculate the Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data}
 \usage{
 calc_fup_uc(
-  PPB.data,
   FILENAME = "UC_Model_Results",
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS = 5,
   NUM.CORES = 2,
   RANDOM.SEED = 1111,
   good.col = "Verified",
-  JAGS.PATH = NA
+  JAGS.PATH = NA,
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{PPB.data}{A data frame containing mass-spectrometry peak areas,
-indication of chemical identity, and measurement type. The data frame should
-contain columns with names specified by the following arguments:}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+"<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results".)}
 
-\item{FILENAME}{A string used to identify outputs of the function call.
-(defaults to "BASE_Model_Results")}
+\item{data.in}{A Level-2 data frame generated from the 
+\code{format_fup_uc} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
 
-\item{TEMP.DIR}{An optional directory where file writing may be faster.}
+\item{TEMP.DIR}{(Character) Temporary directory to save intermediate files. By
+default, i.e. unspecified, all files will be exported to the user's current
+working directory. (Defaults to \code{NULL}.)}
 
-\item{NUM.CHAINS}{The number of Markov Chains to use. This allows evaluation
-of convergence according to Gelman and Rubin diagnostic.}
+\item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5.)}
 
-\item{NUM.CORES}{The number of processors to use (default 2)}
+\item{NUM.CORES}{(Numeric) The number of computer processors to use for
+parallel computing. (Defaults to 2.)}
 
-\item{RANDOM.SEED}{The seed used by the random number generator 
-(default 1111)}
+\item{RANDOM.SEED}{(Numeric) The seed used by the random number generator.
+(Defaults to 1111.)}
 
-\item{JAGS.PATH}{The file path to JAGS.}
+\item{good.col}{(Character) Column name indicating which rows have been
+verified, data rows valid for analysis are indicated with a "Y".
+(Defaults to "Verified".)}
 
-\item{sample.col}{Which column of PPB.data indicates the unique mass 
-spectrometry (MS) sample name used by the laboratory. (Defaults to 
-"Lab.Sample.Name")}
+\item{JAGS.PATH}{(Character) Computer specific file path to JAGS software.
+(Defaults to `NA`.)}
 
-\item{lab.compound.col}{Which column of PPB.data indicates The test compound 
-name used by the laboratory (Defaults to "Lab.Compound.Name")}
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-4) will be exported as a .RData file. 
+(Defaults to \code{TRUE}.)}
 
-\item{dtxsid.col}{Which column of PPB.data indicates EPA's DSSTox Structure 
-ID (\url{http://comptox.epa.gov/dashboard}) (Defaults to "DTXSID")}
+\item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
+as an .RData file. (Defaults to \code{FALSE}.)}
 
-\item{date.col}{Which column of PPB.data indicates the laboratory measurement
-date (Defaults to "Date")}
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
 
-\item{compound.col}{Which column of PPB.data indicates the test compound
-(Defaults to "Compound.Name")}
-
-\item{area.col}{Which column of PPB.data indicates the target analyte (that 
-is, the test compound) MS peak area (Defaults to "Area")}
-
-\item{series.col}{Which column of PPB.data indicates the "series", that is
-a simultaneous replicate (Defaults to "Series")}
-
-\item{type.col}{Which column of PPB.data indicates the sample type (see table
-above)(Defaults to "Sample.Type")}
-
-\item{cal.col}{Which column of PPB.data indicates the MS calibration -- for
-instance different machines on the same day or different days with the same
-MS analyzer (Defaults to "Cal")
-
-#param std.conc.col Which column indicates the intended concentration 
-of the test chemical for calibration curves (Defaults to "Standard.Conc")}
-
-\item{dilution.col}{Which column of PPB.data indicates how many times the
-sample was diluted before MS analysis (Defaults to "Dilution.Factor")}
-
-\item{istd.col}{Which column of PPB.data indicates the MS peak area for the
-internal standard (Defaults to "ISTD.Area")}
-
-\item{istd.name.col}{Which column of PPB.data indicates identity of the 
-internal standard (Defaults to "ISTD.Name")}
-
-\item{istd.conc.col}{Which column of PPB.data indicates the concentration of
-the internal standard (Defaults to "ISTD.Conc")}
-
-\item{uc.assay.conc.col}{Which column of PPB.data indicates the intended
-test chemical concentration at time zero (Defaults to "UC.Assay.Conc")}
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory. (Defaults to \code{NULL}.)}
 }
 \value{
-A data.frame containing quunantiles of the Bayesian posteriors
+A list of two objects: 
+\enumerate{
+   \item{Results: A data frame with Bayesian estimated fraction unbound
+   in plasma (Fup) and credible intervals for all compounds in the input file.
+   Column includes:
+   Compound.Name - compound name,
+   Lab.Compound.Name - compound name used by the laboratory,
+   DTXSID - EPA's DSSTox Structure ID,
+   Fup.point - point estimate of Fup,
+   Fup.Med - Posterior median,
+   Fup.Low - 2.5th quantile,
+   and Fup.High - 97.5th quantile.}
+   \item{coda: A runjags-class object containing results from JAGS model.}
+}
 }
 \description{
+This function estimates the fraction unbound in plasma (Fup) and credible
+intervals with a Bayesian modeling approach, via MCMC simulations.
+Data used in modeling is collected from Ultracentrifugation (UC) Fup assays.
+Fup and the credible interval are calculated from the MCMC posterior samples
+and the function returns a summary table along with the full set of
+MCMC results.
+}
+\details{
+The input to this function should be "Level-2" data. Level-2 data is Level-1,
+data formatted with the \code{\link{format_fup_uc}} function, and curated
+with a verification column. "Y" in the verification column indicates the
+data row is valid for analysis. 
+
+Note: By default, this function writes files to the user's current working
+directory. Users must specify an alternative path with the `TEMP.DIR`
+argument if they want the files exported to another path. Exported files 
+include the summary table (.RData), JAGS model (.RData), and any "unverified" 
+data excluded from the analysis (.tsv).
+
 The data frame of observations should be annotated according to
-of these types:
+these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
-  Ultracentrifugation Aqueous Fraction \tab UC\cr
+  Ultracentrifugation Aqueous Fraction \tab AF\cr
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }
-We don't currently use the T1 data, but you must have CC, AF, and T5 data.
+We don't currently use the T1 data, but CC, AF, and T5 data are required.
+}
+\examples{
+# Level-2 file
+write.table(level2,
+  file="KreutzPFAS-fup-UC-Level2.tsv",
+  sep="\t",
+  row.names=F,
+  quote=F)
+
+# JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
+                       NUM.CORES=8,
+                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+
 }
 \author{
 John Wambaugh and Chantel Nicolas

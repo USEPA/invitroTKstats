@@ -120,17 +120,24 @@ model {
 }
 "
 
-#' Calculate intrinsic hepatic clearance
+#' Calculate Intrinsic Hepatic Clearance (Clint) with Bayesian Modeling (Level-4)
 #'
-#' This function use describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical clearance
-#' as characterized by disappearance of parent compound over time when incubated
-#' with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
-#'
-#' Data are read from a "Level2" text file that should have been formatted and created
-#' by \code{\link{format_fup_red}} (this is the "Level1" file). The Level1 file
-#' should have been curated and had a column added with the value "Y" indicating
-#' that each row is verified as usable for analysis (that is, the Level2 file).
+#' This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
+#' modeling on Hepatocyte Incubation data. Clint and the credible intervals,
+#' at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
+#' A summary table along with the full set of MCMC results is returned from
+#' the function.
+#' 
+#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' data formatted with the \code{\link{format_clint}} function, and curated
+#' with a verification column. "Y" in the verification column indicates the
+#' data row is valid for analysis. 
+#' 
+#' Note: By default, this function writes files to the user's current working
+#' directory. Users must specify an alternative path with the `TEMP.DIR`
+#' argument if they want the files exported to another path. Exported files 
+#' include the summary table (.RData), JAGS model (.RData), and any "unverified" 
+#' data excluded from the analysis (.tsv).
 #'
 #' The data frame of observations should be annotated according to
 #' of these types:
@@ -144,78 +151,103 @@ model {
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
 #' MS response as a function of time.
 #'
-#' @param FILENAME A string used to identify the input file, whatever the
-#' argument given, "-Clint-Level4Analysis.tsv" is appended (defaults to "MYDATA")
+#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' "<FILENAME>-Clint-Level2.tsv", and to name the exported model results. 
+#' This argument is required no matter which method of specifying input data is used. 
+#' (Defaults to \code{NULL}.)
 #'
-#' @param good.col Name of a column indicating which rows have been verified for
-#' analysis, indicated by a "Y" (Defaults to "Verified")
+#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' \code{format_clint} function with a verification column added by 
+#' \code{sample_verification}. Complement with manual verification if needed.
 #'
-#' @param decrease.prob Prior probability that a chemical will decrease in
-#' the assay (defaults to 0.5)
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
+#' If \code{NULL}, all files will be written to the current working directory. 
+#' (Defaults to \code{NULL}.)
+#' 
+#' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
-#' @param saturate.prob Prior probability that a chemicals rate of metabolism
-#' will decrease between 1 and 10 uM (defaults to 0.25)
+#' @param NUM.CORES (Numeric) The number of processors to use for parallel computing. (Defaults to 2.)
 #'
-#' @param degrade.prob Prior probability that a chemical will be unstable
-#' (that is, degrade abiotically) in the assay (defaults to 0.05)
+#' @param RANDOM.SEED (Numeric) The seed used by the random number generator.
+#' (Defaults to 1111.)
 #'
-#' @param TEMP.DIR An optional directory where file writing may be faster.
+#' @param good.col (Character) Column name indicating which rows have been 
+#' verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified".)
+#' 
+#' @param JAGS.PATH (Character) Computer specific file path to JAGS software. 
+#' (Defaults to \code{NA}.)
+#' 
+#' @param decrease.prob (Numeric) Prior probability that a chemical will decrease in
+#' the assay. (Defaults to 0.5.)
 #'
-#' @param JAGS.PATH The file path to JAGS.
+#' @param saturate.prob (Numeric) Prior probability that a chemicals rate of metabolism
+#' will decrease between 1 and 10 uM. (Defaults to 0.25.)
 #'
-#' @param NUM.CHAINS The number of Markov Chains to use. This allows evaluation
-#' of convergence according to Gelman and Rubin diagnostic.
+#' @param degrade.prob (Numeric) Prior probability that a chemical will be unstable
+#' (that is, degrade abiotically) in the assay. (defaults to 0.05.)
+#' 
+#' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results 
+#' as an .RData file. (Defaults to \code{FALSE}.)
+#' 
+#' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
+#' If \code{NULL}, looking for the input level-2 file in the current working
+#' directory. (Defaults to \code{NULL}.)
+#' 
+#' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
+#' If \code{NULL}, the output file will be saved to the current working
+#' directory. (Defaults to \code{NULL}.)
 #'
-#' @param NUM.CORES The number of processors to use (default 2)
-#'
-#' @param RANDOM.SEED The seed used by the random number generator
-#' (default 1111)
-#'
-#' @return \item{data.frame}{A data.frame in standardized format}
+#' @return A list of two objects: 
+#' \enumerate{
+#'    \item{Results: A Level-4 data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
+#'    for 1 and 10 uM and credible intervals for all compounds in the input file. Column includes:
+#'    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
+#'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Clint.1.Med/Clint.10.Med - posterior median, 
+#'    Clint.1.Low/Clint.10.Low - 2.5th quantile, Clint.1.High/Clint.10.High - 97.5th quantile, 
+#'    Clint.pValue, Sat.pValue, degrades.pValue - "p-values" estimated from the probabilities of 
+#'    observing decreases, saturations, and abiotic degradations in all posterior samples.}
+#'    \item{coda: A runjags-class object containing results from JAGS model.}
+#' }
 #'
 #' @author John Wambaugh
 #'
 #' @examples
+#' ## Example 1: loading level-2 using data.in
+#' \dontrun{
+#' level2 <- invitroTKstats::kreutz2023.clint
+#' 
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_clint(data.in = level2,
+#'                      NUM.CORES=2,
+#'                      JAGS.PATH=path.to.JAGS)
+#' }
+#' 
+#' ## Example 2: importing level-2 from a .tsv file
+#' \dontrun{
+#' # Refer to sample_verification help file for how to export level-2 data to a directory.
+#' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+#' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
+#' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+#' path.to.JAGS <- findJAGS()
+#' level4 <- calc_clint(FILENAME="KreutzPFAS",
+#'                      NUM.CORES=2,
+#'                      JAGS.PATH=path.to.JAGS,
+#'                      INPUT.DIR = "invitroTKstats/vignettes")
+#' }
+#' 
+#' 
 #'
-#' library(invitroTKstats)
+#' @import Rdpack
 #'
-#' clint <- wambaugh2019.clint
-#' clint$Date <- "2019"
-#' clint$Sample.Type <- "Blank"
-#' clint$Time..mins. <- as.numeric(clint$Time..mins.)
-#' clint[!is.na(clint$Time..mins.),"Sample.Type"] <- "Cvst"
-#' clint$ISTD.Name <- "Bucetin, Propranolol, and Diclofenac"
-#' clint$ISTD.Conc <- 1
-#' clint$Dilution.Factor <- 1
-#' clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
-#' clint$Hep.Density <- 0.5
-#' clint$Analysis.Method <- "LC or GC"
-#' clint$Analysis.Instrument <- "No Idea"
-#' clint$Analysis.Parameters <- "None"
-#'
-#' level1 <- format_clint(clint,
-#'   FILENAME="Wambaugh2019",
-#'   sample.col="Sample.Name",
-#'   compound.col="Preferred.Name",
-#'   lab.compound.col="Name",
-#'   time.col="Time..mins.",
-#'   cal.col="FileName")
-#'
-#' level2 <- level1
-#' level2$Verified <- "Y"
-#'
-#' # All data (allows test for saturation):
-#' write.table(level2,
-#'   file="Wambaugh2019-Clint-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level4 <- calc_clint_point(FILENAME="Wambaugh2019")
+#' @import coda
 #'
 #' @export calc_clint
 calc_clint <- function(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS=5,
   NUM.CORES=2,
@@ -224,233 +256,47 @@ calc_clint <- function(
   JAGS.PATH = NA,
   decrease.prob = 0.5,
   saturate.prob = 0.25,
-  degrade.prob = 0.05)
+  degrade.prob = 0.05,
+  save.MCMC = FALSE,
+  INPUT.DIR=NULL, 
+  OUTPUT.DIR = NULL
+  )
 {
-# Internal function for constructing data object given to JAGS:
-  build_mydata <- function(this.data)
-  {
-#
-# What concentrations were tested (1 and 10 uM typical):
-#
- # Establish a vector of unique nominal test concentrations:
-    Test.conc <- sort(unique(unique(this.cvt[,"Clint.Assay.Conc"])))
-    Num.conc <- length(Test.conc)
-#
-# How many separate mass-spec calibrations were made:
-#
-# Cal.name is used for matching the observations to the calibrations, but is not
-# passed on to JAGS
-    Cal.name <- unique(this.data$Calibration)
-# Identify the number of calibrations:
-    Num.cal <- length(Cal.name)
-#
-# CvT Obs:
-#
-# Extract the observations
-    this.cvt <- subset(this.data, Sample.Type=="Cvst")
-    obs <-  this.cvt[!is.na(this.cvt[,time.col]), "Response"]
-    Num.obs <- length(obs)
-    obs.time <- this.cvt[!is.na(this.cvt[,time.col]), "Time"]
-    obs.df <- this.cvt[!is.na(this.cvt[,time.col]), "Dilution.Factor"]
-    obs.conc <- rep(NA, Num.obs)
-    for (this.conc in Test.conc)
-    {
-      obs.conc[this.cvt[
-        !is.na(this.cvt[,time.col]), "Clint.Assay.Conc"] == this.conc] <-
-        which(Test.conc == this.conc)
-    }
- # Match observations to correct calibration curve:
-    obs.cal <- rep(NA, Num.obs)
-    for (this.cal in unique(this.cvt$Calibration))
-    {
-      obs.cal[this.cvt$Calibration == this.cal] <-
-        which(Cal.name == this.cal)
-    }
-#
-# Blanks (hepatocytes, no chemical):
-#
-# Identify the blanks (observation time should be NA):
-    this.blanks <- subset(this.data, Sample.Type=="Blank")
-    blank.obs <- this.blanks[,"Response"]
-    blank.df <- this.blanks[,"Dilution.Factor"]
-    Num.blanks <- length(blank.obs)
-    # Create a dummy vector to keep JAGS happy:
-    if (Num.blanks == 0) {
-      blank.obs <- c(-99,-99)
-      blank.df <- c(-99,-99)
-    } else if (Num.blanks == 1) {
-      blank.obs <- c(blank.obs, -99)
-      blank.df <- c(blank.df, -99)
-    }
-# Match the blanks to correct calibration curve:
-    if (Num.blanks > 0) blank.cal <- rep(NA, Num.blanks)
-    else blank.cal <- c(-99,-99)
-    for (this.cal in unique(this.blanks$Calibration))
-    {
-      blank.cal[this.blanks$Calibration == this.cal] <-
-        which(Cal.name == this.cal)
-    }
-#
-# Inactivated hepatocytes
-#
-# Get the inactive hepatocyte data (if any):
-    this.abio <- subset(this.data, Sample.Type=="Inactive" &
-      !is.na(Time))
-    Num.abio.obs <- dim(this.abio)[1]
-    if (Num.abio.obs > 0)
-    {
-      abio.obs <-  this.abio[!is.na(this.abio[,time.col]), "Response"]
-      abio.obs.time <- this.abio[!is.na(this.abio[,time.col]), "Time"]
-      abio.obs.df <- this.abio[!is.na(this.abio[,time.col]), "Dilution.Factor"]
-      abio.obs.conc <- rep(NA, Num.abio.obs)
-      for (this.conc in Test.conc)
-      {
-        abio.obs.conc[this.abio[
-          !is.na(this.abio[,time.col]), "Clint.Assay.Conc"] == this.conc] <-
-          which(Test.conc == this.conc)
-      }
-      abio.obs.cal <- rep(NA, Num.abio.obs)
-      for (this.cal in unique(this.abio$Calibration))
-      {
-        abio.obs.cal[this.abio$Calibration == this.cal] <-
-          which(Cal.name == this.cal)
-      }
-    } else {
-      abio.obs <- c(-99,-99)
-      abio.obs.conc <- c(-99,-99)
-      abio.obs.time <- c(-99,-99)
-      abio.obs.cal <- c(-99,-99)
-      abio.obs.df<- c(-99,-99)
-    }
-#
-# Calibration curve measurements
-#
-# Get the calibration curves (if any):
-    this.cc <- subset(this.data, Sample.Type=="CC" &
-      !is.na(Std.Conc))
-    Num.cc.obs <- dim(this.cc)[1]
-    if (Num.cc.obs > 0)
-    {
-      cc.obs <- this.cc[, "Response"]
-      cc.obs.conc <- this.cc[, "Std.Conc"]
-      cc.obs.df <- this.cc[, "Dilution.Factor"]
-      cc.obs.cal <- rep(NA, Num.cc.obs)
-      for (this.cal in unique(this.cc[,"Calibration"]))
-      {
-        cc.obs.cal[this.cc[,"Calibration"] == this.cal] <-
-          which(Cal.name == this.cal)
-      }
-    } else {
-      cc.obs <- c(-99,-99)
-      cc.obs.conc <- c(-99,-99)
-      cc.obs.cal <- c(-99,-99)
-      cc.obs.df <- c(-99,-99)
-    }
-
-    return(mydata <- list('obs' = obs,
-# Describe assay:
-      'Test.Nominal.Conc' = Test.conc,
-      'Num.cal' = Num.cal,
-# Cvt data:
-      'Num.obs' = Num.obs,
-      'obs.conc' = obs.conc,
-      'obs.time' = obs.time,
-      'obs.cal' = obs.cal,
-      'obs.Dilution.Factor' = obs.df,
-# Blank data:
-      'Num.blank.obs' = Num.blanks,
-      'Blank.obs' = blank.obs,
-      'Blank.cal' = blank.cal,
-      'Blank.Dilution.Factor' = blank.df,
-# Callibration.curve.data:
-      'Num.cc' = Num.cc.obs,
-      'cc.obs.conc' = cc.obs.conc,
-      'cc.obs' = cc.obs,
-      'cc.obs.cal' = cc.obs.cal,
-      'cc.obs.Dilution.Factor' = cc.obs.df,
-# Abiotic degradation data:
-      'Num.abio.obs' = Num.abio.obs,
-      'abio.obs' = abio.obs,
-      'abio.obs.conc' = abio.obs.conc,
-      'abio.obs.time' = abio.obs.time,
-      'abio.obs.cal' = abio.obs.cal,
-      'abio.obs.Dilution.Factor' = abio.obs.df,
-# Priors for decrease/saturation/degradation:
-      'DECREASE.PROB' = decrease.prob,
-      'SATURATE.PROB' = saturate.prob,
-      'DEGRADE.PROB' = degrade.prob
-      ))
-  }
-
-  # function to initialize a Markov chain:
-  initfunction <- function(chain)
-  {
-    seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
-    set.seed(seed)
-
-    return(list(
-# Random number seed:
-      .RNG.seed=seed,
-      .RNG.name="base::Super-Duper",
-# Parameters that may vary between calibrations:
-      log.const.analytic.sd = log10(runif(mydata$Num.cal,0,0.1)),
-      log.hetero.analytic.slope = log10(runif(mydata$Num.cal,0,0.1)),
-      C.thresh = runif(mydata$Num.cal, 0, 0.1),
-      log.calibration = rep(0,mydata$Num.cal),
-      background = rep(0,mydata$Num.cal),
-# Statistics characterizing the measurment:
-      decreases = rbinom(1,1,0.5),
-      degrades = rbinom(1,1,0.5),
-      bio.rate = runif(1,0.05,0.25),
-      abio.rate = runif(1,0.05,0.25),
-      saturates = rbinom(1,1,0.5),
-      saturation = runif(1,0,1)
-    ))
-  }
-
-  MS.data <- read.csv(file=paste(FILENAME,"-Clint-Level2.tsv",sep=""),
-    sep="\t",header=T)
+  if (!missing(data.in)) {
+    if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
+    MS.data <- as.data.frame(data.in)
+    } else if (!is.null(INPUT.DIR)) {
+      MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
+                          sep="\t",header=T)
+      } else {
+        MS.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
+                          sep="\t",header=T)
+        }
+  
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
+  
+  if (!is.null(TEMP.DIR)) 
+  {
+    current.dir <- getwd()
+    setwd(TEMP.DIR)
+  }
 
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  density.col <- "Hep.Density"
-  std.conc.col <- "Std.Conc"
-  clint.assay.conc.col <- "Clint.Assay.Conc"
-  time.col <- "Time"
-  area.col <- "Area"
-
-# We need all these columns in MS.data
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    density.col,
-    std.conc.col,
-    clint.assay.conc.col,
-   time.col,
-    area.col)
-
+  clint.cols <- c(L1.common.cols,
+                  time.col = "Time",
+                  test.conc.col = "Test.Compound.Conc",
+                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  density.col = "Hep.Density"
+  )
+  list2env(as.list(clint.cols), envir = environment())
+  cols <- c(unlist(mget(names(clint.cols))), "Response", good.col)
+  
   # Check for missing columns
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_clint first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_clint first (level 1) then curate to (level 2).")
@@ -464,8 +310,8 @@ calc_clint <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
-  write.table(unverified.data, file=paste(
-    FILENAME,"-Clint-Level2-heldout.tsv",sep=""),
+  write.table(unverified.data, file=paste0(
+    FILENAME,"-Clint-Level2-heldout.tsv"),
     sep="\t",
     row.names=F,
     quote=F)
@@ -485,7 +331,14 @@ calc_clint <- function(
   } else {
     Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
   }
-
+  
+  # Safety check for parallel computation 
+  MAX.CORES <- detectCores(logical = F) - 1
+  if (NUM.CORES > MAX.CORES) stop(paste0("Specified NUM.CORES = ", NUM.CORES, " cores for parallel computing exceeds the allowable number of cores, that is ",
+                                         MAX.CORES, 
+                                         ", and may bog down your machine! (Max cores is based on the total number of available computing cores minus one for overhead.)"))
+  if (NUM.CHAINS > 10) warning("Specified number of chains is greater than 10 and may be excessive for computational time.")
+  
   # Make a cluster if using multiple cores:
   if (NUM.CORES>1)
   {
@@ -521,15 +374,16 @@ calc_clint <- function(
         ")",
         sep=""))
 
-      mydata <- build_mydata(this.subset)
+      mydata <- build_mydata_clint(this.cvt, this.subset, decrease.prob, saturate.prob, degrade.prob)
       if (!is.null(mydata))
       {
         # Use random number seed for reproducibility
         set.seed(RANDOM.SEED)
-
+        
+        init_vals <- function(chain) initfunction_clint(mydata=mydata, chain = chain)
         # write out arguments to runjags:
-        save(this.compound,mydata,initfunction,
-        file=paste(FILENAME,"-Clint-PREJAGS.RData",sep=""))
+        save(this.compound,mydata,init_vals,
+        file=paste0(FILENAME,"-Clint-PREJAGS.RData"))
 
         # Run JAGS:
         coda.out[[this.compound]] <-  autorun.jags(
@@ -538,7 +392,7 @@ calc_clint <- function(
                            method="parallel",
                            cl=CPU.cluster,
                            summarise=T,
-                           inits = initfunction,
+                           inits = init_vals,
                            max.time="300s",
                            startsample=4000,
                            adapt=5000,
@@ -564,7 +418,7 @@ calc_clint <- function(
                                 'const.analytic.sd',
                                 'hetero.analytic.slope',
                                 'C.thresh',
-                                'calibration',
+                                'log.calibration',
                                 'background'),
                               add.monitor = c(
                               # Measurement parameters
@@ -643,19 +497,44 @@ calc_clint <- function(
         Results <- rbind(Results,new.results)
 
         write.table(Results,
-          file=paste(OUTPUT.FILE,sep=""),
+          file=paste0(OUTPUT.FILE),
           sep="\t",
           row.names=F,
           quote=F)
       }
     }
+  
+  if (!is.null(TEMP.DIR)) 
+  {
+    setwd(current.dir)
+  }
 
   stopCluster(CPU.cluster)
 
   View(Results)
+  
+  if (!is.null(OUTPUT.DIR)) {
+    file.path <- OUTPUT.DIR
+  } else if (!is.null(INPUT.DIR)) {
+    file.path <- INPUT.DIR
+  } else {
+    file.path <- getwd()
+  }
+  
   save(Results,
-    file=paste(FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData",sep=""))
-
+       file=paste0(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData"))
+  cat(paste0("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
+             " has been exported to the following directory: ", file.path), "\n")
+  
+  if (save.MCMC){
+    if (length(coda.out) != 0) {
+      save(coda.out,
+           file=paste0(file.path, "/", FILENAME,"-Clint-Level4-MCMC-Results-",Sys.Date(),".RData"))
+      } else {
+        cat("No MCMC results to be saved.\n")
+      }
+    }
+  
   return(list(Results=Results,coda=coda.out))
 }
 
