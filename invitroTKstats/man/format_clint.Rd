@@ -16,24 +16,26 @@ format_clint(
   type.col = "Sample.Type",
   density = NULL,
   density.col = "Hep.Density",
-  compound.conc = NULL,
-  compound.conc.col = "Nominal.Conc",
   cal = NULL,
   cal.col = "Cal",
   dilution = NULL,
   dilution.col = "Dilution.Factor",
-  time = 2,
+  time = NULL,
   time.col = "Time",
   istd.col = "ISTD.Area",
   istd.name = NULL,
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
   istd.conc.col = "ISTD.Conc",
-  std.conc = NULL,
-  std.conc.col = "Standard.Conc",
+  test.conc = NULL,
+  test.conc.col = "Test.Compound.Conc",
   clint.assay.conc = NULL,
   clint.assay.conc.col = "Clint.Assay.Conc",
   area.col = "Area",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method = NULL,
   analysis.method.col = "Analysis.Method",
   analysis.instrument = NULL,
@@ -44,7 +46,11 @@ format_clint(
   level0.file = NULL,
   level0.file.col = "Level0.File",
   level0.sheet = NULL,
-  level0.sheet.col = "Level0.Sheet"
+  level0.sheet.col = "Level0.Sheet",
+  output.res = TRUE,
+  save.bad.types = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
@@ -90,15 +96,6 @@ information. (Defaults to "Hep.Density".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{density}.)}
 
-\item{compound.conc}{(Numeric) The concentration 
-of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
-use only if all tested compounds have the same concentration for calibration curves.)}
-
-\item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
-information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{compound.conc}.)}
-
 \item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
 the same day or on different days with the same MS analyzer. (Defaults to \code{NULL}.) 
@@ -120,7 +117,8 @@ necessarily have this field. If this field is missing, it can be auto-filled wit
 specified in \code{dilution}.)}
 
 \item{time}{(Numeric) Time of the measurement (in minutes) since the test 
-chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)}
+chemicals was introduced into the hepatocyte incubation. (Defaults to \code{NULL}.)
+(Note: Single entry only, use only if all measurements were taken after the same amount of time.)}
 
 \item{time.col}{(Character) Column name containing \code{time} 
 information. (Defaults to "Time".) (Note: \code{data.in} does not
@@ -147,14 +145,14 @@ internal standard concentration.)}
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{istd.conc}.)}
 
-\item{std.conc}{(Numeric) The standard test chemical concentration for 
+\item{test.conc}{(Numeric) The standard test chemical concentration for 
 the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 use only if the same standard concentration was used for all tested compounds.)}
 
-\item{std.conc.col}{(Character) Column name containing \code{std.conc} 
-information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
+\item{test.conc.col}{(Character) Column name containing \code{test.conc} 
+information. (Defaults to "Test.Compound.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{std.conc}.)}
+specified in \code{test.conc}.)}
 
 \item{clint.assay.conc}{(Numeric) The initial test chemical concentration for 
 the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
@@ -167,6 +165,24 @@ specified in \code{clint.assay.conc}.)}
 
 \item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
 is, the test compound) MS peak area. (Defaults to "Area".)}
+
+\item{biological.replicates}{(Character) Replicates with the same analyte. Typically, this uses 
+numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if none of the test compounds have replicates.)}
+
+\item{biological.replicates.col}{(Character) Column name of \code{data.in} containing the number or 
+the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".)
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{biological.replicates}.)}
+
+\item{technical.replicates}{(Character) Repeated measurements from one sample. Typically, this uses 
+numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if none of the test compounds have replicates.)}
+
+\item{technical.replicates.col}{(Character) Column name of \code{data.in} containing the number or 
+the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{technical.replicates}.)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
 typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
@@ -217,6 +233,31 @@ were obtained from the same sheet in the same Level-0 file.)}
 (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{level0.sheet}.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-1) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{save.bad.types}{(Logical) When set to \code{TRUE}, export data removed 
+due to inappropriate sample types. See the Detail section for the required sample types. 
+(Defaults to \code{FALSE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
+If \code{NULL}, looking for the input level-0 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
+
+\item{compound.conc}{(Numeric) The concentration
+of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only,
+use only if all tested compounds have the same concentration for calibration curves.)}
+
+\item{compound.conc.col}{(Character) Column name containing \code{compound.conc}
+information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value
+specified in \code{compound.conc}.)}
 }
 \value{
 A Level-1 data frame with a standardized format containing a  

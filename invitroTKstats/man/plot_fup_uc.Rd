@@ -5,7 +5,13 @@
 \title{Plot Mass Spectrometry Responses for Fraction Unbound in Plasma Data from
 Ultracentrifugation (UC)}
 \usage{
-plot_fup_uc(level2, dtxsid, good.col = "Verified")
+plot_fup_uc(
+  level2,
+  dtxsid,
+  compare = "type",
+  good.col = "Verified",
+  color.palette = "viridis"
+)
 }
 \arguments{
 \item{level2}{(Data Frame) A data.frame containing Level-2 data for fraction
@@ -13,8 +19,15 @@ unbound in plasma (Fup) measured by ultracentrifugation (UC).}
 
 \item{dtxsid}{(Character) EPA's DSSTox Structure ID for the chemical to be plotted.}
 
+\item{compare}{(Character) A string indicating the plot is for 
+comparing the responses across sample types ("type") or across calibrations ("cal").
+(Defaults to "type".)}
+
 \item{good.col}{(Character) Column name containg verification information,
 data rows valid for plotting are indicated with a "Y". (Defaults to "Verified".)}
+
+\item{color.palette}{(Character) A character string indicating which 
+\code{viridis} R package color map option to use. (Defaults to "viridis".)}
 }
 \value{
 \item{ggplot2}{A figure of mass spectrometry responses for

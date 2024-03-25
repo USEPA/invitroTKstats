@@ -6,21 +6,30 @@
 \usage{
 calc_fup_uc(
   FILENAME = "UC_Model_Results",
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS = 5,
   NUM.CORES = 2,
   RANDOM.SEED = 1111,
   good.col = "Verified",
-  JAGS.PATH = NA
+  JAGS.PATH = NA,
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
 \item{FILENAME}{(Character) A string used to identify the input Level-2 file.
-"<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results")}
+"<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results".)}
 
-\item{TEMP.DIR}{(Character) Alternative directory to save output files. By
+\item{data.in}{A Level-2 data frame generated from the 
+\code{format_fup_uc} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
+
+\item{TEMP.DIR}{(Character) Temporary directory to save intermediate files. By
 default, i.e. unspecified, all files will be exported to the user's current
-working directory. (Defaults to `NULL`.)}
+working directory. (Defaults to \code{NULL}.)}
 
 \item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5.)}
 
@@ -36,6 +45,21 @@ verified, data rows valid for analysis are indicated with a "Y".
 
 \item{JAGS.PATH}{(Character) Computer specific file path to JAGS software.
 (Defaults to `NA`.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-4) will be exported as a .RData file. 
+(Defaults to \code{TRUE}.)}
+
+\item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
+as an .RData file. (Defaults to \code{FALSE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory. (Defaults to \code{NULL}.)}
 }
 \value{
 A list of two objects: 

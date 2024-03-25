@@ -6,39 +6,63 @@
 \usage{
 calc_fup_red(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS = 5,
   NUM.CORES = 2,
   RANDOM.SEED = 1111,
   good.col = "Verified",
   JAGS.PATH = NA,
-  Physiological.Protein.Conc = 70/(66.5 * 1000) * 1e+06
+  Physiological.Protein.Conc = 70/(66.5 * 1000) * 1e+06,
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
 \item{FILENAME}{(Character) A string used to identify the input Level-2 file.
 "<FILENAME>-fup-RED-Level2.tsv".}
 
-\item{TEMP.DIR}{(Character) Alternative directory to save output files. 
+\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\code{format_fup_red} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
+
+\item{TEMP.DIR}{(Character) Temporary directory to save intermediate files. 
 If \code{NULL}, all files will be written to the current working directory. 
-(Defaults to \code{NULL})}
+(Defaults to \code{NULL}.)}
 
-\item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5)}
+\item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5.)}
 
-\item{NUM.CORES}{(Numeric) The number of processors to use for parallel computing. (Defaults to 2)}
+\item{NUM.CORES}{(Numeric) The number of processors to use for parallel computing. (Defaults to 2.)}
 
 \item{RANDOM.SEED}{The seed used by the random number generator.
-(Defaults to 1111)}
+(Defaults to 1111.)}
 
 \item{good.col}{(Character) Column name indicating which rows have been 
-verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified")}
+verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified".)}
 
-\item{JAGS.PATH}{(Character) Computer specific file path to JAGS software. (Defaults to \code{NA})}
+\item{JAGS.PATH}{(Character) Computer specific file path to JAGS software. (Defaults to \code{NA}.)}
 
 \item{Physiological.Protein.Conc}{(Numeric) The assumed physiological protein concentration 
 for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
 According to Berg and Lane (2011): 60-80 mg/mL, albumin is 66.5 kDa,
 assume all protein is albumin to estimate default in uM.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-4) will be exported as a .RData file. 
+(Defaults to \code{TRUE}.)}
+
+\item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
+as an .RData file. (Defaults to \code{FALSE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory. (Defaults to \code{NULL}.)}
 }
 \value{
 A list of two objects: 
