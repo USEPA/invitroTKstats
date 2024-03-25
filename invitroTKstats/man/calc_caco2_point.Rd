@@ -6,14 +6,20 @@
 \usage{
 calc_caco2_point(
   FILENAME,
+  data.in,
   good.col = "Verified",
   output.res = TRUE,
-  TEMP.DIR = NULL
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
 \item{FILENAME}{(Character) A string used to identify the input Level-2 file.
 "<FILENAME>-Caco-2-Level2.tsv".}
+
+\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\code{format_caco2} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
 
 \item{good.col}{(Character) Column name indicating which rows have been
 verified, data rows valid for analysis are indicated with a "Y".
@@ -23,9 +29,13 @@ verified, data rows valid for analysis are indicated with a "Y".
 table (Level-3) will be exported the current directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
 
-\item{TEMP.DIR}{(Character) Alternative directory to save output files. By
-default, i.e. unspecified, all files will be exported to the user's current
-working directory. (Defaults to \code{NULL}.)}
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
 \item{data.frame}{A data.frame in standardized format}

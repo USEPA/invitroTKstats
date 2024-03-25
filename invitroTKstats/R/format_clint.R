@@ -64,13 +64,13 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{density}.)
 #' 
-#' @param compound.conc (Numeric) The concentration 
-#' of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' @param compound.conc (Numeric) The concentration
+#' of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only,
 #' use only if all tested compounds have the same concentration for calibration curves.)
 #' 
-#' @param compound.conc.col (Character) Column name containing \code{compound.conc} 
+#' @param compound.conc.col (Character) Column name containing \code{compound.conc}
 #' information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
-#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value
 #' specified in \code{compound.conc}.)
 #' 
 #' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
@@ -94,7 +94,8 @@
 #' specified in \code{dilution}.)
 #' 
 #' @param time (Numeric) Time of the measurement (in minutes) since the test 
-#' chemicals was introduced into the hepatocyte incubation. (Defaults to 2.)
+#' chemicals was introduced into the hepatocyte incubation. (Defaults to \code{NULL}.)
+#' (Note: Single entry only, use only if all measurements were taken after the same amount of time.)
 #' 
 #' @param time.col (Character) Column name containing \code{time} 
 #' information. (Defaults to "Time".) (Note: \code{data.in} does not
@@ -121,14 +122,14 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{istd.conc}.)
 #' 
-#' @param std.conc (Numeric) The standard test chemical concentration for 
+#' @param test.conc (Numeric) The standard test chemical concentration for 
 #' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same standard concentration was used for all tested compounds.)
 #' 
-#' @param std.conc.col (Character) Column name containing \code{std.conc} 
-#' information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
+#' @param test.conc.col (Character) Column name containing \code{test.conc} 
+#' information. (Defaults to "Test.Compound.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{std.conc}.)
+#' specified in \code{test.conc}.)
 #' 
 #' @param clint.assay.conc (Numeric) The initial test chemical concentration for 
 #' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
@@ -141,6 +142,24 @@
 #' 
 #' @param area.col (Character) Column name of \code{data.in} containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
+#' 
+#' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param biological.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".)
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{biological.replicates}.)
+#' 
+#' @param technical.replicates (Character) Repeated measurements from one sample. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param technical.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{technical.replicates}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
@@ -255,24 +274,28 @@ format_clint <- function(
   type.col="Sample.Type",
   density=NULL,
   density.col="Hep.Density",
-  compound.conc=NULL,
-  compound.conc.col="Nominal.Conc",
+  # compound.conc=NULL,
+  # compound.conc.col="Nominal.Conc",
   cal=NULL,
   cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  time = 2,
+  time = NULL,
   time.col="Time",
   istd.col="ISTD.Area",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  std.conc=NULL,
-  std.conc.col="Standard.Conc",
+  test.conc=NULL,
+  test.conc.col="Test.Compound.Conc",
   clint.assay.conc=NULL,
   clint.assay.conc.col="Clint.Assay.Conc",
   area.col="Area",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
   analysis.instrument=NULL,
@@ -307,17 +330,17 @@ format_clint <- function(
     note.col <- "Note"
   }
 
-  if (!(std.conc.col %in% colnames(data.in)))
+  if (!(test.conc.col %in% colnames(data.in)))
   {
-    if (is.null(std.conc))
+    if (is.null(test.conc))
     {
-      data.in[,std.conc.col] <- NA
+      data.in[, test.conc.col] <- NA
     } else {
-      data.in[,std.conc.col] <- std.conc
+      data.in[, test.conc.col] <- test.conc
     }
   }
-  
-  # determine the path for output files 
+
+  # determine the path for output files
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR
   } else if (!is.null(INPUT.DIR)) {
@@ -329,15 +352,14 @@ format_clint <- function(
 # These arguments allow the user to specify a single value for every obseration
 # in the table:
   if (!is.null(date)) data.in[,date.col] <- date
-  if (!is.null(compound.conc)) data.in[,compound.conc.col] <- compound.conc
+  #if (!is.null(compound.conc)) data.in[,compound.conc.col] <- compound.conc
   if (!is.null(time)) data.in[,time.col] <- time
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(density)) data.in[,density.col] <- density
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
-  if (!is.null(std.conc)) data.in[,std.conc.col] <-
-    std.conc
+  if (!is.null(test.conc)) data.in[,test.conc.col] <- test.conc
   if (!is.null(clint.assay.conc)) data.in[,clint.assay.conc.col] <-
     clint.assay.conc
   if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
@@ -347,34 +369,29 @@ format_clint <- function(
     analysis.parameters
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
+  if (!is.null(biological.replicates)) data.in[,biological.replicates.col]<- biological.replicates
+  if (!is.null(technical.replicates)) data.in[,technical.replicates.col]<- technical.replicates
 
 # We need all these columns in data.in
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    density.col,
-    compound.conc.col,
-    std.conc.col,
-    clint.assay.conc.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
-
+  clint.cols <- c(L1.common.cols,
+                  time.col = "Time",
+                  test.conc.col = "Test.Compound.Conc",
+                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  density.col = "Hep.Density"
+                  )
+  
+  ## allow either one of the two, or both replicate columns in the data
+  if (biological.replicates.col %in% colnames(data.in))
+    clint.cols <- c(clint.cols, 
+                    biological.replicates.col = "Biological.Replicates")
+  if (technical.replicates.col %in% colnames(data.in))
+    clint.cols <- c(clint.cols, 
+                    technical.replicates.col = "Technical.Replicates")
+  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.in)))
+    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
+  
+  cols <- unlist(mget(names(clint.cols)))
   if (!(all(cols %in% colnames(data.in))))
   {
     stop(paste("Missing columns named:",
@@ -385,10 +402,10 @@ format_clint <- function(
   req.types=c("Blank","Cvst","CC","Inactive")
   data.out <- subset(data.in,data.in[,type.col] %in% req.types)
   data.in.badtype <- subset(data.in,!(data.in[,type.col] %in% req.types))
-  
+
   # Force code to throw error if data.in accessed after this point:
   rm(data.in)
-  
+
   # Option to export data with bad types
   if (nrow(data.in.badtype) != 0) {
     if (save.bad.types) {
@@ -407,62 +424,15 @@ format_clint <- function(
   # Organize the columns:
   data.out <- data.out[,cols]
 
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  density.col <- "Hep.Density"
-  std.conc.col <- "Std.Conc"
-  clint.assay.conc.col <- "Clint.Assay.Conc"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    density.col,
-    std.conc.col,
-    clint.assay.conc.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+  colnames(data.out) <- clint.cols
 
   # Set reasonable significant figures:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
 
   # calculate the response:
-  data.out[,"Response"] <- signif(data.out[,area.col] /
-     data.out[,istd.col] * data.out[,istd.conc.col], 4)
+  data.out[,"Response"] <- signif(data.out[,"Area"] /
+     data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"], 4)
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
@@ -471,10 +441,10 @@ format_clint <- function(
                 sep="\t",
                 row.names=F,
                 quote=F)
-    cat(paste0("A Level-1 file named ",FILENAME,"-Clint-Level1.tsv", 
+    cat(paste0("A Level-1 file named ",FILENAME,"-Clint-Level1.tsv",
                 " has been exported to the following directory: ", file.path), "\n")
   }
-  
+
   summarize_table(data.out,
     req.types=c("Blank","Cvst"))
 

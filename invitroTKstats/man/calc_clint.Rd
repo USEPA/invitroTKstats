@@ -6,6 +6,7 @@
 \usage{
 calc_clint(
   FILENAME,
+  data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS = 5,
   NUM.CORES = 2,
@@ -14,14 +15,22 @@ calc_clint(
   JAGS.PATH = NA,
   decrease.prob = 0.5,
   saturate.prob = 0.25,
-  degrade.prob = 0.05
+  degrade.prob = 0.05,
+  output.res = TRUE,
+  save.MCMC = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
 \item{FILENAME}{(Character) A string used to identify the input Level-2 file.
 "-Clint-Level2.tsv".}
 
-\item{TEMP.DIR}{(Character) Alternative directory to save output files. 
+\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\code{format_clint} function with a verification column added by 
+\code{sample_verification}. Complement with manual verification if needed.}
+
+\item{TEMP.DIR}{(Character) Temporary directory to save intermediate files. 
 If \code{NULL}, all files will be written to the current working directory. 
 (Defaults to \code{NULL}.)}
 
@@ -46,6 +55,21 @@ will decrease between 1 and 10 uM. (Defaults to 0.25.)}
 
 \item{degrade.prob}{(Numeric) Prior probability that a chemical will be unstable
 (that is, degrade abiotically) in the assay. (defaults to 0.05.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-4) will be exported as a .RData file. 
+(Defaults to \code{TRUE}.)}
+
+\item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results 
+as an .RData file. (Defaults to \code{FALSE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
+If \code{NULL}, looking for the input level-2 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory. (Defaults to \code{NULL}.)}
 }
 \value{
 A list of two objects: 

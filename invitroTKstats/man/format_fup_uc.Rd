@@ -14,10 +14,9 @@ format_fup_uc(
   date.col = "Date",
   compound.col = "Compound.Name",
   area.col = "Area",
-  series.col = "Series",
   type.col = "Sample.Type",
-  std.conc = NULL,
-  std.conc.col = "Standard.Conc",
+  test.conc = NULL,
+  test.conc.col = "Test.Compound.Conc",
   cal = NULL,
   cal.col = "Cal",
   dilution = NULL,
@@ -29,6 +28,10 @@ format_fup_uc(
   istd.conc.col = "ISTD.Conc",
   uc.assay.conc = NULL,
   uc.assay.conc.col = "UC.Assay.Conc",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method = NULL,
   analysis.method.col = "Analysis.Method",
   analysis.instrument = NULL,
@@ -39,7 +42,11 @@ format_fup_uc(
   level0.file = NULL,
   level0.file.col = "Level0.File",
   level0.sheet = NULL,
-  level0.sheet.col = "Level0.Sheet"
+  level0.sheet.col = "Level0.Sheet",
+  output.res = TRUE,
+  save.bad.types = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
@@ -69,21 +76,17 @@ date. (Defaults to "Date".)}
 \item{area.col}{(Character) Column name from \code{data.in} containing the target analyte (that
 is, the test compound) MS peak area. (Defaults to "Area".)}
 
-\item{series.col}{(Character) Column name from \code{data.in} containing the number of 
-simultaneous replicates with the same analytical chemistry. 
-(Defaults to "Series".)}
-
 \item{type.col}{(Character) Column name from \code{data.in} containing the sample type (see table
 under Details). (Defaults to "Sample.Type".)}
 
-\item{std.conc}{(Numeric) The standard test chemical concentration for 
+\item{test.conc}{(Numeric) The standard test chemical concentration for 
 the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 use only if the same standard concentration was used for all tested compounds.)}
 
-\item{std.conc.col}{(Character) Column name containing \code{std.conc} 
-information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
+\item{test.conc.col}{(Character) Column name containing \code{test.conc} 
+information. (Defaults to Test.Compound.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be
-auto-filled with the value specified in \code{std.conc}.)}
+auto-filled with the value specified in \code{test.conc}.)}
 
 \item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
@@ -135,6 +138,24 @@ was the same for all tested compounds.)}
 information. (Defaults to "UC.Assay.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled
 with the value specified in \code{uc.assay.conc}.)}
+
+\item{biological.replicates}{(Character) Replicates with the same analyte. Typically, this uses 
+numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if none of the test compounds have replicates.)}
+
+\item{biological.replicates.col}{(Character) Column name of \code{data.in} containing the number or 
+the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".) 
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled
+with the value specified in \code{biological.replicates}.)}
+
+\item{technical.replicates}{(Character) Repeated measurements from one sample. Typically, this uses 
+numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if none of the test compounds have replicates.)}
+
+\item{technical.replicates.col}{(Character) Column name of \code{data.in} containing the number or 
+the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled
+with the value specified in \code{technical.replicates}.)}
 
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
 typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
@@ -189,6 +210,22 @@ where \code{data.in} is obtained from, if the Level-0 file is an Excel workbook.
 information. (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled
 with the value specified in \code{level0.sheet}.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-1) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{save.bad.types}{(Logical) When set to \code{TRUE}, export data removed 
+due to inappropriate sample types. See the Detail section for the required sample types. 
+(Defaults to \code{FALSE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
+If \code{NULL}, looking for the input level-0 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
 A Level-1 data frame with a standardized format containing a  
