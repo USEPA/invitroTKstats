@@ -330,13 +330,13 @@ format_clint <- function(
     note.col <- "Note"
   }
 
-  if (!(std.conc.col %in% colnames(data.in)))
+  if (!(test.conc.col %in% colnames(data.in)))
   {
-    if (is.null(std.conc))
+    if (is.null(test.conc))
     {
-      data.in[,std.conc.col] <- NA
+      data.in[, test.conc.col] <- NA
     } else {
-      data.in[,std.conc.col] <- std.conc
+      data.in[, test.conc.col] <- test.conc
     }
   }
 

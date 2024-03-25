@@ -42,7 +42,7 @@ chem.ids <- as.data.frame(read_excel("CrizerChemIDs.xlsx"))
 ```{r load_data, eval=TRUE}
 data.guide <- as.data.frame(read_excel("dataguide-DC-hep.xlsx"))
 
-dc.hep <- merge_level0(data.label="CrizerPFASHep",
+dc.hep <- merge_level0(FILENAME="CrizerPFASHep",
 # describe the MS data table:
              level0.catalog=data.guide,
              type.colname.col="Type.ColName",
@@ -208,7 +208,7 @@ level1 <- format_clint(dc.hep,
   density = 0.5,
   clint.assay.conc = 1,
   note.col="Note",
-  std.conc.col="Compound.Conc",
+  test.conc.col="Compound.Conc",
   time.col = "Time",
   analysis.method = "UPLC-MS/MS",
   analysis.instrument.col = "Instrument",
