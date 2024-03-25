@@ -305,59 +305,21 @@ calc_fup_red <- function(
     setwd(TEMP.DIR)
   }
 
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  replicate.col <- "Replicate"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  std.conc.col <- "Std.Conc"
-  Test.Nominal.Conc.col <- "Test.Nominal.Conc"
-  plasma.percent.col <- "Percent.Physiologic.Plasma"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    Test.Nominal.Conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col,
-    "Response",
-    good.col)
-# Throw error if not all columns present with expected names:
+  fup.red.cols <- c(L1.common.cols,
+                    time.col = "Time",
+                    test.conc.col = "Test.Compound.Conc",
+                    test.nominal.conc.col = "Test.Nominal.Conc",
+                    plasma.percent.col = "Percent.Physiologic.Plasma"
+  )
+  list2env(as.list(fup.red.cols), envir = environment())
+  cols <- c(unlist(mget(names(fup.red.cols))), "Response", good.col)
+  
+  # Throw error if not all columns present with expected names:
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_red first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")

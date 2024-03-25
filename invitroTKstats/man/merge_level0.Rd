@@ -5,7 +5,7 @@
 \title{Merge multiple level0 files into a single table for processing}
 \usage{
 merge_level0(
-  data.label = "MYDATA",
+  FILENAME = "MYDATA",
   level0.catalog,
   file.col = "File",
   sheet = NULL,
@@ -35,11 +35,15 @@ merge_level0(
   chem.ids,
   chem.lab.id.col = "Chem.Lab.ID",
   chem.name.col = "Compound",
-  chem.dtxsid.col = "DTXSID"
+  chem.dtxsid.col = "DTXSID",
+  catalog.out = TRUE,
+  output.res = TRUE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{data.label}{(Character) A string used to identify outputs of the function call.
+\item{FILENAME}{(Character) A string used to identify outputs of the function call.
 (Default to "MYDATA")}
 
 \item{level0.catalog}{A data frame describing which columns of which sheets
@@ -157,9 +161,25 @@ returned from `merge_level0`. (Defaults to "Compound")}
 \item{chem.dtxsid.col}{(Character) `chem.ids` column name containing EPA's
 DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard})
 (Defaults to "DTXSID")}
+
+\item{catalog.out}{(Logical) When set to \code{TRUE}, the data frame 
+specified in \code{level0.catalog} will be exported the current directory 
+or \code{OUTPUT.DIR} as a .tsv file. (Defaults to \code{TRUE}.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
+as a .tsv file. (Defaults to \code{TRUE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the Excel files 
+with Level-0 data exist. If not specified, looking for the files
+in the current working directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory. (Defaults to \code{NULL}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized "level1" format}
+\item{data.frame}{A data.frame in standardized Level-0 format}
 }
 \description{
 This function reads multiple Excel files containing mass-spectrometry (MS) data
