@@ -1,0 +1,69 @@
+
+R version 4.2.1 (2022-06-23 ucrt) -- "Funny-Looking Kid"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## code to prepare `std.catcols` dataset goes here
+> # standard catalog column names
+> # use: creating a catalog and/or checking a catalog structure.
+> std.catcols <- c(
++   file.col = "File",
++   sheet.col = "Sheet",
++   skip.rows.col = "Skip.Rows",
++   date.col = "Date",
++   compound.col = "Chemical.ID",
++   istd.col = "ISTD.Name",
++   sample.colname.col = "Sample.ColName",
++   type.colname.col = "Type.ColName",
++   peak.colname.col = "Peak.ColName",
++   istd.peak.colname.col = "ISTD.Peak.ColName",
++   conc.colname.col = "Conc.ColName",
++   analysis.param.colname.col = "AnalysisParam.ColName"
++ )
+> # create the .rda for the package
+> usethis::use_data(std.catcols, overwrite = TRUE)
+✔ Setting active project to 'C:/Users/sdavid01/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Git/invitrotkstats/invitroTKstats'
+✔ Saving 'std.catcols' to 'data/std.catcols.rda'
+• Document your data (see 'https://r-pkgs.org/data.html')
+> # session information
+> sessionInfo()
+R version 4.2.1 (2022-06-23 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 22000)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] fansi_1.0.4     utf8_1.2.2      crayon_1.5.2    rprojroot_2.0.3
+ [5] R6_2.5.1        lifecycle_1.0.3 magrittr_2.0.3  pillar_1.8.1   
+ [9] rlang_1.0.6     cli_3.6.0       rstudioapi_0.14 fs_1.6.0       
+[13] vctrs_0.5.2     desc_1.4.2      glue_1.6.2      purrr_1.0.1    
+[17] compiler_4.2.1  pkgconfig_2.0.3 usethis_2.1.6   tibble_3.1.8   
+> 
+> proc.time()
+   user  system elapsed 
+   1.23    0.20    2.50 
