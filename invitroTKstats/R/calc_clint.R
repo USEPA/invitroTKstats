@@ -303,7 +303,7 @@ calc_clint <- function(
   cols <- c(unlist(mget(names(clint.cols))), "Response", good.col)
   
   # Check for missing columns
-  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(clint.data)))
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
     stop(paste0("Need at least one replicate columns: ", 
                 paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
                 ". Run format_clint first (level 1) then curate to (level 2)."))

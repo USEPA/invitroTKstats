@@ -191,6 +191,17 @@ dc.hep[dc.hep$Sample.Type %in% c("Blank"), "Compound.Conc"] <- 0
 dc.hep[!(dc.hep$Level0.File %in% wetmore.files),"Instrument"] <- "Waters Xevo TQ-S micro (QEB0036)"
 dc.hep[(dc.hep$Level0.File %in% wetmore.files),"Instrument"] <- "Waters Xevo TQS-Micro UPLC-MS/MS"
 ```
+
+```{r set_replicates}
+dc.hep$Technical.Replicates <- 1
+
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x))
+}
+
+dc.hep$Biological.Replicates <- as.numeric(substrRight(dc.hep$Sample,2))
+```
+
 # Create level 1 file:
 ```{r level1}
 level1 <- format_clint(dc.hep,
@@ -300,6 +311,6 @@ library(invitroTKstats)
 setwd("c:/users/jwambaug/git/invitroTKstats/working/CrizerPFAS")
 
 level4 <- calc_clint(FILENAME="CrizerPFAS",
-                          NUM.CORES=8,
+                          NUM.CORES=7,
                           JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")  
 ``` 
