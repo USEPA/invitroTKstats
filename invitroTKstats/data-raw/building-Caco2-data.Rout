@@ -77,8 +77,23 @@ package 'readxl' was built under R version 4.2.3
 +                        INPUT.DIR = path,
 +                        catalog.out = FALSE,
 +                        output.res = FALSE)
+New names:
+• `` -> `...9`
+• `` -> `...16`
+• `` -> `...17`
+• `` -> `...18`
 Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw Data, BF175258
+New names:
+• `` -> `...9`
+• `` -> `...16`
+• `` -> `...17`
+• `` -> `...18`
 Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw Data, BF175270
+New names:
+• `` -> `...9`
+• `` -> `...16`
+• `` -> `...17`
+• `` -> `...18`
 Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw Data, EV0000613
 > 
 > ## There are some additional columns needed for caco2_L0 to go to level-1.
@@ -128,8 +143,8 @@ Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw 
 +                        istd.name="Some ISTD Name",
 +                        istd.conc=1,
 +                        nominal.test.conc=10,
-+                        analysis.method = "Mass Spec",
-+                        analysis.instrument.col="Analysis.Params",
++                        analysis.method.col = "Analysis.Params",
++                        analysis.instrument="TBD",
 +                        analysis.parameters="TBD",
 +                        output.res = FALSE
 + )
@@ -189,4 +204,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   1.37    1.29    4.06 
+   1.29    2.60    6.78 

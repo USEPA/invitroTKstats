@@ -102,8 +102,8 @@ caco2_L1 <- format_caco2(data.in = caco2_L0,
                        istd.name="Some ISTD Name",
                        istd.conc=1,
                        nominal.test.conc=10,
-                       analysis.method = "Mass Spec",
-                       analysis.instrument.col="Analysis.Params",
+                       analysis.method.col = "Analysis.Params",
+                       analysis.instrument="TBD",
                        analysis.parameters="TBD",
                        output.res = FALSE
 )
