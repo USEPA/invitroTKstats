@@ -214,7 +214,7 @@ model {
 #' @examples
 #' ## Example 1: loading level-2 using data.in
 #' \dontrun{
-#' level2 <- invitroTKstats::kreutz2023.clint
+#' level2 <- invitroTKstats::clint_L2
 #' 
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
