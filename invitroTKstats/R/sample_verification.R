@@ -71,7 +71,7 @@
 #' 
 #' \dontrun{
 #' # Write the level-1 file to some folder
-#' write.table(data.out,
+#' write.table(level1,
 #' file="~/invitrotkstats/invitroTKstats/data-raw/kreutz-Clint-Level1.tsv",
 #' sep="\t",
 #' row.names=F,
@@ -83,6 +83,8 @@
 #' my.level2 <- sample_verification(FILENAME="kreutz", 
 #' assay="Clint", INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw")
 #' }
+#' 
+#' @author Zhihui (Grace) Zhao
 #' 
 sample_verification <- function(
     FILENAME, 
@@ -139,6 +141,8 @@ sample_verification <- function(
       ## concatenate exclusion criteria into one string
       ec <- paste(paste(var.list, paste0("\"",value.list,"\""), sep = "=="), collapse = "&")
       ## filter the rows and attach exclusion message 
+      ## suppressWarnings() is used here to suppress the warning from replace(). 
+      ## The number of rows to replace does not match the replacement length, which should be the total number of rows in data.out
       data.out <- suppressWarnings(data.out %>% dplyr::mutate(Verified = replace(Verified, !! rlang::parse_expr(ec), 
                                                                           paste(exclusion.info[i, "Message"], Verified, sep = ", "))))
       
