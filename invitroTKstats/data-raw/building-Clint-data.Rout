@@ -1,0 +1,324 @@
+
+R version 4.2.2 (2022-10-31 ucrt) -- "Innocent and Trusting"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ## This R script should be ran from the command line using
+> ## R CMD BATCH data-raw/building-clint-data.R
+> 
+> ## Load necessary package
+> library(invitroTKstats)
+> library(readxl)
+Warning message:
+package 'readxl' was built under R version 4.2.3 
+> 
+> ## smeltz2023.clint only has data for seven compounds.
+> ## Unfortunately there's only one compound which has all samples verified with a "Y",
+> ## other compounds all have some samples excluded from the analysis. 
+> ## Need to go through couple verification steps from level-1 to level-2.
+> 
+> ## Choose three compounds
+> clint.list <- c("DTXSID1021116", "DTXSID6023525", "DTXSID80380256")
+> 
+> ## Prepare Level-0
+> ## read in chem.ids
+> chem.ids <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=1)
+> chem.ids <- as.data.frame(chem.ids)
+> 
+> ## merge_level0 is not needed here because all the data are in the same Excel file.
+> ## Reference chemicals data is in the second sheet and test chemicals data is in the third sheet. 
+> smeltz.hep.ref <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=2, skip=6)
+New names:
+• `` -> `...1`
+> smeltz.hep.ref <- as.data.frame(smeltz.hep.ref)
+> 
+> smeltz.hep.pfas <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=3, skip=2)
+New names:
+• `` -> `...2`
+• `` -> `...3`
+• `` -> `...4`
+• `` -> `...5`
+• `` -> `...6`
+• `` -> `...7`
+• `` -> `...8`
+• `` -> `...9`
+• `` -> `...10`
+• `` -> `...11`
+• `` -> `...12`
+• `` -> `...13`
+• `` -> `...14`
+• `` -> `...15`
+> smeltz.hep.pfas <- as.data.frame(smeltz.hep.pfas)
+> ## Match the column names
+> colnames(smeltz.hep.pfas) <- colnames(smeltz.hep.ref)
+> 
+> ## Merge the reference chemicals and PFAS
+> clint_L0 <- rbind(smeltz.hep.ref,smeltz.hep.pfas)
+> 
+> ## Remove blank rows
+> clint_L0 <- subset(clint_L0, !is.na(clint_L0[,1]))
+> 
+> ## There are some additional columns needed for clint_L0 to go to level-1.
+> ## But these columns cannot do not exist in the original data file and  
+> ## currently cannot be handled/added by additional utility functions. 
+> ## Need to manually add them in. 
+> 
+> ## Record the level-0 file name and sheet name
+> clint_L0$Level0.File <- "Hep12 Data for Uncertainty Feb2022.xlsx"
+> clint_L0$Level0.Sheet <- "PFAS Data"
+> 
+> ## Annotate Compounds
+> ## The first compound name is in the rows that were skipped. 
+> ## Manually annotate this one.
+> this.compound <- "Phenacetin"
+> this.dtxsid <- chem.ids[
++   tolower(chem.ids[,"Analyte Name"]) == tolower(this.compound),
++   "DTXSID"]
+> this.istdname <- chem.ids[
++   tolower(chem.ids[,"Analyte Name"]) == tolower(this.compound),
++   "Internal Standard"]
+> 
+> ## Loop through the first column to identify compound names and find the matching 
+> ## DTXSID from chem.ids
+> this.row <- 1
+> while (this.row <= dim(clint_L0)[1])
++ {
++   if (regexpr("Compound",clint_L0[this.row,1])!=-1)
++   {
++     this.compound <- strsplit(clint_L0[this.row,1],"  ")[[1]][2] 
++     if (tolower(this.compound) %in% tolower(chem.ids[,"Internal Standard"]))
++     {
++       this.istd <- this.compound
++       this.compound <- "ISTD"
++       this.dtxsid <- NA
++     } else {
++       row.index <- which(regexpr(tolower(this.compound),
++                                  tolower(chem.ids[,"Analyte Name"]))!=-1)
++       this.dtxsid <- chem.ids[row.index, "DTXSID"]
++       this.istdname <- chem.ids[row.index, "Internal Standard"]
++     }
++   }
++   clint_L0[this.row, "Compound"] <- this.compound
++   clint_L0[this.row, "DTXSID"] <- this.dtxsid
++   clint_L0[this.row, "ISTD.Name"] <- this.istdname
++   this.row <- this.row + 1
++ }
+> 
+> ## Remove rows with blank sample text
+> clint_L0 <- subset(clint_L0,!is.na(clint_L0[,"Sample Text"]))
+> 
+> ## Remove internal standard data
+> clint_L0 <- subset(clint_L0, Compound != "ISTD")
+> 
+> ## Only keep data for the three chosen compounds
+> clint_L0 <- clint_L0[clint_L0$DTXSID %in% clint.list,]
+> 
+> ## Indicate whether hepatocytes have been inactivated:
+> clint_L0$Active.Hep <- NA
+> clint_L0[regexpr("living",tolower(clint_L0[,"Sample Text"]))!=-1,
++            "Active.Hep"] <- 1
+> clint_L0[regexpr("inactive",tolower(clint_L0[,"Sample Text"]))!=-1,
++            "Active.Hep"] <- 0
+> 
+> ## Create sample type column
+> ## Use the package annotation of type:
+> clint_L0 <- subset(clint_L0,!is.na(Type))
+> clint_L0[clint_L0$Type == "Analyte", "Type"] <- "Cvst"
+> clint_L0[clint_L0$Type == "Standard", "Type"] <- "CC"
+> clint_L0[regexpr("inactive",tolower(clint_L0[,"Sample Text"]))!=-1,
++          "Type"] <- "Inactive"
+> 
+> ## Create time column
+> clint_L0[,"Time"] <- NA
+> clint_L0[regexpr("t240",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- 240/60
+> clint_L0[regexpr("t120",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- 120/60
+> clint_L0[regexpr("t60",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- 60/60
+> clint_L0[regexpr("t30",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- 30/60
+> clint_L0[regexpr("t15",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- 15/60
+> clint_L0[regexpr("t0",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- 0/60
+> 
+> ## Remove media-only samples
+> clint_L0[regexpr("wem",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- NA
+> clint_L0 <- subset(clint_L0,!is.na(Time) | Type != "Cvst")
+> 
+> ## Create a column for the dilution factors:
+> ## The dilution factor is indeed different across different sample types.
+> ## -	The calibration curves (all, regardless of analyte) are diluted 240x
+> ## -	The ref cmpds (may have label “HLB”) and PFAS labeled as “WAX1” are diluted 480x
+> ## -	PFAS marked as WAX2 are diluted 720x
+> ## -	It seems that when you asked for a pared down sheet this information was lost. We could add it to the Analytes page. I can see it in the more comprehensive sheet she#   provided to me.
+> 
+> clint_L0$Dilution.Factor <- 240
+> clint_L0[regexpr("hlb",tolower(clint_L0[,"Sample Text"]))!=-1,
++            "Dilution.Factor"] <- 480
+> clint_L0[regexpr("wax1",tolower(clint_L0[,"Sample Text"]))!=-1,
++            "Dilution.Factor"] <- 480
+> clint_L0[regexpr("wax2",tolower(clint_L0[,"Sample Text"]))!=-1,
++            "Dilution.Factor"] <- 720
+> clint_L0[regexpr("cc",tolower(clint_L0[,"Sample Text"]))!=-1,
++            "Dilution.Factor"] <- 240
+> 
+> ## Make sure concentration and area columns are numeric
+> clint_L0$Area <- as.numeric(clint_L0$Area)
+> clint_L0[,"IS Area"] <- as.numeric(clint_L0[,"IS Area"])
+> clint_L0[,"Std. Conc"] <- as.numeric(clint_L0[,"Std. Conc"])
+> clint_L0 <- subset(clint_L0, !is.na(Area) & 
++                        !is.na(clint_L0[,"IS Area"]))
+> 
+> ## Convert nM standard concs to uM
+> clint_L0[,"nM"] <- as.numeric(clint_L0[,"nM"])/1000
+> ## Only set a standard conc for calibration curve points
+> clint_L0[clint_L0[,"Type"]!="CC","nM"] <- NA
+> ## Concentrations calculated including dilution
+> clint_L0[,"nM"] <- clint_L0[,"nM"]*clint_L0$Dilution.Factor
+> 
+> ## Prepare Level-1 
+> clint_L1 <- format_clint(data.in = clint_L0,
++                        sample.col ="Name",
++                        date.col="Acq.Date",
++                        compound.col="Compound",
++                        lab.compound.col="Compound",
++                        type.col="Type",
++                        dilution.col="Dilution.Factor",
++                        cal=1,
++                        istd.conc = 10/1000,
++                        istd.col= "IS Area",
++                        density = 0.5,
++                        clint.assay.conc = 1,
++                        biological.replicates = 1,
++                        test.conc.col="nM",
++                        time.col = "Time",
++                        analysis.method = "LCMS",
++                        analysis.instrument = "Unknown",
++                        analysis.parameters.col = "RT",
++                        note="Sample Text",
++                        output.res = FALSE
++ )
+229 observations of 3 chemicals based on 3 separate measurements (calibrations).
+Warning message:
+In format_clint(data.in = clint_L0, sample.col = "Name", date.col = "Acq.Date",  :
+  Data with inappropriate sample types were removed.
+> 
+> ## First assign "Y" to all samples
+> clint_L2 <- sample_verification(data.in = clint_L1, assay = "Clint",output.res = FALSE)
+> 
+> ## If the mix recorded in column "Note" does not match what's recorded on the 
+> ## summary table (chem.ids), exclude the sample due to wrong mix.
+> for (this.id in clint.list)
++ {
++   this.mix <- chem.ids[chem.ids$DTXSID==this.id,"Mix"]
++   if (regexpr("WAX1",this.mix)!=-1)
++   {
++     clint_L2[clint_L2$DTXSID==this.id & clint_L2$Sample.Type =="Cvst" &
++              regexpr("WAX2",clint_L2$Note)!=-1,"Verified"] <- "Wrong Mix"
++   } else if (regexpr("WAX2",this.mix)!=-1)
++   {
++     clint_L2[clint_L2$DTXSID==this.id & clint_L2$Sample.Type =="Cvst" &
++              regexpr("WAX1",clint_L2$Note)!=-1,"Verified"] <- "Wrong Mix"
++   }
++ }
+> ## Exclude calibration curve samples if the concentration is unknown.
+> clint_L2[clint_L2$Sample.Type=="CC" & is.na(clint_L2$Std.Conc),"Verified"] <- 
++   "Unknown Conc."
+> 
+> ## Compare with the level-2 data that's already in the package 
+> ## see if the subset matches what's in the full data.
+> clint.sub <- smeltz2023.clint[smeltz2023.clint$DTXSID %in% clint.list, ]
+> 
+> ## check if the columns are correct
+> names(clint.sub)
+ [1] "Lab.Sample.Name"     "Date"                "Compound.Name"      
+ [4] "DTXSID"              "Lab.Compound.Name"   "Sample.Type"        
+ [7] "Dilution.Factor"     "Calibration"         "ISTD.Name"          
+[10] "ISTD.Conc"           "ISTD.Area"           "Hep.Density"        
+[13] "Std.Conc"            "Clint.Assay.Conc"    "Time"               
+[16] "Area"                "Analysis.Method"     "Analysis.Instrument"
+[19] "Analysis.Parameters" "Note"                "Level0.File"        
+[22] "Level0.Sheet"        "Response"            "Verified"           
+> names(clint_L2)
+ [1] "Lab.Sample.Name"       "Date"                  "Compound.Name"        
+ [4] "DTXSID"                "Lab.Compound.Name"     "Sample.Type"          
+ [7] "Dilution.Factor"       "Calibration"           "ISTD.Name"            
+[10] "ISTD.Conc"             "ISTD.Area"             "Area"                 
+[13] "Analysis.Method"       "Analysis.Instrument"   "Analysis.Parameters"  
+[16] "Note"                  "Level0.File"           "Level0.Sheet"         
+[19] "Time"                  "Test.Compound.Conc"    "Clint.Assay.Conc"     
+[22] "Hep.Density"           "Biological.Replicates" "Response"             
+[25] "Verified"             
+> 
+> ## Compare some key parameters 
+> nrow(clint_L2) == nrow(clint.sub)
+[1] TRUE
+> all(unique(clint.sub$Compound.Name) %in% unique(clint_L2$Compound.Name))
+[1] TRUE
+> 
+> summary(clint.sub$Response)
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+8.600e-07 1.227e-04 1.078e-03 4.214e-03 3.188e-03 7.405e-02 
+> summary(clint_L2$Response)
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+8.600e-07 1.227e-04 1.078e-03 4.214e-03 3.188e-03 7.405e-02 
+> 
+> table(clint.sub$Sample.Type)
+
+   Blank       CC     Cvst Inactive 
+       5      146       58       20 
+> table(clint_L2$Sample.Type)
+
+   Blank       CC     Cvst Inactive 
+       5      146       58       20 
+> 
+> ## Save level-0 and level-1 data to use for function demo/example documentation 
+> save(clint_L0, clint_L1, clint_L2, file = "~/invitrotkstats/invitroTKstats/data/Clint-example.RData")
+> 
+> ## Include session info
+> utils::sessionInfo()
+R version 4.2.2 (2022-10-31 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 22621)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] readxl_1.4.3         invitroTKstats_0.0.9
+
+loaded via a namespace (and not attached):
+ [1] rstudioapi_0.15.0 magrittr_2.0.3    tidyselect_1.2.0  munsell_0.5.0    
+ [5] colorspace_2.1-0  lattice_0.20-45   R6_2.5.1          rlang_1.1.1      
+ [9] fansi_1.0.4       dplyr_1.1.2       tools_4.2.2       rbibutils_2.2.13 
+[13] parallel_4.2.2    grid_4.2.2        gtable_0.3.4      utf8_1.2.3       
+[17] cli_3.6.1         coda_0.19-4       tibble_3.2.1      lifecycle_1.0.3  
+[21] ggplot2_3.4.2     vctrs_0.6.3       Rdpack_2.5        glue_1.6.2       
+[25] cellranger_1.1.0  compiler_4.2.2    pillar_1.9.0      runjags_2.2.2-1.1
+[29] generics_0.1.3    scales_1.2.1      stats4_4.2.2      pkgconfig_2.0.3  
+> 
+> 
+> proc.time()
+   user  system elapsed 
+   2.04    3.15    7.54 
