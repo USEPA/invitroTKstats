@@ -30,9 +30,9 @@ level0.catalog <- data.frame(File = rep("Edited_EPA_Task 10_13_Caco-2 Compiled_L
 )
 
 ## Build chem.ids table 
-## Use placeholders chemical identifiers before finding the true identifiers for the chemical lab IDs
-chem.ids <- data.frame(Compound = c("Compound 1","Compound 2","Compound 3"),
-                       DTXSID = c("ID 1", "ID 2", "ID 3"),
+## Chemical information can be found in the files in "HTTKNewData/Summary/Caco2.xlsx & SupTable1-AnalyticMethods.xlsx)".
+chem.ids <- data.frame(Compound = c("Thiobencarb","Nitrapyrin","4-Chloro-2-methylaniline"),
+                       DTXSID = c("DTXSID6024337", "DTXSID0024216", "DTXSID1041508"),
                        Chem.Lab.ID = c("BF175258","BF175270","EV0000613"))
 
 ## Specify the path to the Excel file 
@@ -102,8 +102,11 @@ caco2_L1 <- format_caco2(data.in = caco2_L0,
                        istd.name="Some ISTD Name",
                        istd.conc=1,
                        nominal.test.conc=10,
-                       analysis.method = "Mass Spec",
-                       analysis.instrument.col="Analysis.Params",
+                       analysis.method.col = "Analysis.Params",
+                       # These data was collected in close time proximity to the 
+                       # Wambaugh2019 work which used Agilent.GCMS for GC, 
+                       # thus we assume the same instrument was used for these data.
+                       analysis.instrument="Agilent.GCMS",
                        analysis.parameters="TBD",
                        output.res = FALSE
 )
@@ -117,8 +120,15 @@ all(caco2_L1[is.na(caco2_L1$Response), "Sample.Type"] == "Blank")
 ## need to replace NA with 0 for blank adjustment.
 caco2_L1[is.na(caco2_L1$Response), "Response"] <- 0
 
+## Set every sample in the data as verified and export level-2 as a .tsv to 
+## the vignette directory for use of function example and vignette.
+caco2_L2 <- sample_verification(FILENAME = "Examples", 
+                                data.in = caco2_L1, 
+                                assay = "Caco-2", 
+                                OUTPUT.DIR="~/invitrotkstats/invitroTKstats/vignettes")
+
 ## Save level-0 and level-1 data to use for function demo/example documentation 
-save(caco2_L0, caco2_L1, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
+save(caco2_L0, caco2_L1, caco2_L2, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
 
 ## Include session info
 utils::sessionInfo()
