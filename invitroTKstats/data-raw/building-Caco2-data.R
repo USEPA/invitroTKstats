@@ -30,9 +30,9 @@ level0.catalog <- data.frame(File = rep("Edited_EPA_Task 10_13_Caco-2 Compiled_L
 )
 
 ## Build chem.ids table 
-## Use placeholders chemical identifiers before finding the true identifiers for the chemical lab IDs
-chem.ids <- data.frame(Compound = c("Compound 1","Compound 2","Compound 3"),
-                       DTXSID = c("ID 1", "ID 2", "ID 3"),
+## Chemical information can be found in the files in "HTTKNewData/Summary/Caco2.xlsx & SupTable1-AnalyticMethods.xlsx)".
+chem.ids <- data.frame(Compound = c("Thiobencarb","Nitrapyrin","4-Chloro-2-methylaniline"),
+                       DTXSID = c("DTXSID6024337", "DTXSID0024216", "DTXSID1041508"),
                        Chem.Lab.ID = c("BF175258","BF175270","EV0000613"))
 
 ## Specify the path to the Excel file 
@@ -103,7 +103,10 @@ caco2_L1 <- format_caco2(data.in = caco2_L0,
                        istd.conc=1,
                        nominal.test.conc=10,
                        analysis.method.col = "Analysis.Params",
-                       analysis.instrument="TBD",
+                       # These data was collected in close time proximity to the 
+                       # Wambaugh2019 work which used Agilent.GCMS for GC, 
+                       # thus we assume the same instrument was used for these data.
+                       analysis.instrument="Agilent.GCMS",
                        analysis.parameters="TBD",
                        output.res = FALSE
 )
