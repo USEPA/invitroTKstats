@@ -21,8 +21,9 @@
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME (Character) A string used to identify the output Level-1 file.
-#' "<FILENAME>-fup-UC-Level1.tsv". (Defaults to "MYDATA".)
+#' @param FILENAME (Character) A string used to identify the output Level-1 file,
+#' "<FILENAME>-fup-UC-Level1.tsv", and/or used to identify the input Level-0 file,
+#' "<FILENAME>-fup-UC-Level0.tsv" if importing from a .tsv file. (Defaults to "MYDATA".)
 #'
 #' @param data.in (Data Frame) A Level-0 data frame containing mass-spectrometry
 #' peak areas, indication of chemical identity, and measurement type.
@@ -205,14 +206,29 @@
 #' @author John Wambaugh
 #'
 #' @examples
-#' library(invitroTKstats)
-#' level0 <- kreutz2020
-#' level1 <- format_fup_uc(level0,
-#'   FILENAME="Kreutz2020",
-#'   compound.col="Name",
-#'   std.conc.col="Standard.Conc",
-#'   area.col="Chem.Area"
-#'   )
+#' 
+#' ## Load the example level-0 data
+#' level0 <- invitroTKstats::fup_uc_L0
+#' 
+#' ## Run it through level-1 processing function
+#' ## This example shows the use of data.in argument which allows users to pass
+#' ## in a data frame from the R session.
+#' ## If the input level-0 data exists in an external file such as a .tsv file,
+#' ## users may import it using INPUT.DIR to specify the path and FILENAME
+#' ## to specify the file name. See documentation for details.
+#' level1 <- format_fup_uc(data.in = level0,
+#'                        ## Mapping required columns to column names in level-0  
+#'                         sample.col="Name",
+#'                         compound.col="Compound.Name",
+#'                         test.conc.col ="Std.Conc", 
+#'                         lab.compound.col="Compound.Name", 
+#'                         type.col="Sample.Type", 
+#'                         istd.col="IS.Area",
+#'                         note.col=NULL,
+#'                         uc.assay.conc.col="Test.Target.Conc",
+#'                         technical.replicates.col = "Replicate",
+#'                         output.res = FALSE
+#'                         )
 #'
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
@@ -275,7 +291,10 @@ format_fup_uc <- function(
                         sep="\t",header=T)
     }
   
-  if (is.null(note.col)) data.in[,"Note"] <- ""
+  if (is.null(note.col)) {
+    data.in[,"Note"] <- ""
+    note.col <- "Note"
+  }
   
   # determine the path for output files 
   if (!is.null(OUTPUT.DIR)) {
@@ -358,8 +377,8 @@ format_fup_uc <- function(
   colnames(data.out) <- fup.uc.cols
 
   # Blanks don't always have internal standard -- add average ISTD.Area
-  # First identify the blanks (have to deal with NA standard.concs:
-  blanks <- data.out[,"Standard.Conc"]
+  # First identify the blanks (have to deal with NA Test.Compound.Conc:
+  blanks <- data.out[,"Test.Compound.Conc"]
   blanks[is.na(blanks)] <- -999
   blanks <- blanks == 0
   for (this.chem in unique(data.out[,"DTXSID"]))
