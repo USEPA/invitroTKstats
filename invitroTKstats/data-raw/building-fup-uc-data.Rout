@@ -28,13 +28,16 @@ Type 'q()' to quit R.
 
 Attaching package: 'invitroTKstats'
 
-The following objects are masked _by_ '.GlobalEnv':
+The following object is masked _by_ '.GlobalEnv':
 
-    fup_uc_L1, fup_uc_L2
+    fup_uc_L0
 
 > ## Load a previously complied Level-0 file of Smeltz 2023 work
 > fup_uc_L0 <- read.table("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC/SmeltzPFAS-PPB-UC-Level0.tsv",
 +                  sep = '\t', header = TRUE)
+> 
+> ## Remove the first two columns that are just row numbers, created from reading in from Excel
+> fup_uc_L0 <- fup_uc_L0[, -c(1,2)]
 > 
 > ## Chose three compounds that have all samples verified
 > uc.list <- c("DTXSID5061954", "DTXSID50892417", "DTXSID8037708")
@@ -122,4 +125,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   1.06    0.40    2.71 
+   0.95    0.20    4.82 

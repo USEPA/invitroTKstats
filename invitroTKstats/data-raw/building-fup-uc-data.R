@@ -8,6 +8,9 @@ library(invitroTKstats)
 fup_uc_L0 <- read.table("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC/SmeltzPFAS-PPB-UC-Level0.tsv",
                  sep = '\t', header = TRUE)
 
+## Remove the first two columns that are just row numbers, created from reading in from Excel
+fup_uc_L0 <- fup_uc_L0[, -c(1,2)]
+
 ## Chose three compounds that have all samples verified
 uc.list <- c("DTXSID5061954", "DTXSID50892417", "DTXSID8037708")
 ## Keep only the data of the chosen compounds
