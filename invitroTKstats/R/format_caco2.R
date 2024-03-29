@@ -49,16 +49,6 @@
 #'
 #' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
 #' date. (Defaults to "Date".)
-#' 
-#' @param series (Numeric) Index of simultaneous replicates with the same analytical chemistry. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
-#' use the same number of replicates.)
-#' 
-#' @param series.col (Character) Column name containing \code{series} information.
-#' (Defaults to "Series".) 
-#' (Note: \code{data.in} does not necessarily have this field. 
-#' If this field is missing, it can be auto-filled with the value 
-#' specified in \code{series}.)
 #'
 #' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -122,10 +112,10 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{dilution}.)
 #' 
-#' @param meas.time (Numeric) The amount of time (in hours) before the receiver and donor 
-#' compartments are measured. (Defaults to 2.)
+#' @param time (Numeric) The amount of time (in hours) before the receiver and donor 
+#' compartments are measured. (Defaults to \code{NULL}.)
 #' 
-#' @param meas.time.col (Character) Column name containing \code{meas.time} 
+#' @param time.col (Character) Column name containing \code{meas.time} 
 #' information. (Defaults to "Time".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{meas.time}.)
@@ -154,6 +144,24 @@
 #' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{nominal.test.conc}.)
+#' 
+#' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param biological.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".)
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{biological.replicates}.)
+#' 
+#' @param technical.replicates (Character) Repeated measurements from one sample. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param technical.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{technical.replicates}.)
 #'
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
@@ -183,6 +191,28 @@
 #' information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{analysis.parameters}.)
+#' 
+#' @param note.col (Character) Column name of \code{data.in} containing additional notes on 
+#' test compounds. (Defaults to "Note").
+#' 
+#' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+#' were obtained from the same Level-0 file.) 
+#' 
+#' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
+#' (Defaults to "Level0.File".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.file}.)
+#' 
+#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
+#' \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+#' were obtained from the same sheet in the same Level-0 file.) 
+#' 
+#' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
+#' (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{level0.sheet}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
 #' table (Level-1) will be exported the current directory as a .tsv file. 
@@ -238,8 +268,6 @@ format_caco2 <- function(
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
   date.col="Date",
-  series=NULL,
-  series.col="Series",
   compound.col="Compound.Name",
   area.col="Area",
   istd.col="ISTD.Area",
@@ -255,30 +283,36 @@ format_caco2 <- function(
   cal.col="Cal",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  meas.time = 2,
-  meas.time.col="Time",
+  time = NULL,
+  time.col="Time",
   istd.name=NULL,
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
   nominal.test.conc=NULL,
   nominal.test.conc.col="Test.Target.Conc",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
   analysis.instrument=NULL,
   analysis.instrument.col="Analysis.Instrument",
   analysis.parameters=NULL,
   analysis.parameters.col="Analysis.Parameters",
+  note.col="Note",
+  level0.file=NULL,
+  level0.file.col="Level0.File",
+  level0.sheet=NULL,
+  level0.sheet.col="Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
   )
 {
-  # These are the required data types as indicated by type.col.
-  # In order to calculate the parameter a chemical must have peak areas for each
-  # of these measurements:
-  
+
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
     # Force code to throw error if data.in accessed after this point:
@@ -314,37 +348,35 @@ format_caco2 <- function(
   if (!is.null(analysis.parameters)) data.out[,analysis.parameters.col] <-
     analysis.parameters
   if (!is.null(membrane.area)) data.out[,membrane.area.col] <- membrane.area
-  if (!is.null(series)) data.out[,series.col] <- series
-  if (!is.null(meas.time)) data.out[,meas.time.col] <- meas.time
+  if (!is.null(time)) data.out[,time.col] <- time
   if (!is.null(compound.conc)) data.out[,compound.conc.col] <- compound.conc
+  if (!is.null(biological.replicates)) data.out[,biological.replicates.col] <- biological.replicates
+  if (!is.null(technical.replicates)) data.out[,technical.replicates.col] <- technical.replicates
+  
+  # Create a list of necessary columns
+  caco2.cols <- c(L1.common.cols, 
+                  time.col = "Time",
+                  direction.col="Direction",
+                  compound.conc.col="Nominal.Conc",
+                  nominal.test.conc.col="Test.Target.Conc",
+                  membrane.area.col="Membrane.Area",
+                  receiver.vol.col="Vol.Receiver",
+                  donor.vol.col="Vol.Donor"
+  )
 
-# We need all these columns in data.out
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    direction.col,
-    dilution.col,
-    cal.col,
-    series.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    meas.time.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    area.col,
-    membrane.area.col,
-    donor.vol.col,
-    receiver.vol.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col
-    )
-
+  ## allow either one of the two, or both replicate columns in the data
+  if (biological.replicates.col %in% colnames(data.out))
+    caco2.cols <- c(caco2.cols, 
+                    biological.replicates.col = "Biological.Replicates")
+  if (technical.replicates.col %in% colnames(data.out))
+    caco2.cols <- c(caco2.cols, 
+                    technical.replicates.col = "Technical.Replicates")
+  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.out)))
+    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
+  
+  # check if all required columns are presented: 
+  cols <- unlist(mget(names(caco2.cols)))
   if (!(all(cols %in% colnames(data.out))))
   {
     stop(paste("Missing columns named:",
@@ -371,67 +403,19 @@ format_caco2 <- function(
     }
   }
   
+                  
   # Organize the columns:
   data.out <- data.out[,cols]
 
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    direction.col <- "Direction"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    series.col <- "Series"
-    compound.conc.col <- "Standard.Conc"
-    nominal.test.conc.col <- "Test.Target.Conc"
-    meas.time.col <- "Time"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    area.col <- "Area"
-    membrane.area.col <- "Membrane.Area"
-    donor.vol.col <- "Vol.Donor"
-    recevier.vol.col <- "Vol.Receiver"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    direction.col,
-    dilution.col,
-    cal.col,
-    series.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    meas.time.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    area.col,
-    membrane.area.col,
-    donor.vol.col,
-    receiver.vol.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col
-    )
+  colnames(data.out) <- caco2.cols
 
   # calculate the response:
-  data.out[,area.col] <- signif(as.numeric(data.out[,area.col]), 5)
-  data.out[,istd.col] <- signif(as.numeric(data.out[,istd.col]), 5)
-  data.out[,istd.conc.col] <- as.numeric(data.out[,istd.conc.col])
-  data.out[,"Response"] <- signif(data.out[,area.col] /
-     data.out[,istd.col] *  data.out[,istd.conc.col], 4)
-
+  data.out[,"Area"] <- signif(as.numeric(data.out[,"Area"]), 5)
+  data.out[,"ISTD.Area"] <- signif(as.numeric(data.out[,"ISTD.Area"]), 5)
+  data.out[,"ISTD.Conc"] <- as.numeric(data.out[,"ISTD.Conc"])
+  data.out[,"Response"] <- signif(data.out[,"Area"] /
+                                    data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"], 4)
+  
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
     write.table(data.out,

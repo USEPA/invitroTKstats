@@ -68,41 +68,22 @@
 #' @author John Wambaugh
 #'
 #' @examples
-#' library(invitroTKstats)
+#' ## Load example level-2 data
+#' level2 <- invitroTKstats::caco2_L2
+#' 
+#' ## scenario 1: 
+#' ## input level-2 data from the R session and do not export the result table
+#' level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
 #'
-#' level0 <- TO1caco2
-#' level1 <- format_caco2(level0,
-#'    FILENAME="EPACyprotex2021",
-#'    sample.col="SampleName",
-#'    dtxsid.col="CompoundName",
-#'    lab.compound.col="CompoundName",
-#'    cal=1,
-#'    istd.conc.col="ISTD.Conc",
-#'    compound.col="CompoundName",
-#'    compound.conc.col="Test.Target.Conc",
-#'    membrane.area=0.11,
-#'    series=1,
-#'    analysis.parameters="Feature",
-#'    analysis.instrument="GC or LC",
-#'    analysis.method="Mass Spec"
-#'    )
-#'
-#' level2 <- level1
-#' level2$Verified <- "Y"
-#'
-#' write.table(level2,
-#'   file="EPACyprotex2021-Caco-2-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level3 <- calc_caco2_point(FILENAME="EPACyprotex2021")
-#'
-#' write.table(level3,
-#'   file="EPACyprotex2021-Caco-2-Level3.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
+#' ## scenario 2: 
+#' ## import level-2 data from a 'tsv' file and export the result table
+#' \dontrun{
+#' ## Refer to sample_verification help file for how to export level-2 data to a directory.
+#' ## Unless a different path is specified in OUTPUT.DIR,
+#' ## the result table will be saved to the directory specified in INPUT.DIR.
+#' level3 <- calc_caco2_point(FILENAME="Examples", 
+#'                            INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #'
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
@@ -136,58 +117,24 @@ calc_caco2_point <- function(
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
 
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    series.col <- "Series"
-    compound.conc.col <- "Standard.Conc"
-    nominal.test.conc.col <- "Test.Target.Conc"
-    meas.time.col="Time"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    membrane.area.col <- "Membrane.Area"
-    donor.vol.col <- "Vol.Donor"
-    receiver.vol.col <- "Vol.Receiver"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    series.col,
-    compound.conc.col,
-    nominal.test.conc.col,
-    meas.time.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    membrane.area.col,
-    donor.vol.col,
-    receiver.vol.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col
-    )
-
+  caco2.cols <- c(L1.common.cols, 
+                  time.col = "Time",
+                  direction.col="Direction",
+                  compound.conc.col="Nominal.Conc",
+                  nominal.test.conc.col="Test.Target.Conc",
+                  membrane.area.col="Membrane.Area",
+                  receiver.vol.col="Vol.Receiver",
+                  donor.vol.col="Vol.Donor"
+  )
+  
+  list2env(as.list(caco2.cols), envir = environment())
+  cols <- c(unlist(mget(names(caco2.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(input.table)))
+    stop(paste0("Need at least one replicate columns: ", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+               ". Run format_caco2 first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(input.table))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")
@@ -210,7 +157,7 @@ calc_caco2_point <- function(
     this.subset <- subset(input.table, input.table[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- cbind(this.subset[1,
-      c(compound.col, dtxsid.col, meas.time.col, membrane.area.col)],
+      c(compound.col, dtxsid.col, time.col, membrane.area.col)],
       data.frame(Calibration="All Data",
         C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN,
         C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Refflux=NaN))

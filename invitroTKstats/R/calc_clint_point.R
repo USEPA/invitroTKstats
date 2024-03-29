@@ -51,60 +51,22 @@
 #' @author John Wambaugh
 #'
 #' @examples
+#' ## Load example level-2 data
+#' level2 <- invitroTKstats::kreutz2023.clint
+#' 
+#' ## scenario 1: 
+#' ## input level-2 data from the R session and do not export the result table
+#' level3 <- calc_clint_point(data.in = level2, output.res = FALSE)
 #'
-#' library(invitroTKstats)
-#'
-#' clint <- wambaugh2019.clint
-#' clint$Date <- "2019"
-#' clint$Sample.Type <- "Blank"
-#' clint$Time..mins. <- as.numeric(clint$Time..mins.)
-#' clint[!is.na(clint$Time..mins.),"Sample.Type"] <- "Cvst"
-#' clint$ISTD.Name <- "Bucetin, Propranolol, and Diclofenac"
-#' clint$ISTD.Conc <- 1
-#' clint$Dilution.Factor <- 1
-#' clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
-#' clint$Hep.Density <- 0.5
-#' clint$Analysis.Method <- "LC or GC"
-#' clint$Analysis.Instrument <- "No Idea"
-#' clint$Analysis.Parameters <- "None"
-#'
-#' level1 <- format_clint(clint,
-#'   FILENAME="Wambaugh2019",
-#'   sample.col="Sample.Name",
-#'   compound.col="Preferred.Name",
-#'   lab.compound.col="Name",
-#'   time.col="Time..mins.",
-#'   cal.col="FileName")
-#'
-#' level2 <- level1
-#' level2$Verified <- "Y"
-#'
-#' # All data (allows test for saturation):
-#' write.table(level2,
-#'   file="Wambaugh2019-Clint-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level3 <- calc_clint_point(FILENAME="Wambaugh2019")
-#'
-#' # Just 1 uM data:
-#' write.table(subset(level2,Conc==1),
-#'   file="Wambaugh2019-1-Clint-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level3.1 <- calc_clint_point(FILENAME="Wambaugh2019-1")
-#'
-#' # Just 10 uM data:
-#' write.table(subset(level2,Conc==10),
-#'   file="Wambaugh2019-10-Clint-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level3.10 <- calc_clint_point(FILENAME="Wambaugh2019-10")
+#' ## scenario 2: 
+#' ## import level-2 data from a 'tsv' file and export the result table
+#' \dontrun{
+#' ## Refer to sample_verification help file for how to export level-2 data to a directory.
+#' ## Unless a different path is specified in OUTPUT.DIR,
+#' ## the result table will be saved to the directory specified in INPUT.DIR.
+#' level3 <- calc_clint_point(FILENAME="KreutzPFAS", 
+#'                            INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #'
 #' @references
 #' \insertRef{shibata2002prediction}{invitroTKstats}
@@ -135,59 +97,27 @@ calc_clint_point <- function(
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
   
-
-# Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  density.col <- "Hep.Density"
-  std.conc.col <- "Std.Conc"
-  clint.assay.conc.col <- "Clint.Assay.Conc"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-
-# We need all these columns in clint.data
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    density.col,
-    std.conc.col,
-    clint.assay.conc.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col
-    )
-
+  clint.cols <- c(L1.common.cols,
+                  time.col = "Time",
+                  test.conc.col = "Test.Compound.Conc",
+                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  density.col = "Hep.Density"
+  )
+  list2env(as.list(clint.cols), envir = environment())
+  cols <- c(unlist(mget(names(clint.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(clint.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_clint first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(clint.data))))
   {
     warning("Run format_clint first (level 1) then curate to (level 2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(clint.data))],collapse=", ")))
   }
+  
 
   # Only include the data types used:
   clint.data <- subset(clint.data,clint.data[,type.col] %in% c(

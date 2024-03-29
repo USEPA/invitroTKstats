@@ -51,30 +51,39 @@
 #' # remove the verification columns from the data and use it as level-1.
 #' level1 <- dplyr::select(level2, -c(Verifed, Verified))
 #' 
-#' # scenario 1: input data is in the R session
-#' # create a exclusion criteria data frame
+#' # Scenario 1: Pass in data.in and exclusion.info data frame from R session 
+#' 
+#' # Create a exclusion criteria data frame
+#' # If more than one variable is used to define a set of samples to be excluded,
+#' # enter them as one string, separate the variables with a vertical bar, "|", and do the same for 
+#' # values. 
 #' exclusion_criteria <- data.frame(
-#' Variable = c("DTXSID", "Lab.Sample.Name", "Compound.Name"),
-#' Value = c("DTXSID00380798","G4-Ametryn Hep052521 T0a", "Nonafluoropentanamide"), 
-#' Message = c("bad id #1","bad sample", "bad compound")
+#' Variables = c("DTXSID", "Date", "Compound.Name|Lab.Sample.Name"),
+#' Values = c("DTXSID00380798","21021", "Nonafluoropentanamide|Amide Hep120220 T0C2_020921"), 
+#' Message = c("Exclude all samples of this compound.","Exclude all samples from this date.", "These samples for this compound were contaminated.")
 #' )
 #' 
-#' my.level2 <- sample_verification(FILENAME="kreutz", 
-#' data.in=level1, exclusion_criteria, assay="Clint")
+#' # Run the verification function.
+#' my.level2 <- sample_verification(data.in=level1, exclusion_criteria, output.res = FALSE)
 #' 
-#' # scenario 2: import 'tsv' as input data
+#' # scenario 2: import 'tsv' as input data and do not pass in a exclusion.info data frame
 #' 
+#' \dontrun{
 #' # Write the level-1 file to some folder
-#' write.table(data.out,
+#' write.table(level1,
 #' file="~/invitrotkstats/invitroTKstats/data-raw/kreutz-Clint-Level1.tsv",
 #' sep="\t",
 #' row.names=F,
 #' quote=F)
 #' 
-#' # import level-1 with INPUT.DIR 
+#' # Run the verification function.
+#' # Specify the path to import level-1 data with INPUT.DIR.
+#' # No exclusion.info data frame used will label all samples as verified.
 #' my.level2 <- sample_verification(FILENAME="kreutz", 
-#' exclusion_criteria, assay="Clint", INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw")
+#' assay="Clint", INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw")
+#' }
 #' 
+#' @author Zhihui (Grace) Zhao
 #' 
 sample_verification <- function(
     FILENAME, 
@@ -88,7 +97,8 @@ sample_verification <- function(
   
   approved_assays <- c("Clint", "Caco-2", "fup-UC", "fup-RED")
   # if either importing or exporting data file, check if the assay given is valid.
-  if ((missing(data.in) |  output.res) & !(assay %in% approved_assays)) 
+  if (missing(data.in) | output.res)
+    if (!(assay %in% approved_assays))
     stop("Invalid assay. ", "Use one of the approved assays: ", paste(approved_assays, collapse = ", "), ".")
   
   if (!missing(data.in)) {
@@ -108,21 +118,39 @@ sample_verification <- function(
                            Unable to import data from the 'tsv' without both FILENAME and assay."))
     }
   
-  # add a column with all "Y"
+  # Add the verification column with all "Y"
   data.out$Verified <- "Y"
   
   if (!missing(exclusion.info)) {
-    if (!all(unique(exclusion.info[, "Variable"]) %in% colnames(data.out))) 
-      stop("Name(s) of the list(s) do not match the column names of the level-1 data.")
-       
+    exclusion.info <- as.data.frame(exclusion.info)
     for (i in 1:nrow(exclusion.info)) {
-      this.variable <- exclusion.info[i ,"Variable"]
-      this.value <- exclusion.info[i, "Value"]
-      which.rows <- data.out[, this.variable] == this.value
-      which.rows[is.na(which.rows)] <- FALSE
-      data.out[which.rows,"Verified"] <- exclusion.info[i, "Message"]
-    }
+      ## split the list, consider all possible separators
+      ## exclude period and underscore - period is used in column names and underscore can be used in sample names
+      var.list <- strsplit(exclusion.info[i, "Variables"], "\\|", perl = TRUE)[[1]]
+      var.list <- trimws(var.list)
+      value.list <- strsplit(exclusion.info[i, "Values"], "\\|", perl = TRUE)[[1]]
+      value.list <- trimws(value.list)
+      ## check if every variable has a matched value 
+      if (length(var.list) != length(value.list))
+        stop("The lengths of variable list and value list do not match.")
+      ## check if the variable names are valid
+      if (!all(var.list %in% colnames(data.out))) 
+        stop("Names of the variables use to determine the exclusion criteria do not match the column names of the level-1 data.")
+      
+      ## concatenate exclusion criteria into one string
+      ec <- paste(paste(var.list, paste0("\"",value.list,"\""), sep = "=="), collapse = "&")
+      ## filter the rows and attach exclusion message 
+      ## suppressWarnings() is used here to suppress the warning from replace(). 
+      ## The number of rows to replace does not match the replacement length, which should be the total number of rows in data.out
+      data.out <- suppressWarnings(data.out %>% dplyr::mutate(Verified = replace(Verified, !! rlang::parse_expr(ec), 
+                                                                          paste(exclusion.info[i, "Message"], Verified, sep = ", "))))
+      
+
+      }
   }
+  
+  ## clean up the format of messages
+  data.out[,"Verified"] <- gsub(", Y", "", data.out[,"Verified"])
   
   if (output.res) {
     if (missing(assay) | missing(FILENAME)) stop("Missing either FILENAME and/or assay. Unable to export data to a 'tsv' without a FILENAME and assay.")

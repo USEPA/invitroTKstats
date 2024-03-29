@@ -60,26 +60,22 @@
 #' @author John Wambaugh
 #'
 #' @examples
-#' level0 <- kreutz2020
-#' level0$Analysis.Method <- "GC"
-#' level0$Analysis.Instrument <- "No Idea"
-#' level0$Analysis.Parameters <- "None"
-#' level1 <- format_fup_uc(level0,
-#'   FILENAME="Kreutz2020",
-#'   compound.col="Name",
-#'   compound.conc.col="Standard.Conc",
-#'   area.col="Chem.Area"
-#'   )
-#' level2 <- level1
-#' level2$Verified <- "Y"
+#' ## Load example level-2 data
+#' level2 <- invitroTKstats::kreutz2023.uc
+#' 
+#' ## scenario 1: 
+#' ## input level-2 data from the R session and do not export the result table
+#' level3 <- calc_fup_uc_point(data.in = level2, output.res = FALSE)
 #'
-#' write.table(level2,
-#'   file="Kreutz2020-fup-UC-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level3 <- calc_fup_uc_point(FILENAME="Kreutz2020")
+#' ## scenario 2: 
+#' ## import level-2 data from a 'tsv' file and export the result table
+#' \dontrun{
+#' ## Refer to sample_verification help file for how to export level-2 data to a directory.
+#' ## Unless a different path is specified in OUTPUT.DIR,
+#' ## the result table will be saved to the directory specified in INPUT.DIR.
+#' level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS", 
+#'                             INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #'
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
@@ -108,53 +104,19 @@ calc_fup_uc_point <- function(
   
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
   PPB.data <- subset(PPB.data,!is.na(Response))
-
-  # Standardize the column names:
-    sample.col <- "Lab.Sample.Name"
-    date.col <- "Date"
-    compound.col <- "Compound.Name"
-    dtxsid.col <- "DTXSID"
-    lab.compound.col <- "Lab.Compound.Name"
-    type.col <- "Sample.Type"
-    dilution.col <- "Dilution.Factor"
-    cal.col <- "Calibration"
-    std.conc.col <- "Standard.Conc"
-    uc.assay.conc.col <- "UC.Assay.T1.Conc"
-    istd.name.col <- "ISTD.Name"
-    istd.conc.col <- "ISTD.Conc"
-    istd.col <- "ISTD.Area"
-    series.col <- "Series"
-    area.col <- "Area"
-    analysis.method.col <- "Analysis.Method"
-    analysis.instrument.col <- "Analysis.Instrument"
-    analysis.parameters.col <- "Analysis.Parameters"
-    note.col <- "Note"
-
-
-# For a properly formatted level 2 file we should have all these columns:
-# We need all these columns in PPB.data
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    cal.col,
-    std.conc.col,
-    uc.assay.conc.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    series.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    "Response",
-    good.col)
+  
+  fup.uc.cols <- c(L1.common.cols,
+                   test.conc.col = "Test.Compound.Conc",
+                   uc.assay.conc.col = "UC.Assay.T1.Conc"
+  )
+  list2env(as.list(fup.uc.cols), envir = environment())
+  cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
+  
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(PPB.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_uc first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(PPB.data))))
   {
     warning("Run format_fup_uc first (level 1) then curate to level 2.")

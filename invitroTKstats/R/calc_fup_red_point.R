@@ -64,49 +64,22 @@
 #' @author John Wambaugh
 #'
 #' @examples
-#' red <- subset(wambaugh2019.red, Protein==100)
-#' red$Date <- "2019"
-#' red$Sample.Type <- "Blank"
-#' red <- subset(red,!is.na(SampleName))
-#' red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-#' red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-#' red$Dilution.Factor <- NA
-#' red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-#' red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-#' red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-#' red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
-#' red$Analysis.Method <- "LC or GC"
-#' red$Analysis.Instrument <- "No Idea"
-#' red$Analysis.Parameters <- "None"
+#' ## Load example level-2 data
+#' level2 <- invitroTKstats::smeltz2023.red
+#' 
+#' ## scenario 1: 
+#' ## input level-2 data from the R session and do not export the result table
+#' level3 <- calc_fup_red_point(data.in = level2, output.res = FALSE)
 #'
-#'
-#' # Strip out protein conc information from compound names:
-#' red$CompoundName <- gsub("-100P","",red$CompoundName)
-#' red$CompoundName <- gsub("-30P","",red$CompoundName)
-#' red$CompoundName <- gsub("-10P","",red$CompoundName)
-#'
-#' red$Test.Target.Conc <- 5
-#' red$ISTD.Name <- "Bucetin and Diclofenac"
-#' red$ISTD.Conc <- 1
-#' red$Series <- 1
-#'
-#' level1 <- format_fup_red(red,
-#'   FILENAME="Wambaugh2019",
-#'   sample.col="SampleName",
-#'   compound.col="Preferred.Name",
-#'   lab.compound.col="CompoundName",
-#'   cal.col="RawDataSet")
-#'
-#' level2 <- level1
-#' level2$Verified <- "Y"
-#'
-#' write.table(level2,
-#'   file="Wambaugh2019-fup-RED-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level3 <- calc_fup_red_point(FILENAME="Wambaugh2019")
+#' ## scenario 2: 
+#' ## import level-2 data from a 'tsv' file and export the result table
+#' \dontrun{
+#' ## Refer to sample_verification help file for how to export level-2 data to a directory.
+#' ## Unless a different path is specified in OUTPUT.DIR,
+#' ## the result table will be saved to the directory specified in INPUT.DIR.
+#' level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS", 
+#'                              INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #'
 #' @references
 #'  \insertRef{waters2008validation}{invitroTKstats}
@@ -136,60 +109,22 @@ calc_fup_red_point <- function(
   
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
-
-  # Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  replicate.col <- "Replicate"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  std.conc.col <- "Std.Conc"
-  test.nominal.conc.col <- "Test.Nominal.Conc"
-  plasma.percent.col <- "Percent.Physiologic.Plasma"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-# For a properly formatted level 2 file we should have all these columns:
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    test.nominal.conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col,
-    "Response",
-    good.col)
-# Throw error if not all columns present with expected names:
+  
+  fup.red.cols <- c(L1.common.cols,
+                    time.col = "Time",
+                    test.conc.col = "Test.Compound.Conc",
+                    test.nominal.conc.col = "Test.Nominal.Conc",
+                    plasma.percent.col = "Percent.Physiologic.Plasma"
+                    )
+  list2env(as.list(fup.red.cols), envir = environment())
+  cols <- c(unlist(mget(names(fup.red.cols))), "Response", good.col)
+  
+  # Throw error if not all columns present with expected names:
+  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
+    stop(paste0("Need at least one replicate columns: ", 
+                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
+                ". Run format_fup_red first (level 1) then curate to (level 2)."))
+  
   if (!(all(cols %in% colnames(MS.data))))
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")

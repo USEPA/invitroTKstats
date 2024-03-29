@@ -1,0 +1,77 @@
+
+R version 4.2.2 (2022-10-31 ucrt) -- "Innocent and Trusting"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ## code to prepare `L1.common.cols` dataset
+> ## Standard names for columns that are expected for all assays.
+> ## Used in format_<assay> functions to check & rename required columns.
+> L1.common.cols <- c(
++   sample.col = "Lab.Sample.Name",
++   date.col = "Date",
++   compound.col = "Compound.Name",
++   dtxsid.col = "DTXSID",
++   lab.compound.col = "Lab.Compound.Name",
++   type.col = "Sample.Type",
++   dilution.col = "Dilution.Factor",
++   cal.col = "Calibration",
++   istd.name.col = "ISTD.Name",
++   istd.conc.col = "ISTD.Conc",
++   istd.col = "ISTD.Area",
++   area.col = "Area",
++   analysis.method.col = "Analysis.Method",
++   analysis.instrument.col = "Analysis.Instrument",
++   analysis.parameters.col = "Analysis.Parameters",
++   note.col = "Note",
++   level0.file.col = "Level0.File",
++   level0.sheet.col = "Level0.Sheet"
++ )
+> # create the .rda for the package
+> usethis::use_data(L1.common.cols, overwrite = TRUE)
+✔ Setting active project to 'C:/Users/zzhao/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/invitrotkstats/invitroTKstats'
+✔ Saving 'L1.common.cols' to 'data/L1.common.cols.rda'
+• Document your data (see 'https://r-pkgs.org/data.html')
+> # session information
+> sessionInfo()
+R version 4.2.2 (2022-10-31 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 22621)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] fansi_1.0.4       utf8_1.2.3        crayon_1.5.2      rprojroot_2.0.3  
+ [5] R6_2.5.1          lifecycle_1.0.3   magrittr_2.0.3    pillar_1.9.0     
+ [9] rlang_1.1.1       cli_3.6.1         rstudioapi_0.15.0 fs_1.6.3         
+[13] vctrs_0.6.3       desc_1.4.2        glue_1.6.2        purrr_1.0.1      
+[17] compiler_4.2.2    pkgconfig_2.0.3   usethis_2.2.2     tibble_3.2.1     
+> 
+> proc.time()
+   user  system elapsed 
+   0.51    0.18    2.31 

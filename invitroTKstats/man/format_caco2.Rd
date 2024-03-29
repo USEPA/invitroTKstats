@@ -11,8 +11,6 @@ format_caco2(
   lab.compound.col = "Lab.Compound.Name",
   dtxsid.col = "DTXSID",
   date.col = "Date",
-  series = NULL,
-  series.col = "Series",
   compound.col = "Compound.Name",
   area.col = "Area",
   istd.col = "ISTD.Area",
@@ -28,20 +26,33 @@ format_caco2(
   cal.col = "Cal",
   dilution = NULL,
   dilution.col = "Dilution.Factor",
-  meas.time = 2,
-  meas.time.col = "Time",
+  time = NULL,
+  time.col = "Time",
   istd.name = NULL,
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
   istd.conc.col = "ISTD.Conc",
   nominal.test.conc = NULL,
   nominal.test.conc.col = "Test.Target.Conc",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method = NULL,
   analysis.method.col = "Analysis.Method",
   analysis.instrument = NULL,
   analysis.instrument.col = "Analysis.Instrument",
   analysis.parameters = NULL,
-  analysis.parameters.col = "Analysis.Parameters"
+  analysis.parameters.col = "Analysis.Parameters",
+  note.col = "Note",
+  level0.file = NULL,
+  level0.file.col = "Level0.File",
+  level0.sheet = NULL,
+  level0.sheet.col = "Level0.Sheet",
+  output.res = TRUE,
+  save.bad.types = FALSE,
+  INPUT.DIR = NULL,
+  OUTPUT.DIR = NULL
 )
 }
 \arguments{
@@ -65,16 +76,6 @@ ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
 \item{date.col}{(Character) Column name of \code{data.in} containing the laboratory measurement
 date. (Defaults to "Date".)}
-
-\item{series}{(Numeric) Index of simultaneous replicates with the same analytical chemistry. 
-(Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
-use the same number of replicates.)}
-
-\item{series.col}{(Character) Column name containing \code{series} information.
-(Defaults to "Series".) 
-(Note: \code{data.in} does not necessarily have this field. 
-If this field is missing, it can be auto-filled with the value 
-specified in \code{series}.)}
 
 \item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
 (Defaults to "Compound.Name".)}
@@ -138,10 +139,10 @@ information. (Defaults to "Dilution.Factor".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{dilution}.)}
 
-\item{meas.time}{(Numeric) The amount of time (in hours) before the receiver and donor 
-compartments are measured. (Defaults to 2.)}
+\item{time}{(Numeric) The amount of time (in hours) before the receiver and donor 
+compartments are measured. (Defaults to \code{NULL}.)}
 
-\item{meas.time.col}{(Character) Column name containing \code{meas.time} 
+\item{time.col}{(Character) Column name containing \code{meas.time} 
 information. (Defaults to "Time".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{meas.time}.)}
@@ -171,6 +172,24 @@ information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{nominal.test.conc}.)}
 
+\item{biological.replicates}{(Character) Replicates with the same analyte. Typically, this uses 
+numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if none of the test compounds have replicates.)}
+
+\item{biological.replicates.col}{(Character) Column name of \code{data.in} containing the number or 
+the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".)
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{biological.replicates}.)}
+
+\item{technical.replicates}{(Character) Repeated measurements from one sample. Typically, this uses 
+numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if none of the test compounds have replicates.)}
+
+\item{technical.replicates.col}{(Character) Column name of \code{data.in} containing the number or 
+the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+(Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{technical.replicates}.)}
+
 \item{analysis.method}{(Character) The analytical chemistry analysis method, 
 typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass
 spectrometry, respectively. (Defaults to \code{NULL}.)
@@ -199,6 +218,44 @@ compound on the chemical analysis instrument, for example
 information. (Defaults to "Analysis.Parameters".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{analysis.parameters}.)}
+
+\item{note.col}{(Character) Column name of \code{data.in} containing additional notes on 
+test compounds. (Defaults to "Note").}
+
+\item{level0.file}{(Character) The Level-0 file from which the \code{data.in} were obtained.
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
+were obtained from the same Level-0 file.)}
+
+\item{level0.file.col}{(Character) Column name containing \code{level0.file} information. 
+(Defaults to "Level0.File".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{level0.file}.)}
+
+\item{level0.sheet}{(Character) The specific sheet name of Level-0 file from which the 
+\code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+(Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
+were obtained from the same sheet in the same Level-0 file.)}
+
+\item{level0.sheet.col}{(Character) Column name containing \code{level0.sheet} information.
+(Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{level0.sheet}.)}
+
+\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+table (Level-1) will be exported the current directory as a .tsv file. 
+(Defaults to \code{TRUE}.)}
+
+\item{save.bad.types}{(Logical) When set to \code{TRUE}, export data removed 
+due to inappropriate sample types. See the Detail section for the required sample types. 
+(Defaults to \code{FALSE}.)}
+
+\item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
+If \code{NULL}, looking for the input level-0 file in the current working
+directory. (Defaults to \code{NULL}.)}
+
+\item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
+If \code{NULL}, the output file will be saved to the current working
+directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
 A Level-1 data frame with a standardized format containing a  

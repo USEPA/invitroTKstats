@@ -5,13 +5,16 @@
 \title{Plot Mass Spectrometry Responses from Measurements of Intrinsic
 Hepatic Clearance}
 \usage{
-plot_clint(level2, dtxsid)
+plot_clint(level2, dtxsid, color.palette = "viridis")
 }
 \arguments{
 \item{level2}{(Data Frame) A data frame containing Level-2 data with a measure
 of chemical clearance over time when incubated with suspended hepatocytes.}
 
 \item{dtxsid}{(Character) EPA's DSSTox Structure ID for the chemical to be plotted.}
+
+\item{color.palette}{(Character) A character string indicating which 
+\code{viridis} R package color map option to use. (Defaults to "viridis".)}
 }
 \value{
 \item{ggplot2}{A figure of mass spectrometry responses over time for

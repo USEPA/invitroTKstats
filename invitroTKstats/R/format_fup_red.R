@@ -66,15 +66,6 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{cal}.)
 #'
-#' @param replicate (Numeric) Simultaneous replicates with the same analytical chemistry. 
-#' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 
-#' use the same number of replicates.)
-#' 
-#' @param replicate.col (Character) Column name containing \code{replicate} 
-#' information. (Defaults to "Replicate".) (Note: \code{data.in} does not
-#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{replicate}.)
-#' 
 #' @param dilution (Numeric) Number of times the sample was diluted before MS 
 #' analysis. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
 #' samples underwent the same number of dilutions.)
@@ -85,7 +76,7 @@
 #' specified in \code{dilution}.)
 #'
 #' @param time (Numeric) Incubation time (in hours) - from the start of incubation to 
-#' when the sample measurements were taken. (Defaults to 4.) (Note: Single entry only, use only if all 
+#' when the sample measurements were taken. (Defaults to \code{NULL}.) (Note: Single entry only, use only if all 
 #' samples were taken after the same amount of incubation time.)
 #'
 #' @param time.col (Character) Column name containing \code{time} information. 
@@ -131,17 +122,35 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{plasma.percent}.)
 #'
-#' @param std.conc (Numeric) The standard test chemical concentration for 
+#' @param test.conc (Numeric) The standard test chemical concentration for 
 #' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same standard concentration was used for all tested compounds.)
 #' 
-#' @param std.conc.col (Character) Column name containing \code{std.conc} 
-#' information. (Defaults to "Standard.Conc".) (Note: \code{data.in} does not
+#' @param test.conc.col (Character) Column name containing \code{test.conc} 
+#' information. (Defaults to "Test.Compound.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{std.conc}.)
+#' specified in \code{test.conc}.)
 #'
 #' @param area.col (Character) Column name of \code{data.in} containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
+#' 
+#' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param biological.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates with the same analyte. (Defaults to "Biological.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{biological.replicates}.)
+#' 
+#' @param technical.replicates (Character) Repeated measurements from one sample. Typically, this uses 
+#' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if none of the test compounds have replicates.)
+#' 
+#' @param technical.replicates.col (Character) Column name of \code{data.in} containing the number or 
+#' the indices of replicates taken from the one sample. (Defaults to "Technical.Replicates".) 
+#' (Note: \code{data.in} does not necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{technical.replicates}.)
 #' 
 #' @param analysis.method (Character) The analytical chemistry analysis method, 
 #' typically "LCMS" or "GCMS", liquid chromatography or gas chromatography–mass spectrometry, respectively. 
@@ -259,11 +268,9 @@ format_fup_red <- function(
   type.col="Sample.Type",
   cal=NULL,
   cal.col="Cal",
-  replicate=NULL,
-  replicate.col="Replicate",
   dilution=NULL,
   dilution.col="Dilution.Factor",
-  time = 4,
+  time = NULL,
   time.col="Time",
   istd.col="ISTD.Area",
   istd.name=NULL,
@@ -274,9 +281,13 @@ format_fup_red <- function(
   test.nominal.conc.col="Test.Target.Conc",
   plasma.percent=NULL,
   plasma.percent.col="Plasma.Percent",
-  std.conc=NULL,
-  std.conc.col="Standard.Conc",
+  test.conc=NULL,
+  test.conc.col="Test.Compound.Conc",
   area.col="Area",
+  biological.replicates = NULL,
+  biological.replicates.col = "Biological.Replicates",
+  technical.replicates = NULL,
+  technical.replicates.col = "Technical.Replicates",
   analysis.method=NULL,
   analysis.method.col="Analysis.Method",
   analysis.instrument=NULL,
@@ -328,8 +339,8 @@ format_fup_red <- function(
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
-  if (!is.null(std.conc)) data.in[,std.conc.col] <-
-    std.conc
+  if (!is.null(test.conc)) data.in[,test.conc.col] <-
+    test.conc
   if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <-
     test.nominal.conc
   if (!is.null(plasma.percent)) data.in[,plasma.percent.col] <-
@@ -341,33 +352,29 @@ format_fup_red <- function(
     analysis.parameters
   if (!is.null(level0.file)) data.in[,level0.file.col] <- level0.file
   if (!is.null(level0.sheet)) data.in[,level0.sheet.col] <- level0.sheet
+  if (!is.null(biological.replicates)) data.in[,biological.replicates.col]<- biological.replicates
+  if (!is.null(technical.replicates)) data.in[,technical.replicates.col]<- technical.replicates
 
-# We need all these columns in data.in
-  cols <-c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    test.nominal.conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
+  # We need all these columns in data.in
+  fup.red.cols <- c(L1.common.cols,
+                    time.col = "Time",
+                    test.conc.col = "Test.Compound.Conc",
+                    test.nominal.conc.col = "Test.Nominal.Conc",
+                    plasma.percent.col = "Percent.Physiologic.Plasma"
+  )
+  
+  ## allow either one of the two, or both replicate columns in the data
+  if (biological.replicates.col %in% colnames(data.in))
+    fup.red.cols <- c(fup.red.cols, 
+                    biological.replicates.col = "Biological.Replicates")
+  if (technical.replicates.col %in% colnames(data.in))
+    fup.red.cols <- c(fup.red.cols, 
+                    technical.replicates.col = "Technical.Replicates")
+  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.in)))
+    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
+               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
+  
+  cols <- unlist(mget(names(fup.red.cols)))
 
   if (!(all(cols %in% colnames(data.in))))
   {
@@ -402,65 +409,16 @@ format_fup_red <- function(
 
   # Organize the columns:
   data.out <- data.out[,cols]
-
-  # Standardize the column names:
-  sample.col <- "Lab.Sample.Name"
-  date.col <- "Date"
-  compound.col <- "Compound.Name"
-  dtxsid.col <- "DTXSID"
-  lab.compound.col <- "Lab.Compound.Name"
-  type.col <- "Sample.Type"
-  dilution.col <- "Dilution.Factor"
-  replicate.col <- "Replicate"
-  cal.col <- "Calibration"
-  istd.name.col <- "ISTD.Name"
-  istd.conc.col <- "ISTD.Conc"
-  istd.col <- "ISTD.Area"
-  std.conc.col <- "Std.Conc"
-  test.nominal.conc.col <- "Test.Nominal.Conc"
-  plasma.percent.col <- "Percent.Physiologic.Plasma"
-  time.col <- "Time"
-  area.col <- "Area"
-  analysis.method.col <- "Analysis.Method"
-  analysis.instrument.col <- "Analysis.Instrument"
-  analysis.parameters.col <- "Analysis.Parameters"
-  note.col <- "Note"
-  level0.file.col <- "Level0.File"
-  level0.sheet.col <- "Level0.Sheet"
-
-  colnames(data.out) <- c(
-    sample.col,
-    date.col,
-    compound.col,
-    dtxsid.col,
-    lab.compound.col,
-    type.col,
-    dilution.col,
-    replicate.col,
-    cal.col,
-    istd.name.col,
-    istd.conc.col,
-    istd.col,
-    std.conc.col,
-    test.nominal.conc.col,
-    plasma.percent.col,
-    time.col,
-    area.col,
-    analysis.method.col,
-    analysis.instrument.col,
-    analysis.parameters.col,
-    note.col,
-    level0.file.col,
-    level0.sheet.col
-    )
-
+  
+  colnames(data.out) <- fup.red.cols
+  
   # Set reasonable sig figs:
   for (this.col in c("Area", "ISTD.Area"))
     data.out[,this.col] <- signif(data.out[,this.col], 5)
   
   # calculate the response:
-  data.out[,"Response"] <- signif(data.out[,area.col] /
-     data.out[,istd.col] * data.out[,istd.conc.col], 4)
+  data.out[,"Response"] <- signif(data.out[,"Area"] /
+     data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"], 4)
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):
