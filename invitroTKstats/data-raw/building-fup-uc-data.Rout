@@ -25,6 +25,13 @@ Type 'q()' to quit R.
 > ## Script used to create data examples for fup-uc to use for function documentations and vignette
 > 
 > library(invitroTKstats)
+
+Attaching package: 'invitroTKstats'
+
+The following objects are masked _by_ '.GlobalEnv':
+
+    fup_uc_L1, fup_uc_L2
+
 > ## Load a previously complied Level-0 file of Smeltz 2023 work
 > fup_uc_L0 <- read.table("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC/SmeltzPFAS-PPB-UC-Level0.tsv",
 +                  sep = '\t', header = TRUE)
@@ -42,7 +49,7 @@ Type 'q()' to quit R.
 +                            lab.compound.col="Compound.Name", 
 +                            type.col="Sample.Type", 
 +                            istd.col="IS.Area",
-+                            note.col="Replicate",
++                            note.col = NULL,
 +                            uc.assay.conc.col="Test.Target.Conc",
 +                            technical.replicates.col = "Replicate",
 +                            output.res = FALSE
@@ -115,4 +122,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   1.50    0.64    2.76 
+   1.06    0.40    2.71 
