@@ -57,6 +57,9 @@ while(this.row <= dim(fup_red_L0)[1])
 ## currently cannot be handled/added by additional utility functions. 
 ## Need to manually add them in. 
 
+## Remove the first two columns that are just row numbers, created from reading in from Excel
+fup_red_L0 <- fup_red_L0[, -c(1,2)]
+
 ## Record the level-0 file name and sheet name
 fup_red_L0$File <- this.file
 fup_red_L0$Sheet <- this.sheet.name
