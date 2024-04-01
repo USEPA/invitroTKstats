@@ -20,13 +20,13 @@ unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.Sheet"])
 
 ## Prepare Level-0
 ## read in chem.ids
-chem.ids <- read_excel("~/invitrotkstats/working/SmeltzPFAS/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
+chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
 chem.ids <- as.data.frame(chem.ids)
 chem.ids <- subset(chem.ids, !duplicated(chem.ids[,2]))
 
 ## read in level-0 file
 ## merge_level0 is not needed here because all the relevant the data exist in one file and one sheet
-this.file <- "~/invitrotkstats/working/SmeltzPFAS/PFAS LC-MS RED Summary 20220709.xlsx"
+this.file <- "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx"
 fup_red_L0 <- read_excel(this.file, sheet=3, skip=6)
 this.sheet.name <- excel_sheets(this.file)[3]
 fup_red_L0 <- as.data.frame(fup_red_L0)
@@ -168,12 +168,12 @@ fup_red_L1 <- format_fup_red(data.in = fup_red_L0,
                              lab.compound.col="Compound",
                              type.col="Sample.Type",
                              dilution.col="Dilution.Factor",
-                             replicate.col="Replicate",
+                             technical.replicates.col ="Replicate",
                              cal=1,
                              istd.conc = 10/1000,
                              istd.col= "IS Area",
                              istd.name.col = "ISTD", 
-                             std.conc.col = "Std. Conc", 
+                             test.conc.col = "Std. Conc", 
                              level0.file.col = "File", 
                              level0.sheet.col = "Sheet",
                              test.nominal.conc = 10,
@@ -206,7 +206,7 @@ table(red.sub$Sample.Type)
 table(fup_red_L1$Sample.Type)
 
 ## Save level-0 and level-1 data to use for function demo/example documentation 
-save(fup_red_L0, fup_red_L1, fup_red_L2, file = "~/invitrotkstats/invitroTKstats/data/fup-red-example.RData")
+save(fup_red_L0, fup_red_L1, fup_red_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-RED-example.RData")
 
 ## Include session info
 utils::sessionInfo()
