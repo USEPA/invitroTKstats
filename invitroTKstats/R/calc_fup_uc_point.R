@@ -60,26 +60,22 @@
 #' @author John Wambaugh
 #'
 #' @examples
-#' level0 <- kreutz2020
-#' level0$Analysis.Method <- "GC"
-#' level0$Analysis.Instrument <- "No Idea"
-#' level0$Analysis.Parameters <- "None"
-#' level1 <- format_fup_uc(level0,
-#'   FILENAME="Kreutz2020",
-#'   compound.col="Name",
-#'   compound.conc.col="Standard.Conc",
-#'   area.col="Chem.Area"
-#'   )
-#' level2 <- level1
-#' level2$Verified <- "Y"
+#' ## Load example level-2 data
+#' level2 <- invitroTKstats::kreutz2023.uc
+#' 
+#' ## scenario 1: 
+#' ## input level-2 data from the R session and do not export the result table
+#' level3 <- calc_fup_uc_point(data.in = level2, output.res = FALSE)
 #'
-#' write.table(level2,
-#'   file="Kreutz2020-fup-UC-Level2.tsv",
-#'   sep="\t",
-#'   row.names=F,
-#'   quote=F)
-#'
-#' level3 <- calc_fup_uc_point(FILENAME="Kreutz2020")
+#' ## scenario 2: 
+#' ## import level-2 data from a 'tsv' file and export the result table
+#' \dontrun{
+#' ## Refer to sample_verification help file for how to export level-2 data to a directory.
+#' ## Unless a different path is specified in OUTPUT.DIR,
+#' ## the result table will be saved to the directory specified in INPUT.DIR.
+#' level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS", 
+#'                             INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #'
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
