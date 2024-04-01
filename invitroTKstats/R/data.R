@@ -381,3 +381,133 @@
 #' }
 #'
 "caco2_L1"
+
+#' Clint Level 0 Example Data set
+#'
+#' Mass Spectrometry measurements of intrinsic hepatic clearance for cryopreserved 
+#' pooled human hepatocytes. Chemicals were per- and poly-fluorinated alkyl substance
+#' (PFAS) samples. The experiments were led by Dr.s Marci Smeltz and Barbara Wetmore. 
+#' This data set is a subset of the experiment data which contains samples of 
+#' three test analytes/compounds.
+#' 
+#' @name clint_L0
+#' @aliases clint_L0
+#' @docType data
+#' @format A level 0 data.frame with 247 rows and 21 variables: \describe{
+#' \item{\code{Name}}{Sample name as described in the laboratory}
+#' \item{\code{Sample Text}}{Additional notes on the sample}
+#' \item{\code{Type}}{Type of Clint sample}
+#' \item{\code{RT}}{Retention time}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Height}}{Peak height}
+#' \item{\code{IS Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' \item{\code{Coeff. Of Determination}}{R-squared of the calibration curve}
+#' \item{\code{Std. Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Compound}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{Active.Hep}}{Indicator of whether hepatocytes have been inactivated. 1 means active while 0 means inactive.}
+#' \item{\code{Time}}{Time point sample measured (h)}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' }
+#' 
+#' @references
+#' \insertRef{shibata2002prediction}{invitroTKstats}
+#'
+#' \insertRef{smeltz2023plasma}{invitroTKstats}
+#'
+"clint_L0"
+
+#' Clint Level 1 Example Data set
+#'
+#' Mass Spectrometry measurements of intrinsic hepatic clearance for cryopreserved 
+#' pooled human hepatocytes. Chemicals were per- and poly-fluorinated alkyl substance
+#' (PFAS) samples. The experiments were led by Dr.s Marci Smeltz and Barbara Wetmore. 
+#' This data set is a subset of the experiment data which contains samples of 
+#' three test analytes/compounds.
+#' 
+#' @name clint_L1
+#' @aliases clint_L1
+#' @docType data
+#' @format A level 1 data.frame with 229 rows and 24 variables: \describe{
+#' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Note}}{Any laboratory notes about sample)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Time}}{Time point sample measured (h)}
+#' \item{\code{Test.Compound.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
+#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+#' \item{\code{Biological.Replicates}}{Identier for biological replicate of UC measurements}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' }
+#' 
+#' @references
+#' \insertRef{shibata2002prediction}{invitroTKstats}
+#'
+#' \insertRef{smeltz2023plasma}{invitroTKstats}
+#'
+"clint_L1"
+
+#' Clint Level 2 Example Data set
+#'
+#' Mass Spectrometry measurements of intrinsic hepatic clearance for cryopreserved 
+#' pooled human hepatocytes. Chemicals were per- and poly-fluorinated alkyl substance
+#' (PFAS) samples. The experiments were led by Dr.s Marci Smeltz and Barbara Wetmore. 
+#' This data set is a subset of the experiment data which contains samples of 
+#' three test analytes/compounds.
+#' 
+#' @name clint_L2
+#' @aliases clint_L2
+#' @docType data
+#' @format A level 2 data.frame with 229 rows and 25 variables: \describe{
+#'  \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
+#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Compound.Name}}{Compound name}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
+#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
+#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{Area}}{Peak area of analyte (target compound)}
+#' \item{\code{Analysis.Method}}{General description of chemical analysis method}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+#' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+#' \item{\code{Note}}{Any laboratory notes about sample)}
+#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+#' \item{\code{Time}}{Time point sample measured (h)}
+#' \item{\code{Test.Compound.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
+#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+#' \item{\code{Biological.Replicates}}{Identier for biological replicate of UC measurements}
+#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
+#' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+#' }
+#' 
+#' @references
+#' \insertRef{shibata2002prediction}{invitroTKstats}
+#'
+#' \insertRef{smeltz2023plasma}{invitroTKstats}
+#'
+"clint_L2"
