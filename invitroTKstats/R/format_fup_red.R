@@ -25,7 +25,8 @@
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
 #' @param FILENAME (Character) A string used to identify the output Level-1 file.
-#' "<FILENAME>-fup-RED-Level1.tsv". (Defaults to "MYDATA".)
+#' "<FILENAME>-fup-RED-Level1.tsv", and/or used to identify the input Level-0 file,
+#' "<FILENAME>-fup-RED-Level0.tsv" if importing from a .tsv file. (Defaults to "MYDATA".)
 #'
 #' @param data.in (Data Frame) A Level-0 data frame containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
@@ -225,30 +226,41 @@
 #' @author John Wambaugh
 #'
 #' @examples
-#' library(invitroTKstats)
-#' red <- wambaugh2019.red
-#' red$Date <- "2019"
-#' red$Sample.Type <- "Blank"
-#' red <- subset(red,!is.na(SampleName))
-#' red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-#' red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-#' red$Dilution.Factor <- NA
-#' red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-#' red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-#' red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-#' red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
-#'
-#' red$Test.Target.Conc <- 5
-#' red$ISTD.Name <- "Bucetin and Diclofenac"
-#' red$ISTD.Conc <- 1
-#' red$Series <- 1
-#'
-#' level1 <- format_fup_red(red,
-#'  FILENAME="Wambaugh2019",
-#'  sample.col="SampleName",
-#'  compound.col="Preferred.Name",
-#'  lab.compound.col="CompoundName",
-#'  cal.col="RawDataSet")
+#' 
+#' ## Load the example level-0 data
+#' level0 <- invitroTKstats::fup_red_L0
+#' 
+#' ## Run it through level-1 processing function
+#' ## This example shows the use of data.in argument which allows users to pass
+#' ## in a data frame from the R session.
+#' ## If the input level-0 data exists in an external file such as a .tsv file,
+#' ## users may import it using INPUT.DIR to specify the path and FILENAME
+#' ## to specify the file name. See documentation for details.
+#' fup_red_L1 <- format_fup_red(data.in = fup_red_L0,
+#'                              sample.col ="Name",
+#'                              date.col="Acq.Date",
+#'                              compound.col="Compound",
+#'                              lab.compound.col="Compound",
+#'                              type.col="Sample.Type",
+#'                              dilution.col="Dilution.Factor",
+#'                              technical.replicates.col ="Replicate",
+#'                              cal=1,
+#'                              istd.conc = 10/1000,
+#'                              istd.col= "IS Area",
+#'                              istd.name.col = "ISTD", 
+#'                              test.conc.col = "Std. Conc", 
+#'                              level0.file.col = "File", 
+#'                              level0.sheet.col = "Sheet",
+#'                              test.nominal.conc = 10,
+#'                              plasma.percent = 100,
+#'                              time.col = "Time",
+#'                              analysis.method = "LCMS",
+#'                              analysis.instrument = "Waters ACQUITY I-Class UHPLC - Xevo TQ-S uTQMS",
+#'                              analysis.parameters = "RT",
+#'                              note.col=NULL,
+#'                              output.res = FALSE
+#'                              )
+#' 
 #'
 #' @references
 #' \insertRef{waters2008validation}{invitroTKstats}
@@ -335,7 +347,6 @@ format_fup_red <- function(
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(date)) data.in[,date.col] <- date
   if (!is.null(time)) data.in[,time.col] <- time
-  if (!is.null(replicate)) data.in[,replicate.col] <- replicate
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
