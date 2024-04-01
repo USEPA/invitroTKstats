@@ -15,15 +15,15 @@ clint.list <- c("DTXSID1021116", "DTXSID6023525", "DTXSID80380256")
 
 ## Prepare Level-0
 ## read in chem.ids
-chem.ids <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=1)
+chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=1)
 chem.ids <- as.data.frame(chem.ids)
 
 ## merge_level0 is not needed here because all the data are in the same Excel file.
 ## Reference chemicals data is in the second sheet and test chemicals data is in the third sheet. 
-smeltz.hep.ref <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=2, skip=6)
+smeltz.hep.ref <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=2, skip=6)
 smeltz.hep.ref <- as.data.frame(smeltz.hep.ref)
 
-smeltz.hep.pfas <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=3, skip=2)
+smeltz.hep.pfas <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=3, skip=2)
 smeltz.hep.pfas <- as.data.frame(smeltz.hep.pfas)
 ## Match the column names
 colnames(smeltz.hep.pfas) <- colnames(smeltz.hep.ref)
@@ -147,6 +147,9 @@ clint_L0[,"nM"] <- as.numeric(clint_L0[,"nM"])/1000
 clint_L0[clint_L0[,"Type"]!="CC","nM"] <- NA
 ## Concentrations calculated including dilution
 clint_L0[,"nM"] <- clint_L0[,"nM"]*clint_L0$Dilution.Factor
+
+## Remove the first two columns that are just row numbers, created from reading in from Excel
+clint_L0 <- clint_L0[, -c(1,2)]
 
 ## Prepare Level-1 
 clint_L1 <- format_clint(data.in = clint_L0,

@@ -38,17 +38,17 @@ package 'readxl' was built under R version 4.2.3
 > 
 > ## Prepare Level-0
 > ## read in chem.ids
-> chem.ids <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=1)
+> chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=1)
 > chem.ids <- as.data.frame(chem.ids)
 > 
 > ## merge_level0 is not needed here because all the data are in the same Excel file.
 > ## Reference chemicals data is in the second sheet and test chemicals data is in the third sheet. 
-> smeltz.hep.ref <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=2, skip=6)
+> smeltz.hep.ref <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=2, skip=6)
 New names:
 • `` -> `...1`
 > smeltz.hep.ref <- as.data.frame(smeltz.hep.ref)
 > 
-> smeltz.hep.pfas <- read_excel("~/invitrotkstats/working/SmeltzPFAS/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=3, skip=2)
+> smeltz.hep.pfas <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=3, skip=2)
 New names:
 • `` -> `...2`
 • `` -> `...3`
@@ -188,6 +188,9 @@ New names:
 > ## Concentrations calculated including dilution
 > clint_L0[,"nM"] <- clint_L0[,"nM"]*clint_L0$Dilution.Factor
 > 
+> ## Remove the first two columns that are just row numbers, created from reading in from Excel
+> clint_L0 <- clint_L0[, -c(1,2)]
+> 
 > ## Prepare Level-1 
 > clint_L1 <- format_clint(data.in = clint_L0,
 +                        sample.col ="Name",
@@ -321,4 +324,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   2.04    3.15    7.54 
+   1.56    2.28    8.42 
