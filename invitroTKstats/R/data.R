@@ -440,10 +440,10 @@
 #' \item{\code{Height}}{Height of the peak}
 #' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
-#' \item{\code{Coeff..Of.Determination}}{Coefficient of determination/R sqaured}
-#' \item{\code{Std..Conc}}{}
-#' \item{\code{uM}}{}
-#' \item{\code{X.Dev}}{}
+#' \item{\code{Coeff..Of.Determination}}{R-sqaured of the calibration curve}
+#' \item{\code{Std..Conc}}{Expected concentration of analytic standard (for calibration curve)}
+#' \item{\code{uM}}{Actual concentration of analyte (uM)}}
+#' \item{\code{X.Dev}}{Percent of deviation of the actual from the the expected concentration}
 #' \item{\code{Primary.Flags}}{Flags the libratory used to label samples}
 #' \item{\code{Acq.Date}}{Date sample was acquired}
 #' \item{\code{Date}}{Date sample was acquired}
