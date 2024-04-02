@@ -397,15 +397,15 @@
 #' \item{\code{Name}}{Sample name as described in the laboratory}
 #' \item{\code{Sample Text}}{Additional notes on the sample}
 #' \item{\code{Type}}{Type of Caco2 sample}
-#' \item{\code{RT}}{Retenion time}
+#' \item{\code{RT}}{Retention time}
 #' \item{\code{Area}}{Peak area of analyte (target compound)}
 #' \item{\code{Height}}{Height of the peak}
 #' \item{\code{IS Area}}{Peak area of internal standard (pixels)}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
-#' \item{\code{Coeff. Of Determination}}{Coefficient of determination/R sqaured}
-#' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve)}
-#' \item{\code{nM}}{Concentration of analyte (nM)}
-#' \item{\code{%Dev}}{}
+#' \item{\code{Coeff. Of Determination}}{R-sqaured of the calibration curve}
+#' \item{\code{Standard.Conc}}{Expected concentration of analytic standard (for calibration curve)}
+#' \item{\code{nM}}{Actual concentration of analyte (nM)}
+#' \item{\code{%Dev}}{Percent of deviation of the actual from the the expected concentration}
 #' \item{\code{Acq.Date}}{Date sample was acquired}
 #' \item{\code{Acq.Time}}{Time of the date sample was acquired}
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
@@ -418,6 +418,11 @@
 #' \item{\code{Time}}{Time point sample measured (h)}
 #' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 #' }
+#' 
+#' @references
+#' \insertRef{waters2008validation}{invitroTKstats}
+#'
+#' \insertRef{smeltz2023plasma}{invitroTKstats}
 #'
 "fup_red_L0"
 
