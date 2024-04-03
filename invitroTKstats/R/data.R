@@ -387,14 +387,14 @@
 #' Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
 #' equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
-#' \insertCite{smeltz2023plasma}{invitroTKstats}. 
-#' This data set is a subset of experimental data containing samples for 3 
-#' test analytes/compounds.
+#' \insertCite{smeltz2023plasma}{invitroTKstats}.
+#' This data set is a subset of experimental data containing samples for 
+#' 3 test analytes/compounds.
 #' 
 #' @name fup_red_L0
 #' @aliases fup_red_L0
 #' @docType data
-#' @format A level 0 data.frame with 660 rows and 23 variables: \describe{
+#' @format A level 0 data.frame with 660 rows and 18 variables: \describe{
 #' \item{\code{Compound}}{Name of the test analyte/compound}
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 #' \item{\code{Lab.Compound.ID}}{Compound as described in the laboratory}
@@ -427,9 +427,9 @@
 #' Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
 #' equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
-#' \insertCite{smeltz2023plasma}{invitroTKstats}. 
-#' This data set is a subset of experimental data containing samples for 3 
-#' test analytes/compounds.
+#' \insertCite{smeltz2023plasma}{invitroTKstats}.
+#' This data set is a subset of experimental data containing samples for 
+#' 3 test analytes/compounds.
 #' 
 #' @name fup_red_L1
 #' @aliases fup_red_L1
@@ -457,7 +457,7 @@
 #' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
 #' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
-#' \item{\code{Biological.Replicates}}{Identier for replicate series of UC measurements}
+#' \item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' }
 #'
@@ -472,9 +472,9 @@
 #' Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
 #' equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
-#' \insertCite{smeltz2023plasma}{invitroTKstats}. 
-#' This data set is a subset of experimental data containing samples for 3 
-#' test analytes/compounds.
+#' \insertCite{smeltz2023plasma}{invitroTKstats}.
+#' This data set is a subset of experimental data containing samples for 
+#' 3 test analytes/compounds.
 #' 
 #' @name fup_red_L2
 #' @aliases fup_red_L2
@@ -502,7 +502,7 @@
 #' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
 #' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
-#' \item{\code{Biological.Replicates}}{Identier for replicate series of UC measurements}
+#' \item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
 #' }
