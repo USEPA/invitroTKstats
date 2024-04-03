@@ -16,6 +16,7 @@ red.list <- c("DTXSID6062599","DTXSID5030030","DTXSID8031865")
 ## They are also from the same sheet in the original file. 
 ## Make them easier to work with later.
 unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Verified"])
+unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.File"])
 unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.Sheet"])
 
 ## Prepare Level-0
@@ -23,87 +24,58 @@ unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.Sheet"])
 chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
 chem.ids <- as.data.frame(chem.ids)
 chem.ids <- subset(chem.ids, !duplicated(chem.ids[,2]))
+## In this table, the chemical names and their lab IDs are in the same column 
+## Extract them into two separate columns
+chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
+chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[2]])))
 
-## read in level-0 file
-## merge_level0 is not needed here because all the relevant the data exist in one file and one sheet
-this.file <- "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx"
-fup_red_L0 <- read_excel(this.file, sheet=3, skip=6)
-this.sheet.name <- excel_sheets(this.file)[3]
-fup_red_L0 <- as.data.frame(fup_red_L0)
+## Read in level-0 file
+## Prepare a data guide for merge_level0 
+this.file <- "PFAS LC-MS RED Summary 20220709.xlsx"
 
-## Identify the compound names and the corresponding DTXSID's
-## The first compound was skipped. Added back in. 
-this.compound <- "DTXSID00379268"
-this.row <- 1
-while(this.row <= dim(fup_red_L0)[1])
-  {
-  if (!is.na(fup_red_L0[this.row,1]))
-    {
-    if (regexpr("Compound",fup_red_L0[this.row,1])!=-1)
-      {
-      temp <- trimws(strsplit(fup_red_L0[this.row,1],": ")[[1]][2])
-      this.compound <- unique(chem.ids[regexpr(paste0("\\(",temp,"\\)"),chem.ids[,2])!=-1,1])
-      if (length(this.compound)==0) this.compound <- temp
-      } else 
-        {  
-          fup_red_L0[this.row,"DTXSID"] <- this.compound
-        }
-    }
-  this.row <- this.row + 1
-}
+data.guide <- create_catalog(
+  file = rep(this.file, 3),
+  sheet = rep("RED1 Raw", 3),
+  skip.rows = c(278,550,822),
+  date = rep("022322",3),
+  compound = c("PFPeA", "PFBS", "PFOA"),
+  istd = c("M5PFPeA", "M3PFBS", "M8PFOA"),
+  sample = rep("Name",3),
+  type = rep("Type", 3),
+  peak = rep("Area", 3),
+  istd.peak = rep("IS Area", 3),
+  conc = rep("Std. Conc", 3),
+  analysis.param = rep("RT",3),
+  num.rows = rep(268, 3),
+  ## Need this sample text column to create new columns later
+  additional.info = list(SampleText.ColName = rep("Sample Text",3))
+)
+
+## Pull in level-0 data
+## In the merge_level0 function, need to specify the path to the level-0 Excel file 
+## with the argument INPUT.DIR. 
+## The Excel file is not tracked with the package. When re-creating the data,
+## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
+## Make necessary adjustments if needed. 
+fup_red_L0 <- merge_level0(level0.catalog  = data.guide,
+             num.rows.col="Number.Data.Rows",
+             istd.col="ISTD.Name",
+             type.colname.col="Type.ColName",
+             additional.colnames = "Sample Text", "nM",
+             additional.colname.cols = "SampleText.ColName",
+             chem.ids = chem.ids,
+             output.res = FALSE,
+             catalog.out = FALSE,
+             INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/")
 
 ## There are some additional columns needed for fup_red_L0 to go to level-1.
-## But these columns cannot do not exist in the original data file and  
+## But these columns do not exist in the original data file and  
 ## currently cannot be handled/added by additional utility functions. 
 ## Need to manually add them in. 
 
-## Remove the first two columns that are just row numbers, created from reading in from Excel
-fup_red_L0 <- fup_red_L0[, -c(1,2)]
-
-## Record the level-0 file name and sheet name
-fup_red_L0$File <- this.file
-fup_red_L0$Sheet <- this.sheet.name
-
-## Remove samples that are not able to identify which compounds they belong 
-fup_red_L0 <- subset(fup_red_L0,!is.na(DTXSID))
-
-## Convert date and time to strings
-fup_red_L0$Acq.Date <- as.Date(as.numeric(fup_red_L0$Acq.Date),origin = "1899-12-30")
-h <- floor(as.numeric(fup_red_L0$Acq.Time)*24)
-m <- as.character(floor((as.numeric(fup_red_L0$Acq.Time)*24-h)*60))
-m[is.na(m)] <- "00"
-m[sapply(m,nchar)==1] <- paste("0",m[sapply(m,nchar)==1],sep="")
-fup_red_L0$Acq.Time <- paste(h,m,sep=":")
-
 ## Set reasonable precision for numeric columns
-for (this.col in c("Area", "Height", "IS Area", "RT", "%Dev",
-                   "Response", "Coeff. Of Determination", "Std. Conc", "nM"))
+for (this.col in c("Peak.Area", "Compound.Conc", "ISTD.Peak.Area"))
   fup_red_L0[,this.col] <- signif(as.numeric(fup_red_L0[,this.col]),6)
-
-## Find matching compound names from chem.ids table
-chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
-for (this.id in unique(fup_red_L0$DTXSID))
-{
-  if (this.id %in% chem.ids$DTXSID)
-  {
-    fup_red_L0[fup_red_L0$DTXSID==this.id,"Compound"] <- 
-      chem.ids[chem.ids$DTXSID==this.id,"Compound"] 
-  } 
-}  
-
-## Match chemicals to their internal standards
-for (this.chem in red.list)
-{
-  this.data <- subset(fup_red_L0,!is.na(fup_red_L0[,"IS Area"]) &
-                        DTXSID==this.chem)
-  this.istd <- fup_red_L0[sapply(fup_red_L0$Area,
-                                 function(x) this.data[1,"IS Area"]%in%x), "DTXSID"]    
-  fup_red_L0[fup_red_L0$DTXSID==this.chem,"ISTD"] <- this.istd              
-}
-## Remove internal standard data
-fup_red_L0 <- subset(fup_red_L0, Compound != "ISTD")
-## Only keep data for the three chosen compounds
-fup_red_L0 <- fup_red_L0[fup_red_L0$DTXSID %in% red.list,]
 
 ## Create the Sample Type column, use the package annotations
 fup_red_L0 <- subset(fup_red_L0,!is.na(fup_red_L0[,"Sample Text"]))
@@ -141,13 +113,12 @@ fup_red_L0[regexpr("/T5",fup_red_L0[,"Sample Text"])!=-1,
            "Time"] <- 5
 
 ## Set Area of blank samples to 0
-fup_red_L0[fup_red_L0[,"Sample.Type"]%in%"NoPlasma.Blank","Area"] <- 0
-fup_red_L0[fup_red_L0[,"Sample.Type"]%in%"NoPlasma.Blank","IS Area"] <- 1
+fup_red_L0[fup_red_L0[,"Sample.Type"]%in%"NoPlasma.Blank","Peak.Area"] <- 0
+fup_red_L0[fup_red_L0[,"Sample.Type"]%in%"NoPlasma.Blank","ISTD.Peak.Area"] <- 1
 
 # Remove samples with missing peak areas for analyte and internal standard
-fup_red_L0[,"Std. Conc"] <- as.numeric(fup_red_L0[,"Std. Conc"])
-fup_red_L0 <- subset(fup_red_L0, !is.na(Area) & 
-                       !is.na(fup_red_L0[,"IS Area"]))
+fup_red_L0 <- subset(fup_red_L0, !is.na(Peak.Area) & 
+                       !is.na(fup_red_L0[,"ISTD.Peak.Area"]))
 
 # Create the dilution factors column
 fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 1
@@ -161,24 +132,22 @@ fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "Plasma.Blank" %in% x),
 fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "NoPlasma.Blank" %in% x),"Dilution.Factor"] <- 1
 
 ## Convert the unit to what the package uses: uM
-fup_red_L0[,"Std. Conc"] <- as.numeric(fup_red_L0[,"Std. Conc"])/100
+fup_red_L0[,"Compound.Conc"] <- as.numeric(fup_red_L0[,"Compound.Conc"])/100
 
 ## Prepare level-1 data
 fup_red_L1 <- format_fup_red(data.in = fup_red_L0,
-                             sample.col ="Name",
-                             date.col="Acq.Date",
+                             sample.col ="Sample",
+                             date.col="Date",
                              compound.col="Compound",
                              lab.compound.col="Compound",
                              type.col="Sample.Type",
                              dilution.col="Dilution.Factor",
-                             technical.replicates.col ="Replicate",
+                             biological.replicates.col ="Replicate",
                              cal=1,
+                             area.col = "Peak.Area",
                              istd.conc = 10/1000,
-                             istd.col= "IS Area",
-                             istd.name.col = "ISTD", 
-                             test.conc.col = "Std. Conc", 
-                             level0.file.col = "File", 
-                             level0.sheet.col = "Sheet",
+                             istd.col= "ISTD.Peak.Area",
+                             test.conc.col = "Compound.Conc", 
                              test.nominal.conc = 10,
                              plasma.percent = 100,
                              time.col = "Time",
