@@ -20,7 +20,10 @@ unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.File"])
 unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.Sheet"])
 
 ## Prepare Level-0
-## read in chem.ids
+## Read in chem.ids, which is the summary table from the Excel file containing the level-0 samples.
+## The Excel file is not tracked with the package. When re-creating the data,
+## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
+## and save it to the path below. Make necessary adjustments if needed. 
 chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
 chem.ids <- as.data.frame(chem.ids)
 chem.ids <- subset(chem.ids, !duplicated(chem.ids[,2]))
@@ -52,11 +55,8 @@ data.guide <- create_catalog(
 )
 
 ## Pull in level-0 data
-## In the merge_level0 function, need to specify the path to the level-0 Excel file 
-## with the argument INPUT.DIR. 
-## The Excel file is not tracked with the package. When re-creating the data,
-## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
-## Make necessary adjustments if needed. 
+## In the merge_level0 function, specify the path to the level-0 Excel file 
+## with the argument INPUT.DIR. Make necessary adjustments if needed.
 fup_red_L0 <- merge_level0(level0.catalog  = data.guide,
              num.rows.col="Number.Data.Rows",
              istd.col="ISTD.Name",

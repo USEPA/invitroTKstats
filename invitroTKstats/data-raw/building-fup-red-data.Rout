@@ -53,7 +53,10 @@ The following objects are masked _by_ '.GlobalEnv':
 [1] "RED1 Raw"
 > 
 > ## Prepare Level-0
-> ## read in chem.ids
+> ## Read in chem.ids, which is the summary table from the Excel file containing the level-0 samples.
+> ## The Excel file is not tracked with the package. When re-creating the data,
+> ## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
+> ## and save it to the path below. Make necessary adjustments if needed. 
 > chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
 New names:
 • `Fu A` -> `Fu A...30`
@@ -103,11 +106,8 @@ All of the standard columns in the catalog are of the correct class.
 Your data catalog is ready for merge_level0.
 ##################################> 
 > ## Pull in level-0 data
-> ## In the merge_level0 function, need to specify the path to the level-0 Excel file 
-> ## with the argument INPUT.DIR. 
-> ## The Excel file is not tracked with the package. When re-creating the data,
-> ## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
-> ## Make necessary adjustments if needed. 
+> ## In the merge_level0 function, specify the path to the level-0 Excel file 
+> ## with the argument INPUT.DIR. Make necessary adjustments if needed.
 > fup_red_L0 <- merge_level0(level0.catalog  = data.guide,
 +              num.rows.col="Number.Data.Rows",
 +              istd.col="ISTD.Name",
@@ -293,4 +293,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   2.06    2.84    7.00 
+   1.73    2.42    8.93 
