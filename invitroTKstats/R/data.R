@@ -156,7 +156,7 @@
 #' \item{\code{Compound.Name}}{Compound name}
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
-#' \item{\code{Sample.Type}}{Type of UC sample}
+#' \item{\code{Sample.Type}}{Type of RED sample}
 #' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
@@ -384,39 +384,35 @@
 
 #' Fup RED Level 0 Example Data set
 #'
-#' Mass Spectrometry measurements of plasma protein binding measured by
-#' rapid equlibriation dialysis for per- and poly-fluorinated alkyl substance
-#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore. 
-#' This data set is a subset of the experiment data which contains samples for 
-#' 3 test analytes/compounds.
+#' Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
+#' equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
+#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
+#' \insertCite{smeltz2023plasma}{invitroTKstats}. 
+#' This data set is a subset of experimental data containing samples for 3 
+#' test analytes/compounds.
 #' 
 #' @name fup_red_L0
 #' @aliases fup_red_L0
 #' @docType data
 #' @format A level 0 data.frame with 660 rows and 23 variables: \describe{
-#' \item{\code{Name}}{Sample name as described in the laboratory}
+#' \item{\code{Compound}}{Name of the test analyte/compound}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
+#' \item{\code{Lab.Compound.ID}}{Compound as described in the laboratory}
+#' \item{\code{Date}}{Date the sample was added to the MS analyzer}
+#' \item{\code{Sample}}{Sample description used in the laboratory}
+#' \item{\code{Type}}{Type of RED sample, annotated by the laboratory}
+#' \item{\code{Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
+#' \item{\code{Peak.Area}}{Peak area of analyte (target compound)}
+#' \item{\code{ISTD.Peak.Area}}{Peak area of internal standard (ISTD) compound (pixels)}
+#' \item{\code{ISTD.Name}}{Name of the internal standard (ISTD) analyte/compound}
+#' \item{\code{Analysis.Params}}{The column contains the retention time}
+#' \item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
+#' \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
 #' \item{\code{Sample Text}}{Additional notes on the sample}
-#' \item{\code{Type}}{Type of Caco2 sample}
-#' \item{\code{RT}}{Retention time}
-#' \item{\code{Area}}{Peak area of analyte (target compound)}
-#' \item{\code{Height}}{Height of the peak}
-#' \item{\code{IS Area}}{Peak area of internal standard (pixels)}
-#' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
-#' \item{\code{Coeff. Of Determination}}{R-sqaured of the calibration curve}
-#' \item{\code{Standard.Conc}}{Expected concentration of analytic standard (for calibration curve)}
-#' \item{\code{nM}}{Actual concentration of analyte (nM)}
-#' \item{\code{%Dev}}{Percent of deviation of the actual from the the expected concentration}
-#' \item{\code{Acq.Date}}{Date sample was acquired}
-#' \item{\code{Acq.Time}}{Time of the date sample was acquired}
-#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
-#' \item{\code{File}}{Name of data file from laboratory that was used to compile level0 data table}
-#' \item{\code{Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read}
-#' \item{\code{Compound}}{Compound name}
-#' \item{\code{ISTD}}{Name of compound used as internal standard (ISTD)}
-#' \item{\code{Sample.Type}}{Type of Caco2 sample in package annotations}
-#' \item{\code{Replicate}}{Identier for technical replicate of measurements}
-#' \item{\code{Time}}{Time point sample measured (h)}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Sample.Type}}{Type of RED sample in the package's annotations}
+#' \item{\code{Replicate}}{Identifier for parallel measurements of multiple samples of a compound}
+#' \item{\code{Time}}{Time point the sample was measured - in hours (h)}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' }
 #' 
 #' @references
@@ -428,39 +424,40 @@
 
 #' Fup RED Level 1 Example Data set
 #'
-#' Mass Spectrometry measurements of plasma protein binding measured by
-#' rapid equlibriation dialysis for per- and poly-fluorinated alkyl substance
-#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore. 
-#' This data set is a subset of the experiment data which contains samples for 
-#' 3 test analytes/compounds.
+#' Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
+#' equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
+#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
+#' \insertCite{smeltz2023plasma}{invitroTKstats}. 
+#' This data set is a subset of experimental data containing samples for 3 
+#' test analytes/compounds.
 #' 
 #' @name fup_red_L1
 #' @aliases fup_red_L1
 #' @docType data
 #' @format A level 1 data.frame with 492 rows and 24 variables: \describe{
 #' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
-#' \item{\code{Date}}{Date sample was acquired}
-#' \item{\code{Compound.Name}}{Compound name}
-#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Date}}{Date the sample was added to the MS analyzer}
+#' \item{\code{Compound.Name}}{Name of the test analyte/compound}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
-#' \item{\code{Sample.Type}}{Type of UC sample}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Sample.Type}}{Type of RED sample}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
-#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Name}}{Name of the internal standard (ISTD) analyte/compound}
 #' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
-#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (ISTD) compound (pixels)}
 #' \item{\code{Area}}{Peak area of analyte (target compound)}
 #' \item{\code{Analysis.Method}}{General description of chemical analysis method}
 #' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
 #' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
 #' \item{\code{Note}}{Any laboratory notes about sample)}
-#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
-#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
-#' \item{\code{Time}}{Time of sample measurment (h)}
-#' \item{\code{Test.Compound.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
+#' \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
+#' \item{\code{Time}}{Time point the sample was measured - in hours (h)}
+#' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
 #' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
-#' \item{\code{Technical.Replicates}}{Identier for replicate series of UC measurements}
+#' \item{\code{Biological.Replicates}}{Identier for replicate series of UC measurements}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' }
 #'
@@ -472,39 +469,40 @@
 
 #' Fup RED Level 2 Example Data set
 #'
-#' Mass Spectrometry measurements of plasma protein binding measured by
-#' rapid equlibriation dialysis for per- and poly-fluorinated alkyl substance
-#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore. 
-#' This data set is a subset of the experiment data which contains samples for 
-#' 3 test analytes/compounds.
+#' Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
+#' equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
+#' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
+#' \insertCite{smeltz2023plasma}{invitroTKstats}. 
+#' This data set is a subset of experimental data containing samples for 3 
+#' test analytes/compounds.
 #' 
 #' @name fup_red_L2
 #' @aliases fup_red_L2
 #' @docType data
 #' @format A level 2 data.frame with 492 rows and 25 variables: \describe{
 #' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
-#' \item{\code{Date}}{Date sample was acquired}
-#' \item{\code{Compound.Name}}{Compound name}
-#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
+#' \item{\code{Date}}{Date the sample was added to the MS analyzer}
+#' \item{\code{Compound.Name}}{Name of the test analyte/compound}
+#' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
-#' \item{\code{Sample.Type}}{Type of UC sample}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Sample.Type}}{Type of RED sample}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
-#' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
+#' \item{\code{ISTD.Name}}{Name of the internal standard (ISTD) analyte/compound}
 #' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
-#' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
+#' \item{\code{ISTD.Area}}{Peak area of internal standard (ISTD) compound (pixels)}
 #' \item{\code{Area}}{Peak area of analyte (target compound)}
 #' \item{\code{Analysis.Method}}{General description of chemical analysis method}
-#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}
+#' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
 #' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
 #' \item{\code{Note}}{Any laboratory notes about sample)}
-#' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table}
-#' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read}
-#' \item{\code{Time}}{Time of sample measurment (h)}
-#' \item{\code{Test.Compound.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
+#' \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
+#' \item{\code{Time}}{Time point the sample was measured - in hours (h)}
+#' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
 #' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
-#' \item{\code{Technical.Replicates}}{Identier for replicate series of UC measurements}
+#' \item{\code{Biological.Replicates}}{Identier for replicate series of UC measurements}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
 #' }
