@@ -239,30 +239,31 @@
 #' level0 <- invitroTKstats::clint_L0
 #' 
 #' ## Run it through level-1 processing function
-#' ## This example shows the use of data.in argument which allows users to pass
+#' ## This example shows the use of the data.in argument which allows users to pass
 #' ## in a data frame from the R session.
 #' ## If the input level-0 data exists in an external file such as a .tsv file,
 #' ## users may import it using INPUT.DIR to specify the path and FILENAME
 #' ## to specify the file name. See documentation for details.
-#' level1 <- format_clint(data.in = level0,
-#'                          sample.col ="Name",
-#'                          date.col="Acq.Date",
+#' clint_L1 <- format_clint(data.in = clint_L0,
+#'                          sample.col ="Sample",
+#'                          date.col="Date",
 #'                          compound.col="Compound",
-#'                          lab.compound.col="Compound",
+#'                          lab.compound.col="Compound", 
 #'                          type.col="Type",
 #'                          dilution.col="Dilution.Factor",
 #'                          cal=1,
 #'                          istd.conc = 10/1000,
-#'                          istd.col= "IS Area",
+#'                          istd.col= "ISTD.Peak.Area",
+#'                          area.col = "Peak.Area",
 #'                          density = 0.5,
 #'                          clint.assay.conc = 1,
 #'                          biological.replicates = 1,
-#'                          test.conc.col="nM",
+#'                          test.conc.col="Compound.Conc",
 #'                          time.col = "Time",
-#'                          analysis.method = "LCMS", 
+#'                          analysis.method = "LCMS",
 #'                          analysis.instrument = "Unknown",
-#'                          analysis.parameters.col = "RT",
-#'                          note="Sample Text", 
+#'                          analysis.parameters.col = "Analysis.Params",
+#'                          note="Sample Text",
 #'                          output.res = FALSE
 #'                          )
 #' 
