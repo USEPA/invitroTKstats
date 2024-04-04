@@ -1,5 +1,9 @@
 ## This R script should be ran from the command line using
-## R CMD BATCH data-raw/building-clint-data.R
+## R CMD BATCH data-raw/building-Clint-data.R
+
+## Script used to create data examples from the full Smeltz 2023
+## Clint data to use for function documentations and vignette.
+## The data examples are smaller subsets of three compounds.
 
 ## Load necessary package
 library(invitroTKstats)
@@ -10,91 +14,68 @@ library(readxl)
 ## other compounds all have some samples excluded from the analysis. 
 ## Need to go through couple verification steps from level-1 to level-2.
 
-## Choose three compounds
+## Choose three compounds for the subset
 clint.list <- c("DTXSID1021116", "DTXSID6023525", "DTXSID80380256")
 
 ## Prepare Level-0
-## read in chem.ids
-chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=1)
+## The Excel file containing the level-0 samples is not tracked with the package. 
+## When re-creating the data, retrieve the file from the 'invitrotkstats' repository 
+## under directory: "working/SmeltzPFAS" and save it to the path: "data-raw/Smeltz-Clint".
+## Make necessary adjustments if needed. 
+
+## Read in chem.ids
+chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", 
+                       sheet=1)
 chem.ids <- as.data.frame(chem.ids)
+## In this table, the chemical names and their lab IDs are in the same column 
+## Extract them into two separate columns
+chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
+chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) if (length(x)!= 1) x[[2]] else tolower(x[[1]]))))
 
-## merge_level0 is not needed here because all the data are in the same Excel file.
-## Reference chemicals data is in the second sheet and test chemicals data is in the third sheet. 
-smeltz.hep.ref <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=2, skip=6)
-smeltz.hep.ref <- as.data.frame(smeltz.hep.ref)
+## Read in level-0 file
+## Prepare a data guide for merge_level0 
+this.file <- "Hep12 Data for Uncertainty Feb2022.xlsx"
 
-smeltz.hep.pfas <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", sheet=3, skip=2)
-smeltz.hep.pfas <- as.data.frame(smeltz.hep.pfas)
-## Match the column names
-colnames(smeltz.hep.pfas) <- colnames(smeltz.hep.ref)
+data.guide <- create_catalog(
+  file = rep(this.file, 3),
+  sheet = c("Ref Chem Data","Ref Chem Data", "PFAS Data"),
+  skip.rows = c(6, 137, 6),
+  date = rep("2022-01-28", 3),
+  compound = c("phenacetin", "propranolol", "TFMFPA"),
+  istd = c("propranolol-d7", "propranolol-d7", "M5PFPeA"),
+  sample = rep("Name",3),
+  type = rep("Type", 3),
+  peak = rep("Area", 3),
+  istd.peak = rep("IS Area", 3),
+  conc = rep("nM", 3),
+  analysis.param = rep("RT",3),
+  num.rows = c(127, 127, 165),
+  ## Need this sample text column to create new columns later
+  additional.info = list(SampleText.ColName = rep("Sample Text",3))
+)
 
-## Merge the reference chemicals and PFAS
-clint_L0 <- rbind(smeltz.hep.ref,smeltz.hep.pfas)
-
-## Remove blank rows
-clint_L0 <- subset(clint_L0, !is.na(clint_L0[,1]))
+## Pull in level-0 data
+## In the merge_level0 function, specify the path to the level-0 Excel file 
+## with the argument INPUT.DIR. Make necessary adjustments if needed.
+clint_L0 <- merge_level0(level0.catalog  = data.guide,
+                           num.rows.col="Number.Data.Rows",
+                           istd.col="ISTD.Name",
+                           type.colname.col="Type.ColName",
+                           additional.colnames = "Sample Text", 
+                           additional.colname.cols = "SampleText.ColName",
+                           chem.ids = chem.ids,
+                           output.res = FALSE,
+                           catalog.out = FALSE,
+                           INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint")
 
 ## There are some additional columns needed for clint_L0 to go to level-1.
-## But these columns cannot do not exist in the original data file and  
+## But these columns do not exist in the original data file and  
 ## currently cannot be handled/added by additional utility functions. 
-## Need to manually add them in. 
-
-## Record the level-0 file name and sheet name
-clint_L0$Level0.File <- "Hep12 Data for Uncertainty Feb2022.xlsx"
-clint_L0$Level0.Sheet <- "PFAS Data"
-
-## Annotate Compounds
-## The first compound name is in the rows that were skipped. 
-## Manually annotate this one.
-this.compound <- "Phenacetin"
-this.dtxsid <- chem.ids[
-  tolower(chem.ids[,"Analyte Name"]) == tolower(this.compound),
-  "DTXSID"]
-this.istdname <- chem.ids[
-  tolower(chem.ids[,"Analyte Name"]) == tolower(this.compound),
-  "Internal Standard"]
-
-## Loop through the first column to identify compound names and find the matching 
-## DTXSID from chem.ids
-this.row <- 1
-while (this.row <= dim(clint_L0)[1])
-{
-  if (regexpr("Compound",clint_L0[this.row,1])!=-1)
-  {
-    this.compound <- strsplit(clint_L0[this.row,1],"  ")[[1]][2] 
-    if (tolower(this.compound) %in% tolower(chem.ids[,"Internal Standard"]))
-    {
-      this.istd <- this.compound
-      this.compound <- "ISTD"
-      this.dtxsid <- NA
-    } else {
-      row.index <- which(regexpr(tolower(this.compound),
-                                 tolower(chem.ids[,"Analyte Name"]))!=-1)
-      this.dtxsid <- chem.ids[row.index, "DTXSID"]
-      this.istdname <- chem.ids[row.index, "Internal Standard"]
-    }
-  }
-  clint_L0[this.row, "Compound"] <- this.compound
-  clint_L0[this.row, "DTXSID"] <- this.dtxsid
-  clint_L0[this.row, "ISTD.Name"] <- this.istdname
-  this.row <- this.row + 1
-}
+## Need to manually add them in. Following the steps in smeltz-hep-cc.R,
+## this script can also be found under "working/SmeltzPFAS".
 
 ## Remove rows with blank sample text
 clint_L0 <- subset(clint_L0,!is.na(clint_L0[,"Sample Text"]))
-
-## Remove internal standard data
-clint_L0 <- subset(clint_L0, Compound != "ISTD")
-
-## Only keep data for the three chosen compounds
-clint_L0 <- clint_L0[clint_L0$DTXSID %in% clint.list,]
-
-## Indicate whether hepatocytes have been inactivated:
-clint_L0$Active.Hep <- NA
-clint_L0[regexpr("living",tolower(clint_L0[,"Sample Text"]))!=-1,
-           "Active.Hep"] <- 1
-clint_L0[regexpr("inactive",tolower(clint_L0[,"Sample Text"]))!=-1,
-           "Active.Hep"] <- 0
 
 ## Create sample type column
 ## Use the package annotation of type:
@@ -135,41 +116,41 @@ clint_L0[regexpr("cc",tolower(clint_L0[,"Sample Text"]))!=-1,
            "Dilution.Factor"] <- 240
 
 ## Make sure concentration and area columns are numeric
-clint_L0$Area <- as.numeric(clint_L0$Area)
-clint_L0[,"IS Area"] <- as.numeric(clint_L0[,"IS Area"])
-clint_L0[,"Std. Conc"] <- as.numeric(clint_L0[,"Std. Conc"])
-clint_L0 <- subset(clint_L0, !is.na(Area) & 
-                       !is.na(clint_L0[,"IS Area"]))
+clint_L0$Peak.Area <- as.numeric(clint_L0$Peak.Area)
+clint_L0[,"ISTD.Peak.Area"] <- as.numeric(clint_L0[,"ISTD.Peak.Area"])
+clint_L0[,"Compound.Conc"] <- as.numeric(clint_L0[,"Compound.Conc"])
+clint_L0 <- subset(clint_L0, !is.na(Peak.Area) & 
+                       !is.na(clint_L0[,"ISTD.Peak.Area"]))
 
-## Convert nM standard concs to uM
-clint_L0[,"nM"] <- as.numeric(clint_L0[,"nM"])/1000
-## Only set a standard conc for calibration curve points
-clint_L0[clint_L0[,"Type"]!="CC","nM"] <- NA
+## The 'Compound.Conc' column maps to the 'nM' column in the original Excel file
+## The unit is in nM, need to convert to uM which is what the package uses
+clint_L0[,"Compound.Conc"] <- as.numeric(clint_L0[,"Compound.Conc"])/1000
+## Only set a standard/expected conc for calibration curve points
+clint_L0[clint_L0[,"Type"]!="CC","Compound.Conc"] <- NA
 ## Concentrations calculated including dilution
-clint_L0[,"nM"] <- clint_L0[,"nM"]*clint_L0$Dilution.Factor
+clint_L0[,"Compound.Conc"] <- clint_L0[,"Compound.Conc"]*clint_L0$Dilution.Factor
 
-## Remove the first two columns that are just row numbers, created from reading in from Excel
-clint_L0 <- clint_L0[, -c(1,2)]
 
 ## Prepare Level-1 
 clint_L1 <- format_clint(data.in = clint_L0,
-                       sample.col ="Name",
-                       date.col="Acq.Date",
+                       sample.col ="Sample",
+                       date.col="Date",
                        compound.col="Compound",
                        lab.compound.col="Compound",
                        type.col="Type",
                        dilution.col="Dilution.Factor",
                        cal=1,
                        istd.conc = 10/1000,
-                       istd.col= "IS Area",
+                       istd.col= "ISTD.Peak.Area",
+                       area.col = "Peak.Area",
                        density = 0.5,
                        clint.assay.conc = 1,
                        biological.replicates = 1,
-                       test.conc.col="nM",
+                       test.conc.col="Compound.Conc",
                        time.col = "Time",
                        analysis.method = "LCMS",
                        analysis.instrument = "Unknown",
-                       analysis.parameters.col = "RT",
+                       analysis.parameters.col = "Analysis.Params",
                        note="Sample Text",
                        output.res = FALSE
 )
@@ -206,7 +187,12 @@ names(clint_L2)
 
 ## Compare some key parameters 
 nrow(clint_L2) == nrow(clint.sub)
-all(unique(clint.sub$Compound.Name) %in% unique(clint_L2$Compound.Name))
+## This is FALSE because smeltz.clint 
+## somehow uses lab compound ID/abbreviations for compound name
+## instead of the full name, which is what I did when I create the subset
+all(tolower(unique(clint.sub$Compound.Name)) %in% tolower(unique(clint_L2$Compound.Name)))
+unique(clint.sub$Compound.Name)
+unique(clint_L2$Compound.Name)
 
 summary(clint.sub$Response)
 summary(clint_L2$Response)
@@ -214,7 +200,10 @@ summary(clint_L2$Response)
 table(clint.sub$Sample.Type)
 table(clint_L2$Sample.Type)
 
-## Save level-0 and level-1 data to use for function demo/example documentation 
+summary(clint.sub$Std.Conc)
+summary(clint_L2$Test.Compound.Conc)
+
+## Save level-0 to level-2 data to use for function demo/example documentation 
 save(clint_L0, clint_L1, clint_L2, file = "~/invitrotkstats/invitroTKstats/data/Clint-example.RData")
 
 ## Include session info
