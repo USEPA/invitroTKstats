@@ -1,9 +1,8 @@
 ## This R script should be ran from the command line using
 ## R CMD BATCH data-raw/building-fup-red-data.R
 
-## Script used to create data examples from the full Smeltz 2023 
-## fup red data (level-2) to use for function documentations
-## and vignette. The data examples should be smaller subsets of three compounds.
+## Script used to create data examples for fup-RED to use for function documentations
+## and vignette. The data examples should be small subsets of three compounds.
 
 ## load necessary package
 library(readxl)
@@ -23,7 +22,7 @@ unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.Sheet"])
 ## Read in chem.ids, which is the summary table from the Excel file containing the level-0 samples.
 ## The Excel file is not tracked with the package. When re-creating the data,
 ## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
-## and save it to the path below. Make necessary adjustments if needed. 
+## and save it to the path: "data-raw/Smeltz-RED". Create the folder if need to. 
 chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
 chem.ids <- as.data.frame(chem.ids)
 chem.ids <- subset(chem.ids, !duplicated(chem.ids[,2]))
@@ -56,7 +55,7 @@ data.guide <- create_catalog(
 
 ## Pull in level-0 data
 ## In the merge_level0 function, specify the path to the level-0 Excel file 
-## with the argument INPUT.DIR. Make necessary adjustments if needed.
+## with the argument INPUT.DIR.
 fup_red_L0 <- merge_level0(level0.catalog  = data.guide,
              num.rows.col="Number.Data.Rows",
              istd.col="ISTD.Name",
@@ -71,7 +70,8 @@ fup_red_L0 <- merge_level0(level0.catalog  = data.guide,
 ## There are some additional columns needed for fup_red_L0 to go to level-1.
 ## But these columns do not exist in the original data file and  
 ## currently cannot be handled/added by additional utility functions. 
-## Need to manually add them in. 
+## Need to manually add them in. Following the steps in MS-REDdata-Apr2023.Rmd,
+## this markdown can also be found under "working/SmeltzPFAS".
 
 ## Set reasonable precision for numeric columns
 for (this.col in c("Peak.Area", "Compound.Conc", "ISTD.Peak.Area"))
@@ -116,11 +116,12 @@ fup_red_L0[regexpr("/T5",fup_red_L0[,"Sample Text"])!=-1,
 fup_red_L0[fup_red_L0[,"Sample.Type"]%in%"NoPlasma.Blank","Peak.Area"] <- 0
 fup_red_L0[fup_red_L0[,"Sample.Type"]%in%"NoPlasma.Blank","ISTD.Peak.Area"] <- 1
 
-# Remove samples with missing peak areas for analyte and internal standard
+## Remove samples with missing peak areas for analyte and internal standard
 fup_red_L0 <- subset(fup_red_L0, !is.na(Peak.Area) & 
                        !is.na(fup_red_L0[,"ISTD.Peak.Area"]))
 
-# Create the dilution factors column
+## Create the dilution factors column
+## Information found in lines 177 to 188 in MS-REDdata-Apr2023.Rmd
 fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 1
 fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "PBS" %in% x),"Dilution.Factor"] <- 2
 fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "EC1" %in% x),"Dilution.Factor"] <- 10
@@ -167,15 +168,61 @@ fup_red_L2$Verified <- "Y"
 ## matches what's in the full data
 red.sub <- smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, ]
 
-## Compare some key parameters 
-nrow(red.sub) == nrow(fup_red_L1)
-all(unique(red.sub$Compound.Name) %in% unique(fup_red_L1$Compound.Name))
+## Compare the the dimensions
+dim(fup_red_L2)
+dim(red.sub)
 
-summary(red.sub$Response)
-summary(fup_red_L1$Response)
+## check all the columns with the same name have matching values
+common_cols <- intersect(colnames(fup_red_L2),colnames(red.sub))
+## subset to only common columns
+subred.sub <- red.sub[,common_cols]
+subfup_red_L2 <- fup_red_L2[,common_cols]
+## check to see if the subset data has all the same information
+for(i in common_cols){
+  test <- all(subred.sub[,i] == subfup_red_L2[,i])
+  if(test == FALSE | is.na(test)){
+    print(i)
+  }
+}
 
-table(red.sub$Sample.Type)
-table(fup_red_L1$Sample.Type)
+## Discrepancies in columns "Date", "Note" and "Time":
+## The Date column in the original (smeltz2023.red) data set might use the 
+## acquired date from the Excel file, while I use the date in the lab sample names. 
+## The format of the date is also different. In smeltz2023.red the date is in 
+## "yyyy-mm-dd" format while I use "mmddyy" format.
+
+## For the Note column, smeltz2023.red uses 'NA' to fill the column while I used "".
+
+## Time column contains missing values so the check with all() will return NA 
+## Use other method to check for this column
+table(subred.sub[,"Time"] == subfup_red_L2[,"Time"])
+
+## Compare the columns with different column names  
+colnames(fup_red_L2)[which(!(colnames(fup_red_L2) %in% common_cols))]
+colnames(red.sub)[which(!(colnames(red.sub) %in% common_cols))]
+## Replicate columns contain missing values too, check with all() returns NA
+all(fup_red_L2[,"Biological.Replicates"] == red.sub[,"Replicate"])
+table(fup_red_L2[,"Biological.Replicates"] == red.sub[,"Replicate"])
+
+## This check returns FALSE
+all(fup_red_L2[,"Test.Compound.Conc"] == red.sub[,"Std.Conc"])
+## Investigate the differences
+diffs <- fup_red_L2[,"Test.Compound.Conc"] - red.sub[,"Std.Conc"]
+summary(diffs[!is.na(diffs)])
+
+## The maximum difference is 5.551e-17 and the minimum difference is -5.551e-17
+## These differences could be due to different systems or are rounding errors
+
+## Set to the same precision and check again
+fup_red_L2[,"Test.Compound.Conc"] <- signif(as.numeric(fup_red_L2[,"Test.Compound.Conc"]),6)
+red.sub[,"Std.Conc"] <- signif(as.numeric(red.sub[,"Std.Conc"]),6)
+diffs <- fup_red_L2[,"Test.Compound.Conc"] - red.sub[,"Std.Conc"]
+## Replace missing values with 0
+diffs[is.na(diffs)] <- 0
+## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
+all(abs(diffs) <= 1e-4)
+
+## All columns are checked and any differences are documented
 
 ## Save level-0 and level-1 data to use for function demo/example documentation 
 save(fup_red_L0, fup_red_L1, fup_red_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-RED-example.RData")
