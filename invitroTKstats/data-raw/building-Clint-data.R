@@ -1,9 +1,8 @@
 ## This R script should be ran from the command line using
 ## R CMD BATCH data-raw/building-Clint-data.R
 
-## Script used to create data examples from the full Smeltz 2023
-## Clint data to use for function documentations and vignette.
-## The data examples are smaller subsets of three compounds.
+## Script used to create data examples for Clint data to use for function documentations 
+## and vignette. The data examples are small subsets of three compounds.
 
 ## Load necessary package
 library(invitroTKstats)
@@ -21,7 +20,7 @@ clint.list <- c("DTXSID1021116", "DTXSID6023525", "DTXSID80380256")
 ## The Excel file containing the level-0 samples is not tracked with the package. 
 ## When re-creating the data, retrieve the file from the 'invitrotkstats' repository 
 ## under directory: "working/SmeltzPFAS" and save it to the path: "data-raw/Smeltz-Clint".
-## Make necessary adjustments if needed. 
+## Create the folder if need to. 
 
 ## Read in chem.ids
 chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", 
@@ -71,7 +70,7 @@ clint_L0 <- merge_level0(level0.catalog  = data.guide,
 ## There are some additional columns needed for clint_L0 to go to level-1.
 ## But these columns do not exist in the original data file and  
 ## currently cannot be handled/added by additional utility functions. 
-## Need to manually add them in. Following the steps in smeltz-hep-cc.R,
+## Need to manually add them in. Following the steps in smeltz-hep-inactive.R,
 ## this script can also be found under "working/SmeltzPFAS".
 
 ## Remove rows with blank sample text
@@ -99,11 +98,11 @@ clint_L0[regexpr("wem",tolower(clint_L0[,"Sample Text"]))!=-1,"Time"] <- NA
 clint_L0 <- subset(clint_L0,!is.na(Time) | Type != "Cvst")
 
 ## Create a column for the dilution factors:
+## Information found in lines 100 to 115 in smeltz-hep-inactive.R
 ## The dilution factor is indeed different across different sample types.
 ## -	The calibration curves (all, regardless of analyte) are diluted 240x
 ## -	The ref cmpds (may have label “HLB”) and PFAS labeled as “WAX1” are diluted 480x
 ## -	PFAS marked as WAX2 are diluted 720x
-## -	It seems that when you asked for a pared down sheet this information was lost. We could add it to the Analytes page. I can see it in the more comprehensive sheet she#   provided to me.
 
 clint_L0$Dilution.Factor <- 240
 clint_L0[regexpr("hlb",tolower(clint_L0[,"Sample Text"]))!=-1,
@@ -136,7 +135,7 @@ clint_L1 <- format_clint(data.in = clint_L0,
                        sample.col ="Sample",
                        date.col="Date",
                        compound.col="Compound",
-                       lab.compound.col="Compound",
+                       lab.compound.col="Lab.Compound.ID",
                        type.col="Type",
                        dilution.col="Dilution.Factor",
                        cal=1,
@@ -165,43 +164,123 @@ for (this.id in clint.list)
   this.mix <- chem.ids[chem.ids$DTXSID==this.id,"Mix"]
   if (regexpr("WAX1",this.mix)!=-1)
   {
-    clint_L2[clint_L2$DTXSID==this.id & clint_L2$Sample.Type =="Cvst" &
+    clint_L2[clint_L2$DTXSID==this.id & 
+             (clint_L2$Sample.Type %in% c("Cvst", "Inactive")) &
              regexpr("WAX2",clint_L2$Note)!=-1,"Verified"] <- "Wrong Mix"
   } else if (regexpr("WAX2",this.mix)!=-1)
   {
-    clint_L2[clint_L2$DTXSID==this.id & clint_L2$Sample.Type =="Cvst" &
+    clint_L2[clint_L2$DTXSID==this.id & 
+             (clint_L2$Sample.Type %in% c("Cvst", "Inactive")) &
              regexpr("WAX1",clint_L2$Note)!=-1,"Verified"] <- "Wrong Mix"
   }
 }
 ## Exclude calibration curve samples if the concentration is unknown.
-clint_L2[clint_L2$Sample.Type=="CC" & is.na(clint_L2$Std.Conc),"Verified"] <- 
+clint_L2[clint_L2$Sample.Type=="CC" & is.na(clint_L2$Test.Compound.Conc),"Verified"] <- 
   "Unknown Conc."
 
 ## Compare with the level-2 data that's already in the package 
 ## see if the subset matches what's in the full data.
 clint.sub <- smeltz2023.clint[smeltz2023.clint$DTXSID %in% clint.list, ]
 
-## check if the columns are correct
-names(clint.sub)
-names(clint_L2)
+## Check the dimension
+## The example data set is expected to have one more column because the original 
+## data set does not have a replicate or a series column. With new update 
+## to the level-1 format function (IVTKS-4) the data are required to have either
+## a biological replicate column or a technical replicate column.
+dim(clint.sub)
+dim(clint_L2)
 
-## Compare some key parameters 
-nrow(clint_L2) == nrow(clint.sub)
-## This is FALSE because smeltz.clint 
-## somehow uses lab compound ID/abbreviations for compound name
-## instead of the full name, which is what I did when I create the subset
-all(tolower(unique(clint.sub$Compound.Name)) %in% tolower(unique(clint_L2$Compound.Name)))
-unique(clint.sub$Compound.Name)
-unique(clint_L2$Compound.Name)
+colnames(clint_L2)
+colnames(clint.sub)
+common.cols <- intersect(colnames(clint.sub),colnames(clint_L2))
+## Check if the common columns have the same names
+colnames(clint.sub[,common.cols]) == colnames(clint_L2[,common.cols])
+## Check all the columns with the same name have matching values
+all(clint.sub[,common.cols] == clint_L2[,common.cols])
+for(i in common.cols){
+  test <- all(clint.sub[,i] == clint_L2[,i])
+  if(test == FALSE | is.na(test)){
+    print(i)
+  }
+}
 
-summary(clint.sub$Response)
-summary(clint_L2$Response)
+## Address the discrepancies one by one
 
-table(clint.sub$Sample.Type)
-table(clint_L2$Sample.Type)
+## Discrepancies found in the Date column:
+## The original (smeltz2023.clint) data set uses the sample acquired date
+## from the Excel file and the date was converted into numbers when read in.
+## I use the date in the lab sample names and enter them in a "yyyy-mm-dd" format.
 
-summary(clint.sub$Std.Conc)
-summary(clint_L2$Test.Compound.Conc)
+## Discrepancies found in the Compound.Name column:
+## The original data set uses lab compound ID/abbreviations for compound name
+## instead of the full name, which is what I did when I created the subsets.
+## I will keep it as-is.
+
+## Discrepancies found in the Lab.Compound.Name column:
+## One of the compound "propranolol" has the first letter capitalized in smeltz2023.clint.
+## Convert to all lower case and check again:
+all(tolower(clint.sub[,"Lab.Compound.Name"]) == tolower(clint_L2[,"Lab.Compound.Name"]))
+
+## Discrepancies found in the Area and ISTD.Area columns:
+## Area and ISTD.Area were rounded to 5 significant digits in format_clint (lines 442-443).
+## Samples with areas larger than 10,000 got the decimals chopped off.
+## Compare the columns in 5 significant digits: 
+clint.sub$Area <- signif(clint.sub[,"Area"], 5)
+all(clint.sub[,"Area"] == clint_L2[,"Area"])
+
+clint.sub$ISTD.Area <- signif(clint.sub[,"ISTD.Area"], 5)
+all(clint.sub[,"ISTD.Area"] == clint_L2[,"ISTD.Area"])
+
+## Discrepancies found in the Time column:
+## Time column contains missing values so the check with all() will return NA 
+## Use other method to check for this column
+table(clint.sub[,"Time"] == clint_L2[,"Time"])
+
+## Discrepancies found in the Analysis.Parameters column:
+## Analysis.Parameters is a numeric column in smeltz2023.clint while it is a character
+## column in the example data.
+## Convert Analysis.Parameters in clint_L2 and check again:
+clint_L2$Analysis.Parameters <- as.numeric(clint_L2$Analysis.Parameters)
+all(clint_L2$Analysis.Parameters == clint.sub$Analysis.Parameters)
+
+## Discrepancies found in the Level0.Sheet column:
+## The script smeltz-hep-inactive.R created this column with a single value for all rows 
+## (in line 137) while it in fact pulls data from two different sheets from the original 
+## Excel workbook (line 9). I will keep my input since they are accurate.
+
+## Discrepancies found in the Response column:
+## Differences in this column are most likely caused by rounding errors since 
+## the same issue happened with area and istd.area, and responses are calculated from them.
+diffs <- clint.sub[,"Response"]- clint_L2[,"Response"]
+summary(diffs[!is.na(diffs)])
+## The maximum difference is 1.000e-05 and the minimum difference is -1.000e-06
+
+## Set to the same precision and check again
+clint.og.resp <- signif(as.numeric(clint.sub[,"Response"]),6)
+clint.ex.resp <- signif(as.numeric(clint_L2[,"Response"]),6)
+diffs <- clint.ex.resp - clint.og.resp
+## Replace missing values with 0
+diffs[is.na(diffs)] <- 0
+## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
+all(abs(diffs) <= 1e-4)
+
+## Compare the columns with different column names  
+colnames(clint_L2)[which(!(colnames(clint_L2) %in% common.cols))]
+colnames(clint.sub)[which(!(colnames(clint.sub) %in% common.cols))]
+
+## Biological.Replicates is a new required column filled with 1.
+## Compare the concentration columns:
+all(clint_L2[,"Test.Compound.Conc"] == clint.sub[,"Std.Conc"])
+
+clint.ex.conc <- signif(as.numeric(clint_L2[,"Test.Compound.Conc"]),6)
+clint.og.conc <- signif(as.numeric(clint.sub[,"Std.Conc"]),6)
+diffs <- clint.ex.conc - clint.og.conc
+## Replace missing values with 0
+diffs[is.na(diffs)] <- 0
+## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
+all(abs(diffs) <= 1e-4)
+
+## All columns are checked and any differences are documented
 
 ## Save level-0 to level-2 data to use for function demo/example documentation 
 save(clint_L0, clint_L1, clint_L2, file = "~/invitrotkstats/invitroTKstats/data/Clint-example.RData")
