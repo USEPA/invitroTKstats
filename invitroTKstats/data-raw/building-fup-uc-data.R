@@ -4,7 +4,7 @@
 ## Script used to create data examples for fup-UC to use for function documentations 
 ## and vignette. The data examples are small subsets of three compounds.
 
-## load necessary package
+## load necessary packages
 library(readxl)
 library(invitroTKstats)
 
@@ -19,7 +19,7 @@ unique(smeltz2023.uc[smeltz2023.uc$DTXSID %in% uc.list, "Verified"])
 ## Create the folder if need to.
 
 ## Read in the assay summary table from the Excel file. 
-## This table records what date each compound was tested on and what mix was used.
+## This table records which date each compound was tested on and which mix was used.
 ## This table will be used later in the process to remove samples with the wrong mix.
 assayinfo <- read_excel(
   "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC/20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
@@ -38,7 +38,7 @@ while (this.row <= dim(assayinfo)[1])
   }
   this.row <- this.row + 1
 }
-## Remove "UTC" from the date
+## Remove "UTC" from the dates
 assayinfo[,1] <- sapply(assayinfo[,1],function(x) gsub("  UTC","",x))
 
 ## Read in chem.ids
@@ -78,7 +78,7 @@ fup_uc_L0 <- merge_level0(level0.catalog  = data.guide,
                            num.rows.col="Number.Data.Rows",
                            istd.col="ISTD.Name",
                            type.colname.col="Type.ColName",
-                           additional.colnames = "Sample Text", "nM",
+                           additional.colnames = "Sample Text",
                            additional.colname.cols = "SampleText.ColName",
                            chem.ids = cheminfo,
                            output.res = FALSE,
@@ -94,7 +94,7 @@ fup_uc_L0 <- merge_level0(level0.catalog  = data.guide,
 ## Remove rows with empty sample text
 fup_uc_L0 <- subset(fup_uc_L0,!is.na(fup_uc_L0[,"Sample Text"]))
 
-# Extract the sample type from column Sample Text:
+# Extract sample types from the column Sample.Text:
 fup_uc_L0[regexpr("AF",unlist(fup_uc_L0[,"Sample Text"]))!=-1,"Sample.Type"] <- "AF"
 fup_uc_L0[regexpr("UF",unlist(fup_uc_L0[,"Sample Text"]))!=-1,"Sample.Type"] <- "AF"
 fup_uc_L0[regexpr("T1",unlist(fup_uc_L0[,"Sample Text"]))!=-1,"Sample.Type"] <- "T1"
@@ -106,16 +106,16 @@ fup_uc_L0[fup_uc_L0$Type == "Blank","Sample.Type"] <- "Blank"
 fup_uc_L0 <- subset(fup_uc_L0,!is.na(Sample.Type))
 
 ## Make sure numeric columns are in the correct class
-fup_uc_L0[,"Compound.Conc"] <- as.numeric(fup_uc_L0[,"Compound.Conc"])
+fup_uc_L0[,"Compound.Conc"] <- signif(as.numeric(fup_uc_L0[,"Compound.Conc"]), 4)
 fup_uc_L0[,"Peak.Area"] <- as.numeric(unlist(fup_uc_L0[,"Peak.Area"]))
 fup_uc_L0[,"ISTD.Peak.Area"] <- as.numeric(unlist(fup_uc_L0[,"ISTD.Peak.Area"]))
-## The unit of compound concentration varies from compound to compound
-## concentration of compound other than 8:2 FTS are in nM, need to convert the unit to uM which is what the package uses
+## The unit of compound concentrations varies from compound to compound
+## concentrations of compound other than 8:2 FTS are in nM, need to convert the unit to uM which is what the package uses
 fup_uc_L0[fup_uc_L0$Lab.Compound.ID != "8:2 FTS", "Compound.Conc"] <- fup_uc_L0[fup_uc_L0$Lab.Compound.ID != "8:2 FTS", "Compound.Conc"]/1000
 
 fup_uc_L0[fup_uc_L0[,"Sample.Type"]!="CC","Compound.Conc"] <- NA 
-## Create the dilution factor column
-## The information come from lines 17 to 21 in MSdata-Mar2022.R:
+## Create the Dilution.Factor column
+## The information comes from lines 17 to 21 in MSdata-Mar2022.R:
 fup_uc_L0[fup_uc_L0[,"Sample.Type"]=="AF","Dilution.Factor"] <- 2*16
 fup_uc_L0[fup_uc_L0[,"Sample.Type"]=="T1","Dilution.Factor"] <- 5*16
 fup_uc_L0[fup_uc_L0[,"Sample.Type"]=="T5","Dilution.Factor"] <- 5*16
@@ -135,7 +135,7 @@ fup_uc_L0[regexpr("_A",fup_uc_L0[,"Sample Text"])!=-1,"Replicate"] <- "A"
 fup_uc_L0[regexpr("_B",fup_uc_L0[,"Sample Text"])!=-1,"Replicate"] <- "B"
 fup_uc_L0[regexpr("_C",fup_uc_L0[,"Sample Text"])!=-1,"Replicate"] <- "C"
 
-## Identify and remove mixes that do not match what's should be used for the analyte 
+## Identify and remove mixes that do not match what should be used for the analyte 
 ## according to the assay information table
 bad.mix <- rep(FALSE,dim(fup_uc_L0)[1])
 for (this.id in uc.list){
@@ -183,11 +183,10 @@ fup_uc_L1 <- format_fup_uc(data.in = fup_uc_L0,
 ## Verify all samples
 fup_uc_L2 <- sample_verification(data.in = fup_uc_L1, output.res = FALSE)
 
-## Compare with smeltz2023.uc to make sure the subset of three compounds 
-## matches what's in the full data
+## Compare with smeltz2023.uc to make sure the subsets match the original datasets.
 uc.sub <- smeltz2023.uc[smeltz2023.uc$DTXSID %in% uc.list, ]
 
-## Check the dimension
+## Check the dimensions
 dim(uc.sub)
 dim(fup_uc_L2)
 
@@ -249,12 +248,12 @@ summary(diffs[!is.na(diffs)])
 
 ## The maximum difference is 1.000e-03 and the minimum difference is -1.000e-02.
 ## The difference in two decimal places is not reasonable.
-## After further investigation, the sample that have the largest difference has 
-## a peak area of 174260 and ISTD area of 17279. With 5 significant digits the 
-## numbers are rounded to whole number and even the tens. 
+## After further investigation, the sample with the largest difference has 
+## a peak area of 174260 and an ISTD area of 17279. With 5 significant digits the 
+## numbers are rounded to the nearest whole number and even the tens.
 
-## To preserve the precision, use the area and ISTD area from Level-0 to calculate response
-## and compare with response from the original data set 
+## To preserve the precision, use the area and ISTD area from Level-0 to calculate the responses
+## and compare with responses from the original data set. 
 ex_level0 <- fup_uc_L0[with(fup_uc_L0, order(Sample, DTXSID)), ]
 ## ISTD concentration is set to 1 (line 330 in MSdata-Mar2022.R)
 ## Set to 4 significant digits because that's that format_fup_uc does (lines 410-411)
@@ -272,17 +271,12 @@ colnames(og_level2)[which(!(colnames(og_level2) %in% common.cols))]
 colnames(ex_level2)[which(!(colnames(ex_level2) %in% common.cols))]
 
 ## As mentioned above, the original data maps replicate to the Note column,
-## and creates a series column filled with 1 (line 261 in MSdata-Mar2022.R).
+## and creates a Series column filled with 1 (line 261 in MSdata-Mar2022.R).
 ## Should compare Biological.Replicates from the example data to Note in the original data 
 all(ex_level2[, "Biological.Replicates"] == og_level2[, "Note"])
 
 ## Check the concentration columns:
-## Replace missing values with 0
-ex_level2[is.na(ex_level2$Test.Compound.Conc), "Test.Compound.Conc"] <- 0
-og_level2[is.na(og_level2$Standard.Conc), "Standard.Conc"] <- 0
-## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
-diffs <- ex_level2[, "Test.Compound.Conc"] - og_level2[, "Standard.Conc"]
-all(abs(diffs) <= 1e-4)
+all.equal(ex_level2[, "Test.Compound.Conc"], og_level2[, "Standard.Conc"])
 
 ## All columns are checked and any differences are documented
 
