@@ -236,28 +236,28 @@
 #' ## If the input level-0 data exists in an external file such as a .tsv file,
 #' ## users may import it using FILENAME and INPUT.DIR to specify the file name 
 #' ## and its directory path, respectively.
-#' fup_red_L1 <- format_fup_red(data.in = fup_red_L0,
-#'                              sample.col ="Sample",
-#'                              date.col="Date",
-#'                              compound.col="Compound",
-#'                              lab.compound.col="Compound",
-#'                              type.col="Sample.Type",
-#'                              dilution.col="Dilution.Factor",
-#'                              technical.replicates.col ="Replicate",
-#'                              cal=1,
-#'                              area.col = "Peak.Area",
-#'                              istd.conc = 10/1000,
-#'                              istd.col= "ISTD.Peak.Area",
-#'                              test.conc.col = "Compound.Conc", 
-#'                              test.nominal.conc = 10,
-#'                              plasma.percent = 100,
-#'                              time.col = "Time",
-#'                              analysis.method = "LCMS",
-#'                              analysis.instrument = "Waters ACQUITY I-Class UHPLC - Xevo TQ-S uTQMS",
-#'                              analysis.parameters = "RT",
-#'                              note.col=NULL, 
-#'                              output.res = FALSE
-#'                              )
+#' level1 <- format_fup_red(data.in = fup_red_L0,
+#'                          sample.col ="Sample",
+#'                          date.col="Date",
+#'                          compound.col="Compound",
+#'                          lab.compound.col="Compound",
+#'                          type.col="Sample.Type",
+#'                          dilution.col="Dilution.Factor",
+#'                          biological.replicates.col ="Replicate",
+#'                          cal=1,
+#'                          area.col = "Peak.Area",
+#'                          istd.conc = 10/1000,
+#'                          istd.col= "ISTD.Peak.Area",
+#'                          test.conc.col = "Compound.Conc", 
+#'                          test.nominal.conc = 10,
+#'                          plasma.percent = 100,
+#'                          time.col = "Time",
+#'                          analysis.method = "LCMS",
+#'                          analysis.instrument = "Waters ACQUITY I-Class UHPLC - Xevo TQ-S uTQMS",
+#'                          analysis.parameters = "RT",
+#'                          note.col=NULL, 
+#'                          output.res = FALSE
+#'                          )
 #' 
 #'
 #' @references
