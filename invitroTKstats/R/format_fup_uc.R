@@ -216,17 +216,22 @@
 #' ## If the input level-0 data exists in an external file such as a .tsv file,
 #' ## users may import it using INPUT.DIR to specify the path and FILENAME
 #' ## to specify the file name. See documentation for details.
-#' level1 <- format_fup_uc(data.in = level0,
-#'                        ## Mapping required columns to column names in level-0  
-#'                         sample.col="Name",
-#'                         compound.col="Compound.Name",
-#'                         test.conc.col ="Std.Conc", 
-#'                         lab.compound.col="Compound.Name", 
+#' level1 <- format_fup_uc(data.in = fup_uc_L0,
+#'                         sample.col="Sample",
+#'                         compound.col="Compound",
+#'                         test.conc.col ="Compound.Conc", 
+#'                         lab.compound.col="Lab.Compound.ID", 
 #'                         type.col="Sample.Type", 
-#'                         istd.col="IS.Area",
-#'                         note.col=NULL,
-#'                         uc.assay.conc.col="Test.Target.Conc",
-#'                         technical.replicates.col = "Replicate",
+#'                         istd.col="ISTD.Peak.Area",
+#'                         cal.col = "Date",
+#'                         area.col = "Peak.Area",
+#'                         istd.conc = 1,
+#'                         note.col = NULL,
+#'                         uc.assay.conc = 10,
+#'                         analysis.method = "UPLC-MS/MS",
+#'                         analysis.instrument = "Waters Xevo TQ-S micro (QEB0036)",
+#'                         analysis.parameters.col = "Analysis.Params",
+#'                         biological.replicates.col = "Replicate",
 #'                         output.res = FALSE
 #'                         )
 #'
