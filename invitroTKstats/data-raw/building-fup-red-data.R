@@ -60,7 +60,7 @@ fup_red_L0 <- merge_level0(level0.catalog  = data.guide,
              num.rows.col="Number.Data.Rows",
              istd.col="ISTD.Name",
              type.colname.col="Type.ColName",
-             additional.colnames = "Sample Text", "nM",
+             additional.colnames = "Sample Text",
              additional.colname.cols = "SampleText.ColName",
              chem.ids = chem.ids,
              output.res = FALSE,
@@ -120,7 +120,7 @@ fup_red_L0[fup_red_L0[,"Sample.Type"]%in%"NoPlasma.Blank","ISTD.Peak.Area"] <- 1
 fup_red_L0 <- subset(fup_red_L0, !is.na(Peak.Area) & 
                        !is.na(fup_red_L0[,"ISTD.Peak.Area"]))
 
-## Create the dilution factors column
+## Create the Dilution.Factor column
 ## Information found in lines 177 to 188 in MS-REDdata-Apr2023.Rmd
 fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 1
 fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "PBS" %in% x),"Dilution.Factor"] <- 2
@@ -164,20 +164,19 @@ fup_red_L1 <- format_fup_red(data.in = fup_red_L0,
 fup_red_L2 <- fup_red_L1
 fup_red_L2$Verified <- "Y"
 
-## Compare with smeltz2023.red to make sure the subset of three compounds 
-## matches what's in the full data
+## Compare with smeltz2023.red to make sure the subsets matche the original datasets.
 red.sub <- smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, ]
 
 ## Compare the the dimensions
 dim(fup_red_L2)
 dim(red.sub)
 
-## check all the columns with the same name have matching values
+## Check all the columns with the same names have matching values
 common_cols <- intersect(colnames(fup_red_L2),colnames(red.sub))
-## subset to only common columns
+## Subset to only common columns
 subred.sub <- red.sub[,common_cols]
 subfup_red_L2 <- fup_red_L2[,common_cols]
-## check to see if the subset data has all the same information
+## check to see if the common columns have the same information
 for(i in common_cols){
   test <- all(subred.sub[,i] == subfup_red_L2[,i])
   if(test == FALSE | is.na(test)){
@@ -185,11 +184,11 @@ for(i in common_cols){
   }
 }
 
-## Discrepancies in columns "Date", "Note" and "Time":
-## The Date column in the original (smeltz2023.red) data set might use the 
-## acquired date from the Excel file, while I use the date in the lab sample names. 
-## The format of the date is also different. In smeltz2023.red the date is in 
-## "yyyy-mm-dd" format while I use "mmddyy" format.
+## Discrepancies found in columns "Date", "Note" and "Time":
+## The Date column in the original (smeltz2023.red) datasets use the 
+## sample acquired dates from the Excel file, while I use the dates in the lab sample names. 
+## The format of the dates are also different. In smeltz2023.red the dates are in 
+## "yyyy-mm-dd" format while in my subsets the dates are in the "mmddyy" format.
 
 ## For the Note column, smeltz2023.red uses 'NA' to fill the column while I used "".
 
@@ -224,7 +223,7 @@ all(abs(diffs) <= 1e-4)
 
 ## All columns are checked and any differences are documented
 
-## Save level-0 and level-1 data to use for function demo/example documentation 
+## Save level-0 and level-1 data to use for function demo/example documentations 
 save(fup_red_L0, fup_red_L1, fup_red_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-RED-example.RData")
 
 ## Include session info
