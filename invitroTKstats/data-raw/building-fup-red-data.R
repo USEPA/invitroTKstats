@@ -74,7 +74,7 @@ fup_red_L0 <- merge_level0(level0.catalog  = data.guide,
 ## (starting at line 125), which can be found in the invitrotkstats repo under 'working/SmeltzPFAS'.
 
 ## Convert the area columns and concentration column to numeric 
-## The RMD I'm follow sets the precision for these columns to have 6 significant figures,
+## The RMD I'm following sets the precision for these columns to have 6 significant figures,
 ## however that step is skipped in this script as we are trying to avoid rounding 
 ## before the end analysis.
 for (this.col in c("Peak.Area", "Compound.Conc", "ISTD.Peak.Area"))
@@ -143,7 +143,7 @@ fup_red_L1 <- format_fup_red(data.in = fup_red_L0,
                              sample.col ="Sample",
                              date.col="Date",
                              compound.col="Compound",
-                             lab.compound.col="Compound",
+                             lab.compound.col="Lab.Compound.ID",
                              type.col="Sample.Type",
                              dilution.col="Dilution.Factor",
                              technical.replicates.col ="Replicate",
@@ -199,29 +199,55 @@ for(i in common_cols){
 ## Use other method to check for this column
 table(subred.sub[,"Time"] == subfup_red_L2[,"Time"])
 
+## Discrepancies found in column Lab.Compound.Name:
+## The original dataset uses the compound names ('Compound' column from Level-0) to 
+## fill this column while I use the Lab.Compound.ID column from Level-0.
+
 ## Discrepancies found in columns "ISTD.Area", "Area" and "Response":
 ## As noted above (lines 76-79), area columns were rounded when the original 
 ## dataset was processed, but I did not do that for the example data files.
 ## Discrepancies found in the comparisons are likely rounding errors. 
 
+## ISTD.Area
 diffs <- signif(fup_red_L2[,"ISTD.Area"],5) - signif(red.sub[,"ISTD.Area"],5)
 summary(diffs[!is.na(diffs)])
 ## The largest difference in ISTD.Area is 1.
+## Examine the differences more closely - summary of the ISTD.Area column shows that  
+## at least 75% of the values are larger than 15,000, and samples 
+## with the largest differences have ISTD areas that are at least ten thousands.
+## These samples having differences of 1 is not a concern.
+summary(fup_red_L2[,"ISTD.Area"])
+## Samples with differences larger or equal to 1
+fup_red_L2[,"ISTD.Area"][which(diffs >= 1)]
 
+## Area
 diffs <- signif(fup_red_L2[,"Area"],5) - signif(red.sub[,"Area"],5)
 summary(diffs[!is.na(diffs)])
-## The largest difference in Area is 1.
-## Exam the differences more closely - samples with the largest differences have
-## areas more than a hundred thousand.
-fup_red_L2[which(diffs[!is.na(diffs)] == 10), "Area"]
+## The largest difference in Area is 10.
+## Examine the differences more closely - samples with the largest differences have
+## areas more than a hundred thousand. These samples having differences of 10 is not a concern.
+summary(fup_red_L2[,"Area"])
+fup_red_L2[,"ISTD.Area"][which(diffs >= 10)]
 
+## Response
 diffs <- signif(fup_red_L2[,"Response"],4) - signif(red.sub[,"Response"],4)
 summary(diffs[!is.na(diffs)])
 ## The largest difference in Response is 1.000e-05.
+## Examine the differences more closely 
+## Check the range of the Response values - zeros are from the blank samples with area = 0
+summary(fup_red_L2[,"Response"])
+## Check the smallest non-zero response 
+min(fup_red_L2[,"Response"][fup_red_L2[,"Response"] > 0])
+## Given this range, it's reasonable to assume any difference smaller than
+## 1e-07 is not a concern. 
+## Samples with differences larger than 1e-07
+diffs[which(diffs > 1e-07)]
+fup_red_L2[,"Response"][which(diffs > 1e-07)]
+## There only two samples have differences larger than 1e-07, and the 
+## discrepancies, when compared to the actual values, happen at the last digit of the decimals.
 
-## Rounding errors in the tens and ones are considered reasonable if the number
-## is large and if they do not cause significant differences in the later calculations.
-## See check with calc_fup_red_point below.
+## Check with calc_fup_red_point to ensure these rounding errors do not cause 
+## significant differences in the later calculations included below following the comparisons.
 
 ## Compare the columns with different column names  
 colnames(fup_red_L2)[which(!(colnames(fup_red_L2) %in% common_cols))]
