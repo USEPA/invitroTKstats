@@ -57,7 +57,7 @@ data.guide <- create_catalog(
   file = rep(this.file, 3),
   sheet = c("20200103","20210308","20201123"),
   skip.rows = c(571,6,137),
-  date = c("2020-01-03","2021-03-08","2020-11-23"),
+  date = c("010320","030821","112320"),
   compound = c("8:2 FTS", "PFOA-F", "K-PFBS"),
   istd = c("M2-8:2FTS", "M8PFOA", "M3PFBS"),
   sample = rep("Name",3),
@@ -143,7 +143,7 @@ for (this.id in uc.list){
   this.date <- fup_uc_L0[fup_uc_L0$DTXSID == this.id, "Date"][1]
   this.assay.index <- which(
     assayinfo[,"DTXSID"] == this.id &
-      assayinfo[,"LCMS Analysis Date"] == this.date)
+      assayinfo[,"LCMS Analysis Date"] == as.Date(this.date, "%m%d%y"))
   if (any(this.assay.index))
   {
     this.mix <- assayinfo[this.assay.index,"Mix"]
@@ -198,7 +198,7 @@ common.cols <- intersect(colnames(uc.sub),colnames(fup_uc_L2))
 all(colnames(uc.sub[,common.cols]) == colnames(fup_uc_L2[,common.cols]))
 
 ## The order of the samples seems to be different
-## Sort the data by lab sample name and DTXSID (sample name along is not a unique identifier)
+## Sort the data by lab sample name and DTXSID (sample name alone is not a unique identifier)
 og_level2 <- uc.sub[with(uc.sub, order(Lab.Sample.Name, DTXSID)), ]
 ex_level2 <- fup_uc_L2[with(fup_uc_L2, order(Lab.Sample.Name, DTXSID)), ]
 
@@ -213,12 +213,22 @@ for(i in common.cols){
 
 ## Address the discrepancies one by one
 
+## Discrepancies found in columns Date and Calibration:
+## These two columns have the same information because we are using the dates as calibration indices.
+## The two datasets should have matched dates but in different formats. 
+## The original dataset has the dates in format 'yyyy-mm-dd' and the example dataset has the dates
+## in format 'mmddyy'.
+
+unique(ex_level2$Date)
+unique(og_level2$Date)
+
 ## Discrepancies found in the Lab.Compound.Name column:
-## The original data uses compound name for lab compound id (line 355 in MSdata-Mar2022.R).
-## I will keep my input.
+## The original dataset maps the 'Compound' column from Level-0 to this column (line 355 in MSdata-Mar2022.R),
+## which is incorrect. I used the 'Lab.Compound.ID' column from Level-0. I will keep my input.
 
 ## Discrepancies found in the Area and ISTD.Area columns:
-## Area and ISTD.Area were rounded to 5 significant digits in format_fup_uc (lines 406-407).
+## Area and ISTD.Area were rounded to 5 significant digits in format_fup_uc (lines 406-407)
+## when the example dataset was complied. Rounding was not used when the original dataset was complied.
 ## Compare the columns in 5 significant digits: 
 all.equal(signif(og_level2[,"Area"],5),ex_level2[,"Area"])
 
@@ -258,6 +268,8 @@ diffs <- og_level2[,"Response"] - ex_level0[,"Response"]
 diffs[is.na(diffs)] <- 0
 ## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
 all(abs(diffs) <= 1e-4)
+## Additional check with calc_fup_uc_point is included below to ensure these rounding errors
+## will not cause significant differences in later calculations. 
 
 ## Compare the columns with different column names  
 colnames(og_level2)[which(!(colnames(og_level2) %in% common.cols))]
@@ -278,6 +290,21 @@ all.equal(ex_level2[, "Test.Compound.Conc"], og_level2[, "Standard.Conc"])
 all.equal(signif(ex_level2[, "Test.Compound.Conc"],4), og_level2[, "Standard.Conc"])
 
 ## All columns are checked and any differences are documented
+
+##---------------------------------------------##
+## Run level-3 calculations with the example dataset.
+ex_level3 <- calc_fup_uc_point(data.in = ex_level2, output.res = FALSE)
+
+## The original dataset needs to update some column names.
+colnames(og_level2)[which(names(og_level2) == "Series")] <- "Biological.Replicates"
+colnames(og_level2)[which(names(og_level2) == "Standard.Conc")] <- "Test.Compound.Conc"
+## Run level-3 calculations with the original dataset.
+og_level3 <- calc_fup_uc_point(data.in = og_level2, output.res = FALSE)
+
+## Compare the results. They are matched.
+## Note that calc_fup_uc_point rounds Fup to the fourth significant figures.
+all.equal(ex_level3$Fup,og_level3$Fup)
+##---------------------------------------------##
 
 ## Save level-0 to level-2 data to use for function demo/example documentation 
 save(fup_uc_L0, fup_uc_L1, fup_uc_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-UC-example.RData")
