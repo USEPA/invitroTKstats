@@ -1,8 +1,8 @@
 ## This R script should be ran from the command line using
 ## R CMD BATCH data-raw/building-Clint-data.R
 
-## Script used to create data examples for Clint data to use for function documentations 
-## and vignette. The data examples are small subsets of three compounds.
+## Script used to create data examples for Clint data to use for function documentation
+## and vignettes. The data examples are small subsets of three compounds.
 
 ## Load necessary package
 library(invitroTKstats)
@@ -39,7 +39,7 @@ data.guide <- create_catalog(
   file = rep(this.file, 3),
   sheet = c("Ref Chem Data","Ref Chem Data", "PFAS Data"),
   skip.rows = c(6, 137, 6),
-  date = rep("2022-01-28", 3),
+  date = rep("012822", 3),
   compound = c("phenacetin", "propranolol", "TFMFPA"),
   istd = c("propranolol-d7", "propranolol-d7", "M5PFPeA"),
   sample = rep("Name",3),
@@ -124,7 +124,7 @@ clint_L0 <- subset(clint_L0, !is.na(Peak.Area) &
 ## The 'Compound.Conc' column maps to the 'nM' column in the original Excel file
 ## The unit is in nM, need to convert to uM which is what the package uses
 clint_L0[,"Compound.Conc"] <- as.numeric(clint_L0[,"Compound.Conc"])/1000
-## Only set a standard/expected conc for calibration curve points
+## Only set a nominal/expected conc for calibration curve points
 clint_L0[clint_L0[,"Type"]!="CC","Compound.Conc"] <- NA
 ## Concentrations calculated including dilution
 clint_L0[,"Compound.Conc"] <- clint_L0[,"Compound.Conc"]*clint_L0$Dilution.Factor
@@ -154,27 +154,38 @@ clint_L1 <- format_clint(data.in = clint_L0,
                        output.res = FALSE
 )
 
-## First assign "Y" to all samples
-clint_L2 <- sample_verification(data.in = clint_L1, assay = "Clint",output.res = FALSE)
 
-## If the mix recorded in column "Note" does not match what's recorded on the 
+## Verification Steps (Level-2)
+
+## The first step: check for correct mix
+## Column "Note" records which mix was actually used for each sample of the test compounds. 
+## If the mix used for a sample is not matched with the expected mix recorded on the
 ## summary table (chem.ids), exclude the sample due to wrong mix.
-for (this.id in clint.list)
-{
-  this.mix <- chem.ids[chem.ids$DTXSID==this.id,"Mix"]
-  if (regexpr("WAX1",this.mix)!=-1)
-  {
-    clint_L2[clint_L2$DTXSID==this.id & 
-             (clint_L2$Sample.Type %in% c("Cvst", "Inactive")) &
-             regexpr("WAX2",clint_L2$Note)!=-1,"Verified"] <- "Wrong Mix"
-  } else if (regexpr("WAX2",this.mix)!=-1)
-  {
-    clint_L2[clint_L2$DTXSID==this.id & 
-             (clint_L2$Sample.Type %in% c("Cvst", "Inactive")) &
-             regexpr("WAX1",clint_L2$Note)!=-1,"Verified"] <- "Wrong Mix"
-  }
-}
-## Exclude calibration curve samples if the concentration is unknown.
+
+## Check the correct mix for each compound:
+## Two of the selected compounds are reference chemicals, so only to check 
+## DTXSID80380256. Exclude any samples with a note of WAX2 being used.
+chem.ids[chem.ids$DTXSID %in% clint.list, c("DTXSID", "Mix")]
+## Look for notes contain the word "WAX2"
+unique(clint_L1[clint_L1$DTXSID == "DTXSID80380256", "Note"])
+## Put the information into an exclusion criteria
+EC <- data.frame(
+  Variables = c("DTXSID|Note"),
+  Values = paste("DTXSID80380256", c("WAX2 T15-B", "WAX2 T240-A Living", "WAX2 T240-B Living","WAX2 T240-C Living",
+                                     "WAX2 T240-B Inactive","WAX2 T240-C Inactive"), sep = "|"),
+  Message = c("Wrong Mix")
+)
+
+## Run it through the verification function
+clint_L2 <- sample_verification(data.in = clint_L1, assay = "Clint",
+                                exclusion.info = EC,
+                                output.res = FALSE)
+
+## The second step: check for unknown concentration
+## Exclude calibration curve (CC) samples if the concentration is unknown.
+## Filtering on a numeric column or detecting if a numeric value is missing are not 
+## supported by the current sample_verification function. 
+## We will do this step manually. 
 clint_L2[clint_L2$Sample.Type=="CC" & is.na(clint_L2$Test.Compound.Conc),"Verified"] <- 
   "Unknown Conc."
 
@@ -208,28 +219,32 @@ for(i in common.cols){
 
 ## Discrepancies found in the Date column:
 ## The original (smeltz2023.clint) data set uses the sample acquired date
-## from the Excel file and the date was converted into numbers when read in.
-## I use the date in the lab sample names and enter them in a "yyyy-mm-dd" format.
+## from the Excel file and the dates were converted into numbers when read in.
+## I use dates extracted from the lab sample names and enter them in format mmddyy.
 
 ## Discrepancies found in the Compound.Name column:
-## The original data set uses lab compound ID/abbreviations for compound name
-## instead of the full name, which is what I did when I created the subsets.
-## I will keep it as-is.
+## The original data set uses lab compound IDs/abbreviations for the Compound.Name 
+## column instead of the full name. When I created the subsets the full name is 
+## used for Compound.Name and lab compound IDs/abbreviations are used for the 
+## Lab.Compound.ID column. I will keep my input. 
 
 ## Discrepancies found in the Lab.Compound.Name column:
-## One of the compound "propranolol" has the first letter capitalized in smeltz2023.clint.
+## The original data set was complied without the use of merge_level0 and the data guide.
+## It was complied by reading a entire sheet from the Excel file in and then filling in the 
+## compound names. The first compound name, "propranolol", had its first letter capitalized
+## when being filled in (line 23 in smeltz-hep-inactive.R). 
+## However, compound names in the raw Excel file are all in lower case.
 ## Convert to all lower case and check again:
 all(tolower(clint.sub[,"Lab.Compound.Name"]) == tolower(clint_L2[,"Lab.Compound.Name"]))
 
 ## Discrepancies found in the Area and ISTD.Area columns:
-## Area and ISTD.Area were rounded to 5 significant digits in format_clint (lines 442-443).
-## Samples with areas larger than 10,000 got the decimals chopped off.
+## Area and ISTD.Area were rounded to 5 significant digits in format_clint (lines 442-443)
+## when the example data set was complied. Rounding was not used when the 
+## original data set was complied.
+## In the example data set, areas larger than 10,000 were rounded to the nearest whole numbers.
 ## Compare the columns in 5 significant digits: 
-clint.sub$Area <- signif(clint.sub[,"Area"], 5)
-all(clint.sub[,"Area"] == clint_L2[,"Area"])
-
-clint.sub$ISTD.Area <- signif(clint.sub[,"ISTD.Area"], 5)
-all(clint.sub[,"ISTD.Area"] == clint_L2[,"ISTD.Area"])
+all.equal(signif(clint.sub[,"Area"], 5), clint_L2[,"Area"])
+all.equal(signif(clint.sub[,"ISTD.Area"], 5), clint_L2[,"ISTD.Area"])
 
 ## Discrepancies found in the Time column:
 ## Time column contains missing values so the check with all() will return NA 
@@ -239,9 +254,9 @@ table(clint.sub[,"Time"] == clint_L2[,"Time"])
 ## Discrepancies found in the Analysis.Parameters column:
 ## Analysis.Parameters is a numeric column in smeltz2023.clint while it is a character
 ## column in the example data.
-## Convert Analysis.Parameters in clint_L2 and check again:
-clint_L2$Analysis.Parameters <- as.numeric(clint_L2$Analysis.Parameters)
-all(clint_L2$Analysis.Parameters == clint.sub$Analysis.Parameters)
+## Compare them as if Analysis.Parameters in clint_L2 is a numeric column:
+all.equal(clint_L2$Analysis.Parameters, clint.sub$Analysis.Parameters)
+all.equal(as.numeric(clint_L2$Analysis.Parameters), clint.sub$Analysis.Parameters)
 
 ## Discrepancies found in the Level0.Sheet column:
 ## The script smeltz-hep-inactive.R created this column with a single value for all rows 
@@ -263,6 +278,8 @@ diffs <- clint.ex.resp - clint.og.resp
 diffs[is.na(diffs)] <- 0
 ## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
 all(abs(diffs) <= 1e-4)
+## Additional check with calc_clint_point is included below to ensure these rounding errors
+## in Area, ISTD.Area and Response will not cause significant differences in later calculations. 
 
 ## Compare the columns with different column names  
 colnames(clint_L2)[which(!(colnames(clint_L2) %in% common.cols))]
@@ -281,6 +298,22 @@ diffs[is.na(diffs)] <- 0
 all(abs(diffs) <= 1e-4)
 
 ## All columns are checked and any differences are documented
+
+##---------------------------------------------##
+## Run level-3 calculations with the example dataset.
+ex_level3 <- calc_clint_point(data.in = clint_L2, output.res = FALSE)
+
+## The original dataset needs to update some column names.
+og_level2 <- clint.sub
+og_level2$Biological.Replicates <- 1
+colnames(og_level2)[which(names(og_level2) == "Std.Conc")] <- "Test.Compound.Conc"
+## Run level-3 calculations with the original dataset.
+og_level3 <- calc_clint_point(data.in = og_level2, output.res = FALSE)
+
+## Compare the results. They are matched.
+## Note that calc_fup_uc_point rounds Fup to the fourth significant figures.
+all.equal(ex_level3$Fup,og_level3$Fup)
+##---------------------------------------------##
 
 ## Save level-0 to level-2 data to use for function demo/example documentation 
 save(clint_L0, clint_L1, clint_L2, file = "~/invitrotkstats/invitroTKstats/data/Clint-example.RData")
