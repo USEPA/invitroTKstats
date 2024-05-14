@@ -65,7 +65,7 @@
 #'
 #' @examples
 #' ## Load example level-2 data
-#' level2 <- invitroTKstats::smeltz2023.red
+#' level2 <- invitroTKstats::fup_red_L2
 #' 
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table
