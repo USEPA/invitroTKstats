@@ -163,12 +163,12 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
   #
   # Get the calibration curves (if any):
   this.cc <- subset(this.data, Sample.Type=="CC" &
-                      !is.na(Std.Conc))
+                      !is.na(Test.Compound.Conc))
   Num.cc.obs <- dim(this.cc)[1]
   if (Num.cc.obs > 0)
   {
     cc.obs <- this.cc[, "Response"]
-    cc.obs.conc <- this.cc[, "Std.Conc"]
+    cc.obs.conc <- this.cc[, "Test.Compound.Conc"]
     cc.obs.df <- this.cc[, "Dilution.Factor"]
     cc.obs.cal <- rep(NA, Num.cc.obs)
     for (this.cal in unique(this.cc[,"Calibration"]))
