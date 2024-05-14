@@ -115,15 +115,17 @@ create_catalog <- function(
   # check if we need to add columns with additional information
   if(!is.null(additional.info)){
     # check the class of the `additional.info` object
-    stopifnot(is.data.frame(additional.info)|is.list(additional.info),
-              "The 'additional.info' argument needs to be a data.frame or named list.")
+    stopifnot("The 'additional.info' argument needs to be a data.frame or named list." = 
+              (is.data.frame(additional.info)|is.list(additional.info))
+              )
     # if `additional.info` is a list make it a data.frame
     if(is.list(additional.info)){
       additional.info <- do.call("cbind.data.frame",additional.info)
     }
     # check the number of rows between `catalog`
-    stopifnot(nrow(additional.info) == nrow(catalog),
-              "Number of rows for the 'additional.info' does not match standard catalog column rows.")
+    stopifnot("Number of rows for the 'additional.info' does not match standard catalog column rows." = 
+                nrow(additional.info) == nrow(catalog)
+              )
     
     catalog <- cbind.data.frame(catalog,additional.info)
   }
