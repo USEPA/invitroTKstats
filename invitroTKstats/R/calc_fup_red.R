@@ -240,7 +240,7 @@ model {
 #' @examples
 #' ## Example 1: loading level-2 using data.in
 #' \dontrun{
-#' level2 <- invitroTKstats::smeltz2023.red
+#' level2 <- invitroTKstats::fup_red_L2
 #' 
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
@@ -316,9 +316,7 @@ calc_fup_red <- function(
   
   # Throw error if not all columns present with expected names:
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
-    stop(paste0("Need at least one replicate columns: ", 
-                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
-                ". Run format_fup_red first (level 1) then curate to (level 2)."))
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_red first (level 1) then curate to (level 2).")
   
   if (!(all(cols %in% colnames(MS.data))))
   {

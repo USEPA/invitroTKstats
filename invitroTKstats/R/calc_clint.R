@@ -293,9 +293,7 @@ calc_clint <- function(
   
   # Check for missing columns
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
-    stop(paste0("Need at least one replicate columns: ", 
-                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
-                ". Run format_clint first (level 1) then curate to (level 2)."))
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_clint first (level 1) then curate to (level 2).")
   
   if (!(all(cols %in% colnames(MS.data))))
   {

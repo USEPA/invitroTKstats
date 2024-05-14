@@ -61,7 +61,7 @@
 #'
 #' @examples
 #' ## Load example level-2 data
-#' level2 <- invitroTKstats::kreutz2023.uc
+#' level2 <- invitroTKstats::fup_uc_L2
 #' 
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table

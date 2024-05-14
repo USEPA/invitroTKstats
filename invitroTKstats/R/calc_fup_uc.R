@@ -150,7 +150,7 @@ model {
 #' @examples 
 #' ## Example 1: loading level-2 using data.in
 #' \dontrun{
-#' level2 <- invitroTKstats::kreutz2023.uc
+#' level2 <- invitroTKstats::fup_uc_L2
 #' 
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
@@ -225,9 +225,7 @@ calc_fup_uc <- function(
   cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
   
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(PPB.data)))
-    stop(paste0("Need at least one replicate columns: ", 
-                paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
-                ". Run format_fup_uc first (level 1) then curate to (level 2)."))
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_uc first (level 1) then curate to (level 2).")
   
   if (!(all(cols %in% colnames(PPB.data))))
   {
@@ -295,10 +293,10 @@ calc_fup_uc <- function(
         sep=""))
       MS.data <- PPB.data[PPB.data[,compound.col]==this.compound,]
     
-      for (this.series in unique(MS.data[,series.col]))
+      for (this.series in unique(MS.data[,"Biological.Replicates"]))
         if (!is.na(this.series))
         {
-          this.series.subset <- subset(MS.data,MS.data[,series.col]==this.series)
+          this.series.subset <- subset(MS.data,MS.data[,"Biological.Replicates"]==this.series)
           for (this.cal in unique(this.series.subset[,cal.col]))
             if (!is.na(this.cal))
             {
@@ -307,7 +305,7 @@ calc_fup_uc <- function(
               if (!all(c("T1","T5","AF") %in% this.cal.subset[,type.col]))
               {
                 # Have to handle the NA series values for CC data:
-                series.values <- MS.data[,series.col]
+                series.values <- MS.data[,"Biological.Replicates"]
                 # Assign a dummy value to the NA's
                 series.values[is.na(series.values)]<-"Cat"
                 # Identify the bad series from the cal and add to ignored.data:
