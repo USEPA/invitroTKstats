@@ -471,7 +471,7 @@
 #' @name fup_uc_L1
 #' @aliases fup_uc_L1
 #' @docType data
-#' @format A level 1 data.frame with 240 rows and 22 variables: \describe{
+#' @format A level 1 data.frame with 240 rows and 23 variables: \describe{
 #' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 #' \item{\code{Date}}{Date the sample was added to the MS analyzer}
 #' \item{\code{Compound.Name}}{Name of the test analyte/compound}
@@ -492,7 +492,8 @@
 #' \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
 #' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{UC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
-#' \item{\code{Technical.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
+#' \item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
+#' \item{\code{Technical.Replicates}}{Identifier for repeated measurements of a sample of a compound}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' }
 #'
@@ -515,7 +516,7 @@
 #' @name fup_uc_L2
 #' @aliases fup_uc_L2
 #' @docType data
-#' @format A level 2 data.frame with 240 rows and 23 variables: \describe{
+#' @format A level 2 data.frame with 240 rows and 24 variables: \describe{
 #' \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 #' \item{\code{Date}}{Date the sample was added to the MS analyzer}
 #' \item{\code{Compound.Name}}{Name of the test analyte/compound}
@@ -536,7 +537,8 @@
 #' \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
 #' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{UC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
-#' \item{\code{Technical.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
+#' \item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
+#' \item{\code{Technical.Replicates}}{Identifier for repeated measurements of a sample of a compound}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
 #' }
@@ -623,7 +625,7 @@
 #' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
 #' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
-#' \item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
+#' \item{\code{Technical.Replicates}}{Identifier for repeated measurements of a sample of a compound}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' }
 #'
@@ -669,7 +671,7 @@
 #' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
 #' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
-#' \item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
+#' \item{\code{Technical.Replicates}}{Identifier for repeated measurements of a sample of a compound}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' \item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
 #' }
