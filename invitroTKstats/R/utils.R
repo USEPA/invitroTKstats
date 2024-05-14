@@ -163,12 +163,12 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
   #
   # Get the calibration curves (if any):
   this.cc <- subset(this.data, Sample.Type=="CC" &
-                      !is.na(Std.Conc))
+                      !is.na(Test.Compound.Conc))
   Num.cc.obs <- dim(this.cc)[1]
   if (Num.cc.obs > 0)
   {
     cc.obs <- this.cc[, "Response"]
-    cc.obs.conc <- this.cc[, "Std.Conc"]
+    cc.obs.conc <- this.cc[, "Test.Compound.Conc"]
     cc.obs.df <- this.cc[, "Dilution.Factor"]
     cc.obs.cal <- rep(NA, Num.cc.obs)
     for (this.cal in unique(this.cc[,"Calibration"]))
@@ -286,7 +286,7 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
   # Convert calibrations to sequential integers:
   CC.cal <- sapply(CC.data[,"Calibration"],
                    function(x) which(unique.cal %in% x))
-  CC.conc <- CC.data[,"Std.Conc"]
+  CC.conc <- CC.data[,"Test.Compound.Conc"]
   Num.CC.obs <- length(CC.obs)
   # PBS
   PBS.data <- subset(this.data,Sample.Type=="PBS")
@@ -307,14 +307,14 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
                        function(x) which(unique.cal %in% x))
   Num.Plasma.obs <- length(Plasma.obs)
   # Match the PBS and Plasma replicate measurments:
-  PBS.rep <- paste0(PBS.data[,"Calibration"],PBS.data[,"Replicate"])
-  Plasma.rep <- paste0(Plasma.data[,"Calibration"],Plasma.data[,"Replicate"])
+  PBS.rep <- paste0(PBS.data[,"Calibration"],PBS.data[,"Technical.Replicates"])
+  Plasma.rep <- paste0(Plasma.data[,"Calibration"],Plasma.data[,"Technical.Replicates"])
   unique.rep <- sort(unique(c(PBS.rep,Plasma.rep)))
   Num.rep <- length(unique.rep)
   # Convert replicates to sequential integers:
   PBS.rep <- sapply(PBS.rep, function(x) which(unique.rep %in% x))
   Plasma.rep <- sapply(Plasma.rep, function(x) which(unique.rep %in% x))
-  Assay.Protein.Percent <- Plasma.data[!duplicated(Plasma.data$Replicate),
+  Assay.Protein.Percent <- Plasma.data[!duplicated(Plasma.data$Technical.Replicates),
                                        "Percent.Physiologic.Plasma"]
   # NO PLASMA BLANK
   NoPlasma.Blank.data <- subset(this.data, Sample.Type=="NoPlasma.Blank")
@@ -339,10 +339,10 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
   Plasma.Blank.cal <- sapply(Plasma.Blank.data[,"Calibration"],
                              function(x) which(unique.cal %in% x))
   Num.Plasma.Blank.obs <- length(Plasma.Blank.obs)
-  if (!any(is.na(Plasma.Blank.data[,"Replicate"])))
+  if (!any(is.na(Plasma.Blank.data[,"Technical.Replicates"])))
   {
     Plasma.Blank.rep <- paste0(Plasma.Blank.data[,"Calibration"],
-                               Plasma.Blank.data[,"Replicate"])
+                               Plasma.Blank.data[,"Technical.Replicates"])
     # Convert replicates to sequential integers:
     Plasma.Blank.rep <- sapply(Plasma.Blank.rep, function(x)
       which(unique.rep %in% x))
@@ -452,7 +452,7 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
     #CC.data <- MS.data[MS.data[,type.col]=="CC",]
     Num.cc.obs <- dim(CC.data)[1]
     CC.data$Obs.Conc <- seq(1,Num.cc.obs)
-    Conc <- CC.data[,"Standard.Conc"]
+    Conc <- CC.data[,"Test.Compound.Conc"]
     Dilution.Factor <- CC.data[,"Dilution.Factor"]
     #
     #
@@ -470,28 +470,28 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
     {
       these.series <- unique(T5.data[
         T5.data[,"Calibration"]==all.cal[i],
-        "Series"])
+        "Biological.Replicates"])
       Num.series <- Num.series + length(these.series) 
       T1.data[
         T1.data[,"Calibration"]==all.cal[i],
-        "Series"] <- paste(all.cal[i],
+        "Biological.Replicates"] <- paste(all.cal[i],
                              T1.data[                          
                                T1.data[,"Calibration"]==all.cal[i],
-                               "Series"],
+                               "Biological.Replicates"],
                              sep="-")
       T5.data[
         T5.data[,"Calibration"]==all.cal[i],
-        "Series"] <- paste(all.cal[i],
+        "Biological.Replicates"] <- paste(all.cal[i],
                              T5.data[                          
                                T5.data[,"Calibration"]==all.cal[i],
-                               "Series"],
+                               "Biological.Replicates"],
                              sep="-")
       AF.data[
         AF.data[,"Calibration"]==all.cal[i],
-        "Series"] <- paste(all.cal[i],
+        "Biological.Replicates"] <- paste(all.cal[i],
                              AF.data[
                                AF.data[,"Calibration"]==all.cal[i],
-                               "Series"],
+                               "Biological.Replicates"],
                              sep="-")
       all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
       Test.Nominal.Conc[i] <- mean(T1.data[
@@ -502,11 +502,11 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
     # multiple observations of that series:
     for (i in 1:Num.series)
     {
-      T1.data[T1.data$Series==all.series[i],"Obs.Conc"] <- 
+      T1.data[T1.data$Biological.Replicates==all.series[i],"Obs.Conc"] <- 
         Num.cc.obs + i
-      T5.data[T5.data$Series==all.series[i],"Obs.Conc"] <- 
+      T5.data[T5.data$Biological.Replicates==all.series[i],"Obs.Conc"] <- 
         Num.cc.obs + 1*Num.series + i
-      AF.data[AF.data$Series==all.series[i],"Obs.Conc"] <-   
+      AF.data[AF.data$Biological.Replicates==all.series[i],"Obs.Conc"] <-   
         Num.cc.obs + 2*Num.series + i
     }
     # There are three total concentrations per series (T1, T5, and AF):
