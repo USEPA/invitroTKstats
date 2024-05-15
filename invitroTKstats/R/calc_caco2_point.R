@@ -131,9 +131,7 @@ calc_caco2_point <- function(
   cols <- c(unlist(mget(names(caco2.cols))), "Response", good.col)
   
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(input.table)))
-    stop(paste0("Need at least one replicate columns: ", 
-               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", "),
-               ". Run format_caco2 first (level 1) then curate to (level 2)."))
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_caco2 first (level 1) then curate to (level 2).")
   
   if (!(all(cols %in% colnames(input.table))))
   {
