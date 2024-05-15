@@ -1311,11 +1311,21 @@ write.table(level2,
       sep="\t",
       row.names=F,
       quote=F)
-    ```
+```
+
 
 # maximum likelihood analysis:
+
+The package has been undergoing further development since the example dataset `kreutz2023.uc` was compiled. Some of the columns are named differently from how they were named in the previous version, or example, "Series" column is now called "Biological.Replicates" and "Standard.Conc" column is now called "Test.Compound.Conc".
+Updating column names:
+```{r}
+colnames(level2)[which(colnames(level2) == "Standard.Conc")] <- "Test.Compound.Conc"
+colnames(level2)[which(colnames(level2) == "Series")] <- "Biological.Replicates"
+```
+
 ```{r MLE, eval=TRUE}
-    level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS") 
+level3 <- calc_fup_uc_point(data.in = level2, 
+                            output.res = FALSE) 
 ```
 
 # Bayesian analysis:
