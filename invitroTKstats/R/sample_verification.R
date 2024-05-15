@@ -84,6 +84,7 @@
 #' }
 #' 
 #' @author Zhihui (Grace) Zhao
+#' @import dplyr
 #' 
 sample_verification <- function(
     FILENAME, 
