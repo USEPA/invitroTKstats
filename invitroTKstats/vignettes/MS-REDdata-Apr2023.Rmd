@@ -268,7 +268,7 @@ level2[level2$DTXSID%in%c(
 level2 <- invitroTKstats::smeltz2023.red
 ```
 
-```{r write_level2, eval=TRUE} 
+```{r write_level2, eval=FALSE} 
 write.table(level2,
   file="SmeltzPFAS-fup-RED-Level2.tsv",
   sep="\t",
@@ -277,8 +277,18 @@ write.table(level2,
 ```
 
 # maximum likelihood analysis:
+
+The package has been undergoing further development since the example dataset `smeltz2023.red` was compiled. Some of the columns are named differently from how they were named in the previous version, for example, "Replicate" column is now called "Technical.Replicates" and "Std.Conc" column is now called "Test.Compound.Conc". Updating column names:
+```{r}
+colnames(level2)[which(colnames(level2) == "Std.Conc")] <- "Test.Compound.Conc"
+colnames(level2)[which(colnames(level2) == "Replicate")] <- "Technical.Replicates"
+```
+
 ```{r MLE, eval=TRUE}
-level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS")
+## Use data.in to specify input level-2 data from R session instead of using FILENAME to read in external .tsv file. 
+## `output.res = FLASE` prevents the exporting of the level-3 result. 
+level3 <- calc_fup_red_point(data.in = level2, 
+                             output.res = FALSE)
 ```
 
 # Bayesian analysis:

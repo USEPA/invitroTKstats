@@ -361,7 +361,7 @@ level2[level2$DTXSID %in% c(
 level2 <- invitroTKstats::kreutz2023.clint
 ```
 
-```{r write_level2, eval=TRUE}  
+```{r write_level2, eval=FALSE}  
 write.table(level2,
   file="KreutzPFAS-Clint-Level2.tsv",
   sep="\t",
@@ -385,8 +385,18 @@ subset(this.subset,Time==0)$Response/1*subset(this.subset,Time==0)$Dilution.Fact
 ```
 
 # maximum likelihood analysis:
+
+The package has been undergoing further development since the example dataset `kreutz2023.clint` was compiled. Some of the columns are named differently from how they were named in the previous version, for example, "Std.Conc" column is now called "Test.Compound.Conc". In addition, each dataset is required to have either a "Technical.Replicates" or a "Biological.Replicates" column. Updating column names and adding a pseudo column:
+```{r}
+level2$Technical.Replicates <- 1
+colnames(level2)[which(colnames(level2) == "Std.Conc")] <- "Test.Compound.Conc"
+```
+
 ```{r MLE, eval=TRUE}
-level3 <- calc_clint_point(FILENAME="KreutzPFAS")
+## Use data.in to specify input level-2 data from R session instead of using FILENAME to read in external .tsv file. 
+## `output.res = FLASE` prevents the exporting of the level-3 result. 
+level3 <- calc_clint_point(data.in = level2, 
+                           output.res = FALSE)
 ``` 
 
 # Bayesian analysis:
