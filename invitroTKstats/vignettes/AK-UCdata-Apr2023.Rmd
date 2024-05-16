@@ -1316,7 +1316,7 @@ write.table(level2,
 
 # maximum likelihood analysis:
 
-The package has been undergoing further development since the example dataset `kreutz2023.uc` was compiled. Some of the columns are named differently from how they were named in the previous version, or example, "Series" column is now called "Biological.Replicates" and "Standard.Conc" column is now called "Test.Compound.Conc".
+The package has been undergoing further development since the example dataset `kreutz2023.uc` was compiled. Some of the columns are named differently from how they were named in the previous version, for example, "Series" column is now called "Biological.Replicates" and "Standard.Conc" column is now called "Test.Compound.Conc".
 Updating column names:
 ```{r}
 colnames(level2)[which(colnames(level2) == "Standard.Conc")] <- "Test.Compound.Conc"
@@ -1324,6 +1324,8 @@ colnames(level2)[which(colnames(level2) == "Series")] <- "Biological.Replicates"
 ```
 
 ```{r MLE, eval=TRUE}
+## Use data.in to specify input level-2 data from R session instead of using FILENAME to read in external .tsv file. 
+## `output.res = FLASE` prevents the exporting of the level-3 result. 
 level3 <- calc_fup_uc_point(data.in = level2, 
                             output.res = FALSE) 
 ```
