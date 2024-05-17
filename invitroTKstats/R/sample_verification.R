@@ -9,8 +9,8 @@
 #' 
 #' The `exclusion.info` should be a data frame with the following columns:
 #' \tabular{rr}{
-#'   Variable \tab Level-1 variable used to filter rows for exclusion\cr
-#'   Value \tab Value to exclude\cr
+#'   Variables \tab Level-1 variable used to filter rows for exclusion\cr
+#'   Values \tab Value to exclude\cr
 #'   Message \tab Simple explanation for the exclusion\cr
 #' }
 #'
