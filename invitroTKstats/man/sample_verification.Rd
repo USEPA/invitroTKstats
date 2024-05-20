@@ -55,8 +55,8 @@ in further analyses and are verified with "Y".
 \details{
 The `exclusion.info` should be a data frame with the following columns:
 \tabular{rr}{
-  Variable \tab Level-1 variable used to filter rows for exclusion\cr
-  Value \tab Value to exclude\cr
+  Variables \tab Level-1 variable used to filter rows for exclusion\cr
+  Values \tab Value to exclude\cr
   Message \tab Simple explanation for the exclusion\cr
 }
 }
@@ -67,29 +67,39 @@ level2 <- invitroTKstats::kreutz2023.clint
 # remove the verification columns from the data and use it as level-1.
 level1 <- dplyr::select(level2, -c(Verifed, Verified))
 
-# scenario 1: input data is in the R session
-# create a exclusion criteria data frame
+# Scenario 1: Pass in data.in and exclusion.info data frame from R session 
+
+# Create a exclusion criteria data frame
+# If more than one variable is used to define a set of samples to be excluded,
+# enter them as one string, separate the variables with a vertical bar, "|", and do the same for 
+# values. 
 exclusion_criteria <- data.frame(
-Variable = c("DTXSID", "Lab.Sample.Name", "Compound.Name"),
-Value = c("DTXSID00380798","G4-Ametryn Hep052521 T0a", "Nonafluoropentanamide"), 
-Message = c("bad id #1","bad sample", "bad compound")
+Variables = c("DTXSID", "Date", "Compound.Name|Lab.Sample.Name"),
+Values = c("DTXSID00380798","21021", "Nonafluoropentanamide|Amide Hep120220 T0C2_020921"), 
+Message = c("Exclude all samples of this compound.","Exclude all samples from this date.", "These samples for this compound were contaminated.")
 )
 
-my.level2 <- sample_verification(FILENAME="kreutz", 
-data.in=level1, exclusion_criteria, assay="Clint")
+# Run the verification function.
+my.level2 <- sample_verification(data.in=level1, exclusion.info = exclusion_criteria, output.res = FALSE)
 
-# scenario 2: import 'tsv' as input data
+# scenario 2: import 'tsv' as input data and do not pass in a exclusion.info data frame
 
+\dontrun{
 # Write the level-1 file to some folder
-write.table(data.out,
+write.table(level1,
 file="~/invitrotkstats/invitroTKstats/data-raw/kreutz-Clint-Level1.tsv",
 sep="\t",
 row.names=F,
 quote=F)
 
-# import level-1 with INPUT.DIR 
+# Run the verification function.
+# Specify the path to import level-1 data with INPUT.DIR.
+# No exclusion.info data frame used will label all samples as verified.
 my.level2 <- sample_verification(FILENAME="kreutz", 
-exclusion_criteria, assay="Clint", INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw")
+assay="Clint", INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw")
+}
 
-
+}
+\author{
+Zhihui (Grace) Zhao
 }

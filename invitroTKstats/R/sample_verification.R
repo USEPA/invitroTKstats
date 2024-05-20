@@ -64,7 +64,7 @@
 #' )
 #' 
 #' # Run the verification function.
-#' my.level2 <- sample_verification(data.in=level1, exclusion_criteria, output.res = FALSE)
+#' my.level2 <- sample_verification(data.in=level1, exclusion.info = exclusion_criteria, output.res = FALSE)
 #' 
 #' # scenario 2: import 'tsv' as input data and do not pass in a exclusion.info data frame
 #' 
