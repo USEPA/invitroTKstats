@@ -9,10 +9,13 @@
 #' 
 #' The `exclusion.info` should be a data frame with the following columns:
 #' \tabular{rr}{
-#'   Variables \tab Level-1 variable used to filter rows for exclusion\cr
-#'   Values \tab Value to exclude\cr
+#'   Variables \tab Level-1 variable(s) used to filter rows for exclusion\cr
+#'   Values \tab Value(s) to exclude\cr
 #'   Message \tab Simple explanation for the exclusion\cr
 #' }
+#' When filtering on multiple variable-value pairs, the character input for 
+#' "Variables" and "Values" should be separated by a vertical bar "|" ,
+#' and the variable-value pairs should match. See demonstration in Examples, Scenario 1. 
 #'
 #' @param FILENAME (Character) A string used to identify the output Level-1 file.
 #' "<FILENAME>-<assay>-Level1.tsv". 
