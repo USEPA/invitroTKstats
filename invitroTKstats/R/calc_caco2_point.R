@@ -185,21 +185,33 @@ calc_caco2_point <- function(
           num.b2a <- num.b2a+1
         }
 
+        # Calculate C0
+        # only can handle one dilution factor right now:
+        if (length(unique(this.dosing$Dilution.Factor))>1) browser()
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
-          mean(this.dosing$Response*this.dosing$Dilution.Factor) -
-          mean(this.blank$Response*this.blank$Dilution.Factor))
-
-        if (length(unique(this.dosing$Vol.Receiver))>1 |
+          unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
+          mean(this.blank$Response))) # [C0] = Peak area (RR) 
+ 
+        # Calculate dQ/dt
+        # only can handle one dilution factor and one receiver volume right now:
+        if (length(unique(this.receiver$Dilution.Factor))>1 |
+            length(unique(this.receiver$Vol.Receiver))>1 |
           length(unique(this.dosing$Time))>1) browser()
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
-          mean(this.receiver$Response*this.receiver$Dilution.Factor) -
-          mean(this.blank$Response*this.blank$Dilution.Factor)*
-          this.dosing$Vol.Receiver[1] / this.dosing$Time[1] / 3600)
+          unique(this.receiver$Dilution.Factor)*(
+            mean(this.receiver$Response) -
+            mean(this.blank$Response)) * # Peak area (RR)
+          unique(this.receiver$Vol.Receiver) / # cm^3
+          unique(this.receiver$Time) / 3600 #  1/h -> 1/s
+          ) # [dQdt] = Peak area (RR) * cm^3 / s 
 
+        # Calcualte Papp
         this.row[paste("Papp",dir.string,sep="_")] <- max(0,
-          as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /
-          as.numeric(this.row[paste("C0",dir.string,sep="_")]) /
-          as.numeric(this.row["Membrane.Area"]) * 1e6)
+          as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
+          as.numeric(this.row[paste("C0",dir.string,sep="_")]) / # Peak area (RR)
+          as.numeric(this.row["Membrane.Area"]) * # cm^ 2
+          1e6 # cm -> 10-6 cm 
+          ) # [Papp] = cm^2/s
         }
       }
 
