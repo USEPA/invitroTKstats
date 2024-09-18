@@ -10,7 +10,7 @@ model {
     # values)
     log.const.analytic.sd[i] ~ dunif(-6, 1)
     log.hetero.analytic.slope[i] ~ dunif(-6, 1)
-    C.thresh[i] ~ dunif(0,Test.Nominal.Conc[i]/10)
+    C.thresh[i] ~ dunif(0,Test.Nominal.Conc/10)
     log.calibration[i] ~ dnorm(0,0.01)
     background[i] ~ dexp(100)
     # Scale conversions:
