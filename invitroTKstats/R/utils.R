@@ -271,13 +271,21 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
   Num.cal <- length(unique.cal)
   # TIME ZERO
   T0.data <- subset(this.data,Sample.Type=="T0")
-  T0.df <- unique(T0.data[,"Dilution.Factor"])
-  if (length(T0.df)>1) stop("Multiple T0 dilution factors.")
-  T0.obs <- T0.data[,"Response"]
-  # Convert calibrations to sequential integers:
-  T0.cal <- sapply(T0.data[,"Calibration"],
-                   function(x) which(unique.cal %in% x))
-  Num.T0.obs <- length(T0.obs)
+  Num.T0.obs <- nrow(T0.data)
+  if(Num.T0.obs > 0){
+    T0.df <- unique(T0.data[,"Dilution.Factor"])
+    if (length(T0.df)>1) stop("Multiple T0 dilution factors.")
+    T0.obs <- T0.data[,"Response"]
+    # Convert calibrations to sequential integers:
+    T0.cal <- sapply(T0.data[,"Calibration"],
+                     function(x) which(unique.cal %in% x))
+  }else{
+    T0.df <- c(-99,-99)
+    T0.obs <- c(-99,-99)
+    T0.cal <- c(-99,-99)
+  }
+  
+  
   # Calibration Curve
   #
   # Get the calibration curves (if any):
