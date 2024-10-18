@@ -271,23 +271,40 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
   Num.cal <- length(unique.cal)
   # TIME ZERO
   T0.data <- subset(this.data,Sample.Type=="T0")
-  T0.df <- unique(T0.data[,"Dilution.Factor"])
-  if (length(T0.df)>1) stop("Multiple T0 dilution factors.")
-  T0.obs <- T0.data[,"Response"]
-  # Convert calibrations to sequential integers:
-  T0.cal <- sapply(T0.data[,"Calibration"],
-                   function(x) which(unique.cal %in% x))
-  Num.T0.obs <- length(T0.obs)
+  Num.T0.obs <- nrow(T0.data)
+  if(Num.T0.obs > 0){
+    T0.df <- unique(T0.data[,"Dilution.Factor"])
+    if (length(T0.df)>1) stop("Multiple T0 dilution factors.")
+    T0.obs <- T0.data[,"Response"]
+    # Convert calibrations to sequential integers:
+    T0.cal <- sapply(T0.data[,"Calibration"],
+                     function(x) which(unique.cal %in% x))
+  }else{
+    T0.df <- c(-99,-99)
+    T0.obs <- c(-99,-99)
+    T0.cal <- c(-99,-99)
+  }
+  
+  
   # Calibration Curve
-  CC.data <- subset(this.data,Sample.Type=="CC")
-  CC.df <- unique(CC.data[,"Dilution.Factor"])
-  if (length(CC.df)>1) stop("Multiple CC dilution factors.")
-  CC.obs <- CC.data[,"Response"]
-  # Convert calibrations to sequential integers:
-  CC.cal <- sapply(CC.data[,"Calibration"],
-                   function(x) which(unique.cal %in% x))
-  CC.conc <- CC.data[,"Test.Compound.Conc"]
-  Num.CC.obs <- length(CC.obs)
+  #
+  # Get the calibration curves (if any):
+  CC.data <- subset(this.data,Sample.Type=="CC" & !is.na(Test.Compound.Conc)) # may need to also add & !is.na("Test.Compound.Conc")
+  Num.CC.obs <- nrow(CC.data)
+  if(Num.CC.obs > 0){
+    CC.df <- unique(CC.data[,"Dilution.Factor"])
+    if (length(CC.df)>1) stop("Multiple CC dilution factors.")
+    CC.obs <- CC.data[,"Response"]
+    # Convert calibrations to sequential integers:
+    CC.cal <- sapply(CC.data[,"Calibration"],
+                     function(x) which(unique.cal %in% x))
+    CC.conc <- CC.data[,"Test.Compound.Conc"]
+  }else{
+    CC.obs <- c(-99,-99)
+    CC.cal <- c(-99,-99)
+    CC.conc <- c(-99,-99)
+    CC.df <- c(-99,-99)
+  }
   # PBS
   PBS.data <- subset(this.data,Sample.Type=="PBS")
   PBS.df <- unique(PBS.data[,"Dilution.Factor"])
