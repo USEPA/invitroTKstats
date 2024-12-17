@@ -344,8 +344,8 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
   Num.NoPlasma.Blank.obs <- length(NoPlasma.Blank.obs)
   if (Num.NoPlasma.Blank.obs == 0) {
     NoPlasma.Blank.df <- 0
-    NoPlasma.Blank.obs <- 0
-    NoPlasma.Blank.cal <- 0
+    NoPlasma.Blank.obs <- c(-99,-99)
+    NoPlasma.Blank.cal <- c(-99,-99)
   }
   # PLASMA BLANK
   Plasma.Blank.data <- subset(this.data, Sample.Type=="Plasma.Blank")
