@@ -387,7 +387,7 @@ calc_fup_red <- function(
 
       REQUIRED.DATA.TYPES <- c("Plasma","PBS","Plasma.Blank")
       if (all(REQUIRED.DATA.TYPES %in% this.subset[,type.col]))
-      { cat("I'm in the for loop when build_mydata is called\n")
+      { 
         mydata <- build_mydata_fup_red(this.subset, Physiological.Protein.Conc)
         if (!is.null(mydata))
         {
