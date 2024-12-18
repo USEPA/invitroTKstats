@@ -14,15 +14,16 @@ calc_fup_red(
   good.col = "Verified",
   JAGS.PATH = NA,
   Physiological.Protein.Conc = 70/(66.5 * 1000) * 1e+06,
-  output.res = TRUE,
   save.MCMC = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
-"<FILENAME>-fup-RED-Level2.tsv".}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file,
+"<FILENAME>-fup-RED-Level2.tsv", and to name the exported model results. 
+This argument is required no matter which method of specifying input data is used. 
+(Defaults to \code{NULL}.)}
 
 \item{data.in}{(Data Frame) A Level-2 data frame generated from the 
 \code{format_fup_red} function with a verification column added by 
@@ -48,10 +49,6 @@ verified for analysis, valid data rows are indicated with "Y". (Defaults to "Ver
 for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
 According to \insertCite{berg2011pathology;textual}{invitroTKstats}: 60-80 mg/mL, albumin is 66.5 kDa,
 assume all protein is albumin to estimate default in uM.)}
-
-\item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-4) will be exported as a .RData file. 
-(Defaults to \code{TRUE}.)}
 
 \item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
 as an .RData file. (Defaults to \code{FALSE}.)}
@@ -103,17 +100,31 @@ of these types:
 }
 }
 \examples{
-# Level-2 file
-write.table(smeltz2023.red,
-  file="SmeltzPFAS-fup-RED-Level2.tsv",
-  sep="\t",
-  row.names=F,
-  quote=F)
+## Example 1: loading level-2 using data.in
+\dontrun{
+level2 <- invitroTKstats::fup_red_L2
 
 # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+# findJAGS() from runjags package is a handy function to find JAGS path automatically.
+# In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+path.to.JAGS <- findJAGS()
+level4 <- calc_fup_red(data.in = level2,
+                       NUM.CORES=2,
+                       JAGS.PATH=path.to.JAGS)
+}
+
+## Example 2: importing level-2 from a .tsv file
+\dontrun{
+# Refer to sample_verification help file for how to export level-2 data to a directory.
+# JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+# findJAGS() from runjags package is a handy function to find JAGS path automatically.
+# In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+path.to.JAGS <- findJAGS()
 level4 <- calc_fup_red(FILENAME="SmeltzPFAS",
-                       NUM.CORES=8,
-                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+                       NUM.CORES=2,
+                       JAGS.PATH=path.to.JAGS,
+                       INPUT.DIR = "invitroTKstats/vignettes")
+}
 
 }
 \references{

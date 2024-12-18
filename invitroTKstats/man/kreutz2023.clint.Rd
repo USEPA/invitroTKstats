@@ -6,7 +6,7 @@
 \alias{Kreutz2023.clint}
 \title{\insertCite{kreutz2023category;textual}{invitroTKstats} intrinsic hepatic clearance data set}
 \format{
-A level 2 data.frame with 5800 rows 24 variables: \describe{
+A level 2 data.frame with 5800 rows and 24 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}

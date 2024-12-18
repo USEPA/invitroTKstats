@@ -50,8 +50,9 @@ format_fup_uc(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
-"<FILENAME>-fup-UC-Level1.tsv". (Defaults to "MYDATA".)}
+\item{FILENAME}{(Character) A string used to identify the output Level-1 file,
+"<FILENAME>-fup-UC-Level1.tsv", and/or used to identify the input Level-0 file,
+"<FILENAME>-fup-UC-Level0.tsv" if importing from a .tsv file. (Defaults to "MYDATA".)}
 
 \item{data.in}{(Data Frame) A Level-0 data frame containing mass-spectrometry
 peak areas, indication of chemical identity, and measurement type.
@@ -255,14 +256,34 @@ returned as a column in the output data frame:
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
-library(invitroTKstats)
-level0 <- kreutz2020
-level1 <- format_fup_uc(level0,
-  FILENAME="Kreutz2020",
-  compound.col="Name",
-  std.conc.col="Standard.Conc",
-  area.col="Chem.Area"
-  )
+
+## Load the example level-0 data
+level0 <- invitroTKstats::fup_uc_L0
+
+## Run it through level-1 processing function
+## This example shows the use of data.in argument which allows users to pass
+## in a data frame from the R session.
+## If the input level-0 data exists in an external file such as a .tsv file,
+## users may import it using INPUT.DIR to specify the path and FILENAME
+## to specify the file name. See documentation for details.
+level1 <- format_fup_uc(data.in = fup_uc_L0,
+                        sample.col="Sample",
+                        compound.col="Compound",
+                        test.conc.col ="Compound.Conc", 
+                        lab.compound.col="Lab.Compound.ID", 
+                        type.col="Sample.Type", 
+                        istd.col="ISTD.Peak.Area",
+                        cal.col = "Date",
+                        area.col = "Peak.Area",
+                        istd.conc = 1,
+                        note.col = NULL,
+                        uc.assay.conc = 10,
+                        analysis.method = "UPLC-MS/MS",
+                        analysis.instrument = "Waters Xevo TQ-S micro (QEB0036)",
+                        analysis.parameters.col = "Analysis.Params",
+                        biological.replicates.col = "Replicate",
+                        output.res = FALSE
+                        )
 
 }
 \references{

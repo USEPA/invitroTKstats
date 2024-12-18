@@ -55,7 +55,8 @@ format_clint(
 }
 \arguments{
 \item{FILENAME}{(Character) A string used to identify the output Level-1 file.
-"<FILENAME>-Clint-Level1.tsv". (Defaults to "MYDATA").}
+"<FILENAME>-Clint-Level1.tsv", and/or used to identify the input Level-0 file,
+"<FILENAME>-Clint-Level0.tsv" if importing from a .tsv file. (Defaults to "MYDATA").}
 
 \item{data.in}{(Data Frame) A Level-0 data frame or a matrix containing mass-spectrometry peak areas,
 indication of chemical identity, and measurement type. The data frame should
@@ -289,27 +290,37 @@ returned as a column in the output data frame:
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
+## Load the example level-0 data
+level0 <- invitroTKstats::clint_L0
 
-library(invitroTKstats)
-
-clint <- wambaugh2019.clint
-clint$Date <- "2019"
-clint$Sample.Type <- "Blank"
-clint$Time..mins. <- as.numeric(clint$Time..mins.)
-clint[!is.na(clint$Time..mins.),"Sample.Type"] <- "Cvst"
-clint$ISTD.Name <- "Bucetin, Propranolol, and Diclofenac"
-clint$ISTD.Conc <- 1
-clint$Dilution.Factor <- 1
-clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
-clint$Hep.Density <- 0.5
-
-level1 <- format_clint(clint,
-  FILENAME="Wambaugh2019",
-  sample.col="Sample.Name",
-  compound.col="Preferred.Name",
-  lab.compound.col="Name",
-  time.col="Time..mins.",
-  cal.col="FileName")
+## Run it through level-1 processing function
+## This example shows the use of the data.in argument which allows users to pass
+## in a data frame from the R session.
+## If the input level-0 data exists in an external file such as a .tsv file,
+## users may import it using INPUT.DIR to specify the path and FILENAME
+## to specify the file name. See documentation for details.
+level1 <- format_clint(data.in = level0,
+                       sample.col ="Sample",
+                       date.col="Date",
+                       compound.col="Compound",
+                       lab.compound.col="Lab.Compound.ID",
+                       type.col="Type",
+                       dilution.col="Dilution.Factor",
+                       cal=1,
+                       istd.conc = 10/1000,
+                       istd.col= "ISTD.Peak.Area",
+                       area.col = "Peak.Area",
+                       density = 0.5,
+                       clint.assay.conc = 1,
+                       biological.replicates = 1,
+                       test.conc.col="Compound.Conc",
+                       time.col = "Time",
+                       analysis.method = "LCMS",
+                       analysis.instrument = "Unknown",
+                       analysis.parameters.col = "Analysis.Params",
+                       note="Sample Text",
+                       output.res = FALSE
+                       )
 
 }
 \references{
