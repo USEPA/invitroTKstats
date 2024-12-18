@@ -26,11 +26,12 @@
 #'
 #'
 #' \eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_{NPB}} (r_{NPB}*c_{DF})}{n_{NPB}}\right)}
-#' {\frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
+#' {\frac{\sum_{i=1}^{n_{PL}} (r_{PL} * c_{DF})}{n_{PL}} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
 #'
 #' where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
 #' \eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
-#' \eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{B}} is Plasma Blank Response,
+#' \eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{PL}} is Plasma Response,
+#' \eqn{n_{PL}} is the number of Plasma Responses, \eqn{r_{B}} is Plasma Blank Response,
 #' and \eqn{n_B} is the number of Plasma Blank Responses.
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file.
