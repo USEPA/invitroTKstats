@@ -71,57 +71,31 @@ of these types:
 
 
 \eqn{f_{up} = \frac{\max\left( 0, \frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_{NPB}} (r_{NPB}*c_{DF})}{n_{NPB}}\right)}
-{\frac{\sum_{i=1}^{n_P} (r_P * c_{DF})}{n_P} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
+{\frac{\sum_{i=1}^{n_{PL}} (r_{PL} * c_{DF})}{n_{PL}} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
 
 where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
 \eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
-\eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{B}} is Plasma Blank Response,
+\eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{PL}} is Plasma Response,
+\eqn{n_{PL}} is the number of Plasma Responses, \eqn{r_{B}} is Plasma Blank Response,
 and \eqn{n_B} is the number of Plasma Blank Responses.
 }
 \examples{
-red <- subset(wambaugh2019.red, Protein==100)
-red$Date <- "2019"
-red$Sample.Type <- "Blank"
-red <- subset(red,!is.na(SampleName))
-red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-red$Dilution.Factor <- NA
-red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
-red$Analysis.Method <- "LC or GC"
-red$Analysis.Instrument <- "No Idea"
-red$Analysis.Parameters <- "None"
+## Load example level-2 data
+level2 <- invitroTKstats::fup_red_L2
 
+## scenario 1: 
+## input level-2 data from the R session and do not export the result table
+level3 <- calc_fup_red_point(data.in = level2, output.res = FALSE)
 
-# Strip out protein conc information from compound names:
-red$CompoundName <- gsub("-100P","",red$CompoundName)
-red$CompoundName <- gsub("-30P","",red$CompoundName)
-red$CompoundName <- gsub("-10P","",red$CompoundName)
-
-red$Test.Target.Conc <- 5
-red$ISTD.Name <- "Bucetin and Diclofenac"
-red$ISTD.Conc <- 1
-red$Series <- 1
-
-level1 <- format_fup_red(red,
-  FILENAME="Wambaugh2019",
-  sample.col="SampleName",
-  compound.col="Preferred.Name",
-  lab.compound.col="CompoundName",
-  cal.col="RawDataSet")
-
-level2 <- level1
-level2$Verified <- "Y"
-
-write.table(level2,
-  file="Wambaugh2019-fup-RED-Level2.tsv",
-  sep="\t",
-  row.names=F,
-  quote=F)
-
-level3 <- calc_fup_red_point(FILENAME="Wambaugh2019")
+## scenario 2: 
+## import level-2 data from a 'tsv' file and export the result table
+\dontrun{
+## Refer to sample_verification help file for how to export level-2 data to a directory.
+## Unless a different path is specified in OUTPUT.DIR,
+## the result table will be saved to the directory specified in INPUT.DIR.
+level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS", 
+                             INPUT.DIR = "invitroTKstats/vignettes")
+}
 
 }
 \references{

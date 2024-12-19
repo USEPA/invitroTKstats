@@ -5,7 +5,7 @@
 \title{Calculate the Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data}
 \usage{
 calc_fup_uc(
-  FILENAME = "UC_Model_Results",
+  FILENAME,
   data.in,
   TEMP.DIR = NULL,
   NUM.CHAINS = 5,
@@ -13,15 +13,16 @@ calc_fup_uc(
   RANDOM.SEED = 1111,
   good.col = "Verified",
   JAGS.PATH = NA,
-  output.res = TRUE,
   save.MCMC = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
-"<FILENAME>-fup-UC-Level2.tsv". (Defaults to "UC_Model_Results".)}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file,
+"<FILENAME>-fup-UC-Level2.tsv", and to name the exported model results. 
+This argument is required no matter which method of specifying input data is used. 
+(Defaults to \code{NULL}.)}
 
 \item{data.in}{A Level-2 data frame generated from the 
 \code{format_fup_uc} function with a verification column added by 
@@ -45,10 +46,6 @@ verified, data rows valid for analysis are indicated with a "Y".
 
 \item{JAGS.PATH}{(Character) Computer specific file path to JAGS software.
 (Defaults to `NA`.)}
-
-\item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-4) will be exported as a .RData file. 
-(Defaults to \code{TRUE}.)}
 
 \item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
 as an .RData file. (Defaults to \code{FALSE}.)}
@@ -108,17 +105,31 @@ these types:
 We don't currently use the T1 data, but CC, AF, and T5 data are required.
 }
 \examples{
-# Level-2 file
-write.table(level2,
-  file="KreutzPFAS-fup-UC-Level2.tsv",
-  sep="\t",
-  row.names=F,
-  quote=F)
+## Example 1: loading level-2 using data.in
+\dontrun{
+level2 <- invitroTKstats::fup_uc_L2
 
 # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+# findJAGS() from runjags package is a handy function to find JAGS path automatically.
+# In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+path.to.JAGS <- findJAGS()
+level4 <- calc_fup_uc(data.in = level2,
+                      NUM.CORES=2,
+                      JAGS.PATH=path.to.JAGS)
+}
+
+## Example 2: importing level-2 from a .tsv file
+\dontrun{
+# Refer to sample_verification help file for how to export level-2 data to a directory.
+# JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+# findJAGS() from runjags package is a handy function to find JAGS path automatically.
+# In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+path.to.JAGS <- findJAGS()
 level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
-                       NUM.CORES=8,
-                       JAGS.PATH="C:/Users/jwambaug/AppData/Local/JAGS/JAGS-4.3.0/x64")
+                      NUM.CORES=2,
+                      JAGS.PATH=path.to.JAGS,
+                      INPUT.DIR = "invitroTKstats/vignettes")
+}
 
 }
 \author{

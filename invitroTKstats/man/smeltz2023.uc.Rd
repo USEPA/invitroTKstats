@@ -6,7 +6,7 @@
 \alias{Smeltz2023.uc}
 \title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} Ultracentrifugation Data Set}
 \format{
-A level 2 data.frame with 10133 rows 23 variables: \describe{
+A level 2 data.frame with 10133 rows and 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}
