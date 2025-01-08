@@ -92,7 +92,7 @@ model {
          (Kd +
          Physiological.Protein.Conc)
 
-# Concentrtion in each replicate:
+# Concentration in each replicate:
   for (i in 1:Num.rep)
   {
 # Calculate protein concentration for observation:
@@ -385,9 +385,9 @@ calc_fup_red <- function(
         ")",
         sep=""))
 
-      REQUIRED.DATA.TYPES <- c("Plasma","PBS","Plasma.Blank","NoPlasma.Blank")
+      REQUIRED.DATA.TYPES <- c("Plasma","PBS","Plasma.Blank")
       if (all(REQUIRED.DATA.TYPES %in% this.subset[,type.col]))
-      {
+      { 
         mydata <- build_mydata_fup_red(this.subset, Physiological.Protein.Conc)
         if (!is.null(mydata))
         {
@@ -428,7 +428,7 @@ calc_fup_red <- function(
               'C.missing',
               'Kd',
               'Fup'))
-
+          
           sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
           for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
           results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
