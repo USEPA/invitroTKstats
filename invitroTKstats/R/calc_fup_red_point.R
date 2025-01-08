@@ -193,8 +193,8 @@ calc_fup_red_point <- function(
       num.chem <- num.chem + 1
       this.row$Fup <- signif(max(0,df.pbs*mean(this.pbs$Response) -
         df.noplasma.blank*noplasma.blank.mean) /
-        (df.plasma*(mean(this.plasma$Response) -
-        df.plasma.blank*plasma.blank.mean)),4)
+        (df.plasma*mean(this.plasma$Response) -
+        df.plasma.blank*plasma.blank.mean),4)
       out.table <- rbind(out.table, this.row)
       print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
       # If fup is NA something is wrong, stop and figure it out:
