@@ -6,7 +6,7 @@
 \alias{Smeltz2023.clint}
 \title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} Intinsic hepatic clearnace data set}
 \format{
-A level 2 data.frame with 625 rows 24 variables: \describe{
+A level 2 data.frame with 625 rows and 24 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}

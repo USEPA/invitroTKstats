@@ -56,7 +56,8 @@ format_fup_red(
 }
 \arguments{
 \item{FILENAME}{(Character) A string used to identify the output Level-1 file.
-"<FILENAME>-fup-RED-Level1.tsv". (Defaults to "MYDATA".)}
+"<FILENAME>-fup-RED-Level1.tsv", and/or used to identify the input Level-0 file,
+"<FILENAME>-fup-RED-Level0.tsv" if importing from a .tsv file. (Defaults to "MYDATA".)}
 
 \item{data.in}{(Data Frame) A Level-0 data frame containing mass-spectrometry peak areas,
 indication of chemical identity, and measurement type. The data frame should
@@ -280,30 +281,39 @@ returned as a column in the output data frame:
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
-library(invitroTKstats)
-red <- wambaugh2019.red
-red$Date <- "2019"
-red$Sample.Type <- "Blank"
-red <- subset(red,!is.na(SampleName))
-red[regexpr("PBS",red$SampleName)!=-1,"Sample.Type"] <- "PBS"
-red[regexpr("Plasma",red$SampleName)!=-1,"Sample.Type"] <- "Plasma"
-red$Dilution.Factor <- NA
-red$Dilution.Factor <- as.numeric(red$Dilution.Factor)
-red[red$Sample.Type=="PBS","Dilution.Factor"] <- 2
-red[red$Sample.Type=="Plasma","Dilution.Factor"] <- 5
-red[regexpr("T0",red$SampleName)!=-1,"Sample.Type"] <- "T0"
 
-red$Test.Target.Conc <- 5
-red$ISTD.Name <- "Bucetin and Diclofenac"
-red$ISTD.Conc <- 1
-red$Series <- 1
+## Load the example level-0 data
+level0 <- invitroTKstats::fup_red_L0
 
-level1 <- format_fup_red(red,
- FILENAME="Wambaugh2019",
- sample.col="SampleName",
- compound.col="Preferred.Name",
- lab.compound.col="CompoundName",
- cal.col="RawDataSet")
+## Run it through level-1 processing function
+## This example shows the use of the data.in argument which allows users to pass
+## in a data frame from the R session.
+## If the input level-0 data exists in an external file such as a .tsv file,
+## users may import it using FILENAME and INPUT.DIR to specify the file name 
+## and its directory path, respectively.
+level1 <- format_fup_red(data.in = fup_red_L0,
+                         sample.col ="Sample",
+                         date.col="Date",
+                         compound.col="Compound",
+                         lab.compound.col="Compound",
+                         type.col="Sample.Type",
+                         dilution.col="Dilution.Factor",
+                         biological.replicates.col ="Replicate",
+                         cal=1,
+                         area.col = "Peak.Area",
+                         istd.conc = 10/1000,
+                         istd.col= "ISTD.Peak.Area",
+                         test.conc.col = "Compound.Conc", 
+                         test.nominal.conc = 10,
+                         plasma.percent = 100,
+                         time.col = "Time",
+                         analysis.method = "LCMS",
+                         analysis.instrument = "Waters ACQUITY I-Class UHPLC - Xevo TQ-S uTQMS",
+                         analysis.parameters = "RT",
+                         note.col=NULL, 
+                         output.res = FALSE
+                         )
+
 
 }
 \references{

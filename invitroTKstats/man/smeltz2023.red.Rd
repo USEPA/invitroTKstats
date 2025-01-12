@@ -6,13 +6,13 @@
 \alias{Smeltz2023.red}
 \title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equlibriation dialysis data set}
 \format{
-A level 2 data.frame with 3897 rows 25 variables: \describe{
+A level 2 data.frame with 3897 rows and 25 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
-\item{\code{Sample.Type}}{Type of UC sample}
+\item{\code{Sample.Type}}{Type of RED sample}
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}

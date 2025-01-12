@@ -16,15 +16,16 @@ calc_clint(
   decrease.prob = 0.5,
   saturate.prob = 0.25,
   degrade.prob = 0.05,
-  output.res = TRUE,
   save.MCMC = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
-"-Clint-Level2.tsv".}
+\item{FILENAME}{(Character) A string used to identify the input Level-2 file,
+"<FILENAME>-Clint-Level2.tsv", and to name the exported model results. 
+This argument is required no matter which method of specifying input data is used. 
+(Defaults to \code{NULL}.)}
 
 \item{data.in}{(Data Frame) A Level-2 data frame generated from the 
 \code{format_clint} function with a verification column added by 
@@ -55,10 +56,6 @@ will decrease between 1 and 10 uM. (Defaults to 0.25.)}
 
 \item{degrade.prob}{(Numeric) Prior probability that a chemical will be unstable
 (that is, degrade abiotically) in the assay. (defaults to 0.05.)}
-
-\item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-4) will be exported as a .RData file. 
-(Defaults to \code{TRUE}.)}
 
 \item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results 
 as an .RData file. (Defaults to \code{FALSE}.)}
@@ -116,42 +113,33 @@ Clint is calculated using \code{\link{lm}} to perform a linear regression of
 MS response as a function of time.
 }
 \examples{
+## Example 1: loading level-2 using data.in
+\dontrun{
+level2 <- invitroTKstats::clint_L2
 
-library(invitroTKstats)
+# JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+# findJAGS() from runjags package is a handy function to find JAGS path automatically.
+# In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+path.to.JAGS <- findJAGS()
+level4 <- calc_clint(data.in = level2,
+                     NUM.CORES=2,
+                     JAGS.PATH=path.to.JAGS)
+}
 
-clint <- wambaugh2019.clint
-clint$Date <- "2019"
-clint$Sample.Type <- "Blank"
-clint$Time..mins. <- as.numeric(clint$Time..mins.)
-clint[!is.na(clint$Time..mins.),"Sample.Type"] <- "Cvst"
-clint$ISTD.Name <- "Bucetin, Propranolol, and Diclofenac"
-clint$ISTD.Conc <- 1
-clint$Dilution.Factor <- 1
-clint[is.na(clint$FileName),"FileName"]<-"Wambaugh2019"
-clint$Hep.Density <- 0.5
-clint$Analysis.Method <- "LC or GC"
-clint$Analysis.Instrument <- "No Idea"
-clint$Analysis.Parameters <- "None"
+## Example 2: importing level-2 from a .tsv file
+\dontrun{
+# Refer to sample_verification help file for how to export level-2 data to a directory.
+# JAGS.PATH should be changed to user's specific computer file path to JAGS software.
+# findJAGS() from runjags package is a handy function to find JAGS path automatically.
+# In certain circumstances or cases, one may need to provide the absolute path to JAGS.
+path.to.JAGS <- findJAGS()
+level4 <- calc_clint(FILENAME="KreutzPFAS",
+                     NUM.CORES=2,
+                     JAGS.PATH=path.to.JAGS,
+                     INPUT.DIR = "invitroTKstats/vignettes")
+}
 
-level1 <- format_clint(clint,
-  FILENAME="Wambaugh2019",
-  sample.col="Sample.Name",
-  compound.col="Preferred.Name",
-  lab.compound.col="Name",
-  time.col="Time..mins.",
-  cal.col="FileName")
 
-level2 <- level1
-level2$Verified <- "Y"
-
-# All data (allows test for saturation):
-write.table(level2,
-  file="Wambaugh2019-Clint-Level2.tsv",
-  sep="\t",
-  row.names=F,
-  quote=F)
-
-level4 <- calc_clint_point(FILENAME="Wambaugh2019")
 
 }
 \author{

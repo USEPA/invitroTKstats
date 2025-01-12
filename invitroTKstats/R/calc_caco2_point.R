@@ -187,32 +187,33 @@ calc_caco2_point <- function(
           dir.string <- "B2A"
           num.b2a <- num.b2a+1
         }
-        
+
+
         # Calculate C0
         # only can handle one dilution factor right now:
         if (length(unique(this.dosing$Dilution.Factor))>1) browser()
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
-                                                        unique(this.dosing$Dilution.Factor)*mean(this.dosing$Response)-mean(this.blank$Response)) # [C0] = Peak area (RR) 
-        
-        # Calculate dQ/dt
+          unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
+          mean(this.blank$Response))) # [C0] = Peak area (RR) 
+         # Calculate dQ/dt
         # only can handle one dilution factor and one receiver volume right now:
         if (length(unique(this.receiver$Dilution.Factor))>1 |
             length(unique(this.receiver$Vol.Receiver))>1 |
             length(unique(this.dosing$Time))>1) browser()
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
-                                                          (unique(this.receiver$Dilution.Factor)*
-                                                             mean(this.receiver$Response)-
-                                                             mean(this.blank$Response)) * # Peak area (RR)
-                                                            unique(this.receiver$Vol.Receiver) / # cm^3
-                                                            unique(this.receiver$Time) / 3600 #  1/h -> 1/s
+        (unique(this.receiver$Dilution.Factor)*
+         mean(this.receiver$Response)-
+          mean(this.blank$Response)) * # Peak area (RR)
+          unique(this.receiver$Vol.Receiver) / # cm^3
+          unique(this.receiver$Time) / 3600 #  1/h -> 1/s
         ) # [dQdt] = Peak area (RR) * cm^3 / s 
         
         # Calculate Papp
         this.row[paste("Papp",dir.string,sep="_")] <- max(0,
-                                                          as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
-                                                            as.numeric(this.row[paste("C0",dir.string,sep="_")]) / # Peak area (RR)
-                                                            as.numeric(this.row["Membrane.Area"]) * # cm^ 2
-                                                            1e6 # cm -> 10-6 cm 
+         as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
+         as.numeric(this.row[paste("C0",dir.string,sep="_")]) / # Peak area (RR)
+         as.numeric(this.row["Membrane.Area"]) * # cm^ 2
+         1e6 # cm -> 10-6 cm 
         ) # [Papp] = cm^2/s
         
         
@@ -221,17 +222,20 @@ calc_caco2_point <- function(
         if (length(unique(this.donor$Dilution.Factor))>1 |
             length(unique(this.dosing$Dilution.Factor))>1 |
             length(unique(this.receiver$Dilution.Factor))>1 |
-            length(unique(this.receiver$Vol.Receiver))>1) browser()
+          length(unique(this.receiver$Vol.Receiver))>1) browser()
         this.row[paste("Frec",dir.string,sep="_")] <- max(0,
-                                                          (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),length(this.donor$Response)))+
-                                                             this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*(this.receiver$Response-rep(mean(this.blank$Response),length(this.receiver$Response))))/
-                                                            (this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*(this.dosing$Response-rep(mean(this.blank$Response),length(this.dosing$Response)))))
-        
+          (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
+          length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
+          (this.receiver$Response-rep(mean(this.blank$Response),
+          length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
+          (this.dosing$Response-rep(mean(this.blank$Response),
+          length(this.dosing$Response)))))
+          
         # if (this.chem=="gamma-Terpinene") browser()
         # print(this.chem)
         
-      }
-    }      
+        }
+      }           
     
     if (!is.nan(unlist(this.row["Papp_A2B"])) &
         !is.nan(unlist(this.row["Papp_B2A"])))
