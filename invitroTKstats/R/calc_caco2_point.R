@@ -286,4 +286,4 @@ calc_caco2_point <- function(
   print(paste("Efflux ratio calculated for",num.efflux,"chemicals."))
   
   return(out.table)
-}
+}b
