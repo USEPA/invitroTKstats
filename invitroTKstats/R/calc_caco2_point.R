@@ -91,7 +91,6 @@
 #' @import Rdpack
 #'
 #' @export calc_caco2_point
-
 calc_caco2_point <- function(
     FILENAME, 
     data.in,
@@ -114,7 +113,6 @@ calc_caco2_point <- function(
     input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
                             sep="\t",header=T)
   }
-  
   
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
@@ -155,13 +153,12 @@ calc_caco2_point <- function(
   for (this.chem in unique(input.table[,compound.col]))
   {
     this.subset <- subset(input.table, input.table[,compound.col]==this.chem)
-    
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- cbind(this.subset[1,
                                   c(compound.col, dtxsid.col, time.col, membrane.area.col)],
                       data.frame(Calibration="All Data",
-                                 C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN,Frec_A2B=NaN,
-                                 C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN,Frec_B2A=NaN, Refflux=NaN))
+                                 C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN, Frec_A2B=NaN,
+                                 C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Frec_B2A=NaN, Refflux=NaN))
     for (this.direction in c("AtoB","BtoA"))
     {
       this.blank <- subset(this.subset, Sample.Type=="Blank" &
@@ -187,55 +184,54 @@ calc_caco2_point <- function(
           dir.string <- "B2A"
           num.b2a <- num.b2a+1
         }
-
-
+        
         # Calculate C0
         # only can handle one dilution factor right now:
         if (length(unique(this.dosing$Dilution.Factor))>1) browser()
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
-          unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
-          mean(this.blank$Response))) # [C0] = Peak area (RR) 
-         # Calculate dQ/dt
+                                                        unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
+                                                                                               mean(this.blank$Response))) # [C0] = Peak area (RR) 
+        
+        # Calculate dQ/dt
         # only can handle one dilution factor and one receiver volume right now:
         if (length(unique(this.receiver$Dilution.Factor))>1 |
             length(unique(this.receiver$Vol.Receiver))>1 |
             length(unique(this.dosing$Time))>1) browser()
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
-        (unique(this.receiver$Dilution.Factor)*
-         mean(this.receiver$Response)-
-          mean(this.blank$Response)) * # Peak area (RR)
-          unique(this.receiver$Vol.Receiver) / # cm^3
-          unique(this.receiver$Time) / 3600 #  1/h -> 1/s
+                                                          (unique(this.receiver$Dilution.Factor)*
+                                                             mean(this.receiver$Response) -
+                                                             mean(this.blank$Response)) * # Peak area (RR)
+                                                            unique(this.receiver$Vol.Receiver) / # cm^3
+                                                            unique(this.receiver$Time) / 3600 #  1/h -> 1/s
         ) # [dQdt] = Peak area (RR) * cm^3 / s 
         
         # Calculate Papp
         this.row[paste("Papp",dir.string,sep="_")] <- max(0,
-         as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
-         as.numeric(this.row[paste("C0",dir.string,sep="_")]) / # Peak area (RR)
-         as.numeric(this.row["Membrane.Area"]) * # cm^ 2
-         1e6 # cm -> 10-6 cm 
+                                                          as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
+                                                            as.numeric(this.row[paste("C0",dir.string,sep="_")]) / # Peak area (RR)
+                                                            as.numeric(this.row["Membrane.Area"]) * # cm^ 2
+                                                            1e6 # cm -> 10-6 cm 
         ) # [Papp] = cm^2/s
-        
         
         #Caculate Recovery
         
         if (length(unique(this.donor$Dilution.Factor))>1 |
             length(unique(this.dosing$Dilution.Factor))>1 |
             length(unique(this.receiver$Dilution.Factor))>1 |
-          length(unique(this.receiver$Vol.Receiver))>1) browser()
+            length(unique(this.receiver$Vol.Receiver))>1) browser()
         this.row[paste("Frec",dir.string,sep="_")] <- max(0,
-          (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
-          length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
-          (this.receiver$Response-rep(mean(this.blank$Response),
-          length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
-          (this.dosing$Response-rep(mean(this.blank$Response),
-          length(this.dosing$Response)))))
-          
+                                                          (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
+                                                                                                                                      length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
+                                                             (this.receiver$Response-rep(mean(this.blank$Response),
+                                                                                         length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
+                                                                                                                              (this.dosing$Response-rep(mean(this.blank$Response),
+                                                                                                                                                        length(this.dosing$Response)))))
+        
         # if (this.chem=="gamma-Terpinene") browser()
         # print(this.chem)
         
-        }
-      }           
+      }
+    }
     
     if (!is.nan(unlist(this.row["Papp_A2B"])) &
         !is.nan(unlist(this.row["Papp_B2A"])))
@@ -256,31 +252,24 @@ calc_caco2_point <- function(
   out.table[,"dQdt_B2A"] <- signif(as.numeric(out.table[,"dQdt_B2A"]),3)
   out.table[,"Papp_A2B"] <- signif(as.numeric(out.table[,"Papp_A2B"]),3)
   out.table[,"Papp_B2A"] <- signif(as.numeric(out.table[,"Papp_B2A"]),3)
+  out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
   out.table <- as.data.frame(out.table)
-  # Overwrite Papp values when recovery is too low or too high:
   
+  # Overwrite Papp values when recovery is too low or too high:
   Frec_A2B.vec <- out.table$Frec_A2B
   Frec_B2A.vec <- out.table$Frec_B2A
   
   # Overwrite NA’s with 1:
-  
   Frec_A2B.vec[is.nan(Frec_A2B.vec)] <- 1
   Frec_B2A.vec[is.nan(Frec_B2A.vec)] <- 1
   
   # Now we can compare the vector to the cutoff values (0.5 and 1.5) and overwrite the Papp_X values:
-  
-  
-  
   out.table[Frec_A2B.vec < 0.4,"Papp_A2B"] <- "Low Recovery"
   out.table[Frec_A2B.vec > 2.0,"Papp_A2B"] <- "High Recovery"
   out.table[Frec_B2A.vec < 0.4,"Papp_B2A"] <- "Low Recovery"
   out.table[Frec_B2A.vec > 2.0,"Papp_B2A"] <- "High Recovery"
   
-  
-  
-  
   # Calculate efflux ratio:
-  
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
   
   if (output.res) {
@@ -311,5 +300,3 @@ calc_caco2_point <- function(
   
   return(out.table)
 }
-
-
