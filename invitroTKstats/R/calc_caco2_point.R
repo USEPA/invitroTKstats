@@ -21,7 +21,6 @@
 #'
 #' Apparent membrane permeability (\eqn{P_{app}}) is calculated from MS responses as:
 #'
-#'
 #' \eqn{P_{app} = \frac{dQ/dt}{c_0*A}}
 #'
 #' The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
@@ -103,7 +102,6 @@ calc_caco2_point <- function(
   # In order to calculate the parameter a chemical must have peak areas for each
   # of these measurements:
   req.types=c("Blank","D0","D2","R2")
-  
   if (!missing(data.in)) {
     input.table <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {
@@ -113,10 +111,8 @@ calc_caco2_point <- function(
     input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
                             sep="\t",header=T)
   }
-  
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
-  
   caco2.cols <- c(L1.common.cols, 
                   time.col = "Time",
                   direction.col="Direction",
@@ -139,13 +135,10 @@ calc_caco2_point <- function(
     stop(paste("Missing columns named:",
                paste(cols[!(cols%in%colnames(input.table))],collapse=", ")))
   }
-  
   # Only include the data types used:
   input.table <- subset(input.table,input.table[,type.col] %in% req.types)
-  
   # Only used verfied data:
   input.table <- subset(input.table, input.table[,good.col] == "Y")
-  
   out.table <-NULL
   num.a2b <- 0
   num.b2a <- 0
@@ -184,7 +177,6 @@ calc_caco2_point <- function(
           dir.string <- "B2A"
           num.b2a <- num.b2a+1
         }
-        
         # Calculate C0
         # only can handle one dilution factor right now:
         if (length(unique(this.dosing$Dilution.Factor))>1) browser()
@@ -204,7 +196,6 @@ calc_caco2_point <- function(
                                                             unique(this.receiver$Vol.Receiver) / # cm^3
                                                             unique(this.receiver$Time) / 3600 #  1/h -> 1/s
         ) # [dQdt] = Peak area (RR) * cm^3 / s 
-        
         # Calculate Papp
         this.row[paste("Papp",dir.string,sep="_")] <- max(0,
                                                           as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
@@ -243,7 +234,6 @@ calc_caco2_point <- function(
     print(paste(this.row$Compound.Name,"Refflux =",
                 signif(this.row$Refflux,3)))
   }
-  
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
   out.table[,"C0_A2B"] <- signif(as.numeric(out.table[,"C0_A2B"]),3)
   out.table[,"C0_B2A"] <- signif(as.numeric(out.table[,"C0_B2A"]),3)
@@ -287,18 +277,13 @@ calc_caco2_point <- function(
                 sep="\t",
                 row.names=F,
                 quote=F)
-    
     # Print notification message stating where the file was output to
     cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
                " has been exported to the following directory: ", file.path), "\n")
   }
-  
   print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))
   print(paste("Basal to apical permeability calculated for",num.b2a,"chemicals."))
   print(paste("Efflux ratio calculated for",num.efflux,"chemicals."))
   
   return(out.table)
 }
-qff
-ggg
-fgg
