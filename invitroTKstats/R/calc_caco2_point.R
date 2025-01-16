@@ -214,7 +214,6 @@ calc_caco2_point <- function(
           ) # [Papp] = cm^2/s
         
         #Calculate Recovery
-        
         if (length(unique(this.donor$Dilution.Factor))>1 |
             length(unique(this.dosing$Dilution.Factor))>1 |
             length(unique(this.receiver$Dilution.Factor))>1 |
