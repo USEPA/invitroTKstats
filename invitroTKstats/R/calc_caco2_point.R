@@ -271,7 +271,6 @@ calc_caco2_point <- function(
   # Calculate efflux ratio:
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
 
-  
   if (output.res) {
     # Write out a "level 3" file (data organized into a standard format):
     # Determine the path for output
