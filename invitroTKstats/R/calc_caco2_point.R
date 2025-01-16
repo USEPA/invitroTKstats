@@ -22,7 +22,7 @@
 #' Apparent membrane permeability (\eqn{P_{app}}) is calculated from MS responses as:
 #'
 #'
-#' \eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
+#' \eqn{P_{app} = \frac{dQ/dt}{c_0*A}}
 #'
 #' The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
 #'
