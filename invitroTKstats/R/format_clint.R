@@ -439,11 +439,11 @@ format_clint <- function(
 
   # Set reasonable significant figures:
   for (this.col in c("Area", "ISTD.Area"))
-    data.out[,this.col] <- signif(data.out[,this.col], 5)
+    data.out[,this.col] <- data.out[,this.col]
 
   # calculate the response:
-  data.out[,"Response"] <- signif(data.out[,"Area"] /
-     data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"], 4)
+  data.out[,"Response"] <- data.out[,"Area"] /
+     data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"]
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):

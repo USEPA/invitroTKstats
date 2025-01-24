@@ -394,7 +394,7 @@ format_fup_uc <- function(
       this.cal.subset <- subset(this.subset, Calibration==this.cal)
       if (any(is.na(this.cal.subset[,"ISTD.Area"])))
       {
-        this.mean.ISTD <- signif(mean(this.cal.subset$ISTD.Area,na.rm=TRUE))
+        this.mean.ISTD <- mean(this.cal.subset$ISTD.Area,na.rm=TRUE)
         which.indices <- data.out[,"DTXSID"] == this.chem &
           data.out[,"Calibration"] == this.cal &
           is.na(data.out[,"ISTD.Area"]) &
@@ -409,11 +409,11 @@ format_fup_uc <- function(
 
   # Set reasonable sig figs:
   for (this.col in c("Area", "ISTD.Area"))
-    data.out[,this.col] <- signif(data.out[,this.col], 5)
+    data.out[,this.col] <- data.out[,this.col]
 
   # calculate the response:
-  data.out[,"Response"] <- signif(as.numeric(data.out[,"Area"]) /
-     as.numeric(data.out[,"ISTD.Area"]) * as.numeric(data.out[,"ISTD.Conc"]),4)
+  data.out[,"Response"] <- as.numeric(data.out[,"Area"]) /
+     as.numeric(data.out[,"ISTD.Area"]) * as.numeric(data.out[,"ISTD.Conc"])
 
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):

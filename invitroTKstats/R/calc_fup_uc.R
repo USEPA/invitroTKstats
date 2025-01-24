@@ -369,7 +369,7 @@ calc_fup_uc <- function(
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
-        results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
+        results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
     
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
         colnames(new.results) <- c("Compound","DTXSID","Lab.Compound.Name")

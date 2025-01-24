@@ -410,11 +410,11 @@ format_caco2 <- function(
   colnames(data.out) <- caco2.cols
 
   # calculate the response:
-  data.out[,"Area"] <- signif(as.numeric(data.out[,"Area"]), 5)
-  data.out[,"ISTD.Area"] <- signif(as.numeric(data.out[,"ISTD.Area"]), 5)
+  data.out[,"Area"] <- as.numeric(data.out[,"Area"])
+  data.out[,"ISTD.Area"] <- as.numeric(data.out[,"ISTD.Area"])
   data.out[,"ISTD.Conc"] <- as.numeric(data.out[,"ISTD.Conc"])
-  data.out[,"Response"] <- signif(data.out[,"Area"] /
-                                    data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"], 4)
+  data.out[,"Response"] <- data.out[,"Area"] /
+                                    data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"]
   
   if (output.res) {
     # Write out a "level 1" file (data organized into a standard format):

@@ -427,7 +427,7 @@ calc_clint <- function(
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
-        results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
+        results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
         results <- as.data.frame(results)
 
         # Convert disappareance rates (1/h)to
@@ -438,14 +438,14 @@ calc_clint <- function(
         if (1 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 1)
-          results[,"Clint.1"] <- signif(1000 *
-            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60, 3)
+          results[,"Clint.1"] <- 1000 *
+            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60
         } else results[,"Clint.1"] <- NA
         if (10 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 10)
-          results[,"Clint.10"] <- signif(1000 *
-            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60, 3)
+          results[,"Clint.10"] <- 1000 *
+            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60
         } else results[,"Clint.10"] <- NA
 
         # Round to 3 sig figs:
@@ -467,17 +467,17 @@ calc_clint <- function(
         }
 
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
-        new.results[,"Clint.pValue"] <- signif(
-          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"Clint.pValue"] <- 
+          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
 
         # Calculate a "pvalue" for saturation probability that we observed
         # a lower Clint at higher conc:
-        new.results[,"Sat.pValue"] <- signif(
-          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"Sat.pValue"] <- 
+          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
 
         # Calculate a "pvalue" for abiotic degradation:
-        new.results[,"degrades.pValue"] <- signif(
-          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"degrades.pValue"] <- 
+          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]
 
         rownames(new.results) <- this.compound
 
