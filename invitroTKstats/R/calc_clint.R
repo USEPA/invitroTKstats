@@ -467,17 +467,17 @@ calc_clint <- function(
         }
 
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
-        new.results[,"Clint.pValue"] <- 
-          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
+        new.results[,"Clint.pValue"] <- signif(
+          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1], 3)
 
         # Calculate a "pvalue" for saturation probability that we observed
         # a lower Clint at higher conc:
-        new.results[,"Sat.pValue"] <- 
-          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
+        new.results[,"Sat.pValue"] <- signif(
+          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1], 3)
 
         # Calculate a "pvalue" for abiotic degradation:
-        new.results[,"degrades.pValue"] <- 
-          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]
+        new.results[,"degrades.pValue"] <- signif(
+          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)
 
         rownames(new.results) <- this.compound
 
