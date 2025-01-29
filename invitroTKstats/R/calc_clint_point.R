@@ -278,15 +278,15 @@ calc_clint_point <- function(
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
   #out.table <- apply(out.table,2,unlist)
   out.table[!(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <-
-    signif(as.numeric(out.table[
-    !(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"]),3)
-  out.table[,"Clint.1"] <- signif(as.numeric(out.table[,"Clint.1"]),3)
-  out.table[,"Clint.10"] <- signif(as.numeric(out.table[,"Clint.10"]),3)
-  out.table[,"Clint.pValue"] <- signif(as.numeric(out.table[,"Clint.pValue"]),3)
-  out.table[,"AIC"] <- signif(as.numeric(out.table[,"AIC"]),3)
-  out.table[,"AIC.Null"] <- signif(as.numeric(out.table[,"AIC.Null"]),3)
-  out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
-  out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
+    as.numeric(out.table[
+    !(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"])
+  out.table[,"Clint.1"] <- as.numeric(out.table[,"Clint.1"])
+  out.table[,"Clint.10"] <- as.numeric(out.table[,"Clint.10"])
+  out.table[,"Clint.pValue"] <- as.numeric(out.table[,"Clint.pValue"])
+  out.table[,"AIC"] <- as.numeric(out.table[,"AIC"])
+  out.table[,"AIC.Null"] <- as.numeric(out.table[,"AIC.Null"])
+  out.table[,"AIC.Sat"] <- as.numeric(out.table[,"AIC.Sat"])
+  out.table[,"Sat.pValue"] <- as.numeric(out.table[,"Sat.pValue"])
 
   if (output.res) {
     # Write out a "level 3" file:

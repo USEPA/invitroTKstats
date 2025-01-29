@@ -178,7 +178,7 @@ calc_fup_uc_point <- function(
   }
 
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3)
+  out.table[,"Fup"] <- as.numeric(out.table[,"Fup"])
   out.table <- as.data.frame(out.table)
   out.table$Fup <- as.numeric(out.table$Fup)
   

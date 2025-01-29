@@ -450,7 +450,7 @@ calc_clint <- function(
 
         # Round to 3 sig figs:
         for (i in dim(results)[2])
-          results[,i] <- signif(results[,i],3)
+          results[,i] <- results[,i]
 
         # Create a row of formatted results:
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
@@ -467,17 +467,17 @@ calc_clint <- function(
         }
 
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
-        new.results[,"Clint.pValue"] <- signif(
-          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"Clint.pValue"] <- 
+          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
 
         # Calculate a "pvalue" for saturation probability that we observed
         # a lower Clint at higher conc:
-        new.results[,"Sat.pValue"] <- signif(
-          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"Sat.pValue"] <- 
+          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
 
         # Calculate a "pvalue" for abiotic degradation:
-        new.results[,"degrades.pValue"] <- signif(
-          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"degrades.pValue"] <- 
+          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]
 
         rownames(new.results) <- this.compound
 

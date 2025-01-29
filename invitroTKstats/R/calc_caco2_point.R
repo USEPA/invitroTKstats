@@ -228,13 +228,13 @@ calc_caco2_point <- function(
   }
 
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table[,"C0_A2B"] <- signif(as.numeric(out.table[,"C0_A2B"]),3)
-  out.table[,"C0_B2A"] <- signif(as.numeric(out.table[,"C0_B2A"]),3)
-  out.table[,"dQdt_A2B"] <- signif(as.numeric(out.table[,"dQdt_A2B"]),3)
-  out.table[,"dQdt_B2A"] <- signif(as.numeric(out.table[,"dQdt_B2A"]),3)
-  out.table[,"Papp_A2B"] <- signif(as.numeric(out.table[,"Papp_A2B"]),3)
-  out.table[,"Papp_B2A"] <- signif(as.numeric(out.table[,"Papp_B2A"]),3)
-  out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
+  out.table[,"C0_A2B"] <- as.numeric(out.table[,"C0_A2B"])
+  out.table[,"C0_B2A"] <- as.numeric(out.table[,"C0_B2A"])
+  out.table[,"dQdt_A2B"] <- as.numeric(out.table[,"dQdt_A2B"])
+  out.table[,"dQdt_B2A"] <- as.numeric(out.table[,"dQdt_B2A"])
+  out.table[,"Papp_A2B"] <- as.numeric(out.table[,"Papp_A2B"])
+  out.table[,"Papp_B2A"] <- as.numeric(out.table[,"Papp_B2A"])
+  out.table[,"Refflux"] <- as.numeric(out.table[,"Refflux"])
   out.table <- as.data.frame(out.table)
 
   if (output.res) {

@@ -433,12 +433,11 @@ calc_fup_red <- function(
           for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
           results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
 
-          Fup.point <- signif(
+          Fup.point <- 
             (mean(mydata$PBS.obs)*mydata$PBS.df -
              mean(mydata$NoPlasma.Blank.obs)*mydata$NoPlasma.Blank.df) /
             (mean(mydata$Plasma.obs)*mydata$Plasma.df -
-             mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df),
-             4)
+             mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df)
 
           new.results <- data.frame(Compound.Name=this.compound,
                                     Lab.Compound.Name=this.lab.name,
@@ -447,7 +446,7 @@ calc_fup_red <- function(
                                     stringsAsFactors=F)
           new.results[,c("Fup.Med","Fup.Low","Fup.High")] <-
             sapply(results[c(2,1,3),"Fup"],
-            function(x) signif(x,4))
+            function(x) x)
 
           print(paste("Final results for ",
             this.compound,

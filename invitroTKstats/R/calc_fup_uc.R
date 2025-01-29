@@ -385,9 +385,9 @@ calc_fup_uc <- function(
           "Fup.Med",
           "Fup.Low",
           "Fup.High")
-        new.results[,"Fup.point"] <- signif(mean(AF.data[,"Response"] *
+        new.results[,"Fup.point"] <- mean(AF.data[,"Response"] *
           AF.data[,"Dilution.Factor"]) / mean(T5.data[,"Response"] *
-          T5.data[,"Dilution.Factor"]),3)
+          T5.data[,"Dilution.Factor"])
         rownames(new.results) <- this.compound
     
         print(paste("Final results for ",

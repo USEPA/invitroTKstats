@@ -193,7 +193,7 @@ calc_fup_red_point <- function(
       num.chem <- num.chem + 1
       fup.est <- max(0,df.pbs*mean(this.pbs$Response) - df.noplasma.blank*noplasma.blank.mean) /
         (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
-      this.row$Fup <- signif(fup.est,4)
+      this.row$Fup <- fup.est
       out.table <- rbind(out.table, this.row)
       print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
       # If fup is NA something is wrong, stop and figure it out:
@@ -232,7 +232,7 @@ calc_fup_red_point <- function(
             }
             fup.est <- max(0,df.pbs*mean(this.pbs$Response) - df.noplasma.blank*noplasma.blank.mean) /
               (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
-            this.row$Fup <- signif(fup.est,4)
+            this.row$Fup <- fup.est
             out.table <- rbind(out.table, this.row)
             print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,3)))
             num.cal <- num.cal + 1
@@ -257,7 +257,7 @@ calc_fup_red_point <- function(
   if (!is.null(out.table))
   {
     rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-    out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3)
+    out.table[,"Fup"] <- as.numeric(out.table[,"Fup"])
     out.table <- as.data.frame(out.table)
     out.table$Fup <- as.numeric(out.table$Fup)
   }
