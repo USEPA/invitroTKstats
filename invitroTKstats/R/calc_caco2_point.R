@@ -65,8 +65,8 @@
 #'   Refflux \tab Efflux ratio \tab unitless\cr
 #'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
 #'   Frec_B2B.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
-#'   Recovr_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" or "High Recovery") \tb qualitative category \cr
-#'   Recovr_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" or "High Recovery") \tb qualitative category \cr
+#'   Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tb qualitative category \cr
+#'   Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tb qualitative category \cr
 #' }
 #'
 #' @author John Wambaugh
@@ -255,14 +255,14 @@ calc_caco2_point <- function(
   out.table <- as.data.frame(out.table)
   
   # Create new columns to store recovery classification separately
-  out_table$Recovr_Class_A2B=NA
-  out_table$Recovr_Class_B2A=NA
+  out_table$Recovery_Class_A2B=NA
+  out_table$Recovery_Class_B2A=NA
 
   # Assign recovery classifications without changing Papp values
-  out_table$Recovr_Class_A2B[out.table$Frec_A2B.vec < 0.4] <- "Low Recovery"
-  out_table$Recovr_Class_A2B[out.table$Frec_A2B.vec > 2.0] <- "High Recovery"
-  out_table$Recovr_Class_B2A[out.table$Frec_B2A.vec < 0.4] <- "Low Recovery"
-  out_table$Recovr_Class_B2A[out.table$Frec_B2A.vec > 2.0] <- "High Recovery"
+  out_table$Recovery_Class_A2B[out.table$Frec_A2B.vec < 0.4] <- "Low Recovery"
+  out_table$Recovery_Class_A2B[out.table$Frec_A2B.vec > 2.0] <- "High Recovery"
+  out_table$Recovery_Class_B2A[out.table$Frec_B2A.vec < 0.4] <- "Low Recovery"
+  out_table$Recovery_Class_B2A[out.table$Frec_B2A.vec > 2.0] <- "High Recovery"
   
   # Calculate efflux ratio:
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
