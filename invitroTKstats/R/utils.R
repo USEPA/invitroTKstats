@@ -367,9 +367,7 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
   {
     Plasma.Blank.rep <- rep(1, Num.Plasma.Blank.obs)
   } else{
-    stop("`Plasma.Blank.rep` cannot be allocated due to
-         lack of Technical replicate information and multiple
-         `Percent.Physiologic.Plasma` values for Plasma Blank Samples.")
+    stop("build_mydata_fup_red - `Plasma.Blank.rep` cannot be allocated due to lack of `Technical.Replicates` information and multiple `Percent.Physiologic.Plasma` values for `Plasma.Blank` samples.")
     # browser()
   } 
   
