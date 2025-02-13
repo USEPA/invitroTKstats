@@ -187,16 +187,24 @@ calc_caco2_point <- function(
 
         # Calculate C0
         # only can handle one dilution factor right now:
-        if (length(unique(this.dosing$Dilution.Factor))>1) browser()
+        if (length(unique(this.dosing$Dilution.Factor))>1){
+          stop(paste0("There is more than one `Dilution.Factor` for ",
+                      this.chem,"Sample Type 'D0' in direction ",this.direction,"."))
+          # browser()
+        } 
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
           unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
           mean(this.blank$Response))) # [C0] = Peak area (RR) 
  
         # Calculate dQ/dt
         # only can handle one dilution factor and one receiver volume right now:
-        if (length(unique(this.receiver$Dilution.Factor))>1 |
+        if (length(unique(this.receiver$Dilution.Factor))>1 | 
             length(unique(this.receiver$Vol.Receiver))>1 |
-          length(unique(this.dosing$Time))>1) browser()
+            length(unique(this.dosing$Time))>1){
+          stop(paste0("`Dilution.Factor`, `Vol.Receiver`, and/or `Time` has more than
+               one unique value for ",this.chem,"in direction ",this.direction,"."))
+          # browser()
+        } 
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
           unique(this.receiver$Dilution.Factor)*(
             mean(this.receiver$Response) -

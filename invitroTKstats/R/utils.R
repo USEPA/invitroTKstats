@@ -366,7 +366,12 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
   } else if(length(unique(Plasma.Blank.data[,"Percent.Physiologic.Plasma"]))==1)
   {
     Plasma.Blank.rep <- rep(1, Num.Plasma.Blank.obs)
-  } else browser()
+  } else{
+    stop("`Plasma.Blank.rep` cannot be allocated due to
+         lack of Technical replicate information and multiple
+         `Percent.Physiologic.Plasma` values for Plasma Blank Samples.")
+    # browser()
+  } 
   
   return(list(
     # Describe assay:

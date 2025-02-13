@@ -364,7 +364,7 @@ merge_level0 <- function(FILENAME="MYDATA",
       print(paste("Columns needed:",paste(needed.columns,collapse=", ")))
       print(head(this.data))
       print(paste0("Missing columns: ",paste(needed.columns[!(needed.columns %in% colnames(this.data))],collapse=", ")))
-      browser()
+      # browser()
     }
     this.data <- reordered.data
     
