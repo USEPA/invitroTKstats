@@ -8,6 +8,7 @@ std.catcols <- c(
   date.col = "Date",
   compound.col = "Chemical.ID",
   istd.col = "ISTD.Name",
+  col.names.loc = "Col.Names.Loc",
   sample.colname.col = "Sample.ColName",
   type.colname.col = "Type.ColName",
   peak.colname.col = "Peak.ColName",
