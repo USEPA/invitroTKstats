@@ -441,10 +441,6 @@ format_clint <- function(
 
   colnames(data.out) <- clint.cols
 
-  # Set reasonable significant figures:
-  for (this.col in c("Area", "ISTD.Area"))
-    data.out[,this.col] <- data.out[,this.col]
-
   # calculate the response:
   data.out[,"Response"] <- data.out[,"Area"] /
      data.out[,"ISTD.Area"] * data.out[,"ISTD.Conc"]

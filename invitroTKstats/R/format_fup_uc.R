@@ -411,9 +411,6 @@ format_fup_uc <- function(
     }
   }
 
-  for (this.col in c("Area", "ISTD.Area"))
-    data.out[,this.col] <- data.out[,this.col]
-
   # calculate the response:
   data.out[,"Response"] <- as.numeric(data.out[,"Area"]) /
      as.numeric(data.out[,"ISTD.Area"]) * as.numeric(data.out[,"ISTD.Conc"])
