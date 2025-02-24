@@ -122,6 +122,9 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-4). 
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -192,6 +195,7 @@ calc_fup_uc <- function(
   good.col="Verified",
   JAGS.PATH = NA,
   save.MCMC = FALSE,
+  sig.figs = 3, 
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
   )
@@ -243,6 +247,13 @@ calc_fup_uc <- function(
   
   # Only used verified data:
   unverified.data <- subset(PPB.data, PPB.data[,good.col] != "Y")
+  # Round L1 results to 2 more digits than L4 desired number of sig figs
+  if (!is.null(sig.figs)){
+    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs+2)
+    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs+2)
+    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs+2)
+    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs+2, " significant figures.\n"))
+  }
   write.table(unverified.data, file=paste0(
     FILENAME,"-fup-UC-Level2-heldout.tsv"),
     sep="\t",
@@ -429,9 +440,20 @@ calc_fup_uc <- function(
       file.path <- INPUT.DIR
       } else {
         file.path <- getwd()
-        }
+      }
   
-  save(Results,
+  # Round to specified number of sig figs 
+  rounded.Results <- Results
+  
+  if (!is.null(sig.figs)){
+    round.cols <- colnames(rounded.Results)[!colnames(rounded.Results) %in% c("Compound.Name","DTXSID","Lab.Compound.Name")]
+    for (this.col in round.cols){
+      rounded.Results[,this.col] <- signif(rounded.Results[,this.col], sig.figs)
+    }
+    cat(paste0("\nL4 RData to export has been rounded to ", sig.figs, " significant figures.\n"))
+  } 
+  
+  save(rounded.Results,
     file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData"))
   cat(paste0("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
              " has been exported to the following directory: ", file.path), "\n")

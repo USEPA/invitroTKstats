@@ -320,7 +320,7 @@ calc_clint_point <- function(
     # Round results to desired number of sig figs
     if (!is.null(sig.figs)){
       rounded.out.table[!(rounded.out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <-
-        signif(arounded.out.table[
+        signif(rounded.out.table[
           !(rounded.out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"],sig.figs)
       rounded.out.table[,"Clint.1"] <- signif(rounded.out.table[,"Clint.1"],sig.figs)
       rounded.out.table[,"Clint.10"] <- signif(rounded.out.table[,"Clint.10"],sig.figs)
