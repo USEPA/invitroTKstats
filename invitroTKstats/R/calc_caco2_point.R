@@ -65,8 +65,8 @@
 #'   Refflux \tab Efflux ratio \tab unitless\cr
 #'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
 #'   Frec_B2B.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
-#'   Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tb qualitative category \cr
-#'   Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tb qualitative category \cr
+#'   Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
 #' }
 #'
 #' @author John Wambaugh
@@ -224,11 +224,11 @@ calc_caco2_point <- function(
             length(unique(this.receiver$Vol.Receiver))>1) browser()
         this.row[paste("Frec",dir.string,sep="_")] <- max(0,
                                                           (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
-                                                           length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
-                                                          (this.receiver$Response-rep(mean(this.blank$Response),
-                                                           length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
-                                                          (this.dosing$Response-rep(mean(this.blank$Response),
-                                                           length(this.dosing$Response)))))
+                                                                                                                                      length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
+                                                             (this.receiver$Response-rep(mean(this.blank$Response),
+                                                                                         length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
+                                                                                                                              (this.dosing$Response-rep(mean(this.blank$Response),
+                                                                                                                                                        length(this.dosing$Response)))))
       }
     }
     
@@ -255,14 +255,14 @@ calc_caco2_point <- function(
   out.table <- as.data.frame(out.table)
   
   # Create new columns to store recovery classification separately
-  out_table$Recovery_Class_A2B=NA
-  out_table$Recovery_Class_B2A=NA
-
+  out.table$Recovery_Class_A2B=NA
+  out.table$Recovery_Class_B2A=NA
+  
   # Assign recovery classifications without changing Papp values
-  out_table$Recovery_Class_A2B[out.table$Frec_A2B.vec < 0.4] <- "Low Recovery"
-  out_table$Recovery_Class_A2B[out.table$Frec_A2B.vec > 2.0] <- "High Recovery"
-  out_table$Recovery_Class_B2A[out.table$Frec_B2A.vec < 0.4] <- "Low Recovery"
-  out_table$Recovery_Class_B2A[out.table$Frec_B2A.vec > 2.0] <- "High Recovery"
+  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec < 0.4] <- "Low Recovery"
+  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec > 2.0] <- "High Recovery"
+  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec < 0.4] <- "Low Recovery"
+  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec > 2.0] <- "High Recovery"
   
   # Calculate efflux ratio:
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
