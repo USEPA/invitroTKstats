@@ -49,6 +49,9 @@
 #' table (Level-3) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -93,6 +96,7 @@ calc_fup_red_point <- function(
     data.in,
     good.col="Verified",
     output.res=TRUE, 
+    sig.figs = 3, 
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
 {
@@ -195,7 +199,12 @@ calc_fup_red_point <- function(
         (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
       this.row$Fup <- fup.est
       out.table <- rbind(out.table, this.row)
-      print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
+      if (!is.null(sig.figs)){
+        print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,sig.figs)))
+      } else {
+        # If sig.figs = NULL, default to 3 sig figs 
+        print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
+      }
       # If fup is NA something is wrong, stop and figure it out:
       if(is.na(this.row$Fup)) browser()
       
@@ -234,7 +243,12 @@ calc_fup_red_point <- function(
               (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
             this.row$Fup <- fup.est
             out.table <- rbind(out.table, this.row)
-            print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,3)))
+            if (!is.null(sig.figs)){
+              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,sig.figs)))
+            } else {
+              # If sig.figs = NULL, default to 3 sig figs 
+              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,3)))
+            }
             num.cal <- num.cal + 1
           } else ignored.chem <- c(ignored.chem, paste(this.chem, "Calibration", this.calibration))
         }
@@ -263,9 +277,7 @@ calc_fup_red_point <- function(
   }
 
   if (output.res) {
-    # Write out a "level 3" file (data organized into a standard format):
     # Determine the path for output
-    
     if (!is.null(OUTPUT.DIR)) {
       file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
@@ -273,7 +285,17 @@ calc_fup_red_point <- function(
     } else {
       file.path <- getwd()
     }
-    write.table(out.table,
+    
+    rounded.out.table <- out.table 
+    
+    # Round results to desired number of sig figs
+    if (!is.null(sig.figs)){
+      rounded.out.table[,"Fup"] <- signif(rounded.out.table[,"Fup"],sig.figs)
+      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+    }
+    
+    # Write out a "level 3" file (data organized into a standard format):
+    write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-fup-RED-Level3.tsv"),
                 sep="\t",
                 row.names=F,
