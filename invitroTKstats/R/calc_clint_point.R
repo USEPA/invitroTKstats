@@ -36,6 +36,7 @@
 #' (Defaults to \code{TRUE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' (Note: console print statements are also rounded to specified significant figures.)
 #' (Defaults to \code{3}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
@@ -269,13 +270,13 @@ calc_clint_point <- function(
             "."
           ))
         } else {
-          # If sig.figs = NULL, default to 3 sig figs 
+          # If sig.figs = NULL
           print(paste(
             this.row$Compound.Name,
             "Cl_int =",
-            signif(this.row$Clint,3),
+            this.row$Clint,
             "uL/min/million hepatocytes, p-Value =",
-            signif(this.row$Clint.pValue,3),
+            this.row$Clint.pValue,
             "."
           ))
         }

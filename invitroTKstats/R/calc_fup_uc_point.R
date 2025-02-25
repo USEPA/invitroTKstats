@@ -45,6 +45,7 @@
 #' (Defaults to \code{TRUE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' (Note: console print statements are also rounded to specified significant figures.) 
 #' (Defaults to \code{3}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
@@ -158,12 +159,12 @@ calc_fup_uc_point <- function(
       if (!is.null(sig.figs)){
         print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,sig.figs)))
       } else {
-        # If sig.figs = NULL, default to 3 sig figs 
-        print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
+        # If sig.figs = NULL, no rounding 
+        print(paste(this.row$Compound.Name,"f_up =",this.row$Fup))
       }
   # If fup is NA something is wrong, stop and figure it out:
       if(is.na(this.row$Fup)) browser()
-  # If there are multiple measrument days, do separate calculations:
+  # If there are multiple measurement days, do separate calculations:
       if (length(unique(this.subset[,cal.col]))>1)
       {
         for (this.calibration in unique(this.subset[,cal.col]))

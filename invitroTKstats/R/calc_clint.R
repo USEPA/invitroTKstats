@@ -190,6 +190,8 @@ model {
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-4). 
+#' (Note: console print statements are also rounded to specified significant figures. 
+#' Level2-heldout.tsv is rounded to \code{sig.figs + 2}.)
 #' (Defaults to \code{3}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
@@ -487,7 +489,21 @@ calc_clint <- function(
           sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]
 
         rownames(new.results) <- this.compound
-
+        
+        # round results and new.results for printing
+        rounded.results <- results
+        rounded.new.results <- new.results 
+        
+        if (!is.null(sig.figs)){
+          for (this.col in 1:ncol(rounded.results)){
+            rounded.results[,this.col] <- signif(rounded.results[,this.col], sig.figs)
+          }
+          round.cols <- colnames(rounded.new.results)[!colnames(rounded.new.results) %in% c("Compound.Name","DTXSID","Lab.Compound.Name")]
+          for (this.col in round.cols){
+            rounded.new.results[,this.col] <- signif(rounded.new.results[,this.col], sig.figs)
+          }
+        }
+  
         print(paste("Final results for ",
           this.compound,
           " (",
@@ -496,8 +512,8 @@ calc_clint <- function(
           length(unique(MS.data[,compound.col])),
           ")",
           sep=""))
-        print(results)
-        print(new.results)
+        print(rounded.results)
+        print(rounded.new.results)
 
         Results <- rbind(Results,new.results)
         

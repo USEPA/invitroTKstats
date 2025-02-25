@@ -47,6 +47,7 @@
 #' (Defaults to \code{TRUE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' (Note: console print statements are also rounded to specified significant figures.) 
 #' (Defaults to \code{3}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
@@ -231,9 +232,8 @@ calc_caco2_point <- function(
         print(paste(this.row$Compound.Name,"Refflux =",
                     signif(this.row$Refflux,sig.figs)))
       } else {
-        # If sig.figs = NULL, default to 3 sig figs 
         print(paste(this.row$Compound.Name,"Refflux =",
-                    signif(this.row$Refflux,3)))
+                    this.row$Refflux))
       }
   }
 

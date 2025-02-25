@@ -50,7 +50,8 @@
 #' (Defaults to \code{TRUE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
-#' (Defaults to \code{3}.)
+#' (Note: console print statements are also rounded to specified significant figures.)
+#' (Defaults to \code{4}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
@@ -96,7 +97,7 @@ calc_fup_red_point <- function(
     data.in,
     good.col="Verified",
     output.res=TRUE, 
-    sig.figs = 3, 
+    sig.figs = 4, 
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
 {
@@ -202,8 +203,8 @@ calc_fup_red_point <- function(
       if (!is.null(sig.figs)){
         print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,sig.figs)))
       } else {
-        # If sig.figs = NULL, default to 3 sig figs 
-        print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
+        # If sig.figs = NULL, no rounding
+        print(paste(this.row$Compound.Name,"f_up =",this.row$Fup))
       }
       # If fup is NA something is wrong, stop and figure it out:
       if(is.na(this.row$Fup)) browser()
@@ -246,8 +247,8 @@ calc_fup_red_point <- function(
             if (!is.null(sig.figs)){
               print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,sig.figs)))
             } else {
-              # If sig.figs = NULL, default to 3 sig figs 
-              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,3)))
+              # If sig.figs = NULL, no rounding  
+              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",this.row$Fup))
             }
             num.cal <- num.cal + 1
           } else ignored.chem <- c(ignored.chem, paste(this.chem, "Calibration", this.calibration))

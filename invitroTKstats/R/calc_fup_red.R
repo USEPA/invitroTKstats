@@ -213,7 +213,9 @@ model {
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-4). 
-#' (Defaults to \code{3}.)
+#' (Note: console print statements are also rounded to specified significant figures. 
+#' Level2-heldout.tsv is rounded to \code{sig.figs + 1}.)
+#' (Defaults to \code{4}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
@@ -283,7 +285,7 @@ calc_fup_red <- function(
   JAGS.PATH = NA,
   Physiological.Protein.Conc = 70/(66.5*1000)*1000000, # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
   save.MCMC = FALSE,
-  sig.figs = 3, 
+  sig.figs = 4, 
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
   )
@@ -337,10 +339,10 @@ calc_fup_red <- function(
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
   # Round L1 results to 2 more digits than L4 desired number of sig figs
   if (!is.null(sig.figs)){
-    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs+2)
-    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs+2)
-    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs+2)
-    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs+2, " significant figures.\n"))
+    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs+1)
+    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs+1)
+    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs+1)
+    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs+1, " significant figures.\n"))
   }
   write.table(unverified.data, file=paste0(
     FILENAME,"-fup-RED-Level2-heldout.tsv"),
@@ -458,6 +460,20 @@ calc_fup_red <- function(
           new.results[,c("Fup.Med","Fup.Low","Fup.High")] <-
             sapply(results[c(2,1,3),"Fup"],
             function(x) x)
+          
+          # round results and new.results for printing
+          rounded.results <- results
+          rounded.new.results <- new.results 
+          
+          if (!is.null(sig.figs)){
+            for (this.col in 1:ncol(rounded.results)){
+              rounded.results[,this.col] <- signif(rounded.results[,this.col], sig.figs)
+            }
+            round.cols <- colnames(rounded.new.results)[!colnames(rounded.new.results) %in% c("Compound.Name","DTXSID","Lab.Compound.Name")]
+            for (this.col in round.cols){
+              rounded.new.results[,this.col] <- signif(rounded.new.results[,this.col], sig.figs)
+            }
+          }
 
           print(paste("Final results for ",
             this.compound,
