@@ -1,17 +1,10 @@
 # R Package "invitroTKstats"
 
-Standardizes the documentation and statistical analysis for in vitro
-Assays that allow prediction of toxicokinetics (that is, the absorption, 
-distribution, metabolism, and elimination of chemicals by the body). The assays 
-covered include intrinsic clearance hepatocyte incubations; three variants of plasma 
-protein binding experiments, CACO-2 membrane permeability, and blood to plasma concentration ratio. 
-Analysis methods include frequentist point estimates and, in some cases, Bayesian methods for identifying 
-distributions of likely parameter values. Analysis is based on mass spectrometry ratios of analyte to 
-internal standard peak areas. Data are formatted for loading into databases.
+Standardized pipeline for processing high-throughput toxicokinetic (HTTK) data from *in vitro* assays.  The pipeline includes standardization for data documentation, statistical analyses predicting toxicokinetics parameters that characterize absorption, distribution, metabolism, and elimination of chemicals by the body.
 
+The assays covered by the pipeline include intrinsic clearance after hepatocyte incubation ($Cl_{int}$); three variants of plasma protein binding experiments, CACO-2 membrane permeability, and blood to plasma concentration ratio. Analysis methods include frequentist point estimates and, in some cases, Bayesian methods for identifying distributions of likely parameter values. Analysis is based on mass spectrometry ratios of analyte peak areas to internal standard peak areas. Data are formatted to anticipate databases storage.
 
 ## Background
-
 
 ## Getting Started
 
@@ -33,6 +26,7 @@ internal standard peak areas. Data are formatted for loading into databases.
 Getting Started with R Package `invitroTKstats`.
 
 * Installing directly from the GitHub repo from the R console
+
 ```
 devtools::install_git(
   "https://github.com/jfwambaugh/invitroTKstats.git",
@@ -46,10 +40,8 @@ devtools::install_git(
   1. Go to the GitHub repo for
   [`invitroTKstats`](https://github.com/jfwambaugh/invitroTKstats)
   2. Choose the "Code" button and copy the repo URL.
-  3. In your local command line terminal and navigate to the directory location
-  you wish to store your local copy of the repo.
-  4. In your terminal type
-  `git clone <https://github.com/jfwambaugh/invitroTKstats>`
+  3. In your local command line terminal, navigate to the directory location you wish to store your local copy of the repo.
+  4. In your terminal type `git clone <https://github.com/jfwambaugh/invitroTKstats>`
   4. After cloning completes then open an R session.
   5. In the R console use the following commands.
   
@@ -60,13 +52,12 @@ devtools::install_local(
 ```
 
 * Installation may also be done via the RStudio provided ‘Install Packages’ menu
-under the ‘Tools’ tab
-
+under the ‘Tools’ tab.
 
 ## Loading the Package
 
 To load the `invitroTKstats` data and functions into your local R session in
-the R console 
+the R console.
 
 ```
 library(invitroTKstats)
@@ -80,23 +71,21 @@ packageVersion(invitroTKstats)
 
 ## Authors
 
-lead package developer John Wambaugh
-[@wambaugh.john@epa.gov]
+John Wambaugh [wambaugh.john@epa.gov] - Package Creator 
 
-Anna Kreutz
-[@kreutz.anna@epa.gov]
+Sarah Davidson-Fritz [davidsonfritz.sarah@epa.gov] - Lead Package Developer
 
-Marci Smeltz
-[@smeltz.marci@epa.gov]
+Lindsay Knupp [knupp.lindsay@epa.gov] - Contributor (Software Development)
 
-Barbara Wetmore
-[@wetmore.barbara@epa.gov]
+Barbara Wetmore [wetmore.barbara@epa.gov] - Contributor (HTTK Data Generation)
 
-Caroline Ring
-[@ring.caroline@epa.gov]
+Caroline Ring [ring.caroline@epa.gov] - Contributor
 
-Sarah Davidson-Fritz
-[@davidsonfritz.sarah@epa.gov]
+Zhihui Zhao - Contributor (Software Development)
+
+Anna Kreutz - Contributor (HTTK Data Generation)
+
+Marci Smeltz - Contributor (HTTK Data Generation)
 
 ## License
 
