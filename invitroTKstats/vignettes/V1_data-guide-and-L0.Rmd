@@ -1,0 +1,57 @@
+---
+title: "Data Guide Creation and Level-0 Data Compilation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{data_guide_and_LO}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+
+The `invitroTKstats` R package is designed to work as a data processing pipeline for *in vitro* assays collecting various physiological parameters used in high-throughput toxicokinetic (HTTK) modeling.  Mass spectrometry (MS) data used to estimate the various physiological parameters.
+
+Here, we discuss the first steps of the data processing pipeline, which include the data guide creation and level-0 (raw data) compilation.
+
+## Suggested packages for use with this vignette
+
+```{r setup}
+# Primary Packages #
+library(invitroTKstats)
+# Data Formatting Packages #
+library(dplyr)
+library(magrittr)
+library(stringr)
+```
+
+# Data Catalog Creation
+
+The data catalog creation step can be thought of as a log of all the relevant raw data files for a given physiological parameter that we wish to pipeline.  It is a crucial part of the pipeline in that it allows us to identify where all of the raw datafiles are coming from and where we are pulling raw (Level-0) data from within those datasets.  This provides key meta-data information that can be used for evaluating data provenance.
+
+Though this `data.frame` may be created manually through an Excel file, the `invitroTKstats` package includes a function called `create_data_catalog` that will automatically generate and document the creation of the data catalog.  This allows for maximum reproducibility, transparency, and efficiency in compiling the necessary data guide.  Thus, it is a best practice to utilize this function for creating the data file.
+
+Below is an example of how to use this function
+
+```{r}
+# create a data catalog listing where Fup data is held
+DC <- create_catalog(
+  file = "<file_path>/my_raw_MS_data_Clint_MMDDYYYY.xlsx",
+  sheet = c(rep(1,5),rep(2,5),rep(3,5)),
+  skip.rows = rep(c(1,10,19,28,37),3),
+  num.rows = 8,date = "MMDDYYYY"
+  )
+```
+
+
+# Session Information
+
+```{r}
+sessionInfo()
+```
