@@ -189,7 +189,8 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results 
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-4). 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2).
+#' The exported result table (Level-4) is left unrounded for reproducibility.
 #' (Note: console print statements are also rounded to specified significant figures.)
 #' (Defaults to \code{3}.)
 #' 
@@ -313,7 +314,7 @@ calc_clint <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
-  # Round L1 results to 2 more digits than L4 desired number of sig figs
+  # Round unverified data 
   if (!is.null(sig.figs)){
     unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs)
     unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs)

@@ -122,7 +122,8 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-4). 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2). 
+#' The exported result table (Level-4) is left unrounded for reproducibility.
 #' (Note: console print statements are also rounded to specified significant figures.)
 #' (Defaults to \code{3}.)
 #' 

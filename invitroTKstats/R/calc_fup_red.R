@@ -212,9 +212,10 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-4). 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2). 
+#' The exported result table (Level-4) is left unrounded for reproducibility. 
 #' (Note: console print statements are also rounded to specified significant figures.) 
-#' (Defaults to \code{4}.)
+#' (Defaults to \code{3}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
@@ -284,7 +285,7 @@ calc_fup_red <- function(
   JAGS.PATH = NA,
   Physiological.Protein.Conc = 70/(66.5*1000)*1000000, # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
   save.MCMC = FALSE,
-  sig.figs = 4, 
+  sig.figs = 3, 
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
   )
@@ -336,7 +337,7 @@ calc_fup_red <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
-  # Round L1 results to 2 more digits than L4 desired number of sig figs
+  # Round unverified data 
   if (!is.null(sig.figs)){
     unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs)
     unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs)

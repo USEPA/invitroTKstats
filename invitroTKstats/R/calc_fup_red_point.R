@@ -51,7 +51,7 @@
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
 #' (Note: console print statements are also rounded to specified significant figures.)
-#' (Defaults to \code{4}.)
+#' (Defaults to \code{3}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
@@ -97,7 +97,7 @@ calc_fup_red_point <- function(
     data.in,
     good.col="Verified",
     output.res=TRUE, 
-    sig.figs = 4, 
+    sig.figs = 3, 
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
 {
