@@ -410,7 +410,7 @@ calc_fup_uc <- function(
           for (this.col in 1:ncol(rounded.results)){
             rounded.results[,this.col] <- signif(rounded.results[,this.col], sig.figs)
           }
-          round.cols <- colnames(rounded.new.results)[!colnames(rounded.new.results) %in% c("Compound.Name","DTXSID","Lab.Compound.Name")]
+          round.cols <- colnames(rounded.new.results)[!colnames(rounded.new.results) %in% c("Compound","DTXSID","Lab.Compound.Name")]
           for (this.col in round.cols){
             rounded.new.results[,this.col] <- signif(rounded.new.results[,this.col], sig.figs)
           }
