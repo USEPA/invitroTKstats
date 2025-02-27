@@ -212,6 +212,11 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2). 
+#' The exported result table (Level-4) is left unrounded for reproducibility. 
+#' (Note: console print statements are also rounded to specified significant figures.) 
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -280,6 +285,7 @@ calc_fup_red <- function(
   JAGS.PATH = NA,
   Physiological.Protein.Conc = 70/(66.5*1000)*1000000, # Berg and Lane (2011) 60-80 mg/mL, albumin is 66.5 kDa, pretend all protein is albumin to get uM
   save.MCMC = FALSE,
+  sig.figs = 3, 
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
   )
@@ -331,6 +337,13 @@ calc_fup_red <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
+  # Round unverified data 
+  if (!is.null(sig.figs)){
+    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs)
+    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs)
+    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs)
+    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs, " significant figures.\n"))
+  }
   write.table(unverified.data, file=paste0(
     FILENAME,"-fup-RED-Level2-heldout.tsv"),
     sep="\t",
@@ -433,12 +446,11 @@ calc_fup_red <- function(
           for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out$mcmc[[i]])
           results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
 
-          Fup.point <- signif(
+          Fup.point <- 
             (mean(mydata$PBS.obs)*mydata$PBS.df -
              mean(mydata$NoPlasma.Blank.obs)*mydata$NoPlasma.Blank.df) /
             (mean(mydata$Plasma.obs)*mydata$Plasma.df -
-             mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df),
-             4)
+             mean(mydata$Plasma.Blank.obs)*mydata$Plasma.Blank.df)
 
           new.results <- data.frame(Compound.Name=this.compound,
                                     Lab.Compound.Name=this.lab.name,
@@ -447,7 +459,21 @@ calc_fup_red <- function(
                                     stringsAsFactors=F)
           new.results[,c("Fup.Med","Fup.Low","Fup.High")] <-
             sapply(results[c(2,1,3),"Fup"],
-            function(x) signif(x,4))
+            function(x) x)
+          
+          # round results and new.results for printing
+          rounded.results <- results
+          rounded.new.results <- new.results 
+          
+          if (!is.null(sig.figs)){
+            for (this.col in 1:ncol(rounded.results)){
+              rounded.results[,this.col] <- signif(rounded.results[,this.col], sig.figs)
+            }
+            round.cols <- colnames(rounded.new.results)[!colnames(rounded.new.results) %in% c("Compound.Name","DTXSID","Lab.Compound.Name")]
+            for (this.col in round.cols){
+              rounded.new.results[,this.col] <- signif(rounded.new.results[,this.col], sig.figs)
+            }
+          }
 
           print(paste("Final results for ",
             this.compound,
@@ -457,8 +483,8 @@ calc_fup_red <- function(
             length(unique(MS.data[,compound.col])),
             ")",
             sep=""))
-          print(results)
-          print(new.results)
+          print(rounded.results)
+          print(rounded.new.results)
 
           Results <- rbind(Results,new.results)
 
@@ -490,8 +516,8 @@ calc_fup_red <- function(
       file.path <- INPUT.DIR
       } else {
         file.path <- getwd()
-        }
-    
+      }
+  
   save(Results,
     file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
   cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
