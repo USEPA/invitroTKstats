@@ -371,7 +371,10 @@ calc_clint <- function(
       this.blank <- subset(this.subset,Sample.Type=="Blank")
     #  if (length(unique(this.cvt$Dilution.Factor))>1) browser()
     #  df.cvt <- this.cvt$Dilution.Factor[1]
-      if (length(unique(this.cvt$Hep.Density))>1) browser()
+      if (length(unique(this.cvt$Hep.Density))>1){
+        stop("calc_clint - Cvst samples for `",this.compound,"` have more than one `Hep.Density`.")
+        # browser()
+      } 
       hep.density <- this.cvt$Hep.Density[1]
 
       # provide running output of where we are in the list:

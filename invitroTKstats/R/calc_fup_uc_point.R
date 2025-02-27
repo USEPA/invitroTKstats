@@ -163,8 +163,11 @@ calc_fup_uc_point <- function(
         print(paste(this.row$Compound.Name,"f_up =",this.row$Fup))
       }
   # If fup is NA something is wrong, stop and figure it out:
-      if(is.na(this.row$Fup)) browser()
-  # If there are multiple measurement days, do separate calculations:
+      if(is.na(this.row$Fup)){
+        stop("calc_fup_uc_point - Fup value for `",this.chem,"` for the `All Data` Calibration is `NA`.")
+        # browser()
+      } 
+  # If there are multiple measrument days, do separate calculations:
       if (length(unique(this.subset[,cal.col]))>1)
       {
         for (this.calibration in unique(this.subset[,cal.col]))

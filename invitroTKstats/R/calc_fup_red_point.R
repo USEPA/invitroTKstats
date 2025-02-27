@@ -174,7 +174,10 @@ calc_fup_red_point <- function(
         plasma.blanks.na.chem <- c(plasma.blanks.na.chem, this.chem)
       } else {
         plasma.blank.mean <- mean(this.plasma.blank$Response)
-        if (length(unique(this.plasma.blank$Dilution.Factor))>1) browser()
+        if (length(unique(this.plasma.blank$Dilution.Factor))>1){
+          stop("calc_fup_red_point - Plasma.Blank samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+          # browser()
+        } 
         df.plasma.blank <- this.plasma.blank$Dilution.Factor[1]
       }
       
@@ -185,14 +188,23 @@ calc_fup_red_point <- function(
         nonplasma.blanks.na.chem <- c(nonplasma.blanks.na.chem, this.chem)
       } else {
         noplasma.blank.mean <- mean(this.noplasma.blank$Response)
-        if (length(unique(this.noplasma.blank$Dilution.Factor))>1) browser()
+        if (length(unique(this.noplasma.blank$Dilution.Factor))>1){
+          stop("calc_fup_red_point - No.Plasma.Blank samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+          # browser()
+        } 
         df.noplasma.blank <- this.noplasma.blank$Dilution.Factor[1]
       }
       
       # Collect dilution factor for calculation
-      if (length(unique(this.pbs$Dilution.Factor))>1) browser()
+      if (length(unique(this.pbs$Dilution.Factor))>1){
+        stop("calc_fup_red_point - PBS samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+        # browser()
+      } 
       df.pbs <- this.pbs$Dilution.Factor[1]
-      if (length(unique(this.plasma$Dilution.Factor))>1) browser()
+      if (length(unique(this.plasma$Dilution.Factor))>1){
+        stop("calc_fup_red_point - Plasma samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+        # browser()
+      } 
       df.plasma <- this.plasma$Dilution.Factor[1]
       
       num.chem <- num.chem + 1
@@ -207,7 +219,10 @@ calc_fup_red_point <- function(
         print(paste(this.row$Compound.Name,"f_up =",this.row$Fup))
       }
       # If fup is NA something is wrong, stop and figure it out:
-      if(is.na(this.row$Fup)) browser()
+      if(is.na(this.row$Fup)){
+        stop("calc_fup_red_point - Fup value for `",this.chem,"` for the `All Data` Calibration is `NA`.")
+        # browser()
+      } 
       
       # If there are multiple measurement days, do separate calculations:
       if (length(unique(this.subset[,cal.col]))>1)

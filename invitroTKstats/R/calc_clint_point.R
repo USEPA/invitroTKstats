@@ -157,7 +157,10 @@ calc_clint_point <- function(
     ll <- log(1/sigma/sqrt(2*pi))*N
     res <- pred-this.data$Response
     ll <- ll+sum(-1/2*res^2/sigma^2)
-    if (is.na(ll)) browser()
+    if (is.na(ll)){
+      stop("lldecay - Estimated Log-likelihood is `NA`.")
+      # browser()
+    } 
     return(-ll)
   }
   
@@ -185,7 +188,10 @@ calc_clint_point <- function(
     ll <- log(1/sigma/sqrt(2*pi))*N
     res <- pred-this.data$Response
     ll <- ll+sum(-1/2*res^2/sigma^2)
-    if (is.na(ll)) browser()
+    if (is.na(ll)){
+      stop("llsatdecay - Estimated Log-likelihood is `NA`.")
+      # browser()
+    } 
     return(-ll)
   }
 
@@ -199,9 +205,15 @@ calc_clint_point <- function(
         Clint.pValue=NaN))
     this.cvt <- subset(this.subset,Sample.Type=="Cvst")
     this.blank <- subset(this.subset,Sample.Type=="Blank")
-    if (length(unique(this.cvt$Dilution.Factor))>1) browser()
+    if (length(unique(this.cvt$Dilution.Factor))>1){
+      stop("calc_clint_point - Cvst samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+      # browser()
+    }
     df.cvt <- this.cvt$Dilution.Factor[1]
-    if (length(unique(this.cvt$Hep.Density))>1) browser()
+    if (length(unique(this.cvt$Hep.Density))>1){
+      stop("calc_clint_point - Cvst samples for `",this.chem,"` have more than one `Hep.Density`.")
+      # browser()
+    } 
     hep.density <- this.cvt$Hep.Density[1]
 
     if (dim(this.cvt)[1] > 1)
@@ -257,7 +269,17 @@ calc_clint_point <- function(
             if (this.row$Clint.pValue==1) test.AIC <- this.row$AIC.Null
             else test.AIC <- this.row$AIC
             this.row$Sat.pValue <- min(exp(-(test.AIC-AIC(this.sat.fit))),1)
-          } else browser()
+          } else{
+            # warning message to users to indicate failed fitting
+            warning("calc_clint_point - Saturation decay fit resulted in an error when fitting. Returning `NA` for the following ourputs:\n\t",
+                    paste0(c("Clint.1","Clint.10","AIC.Sat","AIC","Sat.pValue"),collapse = ", "))
+            # assign NA's to outputs since saturation decay fit failed
+            this.row$Clint.1    <- NA
+            this.row$Clint.10   <- NA
+            this.row$AIC.Sat    <- NA
+            this.row$Sat.pValue <- NA
+            # browser()
+          } 
         }
         if (!is.null(sig.figs)){
           # Print results to desired sig.figs or default of 3  
@@ -284,9 +306,9 @@ calc_clint_point <- function(
         for (col in c("Fit","AIC","AIC.Null","Clint.1","Clint.10","AIC.Sat","Sat.pValue"))
           this.row[,col] <- NA
         this.row$Clint <- "Linear Regression Failed"
-        print("Linear regression failed.")
+        cat("Linear regression failed for:",this.chem,".\n")
         plot(this.data$Time, this.data$Response)
-        browser()
+        # browser()
       }
       out.table <- rbind(out.table, this.row)
     }
