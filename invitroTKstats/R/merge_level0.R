@@ -79,7 +79,7 @@
 #' 
 #' @param col.names.loc (Numeric) Row location of data column names. (Defaults to 
 #' 'NULL'.) (Note: Single entry only, use only if all files have column names 
-#' in the first row)
+#' in the same row location, typically the first row.)
 #' 
 #' @param col.names.loc.col (Character) Catalog column name containing `col.names.loc`
 #' information. (Defaults to "Col.Names.Loc")
@@ -343,17 +343,19 @@ merge_level0 <- function(FILENAME="MYDATA",
     required.col.names <- c(this.sample.name.col, this.peak.col, this.istd.peak.col, this.conc.col, this.type.col, this.analysis.param.col)
     if (!(all(required.col.names %in% this.header.row))) {
       stop(paste("Columns not found in selected header row:",
-                 paste(required.col.names[!(required.col.names%in%this.header.row)],collapse=", ")))
+                 paste(required.col.names[!(required.col.names %in% this.header.row)], collapse=", ")))
     }
     # Check header row has all additional columns 
     if (!is.null(additional.colname.cols))
     {
-      for (this.col in additional.colname.cols)
-      {
-        this.additional.col <- as.character(level0.catalog[this.row, this.col])
-        if(!this.additional.col %in% this.header.row) {
-          stop(paste("Column not found in selected header row:",this.additional.col))
-        }
+      # Required additional columns 
+      required.col.names <- NULL
+      for (this.col in additional.colname.cols){
+        required.col.names <- c(required.col.names, as.character(level0.catalog[this.row, this.col]))
+      }
+      if (!(all(required.col.names %in% this.header.row))){
+        stop(paste("Columns not found in selected header row:",
+                   paste(required.col.names[!(required.col.names %in% this.header.row)], collapse = ", ")))
       }
     }
 
