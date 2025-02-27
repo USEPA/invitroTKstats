@@ -213,8 +213,7 @@ model {
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-4). 
-#' (Note: console print statements are also rounded to specified significant figures. 
-#' Level2-heldout.tsv is rounded to \code{sig.figs + 1}.)
+#' (Note: console print statements are also rounded to specified significant figures.) 
 #' (Defaults to \code{4}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
@@ -339,10 +338,10 @@ calc_fup_red <- function(
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
   # Round L1 results to 2 more digits than L4 desired number of sig figs
   if (!is.null(sig.figs)){
-    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs+1)
-    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs+1)
-    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs+1)
-    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs+1, " significant figures.\n"))
+    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs)
+    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs)
+    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs)
+    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs, " significant figures.\n"))
   }
   write.table(unverified.data, file=paste0(
     FILENAME,"-fup-RED-Level2-heldout.tsv"),
@@ -483,8 +482,8 @@ calc_fup_red <- function(
             length(unique(MS.data[,compound.col])),
             ")",
             sep=""))
-          print(results)
-          print(new.results)
+          print(rounded.results)
+          print(rounded.new.results)
 
           Results <- rbind(Results,new.results)
 
@@ -518,18 +517,7 @@ calc_fup_red <- function(
         file.path <- getwd()
       }
   
-  # Round to specified number of sig figs 
-  rounded.Results <- Results 
-  
-  if (!is.null(sig.figs)){
-    round.cols <- colnames(rounded.Results)[!colnames(rounded.Results) %in% c("Compound.Name","DTXSID","Lab.Compound.Name")]
-    for (this.col in round.cols){
-      rounded.Results[,this.col] <- signif(rounded.Results[,this.col], sig.figs)
-    }
-    cat(paste0("\nL4 RData to export has been rounded to ", sig.figs, " significant figures.\n"))
-  }  
-    
-  save(rounded.Results,
+  save(Results,
     file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
   cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
              " has been exported to the following directory: ", file.path), "\n")
