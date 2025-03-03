@@ -46,6 +46,10 @@
 #' table (Level-3) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' (Note: console print statements are also rounded to specified significant figures.) 
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -96,6 +100,7 @@ calc_caco2_point <- function(
     data.in,
     good.col="Verified", 
     output.res=TRUE, 
+    sig.figs = 3,
     INPUT.DIR=NULL,
     OUTPUT.DIR = NULL)
 {
@@ -187,16 +192,22 @@ calc_caco2_point <- function(
 
         # Calculate C0
         # only can handle one dilution factor right now:
-        if (length(unique(this.dosing$Dilution.Factor))>1) browser()
+        if (length(unique(this.dosing$Dilution.Factor))>1){
+          stop("calc_caco2_point - There is more than one `Dilution.Factor` for `D0` samples of `",this.chem,"` in direction ",this.direction,"."))
+          # browser()
+        } 
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
           unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
           mean(this.blank$Response))) # [C0] = Peak area (RR) 
  
         # Calculate dQ/dt
         # only can handle one dilution factor and one receiver volume right now:
-        if (length(unique(this.receiver$Dilution.Factor))>1 |
+        if (length(unique(this.receiver$Dilution.Factor))>1 | 
             length(unique(this.receiver$Vol.Receiver))>1 |
-          length(unique(this.dosing$Time))>1) browser()
+            length(unique(this.dosing$Time))>1){
+          stop("calc_caco2_point - `Dilution.Factor`, `Vol.Receiver`, and/or `Time` has more than one unique value for `",this.chem,"` in direction ",this.direction,".")
+          # browser()
+        } 
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
           unique(this.receiver$Dilution.Factor)*(
             mean(this.receiver$Response) -
@@ -223,24 +234,27 @@ calc_caco2_point <- function(
           as.numeric(this.row["Papp_A2B"])
       }
       out.table <- rbind(out.table, this.row)
-      print(paste(this.row$Compound.Name,"Refflux =",
-        signif(this.row$Refflux,3)))
+      if (!is.null(sig.figs)) {
+        print(paste(this.row$Compound.Name,"Refflux =",
+                    signif(this.row$Refflux,sig.figs)))
+      } else {
+        print(paste(this.row$Compound.Name,"Refflux =",
+                    this.row$Refflux))
+      }
   }
 
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-  out.table[,"C0_A2B"] <- signif(as.numeric(out.table[,"C0_A2B"]),3)
-  out.table[,"C0_B2A"] <- signif(as.numeric(out.table[,"C0_B2A"]),3)
-  out.table[,"dQdt_A2B"] <- signif(as.numeric(out.table[,"dQdt_A2B"]),3)
-  out.table[,"dQdt_B2A"] <- signif(as.numeric(out.table[,"dQdt_B2A"]),3)
-  out.table[,"Papp_A2B"] <- signif(as.numeric(out.table[,"Papp_A2B"]),3)
-  out.table[,"Papp_B2A"] <- signif(as.numeric(out.table[,"Papp_B2A"]),3)
-  out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
+  out.table[,"C0_A2B"] <- as.numeric(out.table[,"C0_A2B"])
+  out.table[,"C0_B2A"] <- as.numeric(out.table[,"C0_B2A"])
+  out.table[,"dQdt_A2B"] <- as.numeric(out.table[,"dQdt_A2B"])
+  out.table[,"dQdt_B2A"] <- as.numeric(out.table[,"dQdt_B2A"])
+  out.table[,"Papp_A2B"] <- as.numeric(out.table[,"Papp_A2B"])
+  out.table[,"Papp_B2A"] <- as.numeric(out.table[,"Papp_B2A"])
+  out.table[,"Refflux"] <- as.numeric(out.table[,"Refflux"])
   out.table <- as.data.frame(out.table)
 
   if (output.res) {
-    # Write out a "level 3" file (data organized into a standard format):
     # Determine the path for output
-    
     if (!is.null(OUTPUT.DIR)) {
       file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
@@ -248,7 +262,23 @@ calc_caco2_point <- function(
     } else {
       file.path <- getwd()
     }
-    write.table(out.table,
+    
+    rounded.out.table <- out.table 
+    
+    # Round results to desired number of sig figs
+    if (!is.null(sig.figs)){
+      rounded.out.table[,"C0_A2B"] <- signif(rounded.out.table[,"C0_A2B"], sig.figs)
+      rounded.out.table[,"C0_B2A"] <- signif(rounded.out.table[,"C0_B2A"], sig.figs)
+      rounded.out.table[,"dQdt_A2B"] <- signif(rounded.out.table[,"dQdt_A2B"], sig.figs)
+      rounded.out.table[,"dQdt_B2A"] <- signif(rounded.out.table[,"dQdt_B2A"], sig.figs)
+      rounded.out.table[,"Papp_A2B"] <- signif(rounded.out.table[,"Papp_A2B"], sig.figs)
+      rounded.out.table[,"Papp_B2A"] <- signif(rounded.out.table[,"Papp_B2A"], sig.figs)
+      rounded.out.table[,"Refflux"] <- signif(rounded.out.table[,"Refflux"], sig.figs)
+      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+    }
+    
+    # Write out a "level 3" file (data organized into a standard format):
+    write.table(rounded.out.table,
       file=paste0(file.path, "/", FILENAME,"-Caco-2-Level3.tsv"),
       sep="\t",
       row.names=F,
