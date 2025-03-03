@@ -1,8 +1,8 @@
 ---
-title: "Clint_vignette"
+title: "Clint"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Clint_vignette}
+  %\VignetteIndexEntry{Clint}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,64 +12,90 @@ knitr::opts_chunk$set(
   collapse = TRUE
 )
 ```
+## Introduction 
 
-```{r setup}
-devtools::install_local("~/Git/invitrotkstats/invitroTKstats")
+This vignette guides users on how to estimate intrinsic hepatic clearance (cl~int~) from mass spectrometry data. Intrinsic hepatic clearance is a chemical specific parameter that describes a liver's ability to metabolize an unbound compound. It is characterized by the disappearance of compound when incubated with primary hepatocytes (Breen et al. 2021). 
+
+### Suggested packages for use with this vignette 
+```{r setup, message = FALSE}
+# Primary package 
 library(invitroTKstats)
+# Data manipulation and plotting packages 
 library(dplyr)
+library(kableExtra)
+
+# devtools::install_local("~/Git/invitrotkstats/invitroTKstats")
 ```
 
-The package `invitroTKstats` is used to estimate and report analyses of four types of in vitro toxicokinetic measurements. Mass spectrometry (MS) data is used to estimate the measurements using both Frequentist and Bayesian statistical methods.  
-
-This vignette guides users on how to estimate intrinsic hepatic clearance (Clint) from mass spectrometry data. Intrinsic hepatic clearance is a chemical specific parameter that describes a liver's ability to metabolize an unbound compound. It is characterized by the disappearance of compound when incubated with primary hepatocytes (Breen et al. 2021). 
+## Load Data
 
 First, we load in the example dataset from invitroTKstats. 
 ```{r Load example data}
 # Load example clint data 
 data("Clint-example")
-head(clint_L0, n = 3) # Level 0 data 
-head(clint_L1, n = 3) # Level 1 data 
-head(clint_L2, n = 3) # Level 2 data 
 ```
 
-You'll notice that three pieces of data are loaded in, `clint_L0`, `clint_L1`, and `clint_L2`. These represent clint data at different levels of processing. For the purpose of this example, we'll start with `clint_L0` to demonstrate how to pipeline it to Levels 3 and 4. 
+Three datasets are loaded in: `clint_L0`, `clint_L1`, and `clint_L2`. These datasets are cl~int~ data at Level 0, 1, and 2 respectively. For the purpose of this vignette, we'll start with `clint_L0`, displayed below, to demonstrate the complete pipelining process. Further, the `clint_L0` data has already been processed with the `merge_level0` function. For more details on curating raw data to Level 0 data, see "Creating dataguide from raw data vignette". 
+```{r, echo = FALSE}
+# Level 0 data 
+head(clint_L0, n = 3) %>% 
+  kable(caption = "Level 0 data") %>% 
+  scroll_box(width = "100%")
+```
 
-Next, we perform Level 1 processing. The `format_clint` function is used to standardize the column names and ensure we have all required columns. 
+## Level 1 processing
 
-If the Level 0 data already contains the required column, then the existing column name can be specified. For example, `clint_L0` already contains a column specifying the sample name called "Sample". However, the default column name for sample name is "Lab.Sample.Name". Therefore, we specify the correct column with `sample.col = "Sample"`. 
+`format_clint` is the Level 1 function used to create a standardized data frame. The function ensures all required columns are provided and then standardizes the column names. 
 
-If the Level 0 data does not already contain the required column, then the column can be populated with a single value. For example, `clint_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. 
+If the Level 0 data already contains the required column, then the existing column name can be specified. For example, `clint_L0` already contains a column specifying the sample name called "Sample". However, the default column name for sample name is "Lab.Sample.Name". Therefore, we specify the correct column with `sample.col = "Sample"`. In general, to specify an already existing column that differs from the default, the user must use the parameter with the `.col` suffix. 
+
+If the Level 0 data does not already contain the required column, then the column can be populated with a single value. For example, `clint_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the parameter without the `.col` suffix. 
+
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specified as single entry is not permitted: `sample.col`, `compound.col`, `lab.compound.col`, `type.col`, `istd.col`, `area.col`, and `note.col`. 
+
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `density.col` or `density`, `cal.col` or `cal`, `istd.conc.col` or `istd.conc`, `test.conc.col` or `test.conc`, `clint.assay.conc.col` or `clint.assay.conc`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, and `biological.replicates.col` or `biological.replicates`.  
 ```{r L1 processing} 
-clint_L1_temp <- format_clint(FILENAME = "Clint_vignette", 
+clint_L1_curated <- format_clint(FILENAME = "Clint_vignette", 
                          data.in = clint_L0,
-                         # columns present in L0 
-                         sample.col = "Sample", 
+                         # columns present in L0 data 
+                         sample.col = "Sample",
                          compound.col = "Compound",
-                         lab.compound.col = "Lab.Compound.ID", 
+                         lab.compound.col = "Lab.Compound.ID",
                          type.col = "Type",
                          istd.col = "ISTD.Peak.Area",
                          area.col = "Peak.Area",
+                         note.col = "Sample Text",
                          test.conc.col = "Compound.Conc",
                          analysis.parameters.col = "Analysis.Params",
-                         note.col = "Sample Text",
-                         # columns not present in L0 
+                         # columns not present in L0 data
                          density = 0.5,
                          clint.assay.conc = 1,
                          analysis.instrument = "Unknown",
                          analysis.method = "LCMS",
-                         istd.conc = 0.01, 
-                         cal = 1, 
-                         biological.replicates = 1 
+                         istd.conc = 0.01,
+                         cal = 1,
+                         biological.replicates = 1,
+                         # don't return output .tsv file
+                         output.res = FALSE
                          )
 ```
 
-We receive a warning message that some of our samples have been removed due to inappropriate sample types. To view which sample types were removed, you can set the parameter `save.bad.types = T` to export the data to a .tsv file. For this example, we will not save the discarded sample types. 
+We receive a warning message that some of our samples have been removed due to inappropriate sample types. To view which sample types were removed, one can set the parameter `save.bad.types = TRUE` to export the data to a .tsv file. For this example, we will not save the discarded sample types. 
 
-Next, we perform Level 2 processing. Level 2 adds another column called "Verified" that indicates whether a sample should be included in the point estimate (Level 3) and credible interval (Level 4) processing. This column allows users to keep all samples in their data but only use a subset for their analyses. 
+Our Level 1 data is nicely formatted and contains all of the information we provided in `format_clint`. 
+```{r, echo = FALSE}
+head(clint_L1_curated, n = 3) %>% 
+  kable(caption = "Level 1 data") %>% 
+  scroll_box(width = "100%")
+```
 
-We use the `sample_verification` function to assign the correct verification status to each chemical. First, we define a data frame with the following columns: Variables, Values, and Message. 
+## Level 2 processing
 
-The "Variables" column contains the variable names used to filter the excluded rows. In our example, we are using "Lab.Sample.Name" AND "DTXSID" to identify the excluded rows separated by a "|". The "Values" column contains the values of the variables as a character also separated by a "|". The "Message" column contains the reason for exclusion. 
+`sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) and credible interval (Level 4) processing. This column allows users to keep all samples in their data but only use a subset for their statistical analyses. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
+
+First, we need to define a data frame detailing which chemicals to exclude with the following columns: `Variables`, `Values`, and `Message.` The `Variables` column contains the variable names used to filter the excluded rows. In our example, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. 
+
+In our example, we are using the already processed `clint_L2` data to determine which samples should be excluded.
 ```{r L2 processing exclusion}
 # Use verification data from loaded in `clint_L2` data frame
 exclusion <- clint_L2 %>% 
@@ -80,38 +106,71 @@ exclusion <- clint_L2 %>%
   select(Variables, Values, Message)
 ```
 
-
 ```{r L2 processing}
-clint_L2_temp <- sample_verification(FILENAME = "Clint_vignette",
-                                     data.in = clint_L1_temp,
+clint_L2_curated <- sample_verification(FILENAME = "Clint_vignette",
+                                     data.in = clint_L1_curated,
                                      assay = "Clint",
-                                     exclusion.info = exclusion)
-
-head(clint_L2_temp, n = 3)
+                                     exclusion.info = exclusion,
+                                     # don't return output .tsv file 
+                                     output.res = FALSE)
 ```
 
-Now, our Level 2 data contains a "Verified" column that indicates whether to use the sample in Level 3 and Level 4 processing. 
+By default, a .tsv file containing the Level 2 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. 
 
-Next, we perform Level 3 processing. Level 3 calculates the clint point estimate using a Frequentist framework. Therefore, the log likelihood is maximized using a built-in optimization framework and that is chosen as the maximum likelihood estimator. 
+Our Level 2 data now contains a `Verified` column. If the sample should be included, the column contains a "Y" for yes. 
+```{r, echo = FALSE}
+head(clint_L2_curated, n = 3) %>% 
+  kable(caption = "Included Level 2 data") %>% 
+  scroll_box(width = "100%")
+```
+
+If not, the column contains the reason for exclusion such as "Unknown Conc." or "Wrong Mix" in our example. Note that the reasons for exclusion are not limited to these options, they were merely provided as an example. 
+```{r, echo = FALSE}
+head(filter(clint_L2_curated, Verified != "Y"), n = 3) %>% 
+  kable(caption = "Excluded Level 2 data") %>% 
+  scroll_box(width = "100%")
+```
+
+## Level 3 processing
+
+`calc_clint_point` is the Level 3 function used to calculate the cl~int~ point estimate using a Frequentist framework. Using the `mle` estimator function in the `stats4` package, we can estimate the cl~int~ values that maximize the log likelihood for each chemical.
 ```{r L3 processing}
-clint_L3 <- calc_clint_point(FILENAME = "Clint_vignette",
-                             data.in = clint_L2_temp)
+clint_L3_curated <- calc_clint_point(FILENAME = "Clint_vignette",
+                             data.in = clint_L2_curated,
+                             # don't return output .tsv file
+                             output.res = FALSE)
 ```
 
-Next, we perform Level 4 processing. Level 4 calculates the clint point estimate using a Bayesian framework. Therefore, monte carlo markov chains are used to simulate randomness and random sampling. 
+By default, the cl~int~ point estimates are returned to the user both in the R session and in an exported .tsv file. We have again omitted exporting the .tsv file with `output.res = FALSE`. Our Level 3 data contains a cl~int~ estimate, p-value, AIC of the linear regression, and AIC of the linear regression assuming a constant rate of decay. 
+```{r, echo = FALSE}
+# Returned data frame in R session
+head(clint_L3_curated, n = 3) %>% 
+  kable(caption = "Level 3 data") %>% 
+  scroll_box(width = "100%")
+```
 
-To run Level 4, you need to have JAGS installed on your machine. To determine where the correct path is, run 
+## Level 4 processing
+
+`calc_clint` is the Level 4 function used to calculate cl~int~ point estimates and credible intervals using a Bayesian framework. Markov chain Monte Carlo (MCMC) simulations are used to randomly sample from the posterior distribution with a uniform prior. 
+
+To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must run
 ```{r}
 runjags::findjags()
 ```
 
 and include the path up through "/x64". 
 
-Lastly, pass all the relevant information in and you can calculate the Bayesian estimates. 
-```{r L4 Processing}
-clint_L4 <- calc_clint(FILENAME = "Clint_vignette",
-                       data.in = clint_L2_temp, 
+We pass `clint_L2_curated`, the Level 2 data frame, and **not** `clint_L3_curated`, the Level 3 data frame, into `calc_clint`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
+```{r L4 Processing, message= FALSE}
+clint_L4_curated <- calc_clint(FILENAME = "Clint_vignette",
+                       data.in = clint_L2_curated, 
                        JAGS.PATH = "C:/Program Files/JAGS/JAGS-4.3.1/x64"
                        )
 ```
-
+The cl~int~ intervals are returned to the user's R session, in an exported .tsv file, and in an exported .RData file. There is no parameter to prevent the .tsv or .RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a cl~int~ credible interval and the corresponding p-value for each chemical.
+```{r, echo = FALSE}
+# Returned data frame in R session 
+head(clint_L4_curated[["Results"]], n = 3) %>% 
+  kable(caption = "Level 4 Data") %>% 
+  scroll_box(width = "100%")
+```
