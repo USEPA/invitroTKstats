@@ -193,7 +193,7 @@ calc_caco2_point <- function(
         # Calculate C0
         # only can handle one dilution factor right now:
         if (length(unique(this.dosing$Dilution.Factor))>1){
-          stop("calc_caco2_point - There is more than one `Dilution.Factor` for `D0` samples of `",this.chem,"` in direction ",this.direction,"."))
+          stop("calc_caco2_point - There is more than one `Dilution.Factor` for `D0` samples of `",this.chem,"` in direction ",this.direction,".")
           # browser()
         } 
         this.row[paste("C0",dir.string,sep="_")] <- max(0,

@@ -17,6 +17,8 @@
 #'                 the relevant chemical identifier.
 #' @param istd (\emph{character vector}) Vector of character strings with the
 #'             internal standard.
+#' @param col.names.loc (\emph{numeric vector}) Numeric vector containing the 
+#'                      row locations of the column names.
 #' @param sample (\emph{character vector}) Vector of character strings with
 #'               column names containing samples. 
 #' @param type (\emph{character vector}) Vector of character strings with column
@@ -46,24 +48,26 @@
 #' create_catalog(
 #'   file = "testME.xlsx",sheet = "3",skip.rows = 0,
 #'   date = "112723",compound = "80-05-7",
-#'   istd = "Chemical A",sample = "Sample.Name",type = "Type",
+#'   istd = "Chemical A", col.names.loc = 1, 
+#'   sample = "Sample.Name",type = "Type",
 #'   peak = "Response.Area",istd.peak = "ISTD.Peak.Area",
 #'   conc = "Intended.Concentration",analysis.param = "A,B,C"
 #' )
 #' 
 #' @export
 create_catalog <- function(
-    file,sheet,skip.rows,date,compound,istd,sample,
-    type,peak,istd.peak,conc,analysis.param,
+    file,sheet,skip.rows,date,compound,istd, col.names.loc,
+    sample,type,peak,istd.peak,conc,analysis.param,
     num.rows = NULL,
     additional.info = NULL){
-  
+
   data.check <- c(file = missing(file),
                   sheet = missing(sheet),
                   skip.rows = missing(skip.rows),
                   date = missing(date),
                   compound = missing(compound),
                   istd = missing(istd),
+                  col.names.loc = missing(col.names.loc),
                   sample = missing(sample),
                   type = missing(type),
                   peak = missing(peak),
@@ -82,12 +86,14 @@ create_catalog <- function(
                     date = length(date),
                     compound = length(compound),
                     istd = length(istd),
+                    col.names.loc = length(col.names.loc),
                     sample = length(sample),
                     type = length(type),
                     peak = length(peak),
                     istd.peak = length(istd.peak),
                     conc = length(conc),
-                    analysis.param = length(analysis.param))
+                    analysis.param = length(analysis.param)
+                    )
   u.len.check <- unique(length.check)
   if(length(u.len.check) > 1 & !(1%in%u.len.check)|length(u.len.check) > 2){
     stop("The following columns have mis-matching lengths preventing data.frame creation:\n\t",
@@ -98,10 +104,12 @@ create_catalog <- function(
   # build the base catalog
   catalog <- cbind.data.frame(
     file,sheet,skip.rows,
-    date,compound,istd,sample,type,
-    peak,istd.peak,conc,analysis.param
+    date,compound,istd,col.names.loc,
+    sample,type,peak,istd.peak,conc,
+    analysis.param
   )
   colnames(catalog) <- std.catcols
+  
   
   # check if we need to add a column with the number of rows
   if(!is.null(num.rows)){

@@ -25,9 +25,9 @@ check_catalog <- function(catalog){
   
   ### Check Class of Standard Column Names ###
   # check if the standard catalog column names are the correct class
-  std.cols.char <- std.catcols[-which(std.catcols == "Skip.Rows")]
+  std.cols.char <- std.catcols[-which(std.catcols %in% c("Skip.Rows","Col.Names.Loc"))]
   if("Number.Data.Rows"%in%colnames(catalog)){
-    std.cols.num <- c(std.catcols[which(std.catcols == "Skip.Rows")],
+    std.cols.num <- c(std.catcols[which(std.catcols %in% c("Skip.Rows","Col.Names.Loc"))],
                       num.rows = "Number.Data.Rows")
   }else{
     std.cols.num <- std.catcols[which(std.catcols == "Skip.Rows")]
