@@ -61,9 +61,18 @@
 #' # enter them as one string, separate the variables with a vertical bar, "|", and do the same for 
 #' # values. 
 #' exclusion_criteria <- data.frame(
-#' Variables = c("DTXSID", "Date", "Compound.Name|Lab.Sample.Name"),
-#' Values = c("DTXSID00380798","21021", "Nonafluoropentanamide|Amide Hep120220 T0C2_020921"), 
-#' Message = c("Exclude all samples of this compound.","Exclude all samples from this date.", "These samples for this compound were contaminated.")
+#'   Variables = c(
+#'     "DTXSID","Date","Compound.Name|Lab.Sample.Name"
+#'   ),
+#'   Values = c(
+#'     "DTXSID00380798","21021",
+#'     "Nonafluoropentanamide|Amide Hep120220 T0C2_020921"
+#'   ),
+#'   Message = c(
+#'     "Exclude all samples of this compound.",
+#'     "Exclude all samples from this date.",
+#'     "These samples for this compound were contaminated."
+#'     )
 #' )
 #' 
 #' # Run the verification function.

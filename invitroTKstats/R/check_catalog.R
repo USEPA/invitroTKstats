@@ -5,7 +5,7 @@
 #' 
 #' @param catalog The catalog to be checked, format `data.frame`.
 #' 
-#' @example
+#' @examplesIf interactive()
 #' check_catalog(catalog = data.guide) # note the data.guide is not currently in `invitroTKstats`
 #' 
 #' @export

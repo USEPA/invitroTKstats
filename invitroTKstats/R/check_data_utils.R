@@ -2,6 +2,8 @@
 #' @param data Data frame to check.
 #' @param std.colnames Vector of character strings with standard column names
 #'                     to check for in the data.
+#' @param data.name Name of the data object passed to the standard column names
+#'                  check function. (Defaults to NULL.)                     
 .check_std_colnames_in_data <- function(data,std.colnames,data.name = NULL){
   # check if the standard catalog column names are in the catalog
   if(!all(std.colnames%in%colnames(data))){

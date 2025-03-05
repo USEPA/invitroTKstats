@@ -79,10 +79,12 @@
 #' ## Load example level-2 data
 #' level2 <- invitroTKstats::caco2_L2
 #' 
+#' \dontrun{
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table
 #' level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
-#'
+#' }
+#' 
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
 #' \dontrun{
