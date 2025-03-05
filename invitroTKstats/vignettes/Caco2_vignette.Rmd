@@ -1,0 +1,108 @@
+---
+title: "Caco2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Caco2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE
+)
+```
+
+## Introduction 
+
+This vignette guides users on how to estimate apparent membrane permeability (P~app~) from Caco-2 data. Apparent membrane permeability is a chemical specific parameter that describes the general transport of the chemical through a membrane (Honda et al. 2024). 
+
+### Suggested packages for use with this vignette 
+```{r setup, message = FALSE}
+# Primary package 
+library(invitroTKstats)
+# Data manipulation and plotting packages 
+library(dplyr)
+library(kableExtra)
+
+```
+
+## Load Data 
+
+First, we load in the example dataset from invitroTKstats. 
+```{r Load example data}
+# Load example caco2 data 
+data("Caco2-example")
+```
+
+Three datasets are loaded in: `caco2_L0`, `caco2_L1`, and `caco2_L2`. These datasets are Caco-2 data at Level 0, 1, and 2 respectively. For the purpose of this vignette, we'll start with `caco2_L0`, displayed below, to demonstrate the complete pipelining process. Further, the `caco2_L0` data has already been processed with the `merge_level0` function. For more details on curating raw data to Level 0 data, see "Creating dataguide from raw data vignette".
+
+```{r, echo = FALSE}
+# Level 0 data 
+head(caco2_L0, n = 3) %>% 
+  kable(caption = "Level 0 data") %>% 
+  scroll_box(width = "100%")
+```
+
+Level 0 data can be described as the initial transformation from the raw data to a more standardized data frame with exactly one row per tested chemical. Information that is specific to each chemical such as the volumes of the experimental receiver and donor wells, the initial concentrations, and the mass spectrometry peak areas on the receiver side are included.  
+
+## Level 1 processing
+
+To transform our chemical specific information into a standardized data frame that includes more assay specific information, we must undergo Level 1 processing using `format_caco2`. This function ensures all required columns are provided and then standardizes the column names.  
+
+
+
+If the Level 0 data already contains the required column, then the existing column name can be specified. For example, `caco2_L0` already contains a column specifying the sample name called "Sample". However, the default column name for sample name is "Lab.Sample.Name". Therefore, we specify the correct column with `sample.col = "Sample"`. In general, to specify an already existing column that differs from the default, the user must use the parameter with the `.col` suffix. 
+
+If the Level 0 data does not already contain the required column, then the column can be populated with a single value. For example, `caco2_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the  parameter without the `.col` suffix. 
+
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specified as single entry is not permitted: `sample.col`, `lab.compound.col`, `date.col`, `compound.col`, `area.col`, `istd.col`, `type.col`, `direction.col`, `receiver.vol.col`, `donor.vol.col`, and `note.col`, 
+
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `membrane.area.col` or `membrane.area`, `compound.conc.col` or `compound.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `nominal.test.conc.col` or `nominal.test.conc`, `biological.replicates.col` or `biological.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`.
+
+We will also set `output.res = FALSE` so that the .tsv file is not saved to our current working directory. 
+```{r L1 processing}
+# Manually add note column
+caco2_L0_curated <- caco2_L0 %>% 
+  mutate(Note = "")
+
+caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
+                                 data.in = caco2_L0_curated,
+                                 # columns present in L0 data 
+                                 sample.col = "Sample",
+                                 lab.compound.col = "Lab.Compound.ID",
+                                 compound.col = "Compound",
+                                 area.col = "Peak.Area",
+                                 istd.col = "ISTD.Peak.Area",
+                                 compound.conc.col = "Compound.Conc",
+                                 analysis.method.col = "Analysis.Params",
+                                 # columns not present in L0 data
+                                 biological.replicates = 1,
+                                 membrane.area = 0.11,
+                                 cal = 1,
+                                 time = 2, 
+                                 istd.conc = 1,
+                                 nominal.test.conc = 10,
+                                 analysis.instrument = "Agilent.GCMS",
+                                 analysis.parameters = "Unknown",
+                                 # don't return output .tsv file
+                                 output.res = FALSE
+                                 )
+```
+
+Our Level 1 data is nicely formatted and contains all of the information we provided in `format_caco2`
+```{r, echo = FALSE}
+head(caco2_L1_curated, n = 3) %>% 
+  kable(caption = "Level 1 data") %>% 
+  scroll_box(width = "100%")
+```
+
+
+
+
+
+
+
+
+
+
