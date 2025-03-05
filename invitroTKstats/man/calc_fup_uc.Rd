@@ -14,6 +14,7 @@ calc_fup_uc(
   good.col = "Verified",
   JAGS.PATH = NA,
   save.MCMC = FALSE,
+  sig.figs = 3,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -49,6 +50,11 @@ verified, data rows valid for analysis are indicated with a "Y".
 
 \item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
 as an .RData file. (Defaults to \code{FALSE}.)}
+
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported unverified data (Level-2). 
+The exported result table (Level-4) is left unrounded for reproducibility.
+(Note: console print statements are also rounded to specified significant figures.)
+(Defaults to \code{3}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
 If \code{NULL}, looking for the input level-2 file in the current working
