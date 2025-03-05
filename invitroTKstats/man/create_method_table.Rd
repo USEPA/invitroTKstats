@@ -55,8 +55,10 @@ and internal standards used for each chemical-method pair.
 \examples{
 library(invitroTKstats)
 
+\dontrun{
 create_method_table(smeltz2020)
 create_method_table(kreutz2020,compound.col="Name")
+}
 
 }
 \author{

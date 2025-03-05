@@ -299,6 +299,7 @@ Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
 library(invitroTKstats)
+\dontrun{
 level0 <- TO1caco2
 level1 <- format_caco2(level0,
                        FILENAME="EPACyprotex2021",
@@ -315,6 +316,7 @@ level1 <- format_caco2(level0,
                        analysis.instrument="GC or LC",
                        analysis.method="Mass Spec"
                       )
+}
 
 }
 \references{

@@ -41,12 +41,14 @@ by the laboratory.
 \examples{
 
 library(invitroTKstats)
-
+\dontrun{
 # Smeltz et al. (2020) data:
 create_chem_table(smeltz2020)
-
+}
+\dontrun{
 # Kreutz et al. (2020) data:
 create_chem_table(kreutz2020,compound.col="Name")
+}
 
 }
 \author{
