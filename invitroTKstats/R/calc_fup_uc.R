@@ -122,6 +122,11 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2). 
+#' The exported result table (Level-4) is left unrounded for reproducibility.
+#' (Note: console print statements are also rounded to specified significant figures.)
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -192,6 +197,7 @@ calc_fup_uc <- function(
   good.col="Verified",
   JAGS.PATH = NA,
   save.MCMC = FALSE,
+  sig.figs = 3, 
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
   )
@@ -243,6 +249,13 @@ calc_fup_uc <- function(
   
   # Only used verified data:
   unverified.data <- subset(PPB.data, PPB.data[,good.col] != "Y")
+  # Round unverified data 
+  if (!is.null(sig.figs)){
+    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs)
+    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs)
+    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs)
+    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs, " significant figures.\n"))
+  }
   write.table(unverified.data, file=paste0(
     FILENAME,"-fup-UC-Level2-heldout.tsv"),
     sep="\t",
@@ -369,7 +382,7 @@ calc_fup_uc <- function(
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
-        results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
+        results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
     
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
         colnames(new.results) <- c("Compound","DTXSID","Lab.Compound.Name")
@@ -385,11 +398,25 @@ calc_fup_uc <- function(
           "Fup.Med",
           "Fup.Low",
           "Fup.High")
-        new.results[,"Fup.point"] <- signif(mean(AF.data[,"Response"] *
+        new.results[,"Fup.point"] <- mean(AF.data[,"Response"] *
           AF.data[,"Dilution.Factor"]) / mean(T5.data[,"Response"] *
-          T5.data[,"Dilution.Factor"]),3)
+          T5.data[,"Dilution.Factor"])
         rownames(new.results) <- this.compound
     
+        # round results and new.results for printing
+        rounded.results <- results
+        rounded.new.results <- new.results 
+        
+        if (!is.null(sig.figs)){
+          for (this.col in 1:ncol(rounded.results)){
+            rounded.results[,this.col] <- signif(rounded.results[,this.col], sig.figs)
+          }
+          round.cols <- colnames(rounded.new.results)[!colnames(rounded.new.results) %in% c("Compound","DTXSID","Lab.Compound.Name")]
+          for (this.col in round.cols){
+            rounded.new.results[,this.col] <- signif(rounded.new.results[,this.col], sig.figs)
+          }
+        }
+        
         print(paste("Final results for ",
           this.compound,
           " (",
@@ -398,8 +425,8 @@ calc_fup_uc <- function(
           length(unique(MS.data[,compound.col])),
           ")",
           sep=""))       
-        print(results)
-        print(new.results)
+        print(rounded.results)
+        print(rounded.new.results)
     
         Results <- rbind(Results,new.results)
     
@@ -429,8 +456,8 @@ calc_fup_uc <- function(
       file.path <- INPUT.DIR
       } else {
         file.path <- getwd()
-        }
-  
+      }
+
   save(Results,
     file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData"))
   cat(paste0("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 

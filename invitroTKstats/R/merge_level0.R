@@ -18,6 +18,7 @@
 #'   Date \tab The date the measurements were made\cr
 #'   Chemical.ID \tab The laboratory chemical identity\cr
 #'   ISTD \tab The internal standard used\cr
+#'   Col.Names.Loc \tab The row locations of the column names\cr
 #'   Sample.ColName \tab The column name on the sheet that contains sample identity\cr
 #'   Type.ColName \tab The column name on the sheet that contains the type of sample\cr
 #'   Peak.ColName \tab The column name on the sheet that contains the analyte MS peak area \cr
@@ -75,6 +76,13 @@
 #' 
 #' @param istd.col (Character) Column name of input.data (level0?) indicating the
 #' MS peak area for the internal standard. (Defaults to "ISTD")
+#' 
+#' @param col.names.loc (Numeric) Row location of data column names. (Defaults to 
+#' 'NULL'.) (Note: Single entry only, use only if all files have column names 
+#' in the same row location, typically the first row.)
+#' 
+#' @param col.names.loc.col (Character) Catalog column name containing `col.names.loc`
+#' information. (Defaults to "Col.Names.Loc")
 #' 
 #' @param sample.colname (Character) Column name of level 0 data containing
 #' sample information. (Defaults to `NULL`.) (Note: Single entry only, use only
@@ -183,6 +191,8 @@ merge_level0 <- function(FILENAME="MYDATA",
   date.col="Date",
   compound.col="Chemical.ID",
   istd.col="ISTD",
+  col.names.loc=NULL,
+  col.names.loc.col="Col.Names.Loc",
   sample.colname=NULL,
   sample.colname.col="Sample.ColName",
   type.colname=NULL,
@@ -215,6 +225,7 @@ merge_level0 <- function(FILENAME="MYDATA",
   if (!is.null(skip.rows)) level0.catalog[,skip.rows.col] <- skip.rows
   if (!is.null(num.rows)) level0.catalog[,num.rows.col] <- num.rows
   if (!is.null(date)) level0.catalog[,date.col] <- date
+  if (!is.null(col.names.loc)) level0.catalog[,col.names.loc.col] <- col.names.loc
   if (!is.null(sample.colname)) level0.catalog[,sample.colname.col] <- 
     sample.colname
   if (!is.null(type.colname)) level0.catalog[,type.colname.col] <- 
@@ -236,6 +247,7 @@ merge_level0 <- function(FILENAME="MYDATA",
     date.col,
     compound.col,
     istd.col,
+    col.names.loc.col,
     sample.colname.col,
     type.colname.col,
     peak.colname.col,
@@ -265,6 +277,7 @@ merge_level0 <- function(FILENAME="MYDATA",
   date.col <- "Date"
   compound.col <- "Chemical.ID"
   istd.col <- "ISTD.Name"
+  col.names.loc.col <- "Col.Names.Loc"
   sample.colname.col <- "Sample.ColName"
   type.colname.col <- "Type.ColName"
   peak.colname.col <- "Peak.ColName"
@@ -279,6 +292,7 @@ merge_level0 <- function(FILENAME="MYDATA",
     date.col,
     compound.col,
     istd.col,
+    col.names.loc.col,
     sample.colname.col,
     type.colname.col,
     peak.colname.col,
@@ -313,14 +327,40 @@ merge_level0 <- function(FILENAME="MYDATA",
       this.dtxsid <- chem.ids[id.index, chem.dtxsid.col]
     }
     this.istd <- as.character(level0.catalog[this.row, "ISTD.Name"])
+    this.col.name.loc <- as.numeric(level0.catalog[this.row, "Col.Names.Loc"])
     this.sample.name.col <- as.character(level0.catalog[this.row, "Sample.ColName"])
     this.peak.col <- as.character(level0.catalog[this.row, "Peak.ColName"])
     this.istd.peak.col <- as.character(level0.catalog[this.row, "ISTD.Peak.ColName"])
     this.conc.col <- as.character(level0.catalog[this.row, "Conc.ColName"])
     this.type.col <- as.character(level0.catalog[this.row, "Type.ColName"])
     this.analysis.param.col <- as.character(level0.catalog[this.row, "AnalysisParam.ColName"])
+    
+    
+# Read the header row: 
+    this.header.row <- names(read_excel(paste0(INPUT.DIR,"/",this.file), sheet=this.sheet, range = cell_limits(c(this.col.name.loc,1),c(this.col.name.loc,NA))))
+
+    # Check header row has all required columns 
+    required.col.names <- c(this.sample.name.col, this.peak.col, this.istd.peak.col, this.conc.col, this.type.col, this.analysis.param.col)
+    if (!(all(required.col.names %in% this.header.row))) {
+      stop(paste("Columns not found in selected header row:",
+                 paste(required.col.names[!(required.col.names %in% this.header.row)], collapse=", ")))
+    }
+    # Check header row has all additional columns 
+    if (!is.null(additional.colname.cols))
+    {
+      # Required additional columns 
+      required.col.names <- NULL
+      for (this.col in additional.colname.cols){
+        required.col.names <- c(required.col.names, as.character(level0.catalog[this.row, this.col]))
+      }
+      if (!(all(required.col.names %in% this.header.row))){
+        stop(paste("Columns not found in selected header row:",
+                   paste(required.col.names[!(required.col.names %in% this.header.row)], collapse = ", ")))
+      }
+    }
+
 # Read the data:
-    this.data <- as.data.frame(read_excel(paste0(INPUT.DIR,"/",this.file), sheet=this.sheet, skip=this.skip))
+    this.data <- as.data.frame(read_excel(paste0(INPUT.DIR,"/",this.file), sheet=this.sheet, range = cell_limits(c(this.skip+1,1),c(NA,length(this.header.row))), col_names = this.header.row))
 # Trim the data if num.rows.col specified:
     if (!is.null(num.rows.col))
     {
@@ -364,7 +404,7 @@ merge_level0 <- function(FILENAME="MYDATA",
       print(paste("Columns needed:",paste(needed.columns,collapse=", ")))
       print(head(this.data))
       print(paste0("Missing columns: ",paste(needed.columns[!(needed.columns %in% colnames(this.data))],collapse=", ")))
-      browser()
+      # browser()
     }
     this.data <- reordered.data
     

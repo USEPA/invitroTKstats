@@ -49,6 +49,10 @@
 #' table (Level-3) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' (Note: console print statements are also rounded to specified significant figures.)
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -93,6 +97,7 @@ calc_fup_red_point <- function(
     data.in,
     good.col="Verified",
     output.res=TRUE, 
+    sig.figs = 3, 
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
 {
@@ -169,7 +174,10 @@ calc_fup_red_point <- function(
         plasma.blanks.na.chem <- c(plasma.blanks.na.chem, this.chem)
       } else {
         plasma.blank.mean <- mean(this.plasma.blank$Response)
-        if (length(unique(this.plasma.blank$Dilution.Factor))>1) browser()
+        if (length(unique(this.plasma.blank$Dilution.Factor))>1){
+          stop("calc_fup_red_point - Plasma.Blank samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+          # browser()
+        } 
         df.plasma.blank <- this.plasma.blank$Dilution.Factor[1]
       }
       
@@ -180,25 +188,41 @@ calc_fup_red_point <- function(
         nonplasma.blanks.na.chem <- c(nonplasma.blanks.na.chem, this.chem)
       } else {
         noplasma.blank.mean <- mean(this.noplasma.blank$Response)
-        if (length(unique(this.noplasma.blank$Dilution.Factor))>1) browser()
+        if (length(unique(this.noplasma.blank$Dilution.Factor))>1){
+          stop("calc_fup_red_point - No.Plasma.Blank samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+          # browser()
+        } 
         df.noplasma.blank <- this.noplasma.blank$Dilution.Factor[1]
       }
       
       # Collect dilution factor for calculation
-      if (length(unique(this.pbs$Dilution.Factor))>1) browser()
+      if (length(unique(this.pbs$Dilution.Factor))>1){
+        stop("calc_fup_red_point - PBS samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+        # browser()
+      } 
       df.pbs <- this.pbs$Dilution.Factor[1]
-      if (length(unique(this.plasma$Dilution.Factor))>1) browser()
+      if (length(unique(this.plasma$Dilution.Factor))>1){
+        stop("calc_fup_red_point - Plasma samples for `",this.chem,"` have more than one `Dilution.Factor`.")
+        # browser()
+      } 
       df.plasma <- this.plasma$Dilution.Factor[1]
       
       num.chem <- num.chem + 1
-      this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
-        df.noplasma.blank*noplasma.blank.mean)) /
-        (df.plasma*(mean(this.plasma$Response) -
-        df.plasma.blank*plasma.blank.mean)),4)
+      fup.est <- max(0,df.pbs*mean(this.pbs$Response) - df.noplasma.blank*noplasma.blank.mean) /
+        (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
+      this.row$Fup <- fup.est
       out.table <- rbind(out.table, this.row)
-      print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,3)))
+      if (!is.null(sig.figs)){
+        print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,sig.figs)))
+      } else {
+        # If sig.figs = NULL, no rounding
+        print(paste(this.row$Compound.Name,"f_up =",this.row$Fup))
+      }
       # If fup is NA something is wrong, stop and figure it out:
-      if(is.na(this.row$Fup)) browser()
+      if(is.na(this.row$Fup)){
+        stop("calc_fup_red_point - Fup value for `",this.chem,"` for the `All Data` Calibration is `NA`.")
+        # browser()
+      } 
       
       # If there are multiple measurement days, do separate calculations:
       if (length(unique(this.subset[,cal.col]))>1)
@@ -231,13 +255,16 @@ calc_fup_red_point <- function(
             } else {
               noplasma.blank.mean <- mean(this.noplasma.blank$Response)
             }
-            
-            this.row$Fup <- signif(max(0,df.pbs*(mean(this.pbs$Response) -
-              df.noplasma.blank*noplasma.blank.mean)) /
-              (df.plasma*(mean(this.plasma$Response) -
-              df.plasma.blank*plasma.blank.mean)),4)
+            fup.est <- max(0,df.pbs*mean(this.pbs$Response) - df.noplasma.blank*noplasma.blank.mean) /
+              (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
+            this.row$Fup <- fup.est
             out.table <- rbind(out.table, this.row)
-            print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,3)))
+            if (!is.null(sig.figs)){
+              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,sig.figs)))
+            } else {
+              # If sig.figs = NULL, no rounding  
+              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",this.row$Fup))
+            }
             num.cal <- num.cal + 1
           } else ignored.chem <- c(ignored.chem, paste(this.chem, "Calibration", this.calibration))
         }
@@ -260,15 +287,13 @@ calc_fup_red_point <- function(
   if (!is.null(out.table))
   {
     rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
-    out.table[,"Fup"] <- signif(as.numeric(out.table[,"Fup"]),3)
+    out.table[,"Fup"] <- as.numeric(out.table[,"Fup"])
     out.table <- as.data.frame(out.table)
     out.table$Fup <- as.numeric(out.table$Fup)
   }
 
   if (output.res) {
-    # Write out a "level 3" file (data organized into a standard format):
     # Determine the path for output
-    
     if (!is.null(OUTPUT.DIR)) {
       file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
@@ -276,7 +301,17 @@ calc_fup_red_point <- function(
     } else {
       file.path <- getwd()
     }
-    write.table(out.table,
+    
+    rounded.out.table <- out.table 
+    
+    # Round results to desired number of sig figs
+    if (!is.null(sig.figs)){
+      rounded.out.table[,"Fup"] <- signif(rounded.out.table[,"Fup"],sig.figs)
+      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+    }
+    
+    # Write out a "level 3" file (data organized into a standard format):
+    write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-fup-RED-Level3.tsv"),
                 sep="\t",
                 row.names=F,
