@@ -22,7 +22,7 @@
 #' Apparent membrane permeability (\eqn{P_{app}}) is calculated from MS responses as:
 #'
 #'
-#' \eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
+#' \eqn{P_{app} = \frac{dQ/dt}{c_0*A}}
 #'
 #' The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
 #'
@@ -67,6 +67,10 @@
 #'   dQdt_B2A \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
 #'   Papp_B2A \tab Apparent membrane permeability \tab 10^-6 cm/s\cr
 #'   Refflux \tab Efflux ratio \tab unitless\cr
+#'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
+#'   Frec_B2B.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
+#'   Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
 #' }
 #'
 #' @author John Wambaugh
@@ -108,20 +112,20 @@ calc_caco2_point <- function(
   # In order to calculate the parameter a chemical must have peak areas for each
   # of these measurements:
   req.types=c("Blank","D0","D2","R2")
-
+  
   if (!missing(data.in)) {
     input.table <- as.data.frame(data.in)
-    } else if (!is.null(INPUT.DIR)) {
-      input.table <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv"),
+  } else if (!is.null(INPUT.DIR)) {
+    input.table <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv"),
                             sep="\t",header=T)
-      } else {
-        input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
+  } else {
+    input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
                             sep="\t",header=T)
-        }
+  }
   
   input.table <- subset(input.table,!is.na(Compound.Name))
   input.table <- subset(input.table,!is.na(Response))
-
+  
   caco2.cols <- c(L1.common.cols, 
                   time.col = "Time",
                   direction.col="Direction",
@@ -142,15 +146,15 @@ calc_caco2_point <- function(
   {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")
     stop(paste("Missing columns named:",
-      paste(cols[!(cols%in%colnames(input.table))],collapse=", ")))
+               paste(cols[!(cols%in%colnames(input.table))],collapse=", ")))
   }
-
+  
   # Only include the data types used:
   input.table <- subset(input.table,input.table[,type.col] %in% req.types)
-
+  
   # Only used verfied data:
   input.table <- subset(input.table, input.table[,good.col] == "Y")
-
+  
   out.table <-NULL
   num.a2b <- 0
   num.b2a <- 0
@@ -160,26 +164,26 @@ calc_caco2_point <- function(
     this.subset <- subset(input.table, input.table[,compound.col]==this.chem)
     this.dtxsid <- this.subset$dtxsid[1]
     this.row <- cbind(this.subset[1,
-      c(compound.col, dtxsid.col, time.col, membrane.area.col)],
-      data.frame(Calibration="All Data",
-        C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN,
-        C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Refflux=NaN))
+                                  c(compound.col, dtxsid.col, time.col, membrane.area.col)],
+                      data.frame(Calibration="All Data",
+                                 C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN, Frec_A2B=NaN,
+                                 C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Frec_B2A=NaN, Refflux=NaN))
     for (this.direction in c("AtoB","BtoA"))
     {
       this.blank <- subset(this.subset, Sample.Type=="Blank" &
-        Direction==this.direction)
+                             Direction==this.direction)
       this.dosing <- subset(this.subset, Sample.Type=="D0" &
-        Direction==this.direction)
+                              Direction==this.direction)
       this.donor <- subset(this.subset,Sample.Type=="D2" &
-        Direction==this.direction)
+                             Direction==this.direction)
       this.receiver <- subset(this.subset,Sample.Type=="R2" &
-        Direction==this.direction)
-
-    # Check to make sure there are data for PBS and plasma:
+                                Direction==this.direction)
+      
+      # Check to make sure there are data for PBS and plasma:
       if (dim(this.blank)[1]> 0 &
-        dim(this.dosing)[1] > 0 &
-        dim(this.donor)[1] > 0 &
-        dim(this.receiver)[1] > 0)
+          dim(this.dosing)[1] > 0 &
+          dim(this.donor)[1] > 0 &
+          dim(this.receiver)[1] > 0)
       {
         if (this.direction == "AtoB")
         {
@@ -189,17 +193,17 @@ calc_caco2_point <- function(
           dir.string <- "B2A"
           num.b2a <- num.b2a+1
         }
-
+        
         # Calculate C0
         # only can handle one dilution factor right now:
         if (length(unique(this.dosing$Dilution.Factor))>1){
-          stop("calc_caco2_point - There is more than one `Dilution.Factor` for `D0` samples of `",this.chem,"` in direction ",this.direction,"."))
+          stop("calc_caco2_point - There is more than one `Dilution.Factor` for `D0` samples of `",this.chem,"` in direction ",this.direction,".")
           # browser()
         } 
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
-          unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
-          mean(this.blank$Response))) # [C0] = Peak area (RR) 
- 
+                                                        unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
+                                                                                               mean(this.blank$Response))) # [C0] = Peak area (RR) 
+        
         # Calculate dQ/dt
         # only can handle one dilution factor and one receiver volume right now:
         if (length(unique(this.receiver$Dilution.Factor))>1 | 
@@ -209,24 +213,37 @@ calc_caco2_point <- function(
           # browser()
         } 
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
-          unique(this.receiver$Dilution.Factor)*(
-            mean(this.receiver$Response) -
-            mean(this.blank$Response)) * # Peak area (RR)
-          unique(this.receiver$Vol.Receiver) / # cm^3
-          unique(this.receiver$Time) / 3600 #  1/h -> 1/s
-          ) # [dQdt] = Peak area (RR) * cm^3 / s 
-
-        # Calcualte Papp
+                                                          (unique(this.receiver$Dilution.Factor)*
+                                                             mean(this.receiver$Response) -
+                                                             mean(this.blank$Response)) * # Peak area (RR)
+                                                            unique(this.receiver$Vol.Receiver) / # cm^3
+                                                            unique(this.receiver$Time) / 3600 #  1/h -> 1/s
+        ) # [dQdt] = Peak area (RR) * cm^3 / s 
+        
+        # Calculate Papp
         this.row[paste("Papp",dir.string,sep="_")] <- max(0,
-          as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
-          as.numeric(this.row[paste("C0",dir.string,sep="_")]) / # Peak area (RR)
-          as.numeric(this.row["Membrane.Area"]) * # cm^ 2
-          1e6 # cm -> 10-6 cm 
-          ) # [Papp] = cm^2/s
-        }
+                                                          as.numeric(this.row[paste("dQdt",dir.string,sep="_")]) /  # Peak area (RR) * cm^3 / s 
+                                                            as.numeric(this.row[paste("C0",dir.string,sep="_")]) / # Peak area (RR)
+                                                            as.numeric(this.row["Membrane.Area"]) * # cm^ 2
+                                                            1e6 # cm -> 10-6 cm 
+        ) # [Papp] = cm^2/s
+        
+        #Calculate Recovery
+        if (length(unique(this.donor$Dilution.Factor))>1 |
+            length(unique(this.dosing$Dilution.Factor))>1 |
+            length(unique(this.receiver$Dilution.Factor))>1 |
+            length(unique(this.receiver$Vol.Receiver))>1) browser()
+        this.row[paste("Frec",dir.string,sep="_")] <- max(0,
+                                                          (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
+                                                                                                                                      length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
+                                                             (this.receiver$Response-rep(mean(this.blank$Response),
+                                                                                         length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
+                                                                                                                              (this.dosing$Response-rep(mean(this.blank$Response),
+                                                                                                                                                        length(this.dosing$Response)))))
       }
-
-      if (!is.nan(unlist(this.row["Papp_A2B"])) &
+    }
+    
+    if (!is.nan(unlist(this.row["Papp_A2B"])) &
         !is.nan(unlist(this.row["Papp_B2A"])))
       {
         num.efflux <- num.efflux + 1
@@ -242,7 +259,7 @@ calc_caco2_point <- function(
                     this.row$Refflux))
       }
   }
-
+  
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
   out.table[,"C0_A2B"] <- as.numeric(out.table[,"C0_A2B"])
   out.table[,"C0_B2A"] <- as.numeric(out.table[,"C0_B2A"])
@@ -252,7 +269,20 @@ calc_caco2_point <- function(
   out.table[,"Papp_B2A"] <- as.numeric(out.table[,"Papp_B2A"])
   out.table[,"Refflux"] <- as.numeric(out.table[,"Refflux"])
   out.table <- as.data.frame(out.table)
-
+  
+  # Create new columns to store recovery classification separately
+  out.table$Recovery_Class_A2B=NA
+  out.table$Recovery_Class_B2A=NA
+  
+  # Assign recovery classifications without changing Papp values
+  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec < 0.4] <- "Low Recovery"
+  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec > 2.0] <- "High Recovery"
+  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec < 0.4] <- "Low Recovery"
+  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec > 2.0] <- "High Recovery"
+  
+  # Calculate efflux ratio:
+  out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
+  
   if (output.res) {
     # Determine the path for output
     if (!is.null(OUTPUT.DIR)) {
@@ -286,14 +316,13 @@ calc_caco2_point <- function(
    
     # Print notification message stating where the file was output to
     cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
-                " has been exported to the following directory: ", file.path), "\n")
+               " has been exported to the following directory: ", file.path), "\n")
   }
-
+  
   print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))
   print(paste("Basal to apical permeability calculated for",num.b2a,"chemicals."))
   print(paste("Efflux ratio calculated for",num.efflux,"chemicals."))
-
+  
   return(out.table)
 }
-
 
