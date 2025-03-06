@@ -180,8 +180,7 @@ clint_L1_curated <- format_clint(FILENAME = "Clint_vignette",
                          cal = 1,
                          biological.replicates = 1,
                          # don't export output TSV file
-                         output.res = FALSE,
-                         save.bad.types = TRUE
+                         output.res = FALSE
                          )
 ```
 
