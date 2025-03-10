@@ -159,22 +159,12 @@ req_cols %>%
   theme_vanilla
 ```
 
-By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `outpur.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward. 
+By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward. 
 
 ```{r L1 processing}
 # Manually add note column
 caco2_L0_curated <- caco2_L0 %>% 
   mutate(Note = "")
-
-caco2_L0_curated[1, "Type"] <- "TEST" 
-
-
-data.out <- caco2_L0_curated
-type.col = "Type"
-
-req.types=c("Blank","D0","D2","R2")
-data.in <- subset(data.out,data.out[,type.col] %in% req.types)
-data.in.badtype <- subset(data.out,!(data.out[,type.col] %in% req.types))
 
 caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  data.in = caco2_L0_curated,
@@ -196,24 +186,109 @@ caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  analysis.instrument = "Agilent.GCMS",
                                  analysis.parameters = "Unknown",
                                  # don't export output TSV file
-                                 output.res = FALSE,
-                                 save.bad.types = TRUE
+                                 output.res = FALSE
                                  )
 ```
 
+All of our samples are successfully formatted and returned in `caco2_L1_curated`, the Level 1 data frame. Each sample had one of the following sample types: Blank with no chemical added (Blank), Dosing vehicle (C0) at target concentration (D0), Donor compartment at the end of the experiment (D2), or Receiver compartment at the end of the experiment (R2). If any of the samples did not have one of the appropriate sample types, it would be removed and reported to the user. If the user wanted to export the removed samples as a TSV, the user can set the parameter `save.bad.types = TRUE`.  
 
+The following table displays the first three samples of `caco2_L1_curated` with a non-Blank sample type. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration at the specified time and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}}*\textrm{ISTD Conc}$. 
 
-Our Level 1 data is nicely formatted and contains all of the information we provided in `format_caco2`
-```{r, eval = FALSE}
-head(caco2_L1_curated, n = 3) %>% 
-  kable(caption = "Level 1 data") %>% 
-  scroll_box(width = "100%")
+```{r, echo = FALSE}
+# Select non-Blank sample type to display Response col 
+caco2_L1_curated %>% 
+  filter(!Sample.Type %in% c("Blank", "CC")) %>% 
+head(n = 3) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(height = 200)
+      )
+  ) %>% 
+  set_caption("Table 3: Level 1 data", align_with_table = FALSE) %>% 
+  theme_vanilla
 ```
 
+## Level 2 processing 
 
+`sample_verification is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for P~app~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
 
+To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new P~app~ estimates. There is an open channel of communication between the user and the wet-lab scientists. 
 
+We will use the already processed Level 2 data frame, `caco2_L2`, to regenerate our exclusion data. Note, all of our samples are verified but we are explaining how to create an exclusion list for learning purposes. In general, the user would not have access to the exclusion information a priori.
 
+The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here, we are using the reasons listed in the `Verified` column in `caco2_L2`. 
+
+```{r L2 processing exclusion}
+# Use verification data from loaded in `caco2_L2` data frame 
+exclusion <- caco2_L2 %>% 
+  filter(Verified != "Y") %>% 
+  mutate("Variables" = "Lab.Sample.Name|DTXSID") %>% 
+  mutate("Values" = paste(Lab.Sample.Name, DTXSID, sep = "|")) %>% 
+  mutate("Message" = Verified)
+```
+
+```{r, echo = FALSE }
+exclusion %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(height = 200)
+      )
+  ) %>% 
+  set_caption("Table 4: Exclusion data", align_with_table = FALSE) %>% 
+  theme_vanilla
+```
+
+As expected, our exclusion data frame is empty because all of our samples are verified. If all of the user's samples are verified, they simply do not provide an `exclusion.info` data frame in `sample_verification`. 
+
+```{r}
+caco2_L2_curated <- sample_verification(FILENAME = "Caco2_vignette",
+                                        data.in = caco2_L1_curated,
+                                        assay = "Caco-2",
+                                        # don't export output TSV file
+                                        output.res = FALSE)
+```
+
+Our Level 2 data now contains a 'Verified' column. If the sample should be included, the column contains a "Y" for yes. If the sample should be excluded, the column contains the reason for exclusion. 
+
+The following table displays some rows of the Level 2 data. 
+
+```{r, echo = FALSE}
+caco2_L2_curated %>% 
+  head(n = 3) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(height = 200)
+      )
+  ) %>% 
+  set_caption("Table 5: Level 2 data", align_with_table = FALSE) %>% 
+  theme_vanilla
+```
+
+## Level 3 processing 
+
+`calc_caco2_point` is the Level 3 function used to calculate the P~app~ point estimate for each test compound. 
+
+Mathematically, P~app~ is the amount of compound transported per unit time and is defined as $\frac{dQ/dt}{c_0*A}$ where $dQ/dt$ is the rate of permeation, $c_0$ is the initial concentration in the donor compartment, and $A$ is the surface area of the cell monolayer. 
+
+First, the rate of permeation can be understood as the amount of compound passing through the monolayer per unit time. Therefore, it can be expressed as 
+$$c_{\textrm{receiver}}$$
+
+First, flux can be understood as the amount of compound passing through the monolayer with units of $\mu$mol/s  
+
+## References 
+
+Honda, Gregory S., et al. "Impact of gut permeability on estimation of oral bioavailability for chemicals in commerce and the environment." ALTEX-Alternatives to animal experimentation (2024).
+
+Hubatsch I, Ragnarsson EG, Artursson P (2007). “Determination of drug permeability and prediction of drug absorption in Caco-2 monolayers.” Nature protocols, 2(9), 2111–2119.
 
 
 
