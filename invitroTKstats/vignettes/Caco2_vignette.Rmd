@@ -55,7 +55,6 @@ head(caco2_L0, n = 3) %>%
   set_table_properties(
     opts_html = list(
       scroll = list(
-        height = 200
       )
       )
   ) %>% 
@@ -232,11 +231,12 @@ head(n = 3) %>%
   autofit() %>% 
   set_table_properties(
     opts_html = list(
-      scroll = list(height = 200)
+      scroll = list()
       )
   ) %>% 
   set_caption("Table 3: Level 1 data", align_with_table = FALSE) %>% 
-  theme_vanilla
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
 ```
 
 ## Level 2 processing 
@@ -265,11 +265,12 @@ exclusion %>%
   autofit() %>% 
   set_table_properties(
     opts_html = list(
-      scroll = list(height = 200)
+      scroll = list()
       )
   ) %>% 
   set_caption("Table 4: Exclusion data", align_with_table = FALSE) %>% 
-  theme_vanilla
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
 ```
 
 As expected, our exclusion data frame is empty because all of our samples are verified. If all of the user's samples are verified, they simply do not provide an `exclusion.info` data frame in `sample_verification`. 
@@ -294,11 +295,12 @@ caco2_L2_curated %>%
   autofit() %>% 
   set_table_properties(
     opts_html = list(
-      scroll = list(height = 200)
+      scroll = list()
       )
   ) %>% 
   set_caption("Table 5: Level 2 data", align_with_table = FALSE) %>% 
-  theme_vanilla
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
 ```
 
 ## Level 3 processing 
@@ -335,11 +337,12 @@ caco2_L3_curated %>%
   autofit() %>% 
   set_table_properties(
     opts_html = list(
-      scroll = list(height = 200)
+      scroll = list()
       )
   ) %>% 
   set_caption("Table 6: Level 3 data", align_with_table = FALSE) %>% 
-  theme_vanilla
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
 ```
 
 Our Level 3 data contains estimates for `C0`, `dQdt`, and `Papp` in both directions and a `Refflux` estimate. The Efflux ratio, or the ratio between the two apparent membrane permeabilities can be expressed as $R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$. 
@@ -353,8 +356,3 @@ Generally, data processing pipelines should include minimal to no manual coding.
 Honda, Gregory S., et al. "Impact of gut permeability on estimation of oral bioavailability for chemicals in commerce and the environment." ALTEX-Alternatives to animal experimentation (2024).
 
 Hubatsch I, Ragnarsson EG, Artursson P (2007). “Determination of drug permeability and prediction of drug absorption in Caco-2 monolayers.” Nature protocols, 2(9), 2111–2119.
-
-
-
-
-
