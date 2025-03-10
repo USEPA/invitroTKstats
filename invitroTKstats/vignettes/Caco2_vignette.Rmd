@@ -19,16 +19,17 @@ This vignette guides users on how to estimate apparent membrane permeability (P~
 
 The mass spectrometry data should be collected from a Caco-2 assay in which the test compound was added to either the apical or basolateral side of a confluent and differentiated Caco-2 cell monolayer as seen in Figure 1 (Honda et al. 2024). 
 
-```{r, echo = FALSE, out.width = "60%", fig.cap = "Fig 1: Cl~int~ experimental set up", fig.topcaption = TRUE, fig.align = "center"}
+```{r, echo = FALSE, out.width = "60%", fig.cap = "Fig 1: Caco-2 experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("Caco2_diagram.png")
 ```
 
 ### Suggested packages for use with this vignette 
-```{r setup, message = FALSE}
+```{r setup, message = FALSE, warning = FALSE}
 # Primary package 
 library(invitroTKstats)
-# Data manipulation and plotting packages 
+# Data manipulation package 
 library(dplyr)
+# Table formatting package
 library(flextable)
 ```
 
@@ -60,7 +61,8 @@ head(caco2_L0, n = 3) %>%
   ) %>% 
   set_caption(caption = "Table 1: Level 0 data",
               align_with_table = FALSE) %>% 
-  theme_vanilla
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
 ```
 
 ## Level 1 processing
@@ -69,7 +71,7 @@ head(caco2_L0, n = 3) %>%
 
 If the Level 0 data already contains the required column, then the existing column name can be specified. For example, `caco2_L0` already contains a column specifying the sample name called "Sample". However, the default column name for sample name is "Lab.Sample.Name". Therefore, we specify the correct column with `sample.col = "Sample"`. In general, to specify an already existing column that differs from the default, the user must use the parameter with the `.col` suffix. 
 
-If the Level 0 data does not already contain the required column, then the column can be populated with a single value. For example, `caco2_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the  parameter without the `.col` suffix.
+If the Level 0 data does not already contain the required column, then the column can be populated with a single value. For example, `caco2_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the parameter without the `.col` suffix.
 
 Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
 
@@ -80,8 +82,8 @@ The rest of the following columns may either be specified from the Level 0 data 
 ```{r required cols, echo = FALSE}
 # Create a table of required parameters for Level 1
 
-req_cols <- data.frame(matrix(nrow = 33, ncol = 4))
-vars <- c("Parameter", "Required in L0?", "Corresp. single-entry Parameter", "Descr.")
+req_cols <- data.frame(matrix(nrow = 34, ncol = 5))
+vars <- c("Parameter", "Default", "Required in L0?", "Corresp. single-entry Parameter", "Descr.")
 colnames(req_cols) <- vars
 
 # Parameter names 
@@ -90,8 +92,21 @@ parameters <- c("FILENAME", "data.in", "sample.col", "lab.compound.col", "dtxsid
                 "receiver.vol.col", "donor.vol.col", "compound.conc.col", "cal.col", "dilution.col",
                 "time.col", "istd.name.col", "istd.conc.col", "nominal.test.conc.col", "biological.replicates.col",
                 "technical.replicates.col", "analysis.method.col", "analysis.instrument.col", "analysis.parameters.col",
-                "note.col", "level0.file.col", "level0.sheet.col", "output.res", "save.bad.types", "INPUT.DIR", "OUTPUT.DIR")
+                "note.col", "level0.file.col", "level0.sheet.col", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR")
 req_cols[, "Parameter"] <- parameters
+
+# Default parameters 
+defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name",
+              "DTXSID", "Date", "Compound.Name", "Area", 
+              "ISTD.Area", "Type", "Direction", "Membrane.Area",
+              "Vol.Receiver", "Vol.Donor", "Nominal.Conc", 
+              "Cal", "Dilution.Factor", "Time", "ISTD.Name", 
+              "ISTD.Conc", "Test.Target.Conc",
+              "Biological.Replicates", "Technical.Replicates",
+              "Analysis.Method", "Analysis.Instrument", 
+              "Analysis.Parameters", "Note", "Level0.File",
+              "Level0.Sheet", "TRUE", "FALSE", "5", "NULL", "NULL")
+req_cols[, "Default"] <- defaults 
 
 # Parameter required in L0?
 req_cols <- req_cols %>% 
@@ -104,11 +119,11 @@ req_cols <- req_cols %>%
 
 # Corresponding single-entry parameter 
 req_cols <- req_cols %>% 
-  mutate("Corresp. single-entry Parameter" = ifelse(.data[[vars[[2]]]] == "N", 
+  mutate("Corresp. single-entry Parameter" = ifelse(.data[[vars[[3]]]] == "N", 
                                                     gsub(".col" ,"", Parameter), NA))
 
 # Brief description 
-description <- c("Output and/or input filename",
+description <- c("Output and input filename",
                  "Level 0 data frame", 
                  "Lab sample name", 
                  "Lab test compound name (abbr.)",
@@ -139,10 +154,10 @@ description <- c("Output and/or input filename",
                  "Raw data sheet name",
                  "Export restuls (TSV)?",
                  "Export bad data (TSV)?",
+                 "Number of sig figs",
                  "Input directory of Level 0 file",
                  "Export directory to save Level 1 files")
 req_cols[, "Descr."] <- description
-
 ```
 
 ```{r, echo = FALSE}
@@ -156,10 +171,11 @@ req_cols %>%
       )
   ) %>% 
   set_caption("Table 2: Level 1 parameters", align_with_table = FALSE) %>% 
-  theme_vanilla
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
 ```
 
-By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward. 
+By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward.
 
 ```{r L1 processing}
 # Manually add note column
@@ -188,11 +204,23 @@ caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  # don't export output TSV file
                                  output.res = FALSE
                                  )
+
+# Response = Peak.Area/ISTD.Area --> NaN when ISTD.Area = 0 
+# Replace the NaNs with 0 
+caco2_L1_curated <- caco2_L1_curated %>% 
+  mutate(Response = ifelse(is.nan(Response), 0, Response))
 ```
 
-All of our samples are successfully formatted and returned in `caco2_L1_curated`, the Level 1 data frame. Each sample had one of the following sample types: Blank with no chemical added (Blank), Dosing vehicle (C0) at target concentration (D0), Donor compartment at the end of the experiment (D2), or Receiver compartment at the end of the experiment (R2). If any of the samples did not have one of the appropriate sample types, it would be removed and reported to the user. If the user wanted to export the removed samples as a TSV, the user can set the parameter `save.bad.types = TRUE`.  
+All of our samples are successfully formatted and returned in `caco2_L1_curated`, the Level 1 data frame. Each sample has one of the following sample types
 
-The following table displays the first three samples of `caco2_L1_curated` with a non-Blank sample type. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration at the specified time and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}}*\textrm{ISTD Conc}$. 
+1. Blank with no chemical added (Blank)
+2. Dosing vehicle (C0) at target concentration (D0)
+3. Donor compartment at the end of the experiment (D2)
+4. Receiver compartment at the end of the experiment (R2)
+
+If any samples had a different sample type, they would have been removed and reported to the user. If the user wants to export the removed samples as a TSV, the user should set the parameter `save.bad.types = TRUE`.  
+
+The following table displays the first three samples of `caco2_L1_curated` with a non-Blank sample type. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration at the specified time and is calculated as $$\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}}*\textrm{ISTD Conc}$$.
 
 ```{r, echo = FALSE}
 # Select non-Blank sample type to display Response col 
@@ -213,7 +241,7 @@ head(n = 3) %>%
 
 ## Level 2 processing 
 
-`sample_verification is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for P~app~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
+`sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for P~app~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
 
 To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new P~app~ estimates. There is an open channel of communication between the user and the wet-lab scientists. 
 
@@ -277,12 +305,48 @@ caco2_L2_curated %>%
 
 `calc_caco2_point` is the Level 3 function used to calculate the P~app~ point estimate for each test compound. 
 
-Mathematically, P~app~ is the amount of compound transported per unit time and is defined as $\frac{dQ/dt}{c_0*A}$ where $dQ/dt$ is the rate of permeation, $c_0$ is the initial concentration in the donor compartment, and $A$ is the surface area of the cell monolayer. 
+Mathematically, P~app~ is the amount of compound transported per unit time and is defined as $$P_{app} = \frac{dQ/dt}{c_0*A}$$ where $dQ/dt$ is the rate of permeation, $c_0$ is the initial concentration in the donor compartment, and $A$ is the surface area of the cell monolayer. 
 
 First, the rate of permeation can be understood as the amount of compound passing through the monolayer per unit time. Therefore, it can be expressed as 
-$$c_{\textrm{receiver}}$$
+$$\frac{dQ}{dt} = \frac{c_{\textrm{receiver}}V_{\textrm{receiver}}}{\Delta t}$$ where $c_{\textrm{receiver}}$ is the concentration of the test compound in the receiver compartment, $V_{\textrm{receiver}}$ is the volume of the receiver compartment, and $\Delta t$ is the total elapsed time. This rate is a type of flux and therefore has units of $\mu \textrm{mol}/s$. The dimensional analysis is described below. 
+$$\left[\frac{dQ}{dt}\right] = \frac{[c_{\textrm{receiver}}][V_{\textrm{receiver}}]}{[\Delta t]} = \frac{[\mu \textrm{mol/L}][L]}{[s]} = \frac{[\mu \textrm{mol}]}{[s]} $$
 
-First, flux can be understood as the amount of compound passing through the monolayer with units of $\mu$mol/s  
+$c_{\textrm{receiver}}$ is defined as the mean R2 response multiplied by its dilution factor. To account for background noise, we also subtract the mean blank response. $V_{\textrm{receiver}}$ is defined by our `Vol.Receiver` column and $\Delta t$ is defined by our `Time` column. 
+
+$c_0$ is calculated similarly to $c_{\textrm{receiver}}$ but with the mean D0 response instead of R2 such that 
+
+$$c_0 = \textrm{dilution factor}_{D0} *( \overline{Response}_{D0} - \overline{Response}_{Blank})$$. 
+
+Lastly, $A$ is defined by our `Membrane.Area` column. 
+
+With this information, we can calculate P~app~ from the donor to the receiver compartments in the well. The user can switch the roles of donor and receiver and produce a second set of estimates for P~app~ in the opposite direction. The estimate directions are annotated according to Figure 1. 
+
+```{r}
+caco2_L3_curated <- calc_caco2_point(FILENAME = "Caco2_vignette",
+                                     data.in = caco2_L2_curated, 
+                                     # don't export output TSV file 
+                                     output.res = FALSE)
+```
+
+```{r, echo = FALSE}
+caco2_L3_curated %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(height = 200)
+      )
+  ) %>% 
+  set_caption("Table 6: Level 3 data", align_with_table = FALSE) %>% 
+  theme_vanilla
+```
+
+Our Level 3 data contains estimates for `C0`, `dQdt`, and `Papp` in both directions and a `Refflux` estimate. The Efflux ratio, or the ratio between the two apparent membrane permeabilities can be expressed as $R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$. 
+
+## Best Practices: Food for thought 
+
+Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
 
 ## References 
 
