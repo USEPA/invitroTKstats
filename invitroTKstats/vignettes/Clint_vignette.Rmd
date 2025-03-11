@@ -19,19 +19,19 @@ This vignette guides users on how to estimate intrinsic hepatic clearance (Cl~in
 
 The mass spectrometry data should be collected from an assay that uses cryopreserved hepatocyte suspension (Shibata et al. 2002) as seen in Figure 1. 
 
-```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: Cl~int~ experimental set up", fig.topcaption = TRUE, fig.align = "left"}
+```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: Cl~int~ experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("Clint_diagram.png")
 ```
 
 ### Suggested packages for use with this vignette 
 
-```{r setup, message = FALSE}
+```{r setup, message = FALSE, warning = FALSE}
 # Primary package 
 library(invitroTKstats)
-# Data manipulation and plotting packages 
+# Data manipulation package 
 library(dplyr)
-library(htmlTable)
-library(kableExtra)
+# Table formatting package 
+library(flextable)
 ```
 
 ## Load Data
@@ -50,13 +50,20 @@ Three datasets are loaded in: `clint_L0`, `clint_L1`, and `clint_L2`. These data
 The following table displays the first three rows of `clint_L0`, our Level 0 data.  
 
 ```{r, echo = FALSE, warning = FALSE}
-DT::datatable(head(clint_L0, n = 3),
-              rownames = FALSE, 
-              caption = htmltools::tags$caption( style = 'caption-side: top; text-align: left;',
-    'Table 1: Level 0 data'),
-              extensions = 'Scroller',
-              options = list(scrollX = TRUE,
-                             dom = "t" ) )
+head(clint_L0, n = 3) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 1: Level 0 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
 ## Level 1 processing
@@ -69,19 +76,19 @@ If the Level 0 data does not already contain the required column, then the entir
 
 Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specified as single entry is not permitted: `sample.col`, `compound.col`, `dtxsid.col`, `lab.compound.col`, `type.col`, `istd.col`, `area.col`, and `note.col`. 
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `compound.col`, `dtxsid.col`, `lab.compound.col`, `type.col`, `istd.col`, `area.col`, and `note.col`. 
 
 The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `date.col` or `date`, `density.col` or `density`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `test.conc.col` or `test.conc`, `clint.assay.conc.col` or `clint.assay.conc`, `biological.replicates.col` or `biological.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
 
 ```{r required cols, echo = FALSE}
 # Create table of required parameters for Level 1 
 
-req_cols = data.frame(matrix(nrow = 31, ncol = 4))
-vars <- c("Parameter", "Required in L0?", "Corresp. single-entry Parameter", "Descr.")
+req_cols = data.frame(matrix(nrow = 31, ncol = 5))
+vars <- c("Argument", "Default", "Required in L0?", "Corresp. single-entry Argument", "Descr.")
 colnames(req_cols) <- vars
 
-# Parameter names 
-parameters <- c("FILENAME", "data.in", "sample.col", "date.col", "compound.col",
+# Argument names 
+arguments <- c("FILENAME", "data.in", "sample.col", "date.col", "compound.col",
                 "dtxsid.col", "lab.compound.col", "type.col", "density.col", 
                 "cal.col", "dilution.col", "time.col", "istd.col", "istd.name.col", 
                 "istd.conc.col", "test.conc.col", "clint.assay.conc.col",
@@ -90,23 +97,33 @@ parameters <- c("FILENAME", "data.in", "sample.col", "date.col", "compound.col",
                 "analysis.parameters.col", "note.col", "level0.file.col", 
                 "level0.sheet.col", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR",
                 "OUTPUT.DIR")
-req_cols[,"Parameter"] <- parameters
+req_cols[,"Argument"] <- arguments
 
-# Parameter required in L0?
+# Default arguments 
+defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Date", "Compound.Name",
+              "DTXSID", "Lab.Compound.Name", "Sample.Type", "Hep.Density", 
+              "Cal", "Dilution.Factor", "Time", "ISTD.Area", "ISTD.Name", "ISTD.Conc", 
+              "Test.Compound.Conc", "Clint.Assay.Conc", "Area", 
+              "Biological.Replicates", "Technical.Replicates", "Analysis.Method", 
+              "Analysis.Instrument", "Analysis.Parameters", "Note", 
+              "Level0.File", "Level0.Sheet", "TRUE", "FALSE", 5, NA, NA)
+req_cols[,"Default"] <- defaults
+
+# Argument required in L0?
 req_cols <- req_cols %>% 
   mutate("Required in L0?" = case_when(
-    Parameter %in% c("sample.col","compound.col", "dtxsid.col", "lab.compound.col", "type.col", "istd.col", "area.col", "note.col") ~ "Y",
-    Parameter %in% c("FILENAME", "data.in", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A", 
+    Argument %in% c("sample.col","compound.col", "dtxsid.col", "lab.compound.col", "type.col", "istd.col", "area.col", "note.col") ~ "Y",
+    Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A", 
     .default = "N"
   ))
 
-# Corresponding single-entry parameter 
+# Corresponding single-entry Argument 
 req_cols <- req_cols %>% 
-  mutate("Corresp. single-entry Parameter" = ifelse(.data[[vars[[2]]]] == "N", gsub(".col","",Parameter),
+  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[[3]]]] == "N", gsub(".col","",Argument),
                 NA))
 
 # Brief description 
-description <- c("Output and/or input filename", 
+description <- c("Output and input filename", 
                  "Level 0 data frame", 
                  "Lab sample name",
                  "Lab measurement date",
@@ -144,16 +161,21 @@ req_cols[,"Descr."] <- description
 ```
 
 ```{r, echo = FALSE, warning = FALSE}
-DT::datatable(req_cols,
-              caption = htmltools::tags$caption( style = 'caption-side: top; text-align: left;',
-    'Table 2: Level 1 parameters'),
-    extensions = 'Scroller',
-    rownames = FALSE,
-    options = list(deferRender = TRUE,
-                   scroller = TRUE,
-                   scrollY = 200,
-                   dom = "t"
-                   ))
+req_cols %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        height = 200
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 2: Level 1 'format_clint' function arguments",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
 By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward.
@@ -184,7 +206,12 @@ clint_L1_curated <- format_clint(FILENAME = "Clint_vignette",
                          )
 ```
 
-We receive a warning message that some of our samples have been removed due to "inappropriate sample types". The removed samples include data that did not have one of the following sample types: Blank, Hepatocyte incubation concentration (Cvst), Inactivated Hepatocytes (Inactive), or Calibration Curve (CC). 
+We receive a warning message that some of our samples have been removed due to "inappropriate sample types". The removed samples include data that did not have one of the following sample types
+
+1. Blank with no chemical added (Blank)
+2. Hepatocyte incubation concentration (Cvst)
+3. Inactivated Hepatocytes (Inactive)
+4. Calibration Curve (CC)
 
 The following table displays some of the samples that were removed. These samples are annotated with a "QC" sample type indicating "Quality Control" and should therefore not be included in our analysis.
 
@@ -192,28 +219,77 @@ The following table displays some of the samples that were removed. These sample
 clint_L0 %>% 
   filter(Type == "QC") %>% 
   head(n = 5) %>% 
-  DT::datatable(caption = htmltools::tags$caption(style = 'caption-side: top; text-align: left;', 'Table 3: Subset of removed samples'),
-                rownames = FALSE,
-                extensions = 'Scroller',
-                options = list(deferRender = TRUE,
-                               scrollX = TRUE, 
-                               dom = 't'))
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        height = 200
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 3: Subset of removed samples",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
-To export the removed samples types as a TSV, the user can set the parameter `save.bad.types = TRUE`. For this example, we will not save the discarded sample types.  
+Users can verify that these samples are excluded by filtering their Level 1 data frame and ensuring no matches are found. One approach is given below.  
 
-The following table displays the first three rows of `clint_L1_curated`, our Level 1 data produced from `format_clint`. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration (when? at the end? at the beginning?) and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}}*\textrm{ISTD Conc}$. 
+```{r, eval = FALSE}
+# All the samples of an inappropriate sample type 
+excluded <- clint_L0 %>% 
+  filter(!Type %in% c("Blank", "Cvst", "Inactive", "CC"))
+
+# Exclude based on Sample and DTXSID
+X <-  c(excluded$Sample)
+names(X) <- paste(excluded$Sample, excluded$DTXSID, sep = "+")
+Y <- c(excluded$DTXSID)
+
+# Find samples in L1 data frame with matching sample name (X) and DTXSID (Y)
+matches <- as.data.frame(t(mapply(function(X,Y) 
+  {subset(clint_L1_curated, Lab.Sample.Name == X & DTXSID == Y)},
+       X, Y, USE.NAMES = T)))
+
+matches
+
+# Check that no matches were returned for each sample in `excluded`
+check <-  rep(1,nrow(matches))
+names(check) <- rownames(matches)
+for (name in rownames(matches)) {
+  # If no matches were found, each element of check should evaluate to 0
+  check[name] <- sum(sapply(c(1:ncol(matches)),
+                           function(X) {length(matches[1,X][[1]])}))
+}
+
+# Verify that each sample in `excluded` had no matches
+check 
+
+# If no matches, should evaluate to 0
+sum(check)
+```
+
+To export the removed samples types as a TSV, the user can set the parameter `save.bad.types = TRUE`. For this example, we will not save the discarded sample types.
+
+The following table displays the first three rows of `clint_L1_curated`, our Level 1 data produced from `format_clint`. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}}*\textrm{ISTD Conc}$ where $\textrm{Analyte Area}$ is defined by the `Area` column, $\textrm{ISTD Area}$ is defined by the `ISTD.Area` column, and $\textrm{ISTD Conc}$ is defined by the `ISTD.Conc` column. 
 
 ```{r, echo = FALSE, warning = FALSE}
-DT::datatable(head(clint_L1_curated, n = 3),
-              rownames = FALSE,
-              caption = htmltools::tags$caption( style = 'caption-side: top; text-align: left;',
-    'Table 4: Level 1 data'),
-    extensions = 'Scroller',
-    options = list(deferRender = TRUE,
-                   scrollX = TRUE,
-                   dom = "t"
-                   ))
+clint_L1_curated %>% 
+  head(n = 3) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 4: Level 1 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
 ## Level 2 processing
@@ -222,9 +298,9 @@ DT::datatable(head(clint_L1_curated, n = 3),
 
 To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new Cl~int~ estimates. There is an open channel of communication between the user and the wet-lab scientists.
 
-We will use the already processed Level 2 data frame, `clint_L2`, to regenerate our exclusion data. In general, the user would not have access to the exclusion information a priori. 
+We will use the already processed Level 2 data frame, `clint_L2`, to regenerate our exclusion data. In general, the user would not have access to the exclusion information *a priori*. 
 
-The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here, we are using the reasons listed in the `Verified` column in `clint_L2`.
+The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here, we are using the reasons listed in the `Verified` column in `clint_L2`. The user should refrain from using "|" in any of their descriptions to avoid conflicts with the `sample_verification` function. 
 
 ```{r L2 processing exclusion}
 # Use verification data from loaded in `clint_L2` data frame
@@ -237,16 +313,21 @@ exclusion <- clint_L2 %>%
 ```
 
 ```{r, echo = FALSE, warning = FALSE}
-DT::datatable(exclusion,
-              rownames = FALSE,
-              caption = htmltools::tags$caption( style = 'caption-side: top; text-align: left;',
-    'Table 5: Exclusion data frame'),
-    extensions = 'Scroller',
-    options = list(deferRender = TRUE,
-                   scroller = TRUE,
-                   scrollY = 200,
-                   dom = "t"
-                   ))
+exclusion %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        height = 200
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 5: Exclusion data frame",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
 ```{r L2 processing}
@@ -273,15 +354,20 @@ temp <- rbind(temp, df3)
 
 
 ```{r, echo = FALSE, warning = FALSE}
-DT::datatable(temp,
-              rownames = FALSE,
-              caption = htmltools::tags$caption( style = 'caption-side: top; text-align: left;',
-    'Table 6: Level 2 data'),
-    extensions = 'Scroller',
-    options = list(deferRender = TRUE,
-                   scrollX = TRUE,
-                   dom = "t"
-                   ))
+temp %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 6: Level 2 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
 ## Level 3 processing
@@ -290,13 +376,13 @@ DT::datatable(temp,
 
 Mathematically, Cl~int~ is the slope of the line representing log concentrations over time. With some assumptions on the form of the line and on the distribution of the error terms, we can estimate Cl~int~ using maximum likelihood estimation.  
 
-First, we assume the test compound concentration at time $t$ is an exponential decay model $$C(t) = \textrm{cal}*C_0*e^{-mt}$$ where $\textrm{cal}$ is the MS calibration, $C_0$ is the test compound concentration at time 0, $m$ is the rate constant, and $t$ is the incubation time. Notice that if a natural log is applied, $$\textrm{ln}(C(t)) = -mt + \textrm{ln}(\textrm{cal}*C_0)$$ and $m$ is the slope of the line representing log concentrations over time. Thus, the rate constant $m$ is our Cl~int~ value. 
+First, we assume the test compound concentration at time $t$ is an exponential decay model $$C(t) = \textrm{cal}*C_0*e^{-mt}$$ where $\textrm{cal}$ is the MS calibration, $C_0$ is the test compound concentration at time 0, $m$ is the rate constant, and $t$ is the incubation time. Notice that if a natural log is applied, $$\textrm{ln}(C(t)) = -mt + \textrm{ln}(\textrm{cal}*C_0)$$ $m$ is the slope of the line representing log concentrations over time. Thus, the rate constant $m$ is our Cl~int~ value. 
 
 Next, we also assume the random noise is normally distributed $\varepsilon_i \sim \mathcal{N}(0,\sigma^2)$ where $\sigma^2$ is unknown. 
 
 Lastly, the test compound concentration, our dependent variable, is qualitatively defined by our `Response` column, the ratio of the analyte area to the ISTD area. 
 
-With this information, we can rewrite our dependent variable as $$y_i \sim \mathcal{N}(C(t),\sigma^2)$$ After some simplification, our log-likelihood is defined as $$l(\theta) = N*log\left(\frac{1}{\sqrt{2\pi}\sigma}\right)-\frac{1}{2}\sum_{i=1}^N\frac{(y_i-C(\theta, t))^2}{2\sigma^2}$$ where $\theta = (\textrm{cal}, m)$ and $N$ is the number of Cvst and Blank samples. 
+With this information, we can rewrite our dependent variable as $$y_i \sim \mathcal{N}(C(t),\sigma^2)$$ After some simplification, our log-likelihood is defined as $$l(\theta) = N*log\left(\frac{1}{\sqrt{2\pi}\sigma}\right)-\frac{1}{2}\sum_{i=1}^N\frac{(y_i-C(\theta, t))^2}{\sigma^2}$$ where $\theta = (\textrm{cal}, m)$ and $N$ is the number of Cvst and Blank samples. 
 
 Using the `mle` estimator in the `stats4` package, we then estimate the parameters that maximize the log-likelihood for each test compound. 
 
@@ -316,15 +402,20 @@ If these samples are included, `Clint.1` is the clearance rate at 1 $\mu M$, `Cl
 Because our example data did not include these samples, `Clint.1`, `Clint.10`, `AIC.Sat`, and `Sat.pValue` are empty. 
 
 ```{r, echo = FALSE}
-DT::datatable(clint_L3_curated,
-              rownames = FALSE,
-              caption = htmltools::tags$caption( style = 'caption-side: top; text-align: left;',
-    'Table 7: Level 3 data'),
-    extensions = 'Scroller',
-    options = list(deferRender = TRUE,
-                   scrollX = TRUE,
-                   dom = "t"
-                   ))
+clint_L3_curated %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 7: Level 3 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
 ## Level 4 processing
@@ -345,19 +436,30 @@ clint_L4_curated <- calc_clint(FILENAME = "Clint_vignette",
 
 The Cl~int~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a Cl~int~ credible interval and the corresponding p-value for each chemical.
 
-```{r}
-DT::datatable(clint_L4_curated[["Results"]],
-              rownames = FALSE,
-              caption = htmltools::tags$caption( style = 'caption-side: top; text-align: left;',
-    'Table 8: Level 4 data'),
-    extensions = 'Scroller',
-    options = list(deferRender = TRUE,
-                   scrollX = TRUE,
-                   dom = "t"
-                   ))
+```{r, echo = FALSE}
+clint_L4_curated[["Results"]] %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 8: Level 4 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
 
 ## Best Practices: Food for thought 
 
 Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
+
+## References 
+
+Breen, M., Ring, C. L., Kreutz, A., Goldsmith, M. R., & Wambaugh, J. F. (2021). High-throughput PBTK models for in vitro to in vivo extrapolation. Expert opinion on drug metabolism & toxicology, 17(8), 903-921.
+
+Shibata, Y., Takahashi, H., Chiba, M., & Ishii, Y. (2002). Prediction of hepatic clearance and availability by cryopreserved human hepatocytes: an application of serum incubation method. Drug Metabolism and disposition, 30(8), 892-896.
