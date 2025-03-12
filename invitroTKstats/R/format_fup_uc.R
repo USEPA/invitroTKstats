@@ -191,6 +191,9 @@
 #' due to inappropriate sample types. See the Detail section for the required sample types. 
 #' (Defaults to \code{FALSE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-1). 
+#' (Defaults to \code{5}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
 #' If \code{NULL}, looking for the input level-0 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -281,6 +284,7 @@ format_fup_uc <- function(
   level0.sheet.col="Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
+  sig.figs = 5, 
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
   )
@@ -394,7 +398,7 @@ format_fup_uc <- function(
       this.cal.subset <- subset(this.subset, Calibration==this.cal)
       if (any(is.na(this.cal.subset[,"ISTD.Area"])))
       {
-        this.mean.ISTD <- signif(mean(this.cal.subset$ISTD.Area,na.rm=TRUE))
+        this.mean.ISTD <- mean(this.cal.subset$ISTD.Area,na.rm=TRUE)
         which.indices <- data.out[,"DTXSID"] == this.chem &
           data.out[,"Calibration"] == this.cal &
           is.na(data.out[,"ISTD.Area"]) &
@@ -407,17 +411,24 @@ format_fup_uc <- function(
     }
   }
 
-  # Set reasonable sig figs:
-  for (this.col in c("Area", "ISTD.Area"))
-    data.out[,this.col] <- signif(data.out[,this.col], 5)
-
   # calculate the response:
-  data.out[,"Response"] <- signif(as.numeric(data.out[,"Area"]) /
-     as.numeric(data.out[,"ISTD.Area"]) * as.numeric(data.out[,"ISTD.Conc"]),4)
+  data.out[,"Response"] <- as.numeric(data.out[,"Area"]) /
+     as.numeric(data.out[,"ISTD.Area"]) * as.numeric(data.out[,"ISTD.Conc"])
 
   if (output.res) {
+    
+    rounded.data.out <- data.out 
+    
+    # Round results to desired number of sig figs 
+    if (!is.null(sig.figs)){
+      rounded.data.out[,"Area"] <- signif(rounded.data.out[,"Area"], sig.figs)
+      rounded.data.out[,"ISTD.Area"] <- signif(rounded.data.out[,"ISTD.Area"], sig.figs)
+      rounded.data.out[,"Response"] <- signif(rounded.data.out[,"Response"], sig.figs)
+      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+    }
+    
     # Write out a "level 1" file (data organized into a standard format):
-    write.table(data.out,
+    write.table(rounded.data.out,
                 file=paste0(file.path, "/", FILENAME,"-fup-UC-Level1.tsv"),
                 sep="\t",
                 row.names=F,

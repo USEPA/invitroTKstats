@@ -222,6 +222,9 @@
 #' due to inappropriate sample types. See the Detail section for the required sample types. 
 #' (Defaults to \code{FALSE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-1). 
+#' (Defaults to \code{5}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
 #' If \code{NULL}, looking for the input level-0 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -308,6 +311,7 @@ format_caco2 <- function(
   level0.sheet.col="Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
+  sig.figs = 5,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
   )
@@ -385,9 +389,9 @@ format_caco2 <- function(
 
   # Only include the data types used:
   req.types=c("Blank","D0","D2","R2")
-  data.out <- subset(data.out,data.out[,type.col] %in% req.types)
   data.in.badtype <- subset(data.out,!(data.out[,type.col] %in% req.types))
-  
+  data.out <- subset(data.out,data.out[,type.col] %in% req.types)
+
   # Option to export data with bad types
   if (nrow(data.in.badtype) != 0) {
     if (save.bad.types) {
@@ -410,15 +414,26 @@ format_caco2 <- function(
   colnames(data.out) <- caco2.cols
 
   # calculate the response:
-  data.out[,"Area"] <- signif(as.numeric(data.out[,"Area"]), 5)
-  data.out[,"ISTD.Area"] <- signif(as.numeric(data.out[,"ISTD.Area"]), 5)
+  data.out[,"Area"] <- as.numeric(data.out[,"Area"])
+  data.out[,"ISTD.Area"] <- as.numeric(data.out[,"ISTD.Area"])
   data.out[,"ISTD.Conc"] <- as.numeric(data.out[,"ISTD.Conc"])
-  data.out[,"Response"] <- signif(data.out[,"Area"] /
-                                    data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"], 4)
+  data.out[,"Response"] <- data.out[,"Area"] /
+                                    data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"]
   
   if (output.res) {
+  
+    rounded.data.out <- data.out 
+    
+    # Round results to desired number of sig figs
+    if (!is.null(sig.figs)){
+      rounded.data.out[,"Area"] <- signif(rounded.data.out[,"Area"], sig.figs)
+      rounded.data.out[,"ISTD.Area"] <- signif(rounded.data.out[,"ISTD.Area"], sig.figs)
+      rounded.data.out[,"Response"] <- signif(rounded.data.out[,"Response"], sig.figs)
+      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+    }
+    
     # Write out a "level 1" file (data organized into a standard format):
-    write.table(data.out,
+    write.table(rounded.data.out,
                 file=paste0(file.path, "/", FILENAME,"-Caco-2-Level1.tsv"),
                 sep="\t",
                 row.names=F,

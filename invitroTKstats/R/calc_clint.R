@@ -189,6 +189,11 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results 
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2).
+#' The exported result table (Level-4) is left unrounded for reproducibility.
+#' (Note: console print statements are also rounded to specified significant figures.)
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -258,6 +263,7 @@ calc_clint <- function(
   saturate.prob = 0.25,
   degrade.prob = 0.05,
   save.MCMC = FALSE,
+  sig.figs = 3, 
   INPUT.DIR=NULL, 
   OUTPUT.DIR = NULL
   )
@@ -308,6 +314,13 @@ calc_clint <- function(
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
+  # Round unverified data 
+  if (!is.null(sig.figs)){
+    unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs)
+    unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs)
+    unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs)
+    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs, " significant figures.\n"))
+  }
   write.table(unverified.data, file=paste0(
     FILENAME,"-Clint-Level2-heldout.tsv"),
     sep="\t",
@@ -411,7 +424,7 @@ calc_clint <- function(
                             'log.calibration',
                             'background'))
 
-  # We don't follow the measurment parameters for convergence becasue they
+  # We don't follow the measurement parameters for convergence because they
   # are discrete and the convergence diagnostics don't work:
         coda.out[[this.compound]] <-extend.jags(coda.out[[this.compound]],
                               drop.monitor = c(
@@ -430,7 +443,7 @@ calc_clint <- function(
 
         sim.mcmc <- coda.out[[this.compound]]$mcmc[[1]]
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
-        results <- apply(sim.mcmc,2,function(x) signif(quantile(x,c(0.025,0.5,0.975)),3))
+        results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
         results <- as.data.frame(results)
 
         # Convert disappareance rates (1/h)to
@@ -441,20 +454,16 @@ calc_clint <- function(
         if (1 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 1)
-          results[,"Clint.1"] <- signif(1000 *
-            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60, 3)
+          results[,"Clint.1"] <- 1000 *
+            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60
         } else results[,"Clint.1"] <- NA
         if (10 %in% mydata$Test.Nominal.Conc)
         {
           index <- which(mydata$Test.Nominal.Conc == 10)
-          results[,"Clint.10"] <- signif(1000 *
-            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60, 3)
+          results[,"Clint.10"] <- 1000 *
+            results[,paste("bio.slope[",index,"]",sep="")] / hep.density / 60
         } else results[,"Clint.10"] <- NA
-
-        # Round to 3 sig figs:
-        for (i in dim(results)[2])
-          results[,i] <- signif(results[,i],3)
-
+        
         # Create a row of formatted results:
         new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
         colnames(new.results) <- c(compound.col, dtxsid.col, lab.compound.col)
@@ -470,20 +479,34 @@ calc_clint <- function(
         }
 
         # Calculate a Clint "pvalue" from probability that we observed a decrease:
-        new.results[,"Clint.pValue"] <- signif(
-          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"Clint.pValue"] <- 
+          sum(sim.mcmc[,"decreases"]==0)/dim(sim.mcmc)[1]
 
         # Calculate a "pvalue" for saturation probability that we observed
         # a lower Clint at higher conc:
-        new.results[,"Sat.pValue"] <- signif(
-          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"Sat.pValue"] <- 
+          sum(sim.mcmc[,"saturates"]==0)/dim(sim.mcmc)[1]
 
         # Calculate a "pvalue" for abiotic degradation:
-        new.results[,"degrades.pValue"] <- signif(
-          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1], 3)
+        new.results[,"degrades.pValue"] <- 
+          sum(sim.mcmc[,"degrades"]==0)/dim(sim.mcmc)[1]
 
         rownames(new.results) <- this.compound
-
+        
+        # round results and new.results for printing
+        rounded.results <- results
+        rounded.new.results <- new.results 
+        
+        if (!is.null(sig.figs)){
+          for (this.col in 1:ncol(rounded.results)){
+            rounded.results[,this.col] <- signif(rounded.results[,this.col], sig.figs)
+          }
+          round.cols <- colnames(rounded.new.results)[!colnames(rounded.new.results) %in% c("Compound.Name","DTXSID","Lab.Compound.Name")]
+          for (this.col in round.cols){
+            rounded.new.results[,this.col] <- signif(rounded.new.results[,this.col], sig.figs)
+          }
+        }
+  
         print(paste("Final results for ",
           this.compound,
           " (",
@@ -492,11 +515,11 @@ calc_clint <- function(
           length(unique(MS.data[,compound.col])),
           ")",
           sep=""))
-        print(results)
-        print(new.results)
+        print(rounded.results)
+        print(rounded.new.results)
 
         Results <- rbind(Results,new.results)
-
+        
         write.table(Results,
           file=paste0(OUTPUT.FILE),
           sep="\t",

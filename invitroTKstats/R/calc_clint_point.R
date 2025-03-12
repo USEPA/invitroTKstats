@@ -35,6 +35,10 @@
 #' table (Level-3) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' (Note: console print statements are also rounded to specified significant figures.)
+#' (Defaults to \code{3}.)
+#' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-2 file exists. 
 #' If \code{NULL}, looking for the input level-2 file in the current working
 #' directory. (Defaults to \code{NULL}.)
@@ -81,6 +85,7 @@ calc_clint_point <- function(
     data.in,
     good.col="Verified", 
     output.res=TRUE, 
+    sig.figs = 3,
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
 {
@@ -276,14 +281,27 @@ calc_clint_point <- function(
             # browser()
           } 
         }
-        print(paste(
-          this.row$Compound.Name,
-          "Cl_int =",
-          signif(this.row$Clint,3),
-          "uL/min/million hepatocytes, p-Value =",
-          signif(this.row$Clint.pValue,3),
-          "."
+        if (!is.null(sig.figs)){
+          # Print results to desired sig.figs or default of 3  
+          print(paste(
+            this.row$Compound.Name,
+            "Cl_int =",
+            signif(this.row$Clint,sig.figs),
+            "uL/min/million hepatocytes, p-Value =",
+            signif(this.row$Clint.pValue,sig.figs),
+            "."
           ))
+        } else {
+          # If sig.figs = NULL
+          print(paste(
+            this.row$Compound.Name,
+            "Cl_int =",
+            this.row$Clint,
+            "uL/min/million hepatocytes, p-Value =",
+            this.row$Clint.pValue,
+            "."
+          ))
+        }
       } else {
         for (col in c("Fit","AIC","AIC.Null","Clint.1","Clint.10","AIC.Sat","Sat.pValue"))
           this.row[,col] <- NA
@@ -300,20 +318,18 @@ calc_clint_point <- function(
   rownames(out.table) <- make.names(out.table$Compound.Name, unique=TRUE)
   #out.table <- apply(out.table,2,unlist)
   out.table[!(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <-
-    signif(as.numeric(out.table[
-    !(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"]),3)
-  out.table[,"Clint.1"] <- signif(as.numeric(out.table[,"Clint.1"]),3)
-  out.table[,"Clint.10"] <- signif(as.numeric(out.table[,"Clint.10"]),3)
-  out.table[,"Clint.pValue"] <- signif(as.numeric(out.table[,"Clint.pValue"]),3)
-  out.table[,"AIC"] <- signif(as.numeric(out.table[,"AIC"]),3)
-  out.table[,"AIC.Null"] <- signif(as.numeric(out.table[,"AIC.Null"]),3)
-  out.table[,"AIC.Sat"] <- signif(as.numeric(out.table[,"AIC.Sat"]),3)
-  out.table[,"Sat.pValue"] <- signif(as.numeric(out.table[,"Sat.pValue"]),3)
+    as.numeric(out.table[
+    !(out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"])
+  out.table[,"Clint.1"] <- as.numeric(out.table[,"Clint.1"])
+  out.table[,"Clint.10"] <- as.numeric(out.table[,"Clint.10"])
+  out.table[,"Clint.pValue"] <- as.numeric(out.table[,"Clint.pValue"])
+  out.table[,"AIC"] <- as.numeric(out.table[,"AIC"])
+  out.table[,"AIC.Null"] <- as.numeric(out.table[,"AIC.Null"])
+  out.table[,"AIC.Sat"] <- as.numeric(out.table[,"AIC.Sat"])
+  out.table[,"Sat.pValue"] <- as.numeric(out.table[,"Sat.pValue"])
 
   if (output.res) {
-    # Write out a "level 3" file:
     # Determine the path for output
-    
     if (!is.null(OUTPUT.DIR)) {
       file.path <- OUTPUT.DIR
     } else if (!is.null(INPUT.DIR)) {
@@ -321,7 +337,26 @@ calc_clint_point <- function(
     } else {
       file.path <- getwd()
     }
-    write.table(out.table,
+    
+    rounded.out.table <- out.table
+    
+    # Round results to desired number of sig figs
+    if (!is.null(sig.figs)){
+      rounded.out.table[!(rounded.out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <-
+        signif(rounded.out.table[
+          !(rounded.out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"],sig.figs)
+      rounded.out.table[,"Clint.1"] <- signif(rounded.out.table[,"Clint.1"],sig.figs)
+      rounded.out.table[,"Clint.10"] <- signif(rounded.out.table[,"Clint.10"],sig.figs)
+      rounded.out.table[,"Clint.pValue"] <- signif(rounded.out.table[,"Clint.pValue"],sig.figs)
+      rounded.out.table[,"AIC"] <- signif(rounded.out.table[,"AIC"],sig.figs)
+      rounded.out.table[,"AIC.Null"] <- signif(rounded.out.table[,"AIC.Null"],sig.figs)
+      rounded.out.table[,"AIC.Sat"] <- signif(rounded.out.table[,"AIC.Sat"],sig.figs)
+      rounded.out.table[,"Sat.pValue"] <- signif(rounded.out.table[,"Sat.pValue"],sig.figs)
+      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+    }
+    
+    # Write out a "level 3" file:
+    write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-Clint-Level3.tsv"),
                 sep="\t",
                 row.names=F,
