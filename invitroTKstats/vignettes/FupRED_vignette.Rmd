@@ -1,0 +1,78 @@
+---
+title: "Fup RED"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Fup RED}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE
+)
+```
+
+## Introduction 
+
+This vignette guides users on how to estimate fraction unbound (f~u~) in plasma from mass spectrometry data using rapid equilibrium dialysis (RED). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma (Waters et al. 2008).
+
+The mass spectrometry data should be collected from an assay that uses rapid equilibrium dialysis as seen in Figure 1 (Waters et al. 2008). 
+
+```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: f~u~ RED experimental set up", fig.topcaption = TRUE, fig.align = "center"}
+knitr::include_graphics("fupRED_diagram.png")
+```
+
+### Suggested packages for use with this vignette
+
+```{r setup, message = FALSE, warning = FALSE}
+# Primary package
+library(invitroTKstats)
+# Data manipulation package
+library(dplyr)
+# Table formatting package 
+library(flextable)
+```
+
+## Load Data 
+
+First, we load in the example dataset from `invitroTKstats`. 
+
+```{r Load example data}
+# Load example fup RED data 
+data("fup-red-example")
+```
+
+Three datasets are loaded in: `fup_red_L0`, `fup_red_L1`, and `fup_red_L2`. These datasets are f~u~ data at Level 0, 1, and 2 respectively. For the purpose of this vignette, we'll start with `fup_red_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
+
+`fup_red_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see "Creating dataguide from raw data vignette". 
+
+The following table displays the first three rows of `fup_red_L0`, our Level 0 data. 
+
+```{r, echo = FALSE, warning = FALSE}
+head(fup_red_L0, n = 3) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        
+      )
+    )
+  ) %>% 
+  set_caption(caption = "Table 1: Level 0 data", 
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
+
+## Level 1 processing 
+
+`format_fup_red` is the Level 1 function used to create a standardized data frame. This level of processing is necessary because naming conventions or formatting can differ across data sets. 
+
+If the Level 0 data already contains the required column, then the existing column name can be specified. For example, `fup_red_L0` already contains a column specifying the sample name called "Sample". However, the 
+
+## References 
+
+Waters, N. J., Jones, R., Williams, G., & Sohal, B. (2008). Validation of a rapid equilibrium dialysis approach for the measurement of plasma protein binding. Journal of pharmaceutical sciences, 97(10), 4586-4595.
