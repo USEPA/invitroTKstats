@@ -201,8 +201,8 @@ calc_caco2_point <- function(
           # browser()
         } 
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
-                                                        unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
-                                                                                               mean(this.blank$Response))) # [C0] = Peak area (RR) 
+                                                        mean(this.dosing$Response * this.dosing$Dilution.Factor) -
+                                                        mean(this.blank$Response * this.blank$Dilution.Factor)) # [C0] = Peak area (RR) 
         
         # Calculate dQ/dt
         # only can handle one dilution factor and one receiver volume right now:
@@ -213,9 +213,8 @@ calc_caco2_point <- function(
           # browser()
         } 
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
-                                                          (unique(this.receiver$Dilution.Factor)*
-                                                             mean(this.receiver$Response) -
-                                                             mean(this.blank$Response)) * # Peak area (RR)
+                                                          (mean(this.receiver$Response * this.receiver$Dilution.Factor) -
+                                                             mean(this.blank$Response * this.blank$Dilution.Factor)) * # Peak area (RR)
                                                             unique(this.receiver$Vol.Receiver) / # cm^3
                                                             unique(this.receiver$Time) / 3600 #  1/h -> 1/s
         ) # [dQdt] = Peak area (RR) * cm^3 / s 
