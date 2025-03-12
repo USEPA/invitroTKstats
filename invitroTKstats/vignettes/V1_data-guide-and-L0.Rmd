@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 The `invitroTKstats` R package is designed to work as a data processing pipeline for *in vitro* assays collecting various physiological parameters used in high-throughput toxicokinetic (HTTK) modeling.  Mass spectrometry (MS) data used to estimate the various physiological parameters.
 
-Here, we discuss the first steps of the data processing pipeline, which include the data guide creation and level-0 (raw data) compilation.
+Here, we discuss the first steps of the data processing pipeline, which include the data guide creation and level-0 (raw data) compilation. *Note, these steps are meant to be consistent across the various assays that may be pipelined by this package, i.e. not assay specific.*
 
 ## Suggested packages for use with this vignette
 
@@ -35,23 +35,77 @@ library(stringr)
 
 The data catalog creation step can be thought of as a log of all the relevant raw data files for a given physiological parameter that we wish to pipeline.  It is a crucial part of the pipeline in that it allows us to identify where all of the raw datafiles are coming from and where we are pulling raw (Level-0) data from within those datasets.  This provides key meta-data information that can be used for evaluating data provenance.
 
-Though this `data.frame` may be created manually through an Excel file, the `invitroTKstats` package includes a function called `create_data_catalog` that will automatically generate and document the creation of the data catalog.  This allows for maximum reproducibility, transparency, and efficiency in compiling the necessary data guide.  Thus, it is a best practice to utilize this function for creating the data file.
+Though this `data.frame` may be created manually through an Excel file, the `invitroTKstats` package includes a function called `create_data_catalog` that will automatically generate and document the creation of the data catalog.  This allows for maximum reproducibility, transparency, and efficiency in compiling the necessary data guide/catalog.  Thus, it is a best practice to utilize this function for creating the data file.
+
+*NOTE: We will use data catalog and data guide interchangeably.*
 
 Below is an example of how to use this function
 
-```{r}
+```{r eval=FALSE}
+### DO NOT EVALUATE THIS CODE CHUNK ###
 # create a data catalog listing where Fup data is held
 DC <- create_catalog(
+  # file path(s) -> file name(s): "<file_path>/my_raw_MS_data_Clint_MMDDYYYY.xlsx"
   file = "<file_path>/my_raw_MS_data_Clint_MMDDYYYY.xlsx",
+  # sheet name/number
   sheet = c(rep(1,5),rep(2,5),rep(3,5)),
+  # number of rows in Excel file to skip
   skip.rows = rep(c(1,10,19,28,37),3),
-  num.rows = 8,date = "MMDDYYYY"
+  # number of rows to read in may be the same and/or different
+  num.rows = 8,
+  # date with 2-digt month, 2-digit day, and 4-digit year
+  date = "MMDDYYYY"
   )
 ```
 
-
-# Session Information
+We are going to construct a data guide for the Kruetz et al. (2023) PFAS Cl~int~ Data.
 
 ```{r}
-sessionInfo()
+DC_kreutz.pfas <- create_catalog(
+  # filename (no file path)
+  file = c(rep("Hep_745_949_959_082421_final.xlsx",3)), 
+  # sheet name (or sheet number)
+  sheet = c(rep("Data063021",3)), 
+  # number of rows to skip in L0 Excel file - start for compound/analyte samples
+  skip.rows = c(43,73,91), 
+  # number of rows to read in from L0 Excel file for compound/analyte samples
+  num.rows = c(30,17,109), 
+  # date the data was generated
+  #   (MMDDYYY: 2-digit month, 2-digit day, 4-digit year)
+  date = "06302021", 
+  # chemical id
+  compound = c("745","949","959"),
+  # internal standard compound (corresponding to chemical id)
+  istd = c("MFBET","MFHET","MFOET"),
+  # column name for sample names
+  sample = "Name", 
+  # column name for sample types
+  type = "Type",
+  # column name(s) for analyte MS peak areas
+  peak = c("Area...13","Area...20","Area...27"),
+  # column name(s) for internal standard MS peak areas
+  istd.peak = c("Resp....16","Resp....23","Resp....30"),
+  # column name(s) for experimental concentration
+  conc = c("Final Conc....11","Final Conc....11","Final Conc....11"),
+  # column name(s) with analysis parameters
+  analysis.param = c("Exp. Conc....10","Exp. Conc....17","Exp. Conc....24")
+  # note = "RT...12"
+)
 ```
+
+Show the constructed data guide/catalog for the Kreutz PFAS Cl~int~ data.
+
+```{r}
+DC_kreutz.pfas
+```
+
+# Merge Level-0 (L0) Data
+
+Now that we have a data guide we want to pull in all of the 'raw' level-0 data.
+
+**********RETURN HERE**********
+
+# Best Practices for Data Processing
+
+* The data catalog can be manually constructed as done in this markdown. This is the minimum expectation.  However, the best practice would be to create a wrapper function for your particular Mass-Spectrometry data to leverage the `create_catalog` function, but to auto-generate the input for this function programmatically (e.g. a lab-specific processing function).
+* Users may manually construct data catalogs in Excel files, this is not recommended but may occur in cases of working with legacy data (i.e. data processed prior to 2025).  In this scenario, it is recommended to use the `check_catalog` to ensure the data catalog meets the minimum meta-data reporting requirements to use `merge_level0`.
