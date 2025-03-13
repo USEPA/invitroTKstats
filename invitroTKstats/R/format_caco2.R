@@ -329,6 +329,13 @@ format_caco2 <- function(
                          sep="\t",header=T)
     }
   
+  # check if note.col = NULL
+  if (is.null(note.col)) 
+  {
+    data.out[, "Note"] <- ""
+    note.col <- "Note"
+  }
+  
   # determine the path for output files 
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR
