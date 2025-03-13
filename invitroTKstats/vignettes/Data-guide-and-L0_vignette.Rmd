@@ -16,9 +16,9 @@ knitr::opts_chunk$set(
 
 # Overview
 
-The `invitroTKstats` R package is designed to work as a data processing pipeline for *in vitro* assays collecting various physiological parameters used in high-throughput toxicokinetic (HTTK) modeling.  Mass spectrometry (MS) data used to estimate the various physiological parameters.
+The `invitroTKstats` R package is designed to work as a data processing pipeline for *in vitro* assays collecting various physiological parameters used in high-throughput toxicokinetic (HTTK) modeling.  This pipeline is meant to take mass spectrometry (MS) data to estimate the various physiological parameters.
 
-Here, we discuss the first steps of the data processing pipeline, which include the data guide creation and level-0 (raw data) compilation. *Note, these steps are meant to be consistent across the various assays that may be pipelined by this package, i.e. not assay specific.*
+Here, we discuss the first steps of the data processing pipeline, which include creating the data guide and compliation of level-0 (raw) data. *Note, these steps are meant to be consistent across the various assays that may be pipelined by this package, i.e. not assay specific.*
 
 ## Suggested packages for use with this vignette
 
@@ -37,7 +37,7 @@ The data catalog creation step can be thought of as a log of all the relevant ra
 
 Though this `data.frame` may be created manually through an Excel file, the `invitroTKstats` package includes a function called `create_data_catalog` that will automatically generate and document the creation of the data catalog.  This allows for maximum reproducibility, transparency, and efficiency in compiling the necessary data guide/catalog.  Thus, it is a best practice to utilize this function for creating the data file.
 
-*NOTE: We will use data catalog and data guide interchangeably.*
+*NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
 Below is an example of how to use this function
 
@@ -104,6 +104,54 @@ DC_kreutz.pfas
 Now that we have a data guide we want to pull in all of the 'raw' level-0 data.
 
 **********RETURN HERE**********
+
+```{r raw_data_path,echo=TRUE}
+raw_data_path <- "~/Git/invitrotkstats/working/KreutzPFAS"
+```
+
+```{r chem_id_table}
+# obtain the chemical identification mapping information from the MS-data
+#   cover sheet (i.e. raw data summary information)
+assay_cover_sheet <-
+  readxl::read_xlsx(
+    paste(raw_data_path,"Hep_745_949_959_082421_final.xlsx",sep = "/"),
+    sheet = "Cover Sheet",skip = 35,n_max = 4) %>% 
+  as.data.frame()
+
+# show the assay cover sheet
+assay_cover_sheet
+
+# create a chemical table necessary for the L0 compilation function, using the
+#   assay cover sheet chemical identification mapping information
+chem.ids <- create_chem_table(
+  # input table (data.frame class) with information
+  input.table = assay_cover_sheet,
+  # column name with DSSTox chemical ID's
+  dtxsid.col = "Analyte",
+  # column name with formal compound names
+  compound.col = "Name",
+  # column name with lab chemical ID's
+  lab.compound.col = "Sample ID"
+)
+
+# show the chemical ID mapping data
+chem.ids
+```
+
+```{r}
+kreutz.pfas_L0 <- merge_level0(
+  level0.catalog = DC_kreutz.pfas, # data catalog
+  INPUT.DIR = raw_data_path, # the path to your raw data files
+  istd.col = "ISTD.Name",
+  type.colname.col = "Type.ColName",
+  chem.ids = chem.ids, # chemical ID mapping data
+  chem.lab.id.col = "Lab.Compound.Name",
+  chem.name.col = "Compound.Name",
+  catalog.out = FALSE, # do not export the data catalog during this function
+  output.res = FALSE # do not export the compiled L0 during this function
+) # hitting a browser statement - this will need to be fixed in 'dev' first
+```
+
 
 # Best Practices for Data Processing
 
