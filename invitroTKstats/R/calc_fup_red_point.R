@@ -90,6 +90,7 @@
 #'  \insertRef{waters2008validation}{invitroTKstats}
 #'
 #' @import Rdpack
+#' @importFrom utils read.csv write.table
 #'
 #' @export calc_fup_red_point
 calc_fup_red_point <- function(
@@ -101,6 +102,9 @@ calc_fup_red_point <- function(
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
 {
+  
+  #assigning global variables
+  Compound.Name <- Response <- Sample.Type <- Direction <- NULL
   
   if (!missing(data.in)) {
     MS.data <- as.data.frame(data.in)

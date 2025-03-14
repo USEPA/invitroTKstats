@@ -318,7 +318,12 @@ format_caco2 <- function(
   OUTPUT.DIR = NULL
   )
 {
-
+  #assigning global variables
+  dilution.factor.col <- NULL
+  
+  # These are the required data types as indicated by type.col.
+  # In order to calculate the parameter a chemical must have peak areas for each
+  # of these measurements:
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
     # Force code to throw error if data.in accessed after this point:

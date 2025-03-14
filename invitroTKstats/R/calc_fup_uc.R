@@ -181,10 +181,9 @@ model {
 #' 
 #' @import parallel 
 #' @import runjags
-#' 
 #' @import coda
-#'
 #' @import Rdpack
+#' 
 #'
 #' @export calc_fup_uc
 calc_fup_uc <- function(
@@ -202,6 +201,10 @@ calc_fup_uc <- function(
   OUTPUT.DIR = NULL
   )
 {
+  
+  #assigning global variables
+  Compound.Name <- Response <- NULL
+  
   if (!missing(data.in)) {
     if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
     PPB.data <- as.data.frame(data.in)
@@ -446,7 +449,7 @@ calc_fup_uc <- function(
   }
   stopCluster(CPU.cluster)
 
-  View(Results)
+  #View(Results)
   
   # Write out a "level 4" result table:
   # Determine the path for output

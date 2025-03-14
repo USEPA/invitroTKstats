@@ -290,6 +290,9 @@ format_fup_uc <- function(
   )
 {
 
+  #assigning global variables
+  DTXSID <- Calibration <- NULL
+  
   if (!missing(data.in)) {
     data.in <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {

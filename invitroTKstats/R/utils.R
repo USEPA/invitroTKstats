@@ -65,6 +65,8 @@ runjagsdata.to.list <- function(runjagsdata.in)
 #'
 build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob, degrade.prob)
 {
+  #assigning global variables
+  Sample.Type <- Time <- Std.Conc <- NULL
   #
   # What concentrations were tested (1 and 10 uM typical):
   #
@@ -223,6 +225,8 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
 #' @param mydata (List) Output of \code{build_mydata_clint}.
 #' @param chain (Numeric) The number of Markov Chains to use.
 #' 
+#' @importFrom stats runif rbinom
+#' 
 #' @return A list of initial values.
 #' 
 initfunction_clint <- function(mydata, chain)
@@ -260,6 +264,8 @@ initfunction_clint <- function(mydata, chain)
 #' 
 build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
 {
+  #assigning global variables
+  Sample.Type <- NULL
   #mg/mL -> g/L is 1:1
   #kDa -> g/mol is *1000
   #g/mol -> M is g/L/MW
@@ -562,6 +568,8 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
 #' 
 #' @param mydata (List) Output of \code{build_mydata_clint}.
 #' @param chain (Numeric) The number of Markov Chains to use.
+#' 
+#' @importFrom stats lm
 #' 
 #' @return A list of initial values.
 #' 

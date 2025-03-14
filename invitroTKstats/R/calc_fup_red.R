@@ -270,8 +270,9 @@ model {
 #' }
 #'
 #' @import coda
-#'
 #' @import Rdpack
+#' @importFrom utils read.csv write.table read.table
+#' @importFrom stats quantile
 #'
 #' @export calc_fup_red
 calc_fup_red <- function(
@@ -290,6 +291,10 @@ calc_fup_red <- function(
   OUTPUT.DIR = NULL
   )
 {
+  
+  #assigning global variables
+  Compound.Name <- Response <- NULL
+  
   
   if (!missing(data.in)) {
     if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
@@ -505,7 +510,7 @@ calc_fup_red <- function(
   }
   stopCluster(CPU.cluster)
 
-  View(Results)
+  #View(Results)
   
 
   # Write out a "level 4" result table:
