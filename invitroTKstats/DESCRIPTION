@@ -25,7 +25,7 @@ Authors@R: c(
            person("Anna", "Kreutz", role = c("ctb"))
            )
 Depends: R (>= 2.10)
-Imports: runjags, parallel, readxl, coda, ggplot2, scales, stats4, Rdpack, methods, stats, utils, dplyr
+Imports: runjags, parallel, readxl, coda, ggplot2, scales, stats4, Rdpack, methods, stats, utils, dplyr, rlang
 RdMacros: Rdpack
 Suggests: 
     knitr,
@@ -33,6 +33,7 @@ Suggests:
     tidyverse,
     gridExtra,
     gridtext,
+    flextable,
     rmarkdown
 License: GPL-3
 LazyData: true

@@ -68,7 +68,7 @@ level2 <- invitroTKstats::kreutz2023.clint
 
 # Data sets in the package are level-2 data. For demonstration purposes,
 # remove the verification columns from the data and use it as level-1.
-level1 <- dplyr::select(level2, -c(Verifed, Verified))
+level1 <- subset(level2, select = -c(Verifed,Verified) )
 
 # Scenario 1: Pass in data.in and exclusion.info data frame from R session 
 
