@@ -336,6 +336,13 @@ format_caco2 <- function(
                          sep="\t",header=T)
     }
   
+  # check if note.col = NULL
+  if (is.null(note.col)) 
+  {
+    data.out[, "Note"] <- ""
+    note.col <- "Note"
+  }
+  
   # determine the path for output files 
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR
@@ -396,9 +403,9 @@ format_caco2 <- function(
 
   # Only include the data types used:
   req.types=c("Blank","D0","D2","R2")
-  data.out <- subset(data.out,data.out[,type.col] %in% req.types)
   data.in.badtype <- subset(data.out,!(data.out[,type.col] %in% req.types))
-  
+  data.out <- subset(data.out,data.out[,type.col] %in% req.types)
+
   # Option to export data with bad types
   if (nrow(data.in.badtype) != 0) {
     if (save.bad.types) {
