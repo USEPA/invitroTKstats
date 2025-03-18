@@ -198,6 +198,7 @@ fup_red_L1_curated <- format_fup_red(FILENAME = "Fup_RED_vignette",
                                      test.conc.col = "Compound.Conc",
                                      area.col = "Peak.Area",
                                      note.col = "Sample Text", 
+                                     technical.replicates.col = "Replicate",
                                      # columns not present in L0 data
                                      cal = 1, 
                                      istd.conc = 0.01, 
@@ -373,13 +374,68 @@ fup_red_L2_curated %>%
 
 ## Level 3 processing 
 
-`calc_fup_red` is the Level 3 function used to calculate the f~up~ RED point estimate for each test compound using a Frequentist framework. 
+`calc_fup_red` is the Level 3 function used to calculate the f~up~ point estimate from rapid equilibrium dialysis for each test compound using a Frequentist framework. 
 
-Mathematically, f~up~ is the ratio of the buffer side response to the plasma side responses. To account for background noise and variation, we subtract the corresponding blank sample from the mean response. 
+Mathematically, f~up~ is the ratio of the compound concentration in the buffer side to the plasma side. However, in some experiments, the phosphate buffered solution (PBS) is loaded into both sides of the chamber; the difference between the sides is then differentiated by which side contains the plasma. Therefore, to increase clarity, we rename the buffer side to the acceptor well and the plasma side to the donor well such that $$f_{up} = \frac{C_{\textrm{acceptor}}}{C_{\textrm{donor}}}$$ where $C_{\textrm{acceptor}}$ is the compound concentration in the acceptor well and $C_{\textrm{donor}}$ is the compound concentration in the donor well. 
 
-PBS Response (Phosphate-buffered solution) - NPB Response (No.Plasma.Blank)
--------------------------------------------------------------
-PL Response (Plasma) - B Response (Plasma.Blank)
+The concentrations are defined as the mean PBS or Plasma response multiplied by its dilution factor. To account for background noise, we also subtract the mean NoPlasma.Blank or Plasma.Blank responses respectively. 
+
+```{r}
+fup_red_L3_curated <- calc_fup_red_point(FILENAME = "Fup_RED_vignette",
+                                         data.in = fup_red_L2_curated, 
+                                         # don't export output TSV file
+                                         output.res = FALSE)
+```
+
+```{r, echo = FALSE}
+fup_red_L3_curated %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_caption("Table 7: Level 3 data", align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
+```
+
+Our Level 3 data contains a `Fup` estimate and a `Calibration` column that details which data was used to calculate the point estimate. 
+
+## Level 4 Processing 
+
+`calc_fup_red` is the Level 4 function used to calculate f~up~ point estimates and credible intervals from rapid equilibrium dialysis using a Bayesian framework. Markov chain Monte Carlo (MCMC) simulations are used to randomly sample from the posterior distribution with a uniform prior. 
+
+To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must use `runjags::findjags()` as their argument for the `JAGS.PATH` parameter. 
+
+We pass `fup_red_L2_curated`, the Level 2 data frame, and **not** `fup_red_L3_curated`, the Level 3 data frame, into `calc_fup_red`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
+
+```{r L4 processing, message = FALSE}
+fup_red_L4_curated <- calc_fup_red(FILENAME = "Fup_RED_vignette",
+                                   data.in = fup_red_L2_curated,
+                                   JAGS.PATH = runjags::findjags()
+                                   )
+```
+
+The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a f~up~ credible interval.
+
+```{r, echo = FALSE}
+fup_red_L4_curated[["Results"]] %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 8: Level 4 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
+
+## Best Practices: Food for thought 
+
+Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
 
 ## References 
 
