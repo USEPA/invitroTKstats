@@ -85,13 +85,11 @@
 #'
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
-#' \dontrun{
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR.
 #' level3 <- calc_caco2_point(FILENAME="Examples", 
 #'                            INPUT.DIR = "invitroTKstats/vignettes")
-#' }
 #'
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
@@ -201,8 +199,8 @@ calc_caco2_point <- function(
           # browser()
         } 
         this.row[paste("C0",dir.string,sep="_")] <- max(0,
-                                                        mean(this.dosing$Response * this.dosing$Dilution.Factor) -
-                                                        mean(this.blank$Response * this.blank$Dilution.Factor)) # [C0] = Peak area (RR) 
+                                                        unique(this.dosing$Dilution.Factor)*(mean(this.dosing$Response) -
+                                                                                               mean(this.blank$Response))) # [C0] = Peak area (RR) 
         
         # Calculate dQ/dt
         # only can handle one dilution factor and one receiver volume right now:
@@ -213,8 +211,9 @@ calc_caco2_point <- function(
           # browser()
         } 
         this.row[paste("dQdt",dir.string,sep="_")] <- max(0,
-                                                          (mean(this.receiver$Response * this.receiver$Dilution.Factor) -
-                                                             mean(this.blank$Response * this.blank$Dilution.Factor)) * # Peak area (RR)
+                                                          (unique(this.receiver$Dilution.Factor)*
+                                                             mean(this.receiver$Response) -
+                                                             mean(this.blank$Response)) * # Peak area (RR)
                                                             unique(this.receiver$Vol.Receiver) / # cm^3
                                                             unique(this.receiver$Time) / 3600 #  1/h -> 1/s
         ) # [dQdt] = Peak area (RR) * cm^3 / s 

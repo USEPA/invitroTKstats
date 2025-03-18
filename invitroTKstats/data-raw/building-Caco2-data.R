@@ -15,19 +15,22 @@ library(readxl)
 library(invitroTKstats)
 
 ## Build the data guide 
-level0.catalog <- data.frame(File = rep("Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm", 3),
-                             Sheet = rep("Raw Data", 3),
-                             Skip.Rows = c(0, 26, 52),
-                             Date = rep("03 Oct 2017", 3),
-                             Chemical.ID = c("BF175258","BF175270","EV0000613"),
-                             ISTD.Name = rep("ISTD Name", 3),
-                             Sample.ColName = rep("SampleName", 3),
-                             Type.ColName = rep("Type", 3),
-                             Peak.ColName = rep("Area",3),
-                             ISTD.Peak.ColName = rep("ISTD Area",3),
-                             Conc.ColName = rep("Test Concentration", 3),
-                             AnalysisParam.ColName = rep("Transition", 3)
-)
+level0.catalog <- create_catalog(file = "Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm",
+                                 sheet = "Raw Data",
+                                 skip.rows = c(0, 26, 52),
+                                 date = "100317",
+                                 compound = c("BF175258","BF175270","EV0000613"),
+                                 istd = "ISTD Name",
+                                 num.rows = 16, 
+                                 
+                                 # column names 
+                                 sample = "SampleName",
+                                 type = "Type", 
+                                 peak = "Area",
+                                 istd.peak = "ISTD Area",
+                                 conc = "Test Concentration",
+                                 analysis.param = "Transition"
+                                 )
 
 ## Build chem.ids table 
 ## Chemical information can be found in the files in "HTTKNewData/Summary/Caco2.xlsx & SupTable1-AnalyticMethods.xlsx)".
@@ -39,12 +42,10 @@ chem.ids <- data.frame(Compound = c("Thiobencarb","Nitrapyrin","4-Chloro-2-methy
 ## The Excel file is not tracked with the package. When re-creating the data,
 ## retrieve the file from the directory mentioned above and save it to the path below.
 ## Make necessary adjustments if needed. 
-path <- "~/invitrotkstats/invitroTKstats/data-raw/Caco2"
+path <- "~/Git/invitrotkstats/invitroTKstats/data-raw"
 ## Compile level-0 data 
 caco2_L0 <- merge_level0(level0.catalog = level0.catalog,
-                       ## each compound has 16 samples 
-                       num.rows=16,
-                       num.rows.col="Num.rows",
+                       num.rows.col="Number.Data.Rows",
                        istd.col="ISTD.Name",
                        type.colname.col="Type.ColName",
                        chem.ids = chem.ids,
@@ -82,12 +83,16 @@ caco2_L0[, "Dilution.Factor"] <- NA
 caco2_L0[caco2_L0$Type == "Blank", "Dilution.Factor"] <- 1
 caco2_L0[is.na(caco2_L0$Dilution.Factor), "Dilution.Factor"] <- 4
 
+## Add Note column 
+## note.col = NULL handling not in tarball (v0.0.11) used when data was created
+caco2_L0[,"Note"] <- ""
+
 ## Run through the format function 
 caco2_L1 <- format_caco2(data.in = caco2_L0,
                        sample.col="Sample",
                        lab.compound.col = "Lab.Compound.ID",
                        compound.col = "Compound",
-                       series=1,
+                       biological.replicates = 1,
                        area.col="Peak.Area",
                        istd.col="ISTD.Peak.Area",
                        type.col="Type",
@@ -98,8 +103,8 @@ caco2_L1 <- format_caco2(data.in = caco2_L0,
                        compound.conc.col="Compound.Conc",
                        cal=1,
                        dilution.col="Dilution.Factor", 
-                       meas.time = 2,
-                       istd.name="Some ISTD Name",
+                       time = 2, 
+                       istd.name.col = "ISTD.Name",
                        istd.conc=1,
                        nominal.test.conc=10,
                        analysis.method.col = "Analysis.Params",
@@ -125,10 +130,10 @@ caco2_L1[is.na(caco2_L1$Response), "Response"] <- 0
 caco2_L2 <- sample_verification(FILENAME = "Examples", 
                                 data.in = caco2_L1, 
                                 assay = "Caco-2", 
-                                OUTPUT.DIR="~/invitrotkstats/invitroTKstats/vignettes")
+                                OUTPUT.DIR="~/Git/invitrotkstats/invitroTKstats/vignettes")
 
 ## Save level-0 and level-1 data to use for function demo/example documentation 
-save(caco2_L0, caco2_L1, caco2_L2, file = "~/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
+save(caco2_L0, caco2_L1, caco2_L2, file = "~/Git/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
 
 ## Include session info
 utils::sessionInfo()

@@ -252,7 +252,7 @@
 #'                        compound.col="CompoundName",
 #'                        compound.conc.col="Test.Target.Conc",
 #'                        membrane.area=0.11,
-#'                        series=1,
+#'                        biological.replicates=1,
 #'                        analysis.parameters="Feature",
 #'                        analysis.instrument="GC or LC",
 #'                        analysis.method="Mass Spec"
