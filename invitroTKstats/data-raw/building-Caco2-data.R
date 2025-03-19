@@ -12,12 +12,14 @@
 
 ## load necessary package
 library(readxl)
-library(invitroTKstats)
+# library(invitroTKstats) ## use when installed package is up-to-date
+devtools::load_all("~/Git/invitrotkstats/invitroTKstats") ## use when installed package is not up-to-date
 
 ## Build the data guide 
 level0.catalog <- create_catalog(file = "Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm",
                                  sheet = "Raw Data",
-                                 skip.rows = c(0, 26, 52),
+                                 skip.rows = c(1, 27, 53),
+                                 col.names.loc = c(1, 27, 53),
                                  date = "100317",
                                  compound = c("BF175258","BF175270","EV0000613"),
                                  istd = "ISTD Name",
@@ -83,10 +85,6 @@ caco2_L0[, "Dilution.Factor"] <- NA
 caco2_L0[caco2_L0$Type == "Blank", "Dilution.Factor"] <- 1
 caco2_L0[is.na(caco2_L0$Dilution.Factor), "Dilution.Factor"] <- 4
 
-## Add Note column 
-## note.col = NULL handling not in tarball (v0.0.11) used when data was created
-caco2_L0[,"Note"] <- ""
-
 ## Run through the format function 
 caco2_L1 <- format_caco2(data.in = caco2_L0,
                        sample.col="Sample",
@@ -113,7 +111,8 @@ caco2_L1 <- format_caco2(data.in = caco2_L0,
                        # thus we assume the same instrument was used for these data.
                        analysis.instrument="Agilent.GCMS",
                        analysis.parameters="TBD",
-                       output.res = FALSE
+                       output.res = FALSE,
+                       note.col = NULL
 )
 
 ## Confirmed that all rows with missing responses are Blank samples
@@ -131,6 +130,12 @@ caco2_L2 <- sample_verification(FILENAME = "Examples",
                                 data.in = caco2_L1, 
                                 assay = "Caco-2", 
                                 OUTPUT.DIR="~/Git/invitrotkstats/invitroTKstats/vignettes")
+
+## Verify that exported level-2 is unrounded 
+level2_TSV <- read.delim("~/Git/invitrotkstats/invitroTKstats/vignettes/Examples-Caco-2-Level2.tsv",
+           sep = "\t")
+## Compare Responses to caco2_L2 Responses 
+isTRUE(all.equal(level2_TSV$Response,caco2_L2$Response))
 
 ## Save level-0 and level-1 data to use for function demo/example documentation 
 save(caco2_L0, caco2_L1, caco2_L2, file = "~/Git/invitrotkstats/invitroTKstats/data/Caco2-example.RData")

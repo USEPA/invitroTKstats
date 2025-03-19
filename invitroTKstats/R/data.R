@@ -364,7 +364,7 @@
 #' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 #' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
-#' \item{\code{Biological.Replicates}}{Replicates with the same analyte}
+#' \item{\code{Biological.Replicates}}{Replicate series of measurements with the same analyte}
 #' \item{\code{Nominal.Conc}}{Concentration of test chemical (for calibration curve) (uM)}
 #' \item{\code{Test.Target.Conc}}{Test concentration of chemical (uM) at time zero}
 #' \item{\code{Time}}{Time point sample measured (h)}
@@ -404,7 +404,7 @@
 #' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 #' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
-#' \item{\code{Biological.Replicates}}{Replicates with the same analyte}
+#' \item{\code{Biological.Replicates}}{Replicate series of measurements with the same analyte}
 #' \item{\code{Nominal.Conc}}{Concentration of test chemical (for calibration curve) (uM)}
 #' \item{\code{Test.Target.Conc}}{Test concentration of chemical (uM) at time zero}
 #' \item{\code{Time}}{Time point sample measured (h)}
