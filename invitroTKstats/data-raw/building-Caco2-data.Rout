@@ -159,7 +159,7 @@ Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw 
 +                        time = 2, 
 +                        istd.name.col = "ISTD.Name",
 +                        istd.conc=1,
-+                        nominal.test.conc=20,
++                        nominal.test.conc=10,
 +                        analysis.method.col = "Analysis.Params",
 +                        # These data was collected in close time proximity to the 
 +                        # Wambaugh2019 work which used Agilent.GCMS for GC, 
@@ -228,4 +228,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.60    0.51    9.57 
+   0.73    1.09    6.54 

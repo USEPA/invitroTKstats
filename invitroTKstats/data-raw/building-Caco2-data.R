@@ -106,7 +106,7 @@ caco2_L1 <- format_caco2(data.in = caco2_L0,
                        time = 2, 
                        istd.name.col = "ISTD.Name",
                        istd.conc=1,
-                       nominal.test.conc=20,
+                       nominal.test.conc=10,
                        analysis.method.col = "Analysis.Params",
                        # These data was collected in close time proximity to the 
                        # Wambaugh2019 work which used Agilent.GCMS for GC, 
