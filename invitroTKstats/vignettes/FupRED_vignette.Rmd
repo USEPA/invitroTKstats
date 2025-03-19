@@ -181,6 +181,7 @@ By default, a TSV file containing the Level 1 data is exported to the user's dir
 
 ```{r L1 processing}
 # Rename EC1 as EQ1 AND EC2 as EQ2 so they do not get removed 
+# until format_fup_red is fixed 
 fup_red_L0_curated <- fup_red_L0 %>% 
   mutate(Sample.Type = case_when(
     Sample.Type == "EC1" ~ "EQ1", 
@@ -312,7 +313,7 @@ To determine whether a sample should be included, the user should consult the we
 
 We will use the already processed Level 2 data frame, `fup_red_L2`, to regenerate our exclusion data. Note, all of our samples are verified but we are explaining how to create an exclusion list for learning purposes. In general, the user would not have access to the exclusion information *a priori*. 
 
-The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and`DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here, we are using the reasons listed in the `Verified` column in `fup_red_L2`. The user should refrain from using "|" in any of their descriptions to avoid conflicts with the `sample_verification` function. 
+The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here, we are using the reasons listed in the `Verified` column in `fup_red_L2`. The user should refrain from using "|" in any of their descriptions to avoid conflicts with the `sample_verification` function. 
 
 ```{r L2 processing exclusion}
 # Use verification data from loaded in `fup_red_L2` data frame 
@@ -356,7 +357,7 @@ Our Level 2 data now contains a 'Verified' column. If the sample should be inclu
 
 The following table displays some rows of the Level 2 data. 
 
-```{r}
+```{r, echo = FALSE}
 fup_red_L2_curated %>% 
   head(n = 3) %>% 
   flextable() %>% 
@@ -376,7 +377,7 @@ fup_red_L2_curated %>%
 
 `calc_fup_red` is the Level 3 function used to calculate the f~up~ point estimate from rapid equilibrium dialysis for each test compound using a Frequentist framework. 
 
-Mathematically, f~up~ is the ratio of the compound concentration in the buffer side to the plasma side. However, in some experiments, the phosphate buffered solution (PBS) is loaded into both sides of the chamber; the difference between the sides is then differentiated by which side contains the plasma. Therefore, to increase clarity, we rename the buffer side to the acceptor well and the plasma side to the donor well such that $$f_{up} = \frac{C_{\textrm{acceptor}}}{C_{\textrm{donor}}}$$ where $C_{\textrm{acceptor}}$ is the compound concentration in the acceptor well and $C_{\textrm{donor}}$ is the compound concentration in the donor well. 
+Mathematically, f~up~ is the ratio of the compound concentration in the buffer well to the plasma well. However, in some experiments, the phosphate buffered solution (PBS) is loaded into both sides of the chamber; the difference between the wells is then differentiated by the well which is spiked with the chemical - the side containing the plasma. Therefore, to improve clarity, we rename the "plasma well" as the "donor well" and the "buffer well" as the "receiver well" such that $$f_{up} = \frac{C_{\textrm{receiver}}}{C_{\textrm{donor}}}$$ where $C_{\textrm{receiver}}$ is the compound concentration in the receiver well and $C_{\textrm{donor}}$ is the compound concentration in the donor well. 
 
 The concentrations are defined as the mean PBS or Plasma response multiplied by its dilution factor. To account for background noise, we also subtract the mean NoPlasma.Blank or Plasma.Blank responses respectively. 
 
