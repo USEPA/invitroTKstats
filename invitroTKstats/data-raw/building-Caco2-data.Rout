@@ -17,6 +17,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+[Previously saved workspace restored]
+
 > ## This R script should be ran from the command line using
 > ## R CMD BATCH data-raw/building-Caco2-data.R
 > 
@@ -32,6 +34,13 @@ Type 'q()' to quit R.
 > ## load necessary package
 > library(readxl)
 > library(invitroTKstats)
+
+Attaching package: 'invitroTKstats'
+
+The following objects are masked _by_ '.GlobalEnv':
+
+    caco2_L0, caco2_L1, caco2_L2
+
 > 
 > ## Build the data guide 
 > level0.catalog <- create_catalog(file = "Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm",
@@ -68,7 +77,7 @@ Your data catalog is ready for merge_level0.
 > ## The Excel file is not tracked with the package. When re-creating the data,
 > ## retrieve the file from the directory mentioned above and save it to the path below.
 > ## Make necessary adjustments if needed. 
-> path <- "~/Git/invitrotkstats/invitroTKstats/data-raw"
+> path <- "~/Git/invitrotkstats/invitroTKstats/data-raw/Caco2"
 > ## Compile level-0 data 
 > caco2_L0 <- merge_level0(level0.catalog = level0.catalog,
 +                        num.rows.col="Number.Data.Rows",
@@ -150,7 +159,7 @@ Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm, Raw 
 +                        time = 2, 
 +                        istd.name.col = "ISTD.Name",
 +                        istd.conc=1,
-+                        nominal.test.conc=10,
++                        nominal.test.conc=20,
 +                        analysis.method.col = "Analysis.Params",
 +                        # These data was collected in close time proximity to the 
 +                        # Wambaugh2019 work which used Agilent.GCMS for GC, 
@@ -219,4 +228,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.10    0.31    4.20 
+   0.60    0.51    9.57 

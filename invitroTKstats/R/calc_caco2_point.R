@@ -85,11 +85,13 @@
 #'
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
+#' \dontrun{
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR.
 #' level3 <- calc_caco2_point(FILENAME="Examples", 
 #'                            INPUT.DIR = "invitroTKstats/vignettes")
+#' }
 #'
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}

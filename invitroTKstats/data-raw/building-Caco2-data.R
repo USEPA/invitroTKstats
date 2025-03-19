@@ -42,7 +42,7 @@ chem.ids <- data.frame(Compound = c("Thiobencarb","Nitrapyrin","4-Chloro-2-methy
 ## The Excel file is not tracked with the package. When re-creating the data,
 ## retrieve the file from the directory mentioned above and save it to the path below.
 ## Make necessary adjustments if needed. 
-path <- "~/Git/invitrotkstats/invitroTKstats/data-raw"
+path <- "~/Git/invitrotkstats/invitroTKstats/data-raw/Caco2"
 ## Compile level-0 data 
 caco2_L0 <- merge_level0(level0.catalog = level0.catalog,
                        num.rows.col="Number.Data.Rows",
@@ -106,7 +106,7 @@ caco2_L1 <- format_caco2(data.in = caco2_L0,
                        time = 2, 
                        istd.name.col = "ISTD.Name",
                        istd.conc=1,
-                       nominal.test.conc=10,
+                       nominal.test.conc=20,
                        analysis.method.col = "Analysis.Params",
                        # These data was collected in close time proximity to the 
                        # Wambaugh2019 work which used Agilent.GCMS for GC, 
