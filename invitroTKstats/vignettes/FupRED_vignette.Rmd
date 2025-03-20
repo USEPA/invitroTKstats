@@ -353,7 +353,7 @@ fup_red_L2_curated <- sample_verification(FILENAME = "Fup_RED_vignette",
                                           output.res = FALSE)
 ```
 
-Our Level 2 data now contains a 'Verified' column. If the sample should be included, the column contains a "Y" for yes. If the sample should be excluded, the column contains the reason for exclusion. 
+Our Level 2 data now contains a `Verified` column. If the sample should be included, the column contains a "Y" for yes. If the sample should be excluded, the column contains the reason for exclusion. 
 
 The following table displays some rows of the Level 2 data. 
 
