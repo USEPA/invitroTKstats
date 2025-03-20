@@ -78,7 +78,9 @@ If the Level 0 data does not already contain the required column, then the entir
 
 Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. 
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `date.col`, `compound.col`, `area.col`, `type.col`, `istd.col`, and `note.col`.
+
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `test.conc.col` or `test.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `uc.assay.conc.col` or `uc.assay.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
 
 ```{r required cols, echo = FALSE}
 # Create table of required arguments for Level 1 
@@ -200,7 +202,7 @@ fup_uc_L1_curated <- format_fup_uc(FILENAME = "Fup_UC_vignette",
                                    )
 ```
 
-All of our samples are successfully formatted and returned in `fup_uc_L1_curated`, the Level 1 data frame. Each sample has one of the following sample types
+All of our samples are successfully formatted and returned in `fup_uc_L1_curated`, our Level 1 data produced from `format_fup_uc`. Each sample has one of the following sample types
 
 1. Calibration Curve (CC)
 2. Ultracentrifugation Aqueous Fraction (AF)
@@ -209,7 +211,7 @@ All of our samples are successfully formatted and returned in `fup_uc_L1_curated
 
 If any samples had a different sample type, they would have been removed and reported to the user. If the user wants to export the removed samples as a TSV, the user should set the parameter `save.bad.types = TRUE`. 
 
-The following table displays the first three rows of `fup_uc_L1_curated`, our Level 1 data produced from `format_fup_uc`. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration at the specified time and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}} * \textrm{ISTD Conc}$ where $\textrm{Analyte Area}$ is defined by the `Area` column, $\textrm{ISTD Area}$ is defined by the `ISTD.Area` column, and $\textrm{ISTD Conc}$ is defined by the `ISTD.Conc` column. 
+The following table displays the first three rows of `fup_uc_L1_curated`. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}} * \textrm{ISTD Conc}$ where $\textrm{Analyte Area}$ is defined by the `Area` column, $\textrm{ISTD Area}$ is defined by the `ISTD.Area` column, and $\textrm{ISTD Conc}$ is defined by the `ISTD.Conc` column. 
 
 ```{r, echo = FALSE, warning = FALSE}
 fup_uc_L1_curated %>% 
@@ -245,7 +247,8 @@ exclusion <- fup_uc_L2 %>%
   filter(Verified != "Y") %>% 
   mutate("Variables" = "Lab.Sample.Name|DTXSID") %>% 
   mutate("Values" = paste(Lab.Sample.Name, DTXSID, sep = "|")) %>% 
-  mutate("Message" = Verified)
+  mutate("Message" = Verified) %>% 
+  select(Variables, Values, Message)
 ```
 
 ```{r, echo = FALSE}
@@ -273,7 +276,7 @@ fup_uc_L2_curated <- sample_verification(FILENAME = "fup_UC_vignette",
                                          output.res = FALSE)
 ```
 
-Our Level 2 data now contains a `Verified` column. If the sample should be included, the column contains a "Y" for yes. If the sample should not be included, the column contains the reason for exclusion. 
+Our Level 2 data now contains a `Verified` column. If the sample should be included, the column contains a "Y" for yes. If the sample should should be excluded, the column contains the reason for exclusion. 
 
 The following table displays some rows of the Level 2 data. 
 
@@ -326,14 +329,11 @@ Our Level 3 data contains a `Fup` estimate and a `Calibration` column that detai
 
 To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must use `runjags::findjags()` as their argument for the `JAGS.PATH` parameter. 
 
-To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must run `runjags::findjags()` and include the path up through `/x64`. 
-
 We pass `fup_uc_L2_curated`, the Level 2 data frame, and **not** `fup_uc_L3_curated`, the Level 3 data frame, into `calc_fup_uc`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
 
 ```{r L4 processing, message = FALSE}
 fup_uc_L4_curated <- calc_fup_uc(FILENAME = "Fup_UC_vignette",
                                  data.in = fup_uc_L2_curated,
-                                 NUM.CORES = 8,
                                  JAGS.PATH = runjags::findjags()
                                  )
 ```
