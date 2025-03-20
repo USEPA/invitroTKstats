@@ -24,6 +24,7 @@ knitr::include_graphics("Caco2_diagram.png")
 ```
 
 ### Suggested packages for use with this vignette 
+
 ```{r setup, message = FALSE, warning = FALSE}
 # Primary package 
 library(invitroTKstats)
@@ -35,7 +36,8 @@ library(flextable)
 
 ## Load Data 
 
-First, we load in the example dataset from invitroTKstats. 
+First, we load in the example dataset from `invitroTKstats`. 
+
 ```{r Load example data}
 # Load example caco2 data 
 data("Caco2-example")
@@ -70,31 +72,31 @@ head(caco2_L0, n = 3) %>%
 
 If the Level 0 data already contains the required column, then the existing column name can be specified. For example, `caco2_L0` already contains a column specifying the sample name called "Sample". However, the default column name for sample name is "Lab.Sample.Name". Therefore, we specify the correct column with `sample.col = "Sample"`. In general, to specify an already existing column that differs from the default, the user must use the parameter with the `.col` suffix. 
 
-If the Level 0 data does not already contain the required column, then the column can be populated with a single value. For example, `caco2_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the parameter without the `.col` suffix.
+If the Level 0 data does not already contain the required column, then the entire column can be populated with a single value. For example, `caco2_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the parameter without the `.col` suffix.
 
 Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specified as single entry is not permitted: `sample.col`, `lab.compound.col`, `date.col`, `compound.col`, `area.col`, `istd.col`, `type.col`, `direction.col`, `receiver.vol.col`, `donor.vol.col`, and `note.col`, 
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `date.col`, `compound.col`, `area.col`, `istd.col`, `type.col`, `direction.col`, `receiver.vol.col`, `donor.vol.col`, and `note.col`.
 
-The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `membrane.area.col` or `membrane.area`, `compound.conc.col` or `compound.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `nominal.test.conc.col` or `nominal.test.conc`, `biological.replicates.col` or `biological.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`.
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `membrane.area.col` or `membrane.area`, `compound.conc.col` or `compound.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `nominal.test.conc.col` or `nominal.test.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`.
 
 ```{r required cols, echo = FALSE}
-# Create a table of required parameters for Level 1
+# Create a table of required arguments for Level 1
 
 req_cols <- data.frame(matrix(nrow = 34, ncol = 5))
-vars <- c("Parameter", "Default", "Required in L0?", "Corresp. single-entry Parameter", "Descr.")
+vars <- c("Argument", "Default", "Required in L0?", "Corresp. single-entry Argument", "Descr.")
 colnames(req_cols) <- vars
 
-# Parameter names 
-parameters <- c("FILENAME", "data.in", "sample.col", "lab.compound.col", "dtxsid.col", "date.col", 
+# Argument names 
+arguments <- c("FILENAME", "data.in", "sample.col", "lab.compound.col", "dtxsid.col", "date.col", 
                 "compound.col", "area.col", "istd.col", "type.col", "direction.col", "membrane.area.col",
                 "receiver.vol.col", "donor.vol.col", "compound.conc.col", "cal.col", "dilution.col",
                 "time.col", "istd.name.col", "istd.conc.col", "nominal.test.conc.col", "biological.replicates.col",
                 "technical.replicates.col", "analysis.method.col", "analysis.instrument.col", "analysis.parameters.col",
                 "note.col", "level0.file.col", "level0.sheet.col", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR")
-req_cols[, "Parameter"] <- parameters
+req_cols[, "Argument"] <- arguments
 
-# Default parameters 
+# Default arguments 
 defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name",
               "DTXSID", "Date", "Compound.Name", "Area", 
               "ISTD.Area", "Type", "Direction", "Membrane.Area",
@@ -107,19 +109,19 @@ defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name",
               "Level0.Sheet", "TRUE", "FALSE", "5", "NULL", "NULL")
 req_cols[, "Default"] <- defaults 
 
-# Parameter required in L0?
+# Argument required in L0?
 req_cols <- req_cols %>% 
   mutate("Required in L0?" = case_when(
-    Parameter %in% c("sample.col", "lab.compound.col", "dtxsid.col", "date.col", "compound.col", "area.col", "istd.col", 
+    Argument %in% c("sample.col", "lab.compound.col", "dtxsid.col", "date.col", "compound.col", "area.col", "istd.col", 
   "type.col", "direction.col", "receiver.vol.col", "donor.vol.col", "note.col") ~ "Y",
-  Parameter %in% c("FILENAME", "data.in", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A",
+  Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A",
   .default = "N"
   ))
 
-# Corresponding single-entry parameter 
+# Corresponding single-entry Argument 
 req_cols <- req_cols %>% 
-  mutate("Corresp. single-entry Parameter" = ifelse(.data[[vars[[3]]]] == "N", 
-                                                    gsub(".col" ,"", Parameter), NA))
+  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[[3]]]] == "N", 
+                                                    gsub(".col" ,"", Argument), NA))
 
 # Brief description 
 description <- c("Output and input filename",
@@ -169,7 +171,7 @@ req_cols %>%
       scroll = list(height = 200)
       )
   ) %>% 
-  set_caption("Table 2: Level 1 parameters", align_with_table = FALSE) %>% 
+  set_caption("Table 2: Level 1 'format_caco2' function arguments", align_with_table = FALSE) %>% 
   fontsize(size = 10, part = "body") %>% 
   theme_vanilla()
 ```
@@ -193,6 +195,7 @@ caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  analysis.method.col = "Analysis.Params",
                                  # columns not present in L0 data
                                  biological.replicates = 1,
+                                 technical.replicates = 1,
                                  membrane.area = 0.11,
                                  cal = 1,
                                  time = 2, 
@@ -203,14 +206,9 @@ caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  # don't export output TSV file
                                  output.res = FALSE
                                  )
-
-# Response = Peak.Area/ISTD.Area --> NaN when ISTD.Area = 0 
-# Replace the NaNs with 0 
-caco2_L1_curated <- caco2_L1_curated %>% 
-  mutate(Response = ifelse(is.nan(Response), 0, Response))
 ```
 
-All of our samples are successfully formatted and returned in `caco2_L1_curated`, the Level 1 data frame. Each sample has one of the following sample types
+All of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types
 
 1. Blank with no chemical added (Blank)
 2. Dosing vehicle (C0) at target concentration (D0)
@@ -219,7 +217,7 @@ All of our samples are successfully formatted and returned in `caco2_L1_curated`
 
 If any samples had a different sample type, they would have been removed and reported to the user. If the user wants to export the removed samples as a TSV, the user should set the parameter `save.bad.types = TRUE`.  
 
-The following table displays the first three samples of `caco2_L1_curated` with a non-Blank sample type. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration at the specified time and is calculated as $$\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}}*\textrm{ISTD Conc}$$.
+The following table displays the first three samples of `caco2_L1_curated` with a non-Blank sample type. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}}*\textrm{ISTD Conc}$ where $\textrm{Analyte Area}$ is defined by the `Area` column, $\textrm{ISTD Area}$ is defined by the `ISTD.Area` column, and $\textrm{ISTD Conc}$ is defined by the `ISTD.Conc` column.
 
 ```{r, echo = FALSE}
 # Select non-Blank sample type to display Response col 
@@ -239,15 +237,30 @@ head(n = 3) %>%
   theme_vanilla()
 ```
 
+Currently, when the ISTD.Area measurement for a sample is 0, the calculated Response is NaN, or not a number, because of the division by 0. In this particular case, all of our samples that have a NaN Response are "Blank" sample types. But, these sample types are needed for point estimation. Users can verify this with the following check. 
+
+```{r, eval = FALSE}
+all(caco2_L1_curated[is.nan(caco2_L1_curated$Response), "Sample.Type"] == "Blank")
+```
+
+Therefore, we replace the NaNs with 0 so that the "Blank" samples types are kept in the datset and our estimates are accurate. 
+
+```{r}
+# Response = Peak.Area/ISTD.Area --> NaN when ISTD.Area = 0 
+# Replace the NaNs with 0
+caco2_L1_curated <- caco2_L1_curated %>% 
+  mutate(Response = ifelse(is.nan(Response), 0, Response))
+```
+
 ## Level 2 processing 
 
 `sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for P~app~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
 
 To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new P~app~ estimates. There is an open channel of communication between the user and the wet-lab scientists. 
 
-We will use the already processed Level 2 data frame, `caco2_L2`, to regenerate our exclusion data. Note, all of our samples are verified but we are explaining how to create an exclusion list for learning purposes. In general, the user would not have access to the exclusion information a priori.
+We will use the already processed Level 2 data frame, `caco2_L2`, to regenerate our exclusion data. Note, all of our samples are verified but we are explaining how to create an exclusion list for learning purposes. In general, the user would not have access to the exclusion information *a priori*. 
 
-The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here, we are using the reasons listed in the `Verified` column in `caco2_L2`. 
+The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here, we are using the reasons listed in the `Verified` column in `caco2_L2`. The user should refrain from using "|" in any of their descriptions to avoid conflicts with the `sample_verification` function.
 
 ```{r L2 processing exclusion}
 # Use verification data from loaded in `caco2_L2` data frame 
@@ -255,7 +268,8 @@ exclusion <- caco2_L2 %>%
   filter(Verified != "Y") %>% 
   mutate("Variables" = "Lab.Sample.Name|DTXSID") %>% 
   mutate("Values" = paste(Lab.Sample.Name, DTXSID, sep = "|")) %>% 
-  mutate("Message" = Verified)
+  mutate("Message" = Verified) %>% 
+  select(Variables, Values, Message)
 ```
 
 ```{r, echo = FALSE }
@@ -268,7 +282,7 @@ exclusion %>%
       scroll = list()
       )
   ) %>% 
-  set_caption("Table 4: Exclusion data", align_with_table = FALSE) %>% 
+  set_caption("Table 4: Exclusion data frame", align_with_table = FALSE) %>% 
   fontsize(size = 10, part = "body") %>% 
   theme_vanilla()
 ```
@@ -283,7 +297,7 @@ caco2_L2_curated <- sample_verification(FILENAME = "Caco2_vignette",
                                         output.res = FALSE)
 ```
 
-Our Level 2 data now contains a 'Verified' column. If the sample should be included, the column contains a "Y" for yes. If the sample should be excluded, the column contains the reason for exclusion. 
+Our Level 2 data now contains a `Verified` column. If the sample should be included, the column contains a "Y" for yes. If the sample should be excluded, the column contains the reason for exclusion. 
 
 The following table displays some rows of the Level 2 data. 
 
@@ -305,7 +319,7 @@ caco2_L2_curated %>%
 
 ## Level 3 processing 
 
-`calc_caco2_point` is the Level 3 function used to calculate the P~app~ point estimate for each test compound. 
+`calc_caco2_point` is the Level 3 function used to calculate the P~app~ point estimate for each test compound using a Frequentist framework.
 
 Mathematically, P~app~ is the amount of compound transported per unit time and is defined as $$P_{app} = \frac{dQ/dt}{c_0*A}$$ where $dQ/dt$ is the rate of permeation, $c_0$ is the initial concentration in the donor compartment, and $A$ is the surface area of the cell monolayer. 
 
@@ -317,7 +331,7 @@ $c_{\textrm{receiver}}$ is defined as the mean R2 response multiplied by its dil
 
 $c_0$ is calculated similarly to $c_{\textrm{receiver}}$ but with the mean D0 response instead of R2 such that 
 
-$$c_0 = \textrm{dilution factor}_{D0} *( \overline{Response}_{D0} - \overline{Response}_{Blank})$$. 
+$$c_0 = \textrm{dilution factor}_{D0} * \overline{Response}_{D0} - \textrm{dilution factor}_{Blank} * \overline{Response}_{Blank}$$. 
 
 Lastly, $A$ is defined by our `Membrane.Area` column. 
 
@@ -345,7 +359,7 @@ caco2_L3_curated %>%
   theme_vanilla()
 ```
 
-Our Level 3 data contains estimates for `C0`, `dQdt`, and `Papp` in both directions and a `Refflux` estimate. The Efflux ratio, or the ratio between the two apparent membrane permeabilities can be expressed as $R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$. 
+Our Level 3 data contains estimates for `C0`, `dQdt`, and `Papp` in both directions and a `Refflux` estimate. The Efflux ratio, or the ratio between the two apparent membrane permeabilities is expressed as $R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$. 
 
 ## Best Practices: Food for thought 
 
