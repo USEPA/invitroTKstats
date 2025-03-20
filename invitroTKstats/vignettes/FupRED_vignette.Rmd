@@ -400,7 +400,7 @@ fup_red_L3_curated %>%
 
 Our Level 3 data contains a `Fup` estimate and a `Calibration` column that details which data was used to calculate the point estimate. 
 
-## Level 4 Processing 
+## Level 4 processing 
 
 `calc_fup_red` is the Level 4 function used to calculate f~up~ point estimates and credible intervals from rapid equilibrium dialysis using a Bayesian framework. Markov chain Monte Carlo (MCMC) simulations are used to randomly sample from the posterior distribution with a uniform prior. 
 
