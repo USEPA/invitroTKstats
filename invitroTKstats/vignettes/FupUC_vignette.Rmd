@@ -1,6 +1,6 @@
 ---
 title: "Fup UC"
-output: rmarkdwon::html_vignette
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Fup UC}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,7 +20,7 @@ This vignette guides users on how to estimate fraction unbound in plasma (f~up~)
 
 The mass spectrometry data should be collected from an assay that uses ultracentrifugation as seen in Figure 1 (Smeltz et al. 2023, Kreutz et al. 2023). 
 
-```{r, echo = FALSE, out.width = 100%, fig.cap = "Fig 1: f~up~ UC experimental set up", fig.topcaption = TRUE, fig.align = "center"}
+```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: f~up~ UC experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("fupUC_diagram.png")
 ```
 
@@ -108,9 +108,258 @@ defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name", "DTXSID",
               "Note", "Level0.File", "Level0.Sheet", TRUE, FALSE, NA, NA)
 req_cols[, "Default"] <- defaults 
 
-req_cols
+# Argument required in L0?
+req_cols <- req_cols %>% 
+  mutate("Required in L0?" = case_when(
+    Argument %in% c("sample.col", "lab.compound.col", "dtxsid.col",
+                    "date.col", "compound.col", "area.col", "type.col", 
+                    "istd.col", "note.col") ~ "Y", 
+    Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", 
+                    "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A",
+    .default = "N"
+  ))
+
+# Corresponding single-entry Argument 
+req_cols <- req_cols %>% 
+  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[3]]] == "N",
+                                                   gsub(".col", "", Argument), NA))
+
+# Brief description 
+description <- c("Output and input filename", 
+                 "Level 0 data frame", 
+                 "Lab sample name", 
+                 "Lab test compound name (abbr.)", 
+                 "EPA's DSSTox Structure ID",
+                 "Lab measurement date", 
+                 "Formal test compound name", 
+                 "Target analyte peak area", 
+                 "Sample type (CC/AF/T1/T5)",
+                 "Standard test chemical concentration", 
+                 "MS calibration", 
+                 "Number of times sample was diluted", 
+                 "Internal standard peak area", 
+                 "Internal standard name", 
+                 "Internal standard concentration", 
+                 "Intended initial test concentration",
+                 "Replicates with the same analyte", 
+                 "Repeated measurements from one sample", 
+                 "Analytical chemistry analysis method", 
+                 "Analytical chemistry analysis instrument", 
+                 "Analytical chemistry analysis parameters", 
+                 "Additional notes", 
+                 "Raw data filename", 
+                 "Raw data sheet name", 
+                 "Export results (TSV)?", 
+                 "Export bad data (TSV)?",
+                 "Input directory of Level 0 file", 
+                 "Export directory to save Level 1 files")
+req_cols[, "Descr."] <- description
 ```
 
+```{r, echo = FALSE, warning = FALSE}
+req_cols %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        height = 200
+      )
+    )
+  ) %>% 
+  set_caption(caption = "Table 2: Level 1 `format_fup_uc` function arguments", align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
+
+By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward. 
+
+```{r L1 processing}
+fup_uc_L1_curated <- format_fup_uc(FILENAME = "Fup_UC_vignette",
+                                   data.in = fup_uc_L0,
+                                   # columns present in L0 data
+                                   sample.col = "Sample",
+                                   lab.compound.col = "Lab.Compound.ID",
+                                   compound.col = "Compound",
+                                   area.col = "Peak.Area", 
+                                   test.conc.col = "Compound.Conc",
+                                   cal.col = "Date", 
+                                   istd.col = "ISTD.Peak.Area",
+                                   technical.replicates.col = "Replicate",
+                                   analysis.parameters.col = "Analysis.Params",
+                                   # columns not present in L0 data 
+                                   istd.conc = 1, 
+                                   uc.assay.conc = 10, 
+                                   biological.replicates = 1, 
+                                   analysis.method = "UPLC-MS/MS",
+                                   analysis.instrument = "Waters Xevo TQ-S micro(QEB0036)",
+                                   note.col = NULL,
+                                   # don't export output TSV file
+                                   output.res = FALSE
+                                   )
+```
+
+All of our samples are successfully formatted and returned in `fup_uc_L1_curated`, the Level 1 data frame. Each sample has one of the following sample types
+
+1. Calibration Curve (CC)
+2. Ultracentrifugation Aqueous Fraction (AF)
+3. Whole Plasma T1h Sample (T1)
+4. Whole Plasma T5h Sample (T5)
+
+If any samples had a different sample type, they would have been removed and reported to the user. If the user wants to export the removed samples as a TSV, the user should set the parameter `save.bad.types = TRUE`. 
+
+The following table displays the first three rows of `fup_uc_L1_curated`, our Level 1 data produced from `format_fup_uc`. In addition to the columns specified by the user, there is an additional column called `Response`. This column is the test compound concentration at the specified time and is calculated as $\textrm{Response} = \frac{\textrm{Analyte Area}}{\textrm{ISTD Area}} * \textrm{ISTD Conc}$ where $\textrm{Analyte Area}$ is defined by the `Area` column, $\textrm{ISTD Area}$ is defined by the `ISTD.Area` column, and $\textrm{ISTD Conc}$ is defined by the `ISTD.Conc` column. 
+
+```{r, echo = FALSE, warning = FALSE}
+fup_uc_L1_curated %>% 
+  head(n = 3) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 3: Level 1 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
+
+## Level 2 processing 
+
+`sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) and credible interval (Level 4) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for f~up~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column.
+
+To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new f~up~ estimates. There is an open channel of communication between the user and the wet-lab scientists. 
+
+We will use the already processed Level 2 data frame, `fup_uc_L2`, to regenerate our exclusion data. Note, all of our samples are verified but we are explaining how to create an exclusion list for learning purposes. In general, the user would not have access to the exclusion information *a priori*. 
+
+The exclusion data frame must include the following columns: `Variables`, `Values`, and `Message`. The `Variables` column contains the variable names used to filter the excluded rows. Here, we are using `Lab.Sample.Name` and `DTXSID` to identify the excluded rows separated by a "|". The `Values` column contains the values of the variables, as a character, also separated by a "|". The `Message` column contains the reason for exclusion. Here we are using the reasons listed in the `Verified` column in `fup_uc_L2`. The user should refrain from using "|" in any of their descriptions to avoid conflicts with the `sample_verifiation` function. 
+
+```{r}
+# Use verification data from loaded in `fup_uc_L2` data frame 
+exclusion <- fup_uc_L2 %>% 
+  filter(Verified != "Y") %>% 
+  mutate("Variables" = "Lab.Sample.Name|DTXSID") %>% 
+  mutate("Values" = paste(Lab.Sample.Name, DTXSID, sep = "|")) %>% 
+  mutate("Message" = Verified)
+```
+
+```{r, echo = FALSE}
+exclusion %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list()
+      )
+  ) %>% 
+  set_caption("Table 4: Exclusion data", align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
+```
+
+As expected, our exclusion data frame is empty because all of our samples are verified. If all of the user's samples are verified, they simply do not provide an `exclusion.info` data frame in `sample_verification`. 
+
+```{r L2 processing}
+fup_uc_L2_curated <- sample_verification(FILENAME = "fup_UC_vignette", 
+                                         data.in = fup_uc_L1_curated,
+                                         assay = "fup-UC",
+                                         # don't export output TSV file
+                                         output.res = FALSE)
+```
+
+Our Level 2 data now contains a `Verified` column. If the sample should be included, the column contains a "Y" for yes. If the sample should not be included, the column contains the reason for exclusion. 
+
+The following table displays some rows of the Level 2 data. 
+
+```{r, echo = FALSE}
+fup_uc_L2_curated %>% 
+  head(n = 3) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list()
+      )
+  ) %>% 
+  set_caption("Table 5: Level 2 data", align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
+```
+
+## Level 3 processing 
+
+`calc_fup_uc` is the Level 3 function used to calculate the f~up~ point estimate from ultracentrifugation for each test compound using a Frequentist framework. 
+
+Mathematically, f~up~ is the ratio of the compound concentration in the aqueous fraction after centrifugation to the compound concentration in the sample after incubation for 5 hours. It can be expressed as $$f_{up} = \frac{C_{\textrm{aqueous fraction}}}{C_{\textrm{incubation}}}$$ where $C_{\textrm{aqueous fraction}}$ is the compound concentration in the aqueous fraction and $C_{\textrm{incubation}}$ is the compound concentration in the incubated sample. 
+
+The concentrations are defined as the mean AF or T5 response multiplied by its dilution factor. 
+
+```{r L3 processing}
+fup_uc_L3_curated <- calc_fup_uc_point(FILENAME = "Fup_UC_vignette", 
+                                 data.in = fup_uc_L2_curated,
+                                 # don't export output TSV file 
+                                 output.res = FALSE)
+```
+
+```{r, echo = FALSE}
+fup_uc_L3_curated %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_caption("Table 6: Level 3 data", align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "body") %>% 
+  theme_vanilla()
+```
+
+Our Level 3 data contains a `Fup` estimate and a `Calibration` column that details which data was used to calculate the point estimate. 
+
+## Level 4 processing 
+
+`calc_fup_uc` is the Level 4 function used to calculate f~up~ point estimates and credible intervals from ultracentrifugation using a Bayesian framework. Markov chain Monte Carlo (MCMC) simulations are used to randomly sample from the posterior distribution with a uniform prior. 
+
+To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must use `runjags::findjags()` as their argument for the `JAGS.PATH` parameter. 
+
+To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must run `runjags::findjags()` and include the path up through `/x64`. 
+
+We pass `fup_uc_L2_curated`, the Level 2 data frame, and **not** `fup_uc_L3_curated`, the Level 3 data frame, into `calc_fup_uc`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
+
+```{r L4 processing, message = FALSE}
+fup_uc_L4_curated <- calc_fup_uc(FILENAME = "Fup_UC_vignette",
+                                 data.in = fup_uc_L2_curated,
+                                 NUM.CORES = 8,
+                                 JAGS.PATH = runjags::findjags()
+                                 )
+```
+
+The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a f~up~ credible interval. 
+
+```{r, echo = FALSE}
+fup_uc_L4_curated[["Results"]] %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+      )
+      )
+  ) %>% 
+  set_caption(caption = "Table 7: Level 4 data",
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
+
+## Best Practices: Food for thought 
+
+Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
 
 ## References 
 
