@@ -96,6 +96,8 @@ calc_fup_uc_point <- function(
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
 {
+  #assigning global variables
+  Compound.Name <- Response <- Sample.Type <- NULL
   
   if (!missing(data.in)) {
     PPB.data <- as.data.frame(data.in)

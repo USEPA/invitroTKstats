@@ -96,6 +96,7 @@ be annotated as follows:
 }
 }
 \examples{
+\dontrun{
 # need to re-visit the path to load data for this example 
 load("~/invitroTKstats/Data/Kreutz2023.RData")
 load("~/invitroTKstats/Data/Smeltz2023.RData")
@@ -103,6 +104,7 @@ summarize_table(kreutz2023.uc, req.types = c("CC", "T1", "T5", "AF"))
 summarize_table(kreutz2023.clint)
 summarize_table(smeltz2023.red, req.types = c("NoPlasma.Blank","CC","T0","PBS","Plasma",
 "Stability","Plasma.Blank"))
+}
 
 }
 \author{

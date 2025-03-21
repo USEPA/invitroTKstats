@@ -176,6 +176,8 @@
 #' @author John Wambaugh
 #' 
 #' @import readxl
+#' @importFrom methods is 
+#' @importFrom utils head
 #' 
 #' @export merge_level0
 merge_level0 <- function(FILENAME="MYDATA",
@@ -217,6 +219,9 @@ merge_level0 <- function(FILENAME="MYDATA",
   OUTPUT.DIR = NULL
   )
 {
+  #assigning global variables
+  std.conc <- NULL
+  
   level0.catalog <- as.data.frame(level0.catalog)
   
 # These arguments allow the user to specify a single value for every observation 

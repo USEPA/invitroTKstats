@@ -246,6 +246,7 @@ model {
 #' 
 #'
 #' @import Rdpack
+#' @importFrom utils read.csv write.table read.table
 #'
 #' @import coda
 #'
@@ -268,6 +269,11 @@ calc_clint <- function(
   OUTPUT.DIR = NULL
   )
 {
+  
+  #assigning global variables
+  Compound.Name <- Response <- Sample.Type <- NULL
+  
+  
   if (!missing(data.in)) {
     if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
     MS.data <- as.data.frame(data.in)
@@ -535,7 +541,7 @@ calc_clint <- function(
 
   stopCluster(CPU.cluster)
 
-  View(Results)
+  #View(Results)
   
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR

@@ -10,6 +10,7 @@ calc_fup_red_point(
   data.in,
   good.col = "Verified",
   output.res = TRUE,
+  sig.figs = 3,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -29,6 +30,10 @@ verified, data rows valid for analysis are indicated with a "Y".
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
 table (Level-3) will be exported the current directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
+
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-3). 
+(Note: console print statements are also rounded to specified significant figures.)
+(Defaults to \code{3}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
 If \code{NULL}, looking for the input level-2 file in the current working

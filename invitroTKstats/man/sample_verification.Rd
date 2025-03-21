@@ -68,7 +68,7 @@ level2 <- invitroTKstats::kreutz2023.clint
 
 # Data sets in the package are level-2 data. For demonstration purposes,
 # remove the verification columns from the data and use it as level-1.
-level1 <- dplyr::select(level2, -c(Verifed, Verified))
+level1 <- subset(level2, select = -c(Verifed,Verified) )
 
 # Scenario 1: Pass in data.in and exclusion.info data frame from R session 
 
@@ -77,13 +77,24 @@ level1 <- dplyr::select(level2, -c(Verifed, Verified))
 # enter them as one string, separate the variables with a vertical bar, "|", and do the same for 
 # values. 
 exclusion_criteria <- data.frame(
-Variables = c("DTXSID", "Date", "Compound.Name|Lab.Sample.Name"),
-Values = c("DTXSID00380798","21021", "Nonafluoropentanamide|Amide Hep120220 T0C2_020921"), 
-Message = c("Exclude all samples of this compound.","Exclude all samples from this date.", "These samples for this compound were contaminated.")
+  Variables = c(
+    "DTXSID","Date","Compound.Name|Lab.Sample.Name"
+  ),
+  Values = c(
+    "DTXSID00380798","21021",
+    "Nonafluoropentanamide|Amide Hep120220 T0C2_020921"
+  ),
+  Message = c(
+    "Exclude all samples of this compound.",
+    "Exclude all samples from this date.",
+    "These samples for this compound were contaminated."
+    )
 )
 
 # Run the verification function.
-my.level2 <- sample_verification(data.in=level1, exclusion.info = exclusion_criteria, output.res = FALSE)
+my.level2 <- sample_verification(data.in=level1,
+                                 exclusion.info = exclusion_criteria,
+                                 output.res = FALSE)
 
 # scenario 2: import 'tsv' as input data and do not pass in a exclusion.info data frame
 

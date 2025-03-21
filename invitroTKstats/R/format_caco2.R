@@ -241,6 +241,7 @@
 #'
 #' @examples
 #' library(invitroTKstats)
+#' \dontrun{
 #' level0 <- TO1caco2
 #' level1 <- format_caco2(level0,
 #'                        FILENAME="EPACyprotex2021",
@@ -257,7 +258,8 @@
 #'                        analysis.instrument="GC or LC",
 #'                        analysis.method="Mass Spec"
 #'                       )
-#'
+#' }
+#' 
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
 #'
@@ -316,7 +318,12 @@ format_caco2 <- function(
   OUTPUT.DIR = NULL
   )
 {
-
+  #assigning global variables
+  dilution.factor.col <- NULL
+  
+  # These are the required data types as indicated by type.col.
+  # In order to calculate the parameter a chemical must have peak areas for each
+  # of these measurements:
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
     # Force code to throw error if data.in accessed after this point:
