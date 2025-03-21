@@ -338,7 +338,7 @@ fup_uc_L4_curated <- calc_fup_uc(FILENAME = "Fup_UC_vignette",
                                  )
 ```
 
-The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a f~up~ credible interval. 
+The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a credible interval for f~up~ and for f~stable~ which measures the compound's stability. Mathematically, $f_{stable} = \frac{\textrm{T5}}{\textrm{T1}}$ where a value of $1$ indicates no compound breakdown. 
 
 ```{r, echo = FALSE, eval = FALSE}
 # Once Level 3 and Level 4 results are produced in R script and saved to /Data 
