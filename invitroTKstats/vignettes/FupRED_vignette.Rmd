@@ -210,7 +210,7 @@ fup_red_L1_curated <- format_fup_red(FILENAME = "Fup_RED_vignette",
                                      analysis.instrument = "Waters ACQUITY I-Class UHPLC - Xevo TQ-S uTQMS",
                                      analysis.parameters = "RT",
                                      # don't export output TSV file 
-                                     output.res = FALSE,
+                                     output.res = FALSE
                                      )
 ```
 
@@ -408,7 +408,7 @@ To run Level 4, one needs to have JAGS installed on their machine. To determine 
 
 We pass `fup_red_L2_curated`, the Level 2 data frame, and **not** `fup_red_L3_curated`, the Level 3 data frame, into `calc_fup_red`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
 
-```{r L4 processing, message = FALSE}
+```{r L4 processing, message = FALSE, eval = FALSE}
 fup_red_L4_curated <- calc_fup_red(FILENAME = "Fup_RED_vignette",
                                    data.in = fup_red_L2_curated,
                                    JAGS.PATH = runjags::findjags()
@@ -417,8 +417,13 @@ fup_red_L4_curated <- calc_fup_red(FILENAME = "Fup_RED_vignette",
 
 The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a f~up~ credible interval.
 
-```{r, echo = FALSE}
-fup_red_L4_curated[["Results"]] %>% 
+```{r, echo = FALSE, eval = FALSE}
+# Once Level 3 and Level 4 results are produced in R script and saved to /Data 
+# directory, Level 4 results can be read in and set `eval = TRUE` for this chunk. 
+file = "Fup_RED_vignette-fup-RED-Level.tsv"
+fup_red_L4_curated <- read.delim(file = file, sep = "\t")
+
+fup_red_L4_curated %>% 
   flextable() %>% 
   bg(bg = "#DDDDDD", part = "header") %>% 
   autofit() %>% 
