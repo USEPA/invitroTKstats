@@ -331,7 +331,7 @@ To run Level 4, one needs to have JAGS installed on their machine. To determine 
 
 We pass `fup_uc_L2_curated`, the Level 2 data frame, and **not** `fup_uc_L3_curated`, the Level 3 data frame, into `calc_fup_uc`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
 
-```{r L4 processing, message = FALSE}
+```{r L4 processing, message = FALSE, eval = FALSE}
 fup_uc_L4_curated <- calc_fup_uc(FILENAME = "Fup_UC_vignette",
                                  data.in = fup_uc_L2_curated,
                                  JAGS.PATH = runjags::findjags()
@@ -340,8 +340,13 @@ fup_uc_L4_curated <- calc_fup_uc(FILENAME = "Fup_UC_vignette",
 
 The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a f~up~ credible interval. 
 
-```{r, echo = FALSE}
-fup_uc_L4_curated[["Results"]] %>% 
+```{r, echo = FALSE, eval = FALSE}
+# Once Level 3 and Level 4 results are produced in R script and saved to /Data 
+# directory, Level 4 results can be read in and set `eval = TRUE` for this chunk. 
+file = "Fup_UC_vignette-fup-UC-Level4.tsv"
+fup_uc_L4_curated <- read.delim(file = file, sep = "\t")
+
+fup_uc_L4_curated %>% 
   flextable() %>% 
   bg(bg = "#DDDDDD", part = "header") %>% 
   autofit() %>% 
