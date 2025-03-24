@@ -128,9 +128,11 @@ calc_fup_red_point <- function(
   # # Throw error if not all columns present with expected names:
   reps = c("Biological.Replicates", "Technical.Replicates")
   if (!(all(reps %in% colnames(MS.data))))
+  {
     warning("Run format_fup_red first (level 1) then curate to (level 2).")
     stop(paste("Missing replication columns named:", 
                paste(reps[!(reps %in% colnames(MS.data))], collapse = ", ")))
+  }
   
   if (!(all(cols %in% colnames(MS.data))))
   {
