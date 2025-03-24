@@ -45,6 +45,7 @@ format_fup_uc(
   level0.sheet.col = "Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
+  sig.figs = 5,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -219,6 +220,9 @@ table (Level-1) will be exported the current directory as a .tsv file.
 \item{save.bad.types}{(Logical) When set to \code{TRUE}, export data removed 
 due to inappropriate sample types. See the Detail section for the required sample types. 
 (Defaults to \code{FALSE}.)}
+
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-1). 
+(Defaults to \code{5}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
 If \code{NULL}, looking for the input level-0 file in the current working

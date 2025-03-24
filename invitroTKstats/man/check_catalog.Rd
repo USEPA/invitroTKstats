@@ -13,3 +13,8 @@ check_catalog(catalog)
 This function is meant to check whether the catalog file is in the anticipated
 format with required information.
 }
+\examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+check_catalog(catalog = data.guide) # note the data.guide is not currently in `invitroTKstats`
+\dontshow{\}) # examplesIf}
+}

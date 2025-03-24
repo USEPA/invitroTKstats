@@ -49,6 +49,7 @@ format_clint(
   level0.sheet.col = "Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
+  sig.figs = 5,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -243,6 +244,9 @@ table (Level-1) will be exported the current directory as a .tsv file.
 due to inappropriate sample types. See the Detail section for the required sample types. 
 (Defaults to \code{FALSE}.)}
 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-1). 
+(Defaults to \code{5}.)}
+
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
 If \code{NULL}, looking for the input level-0 file in the current working
 directory. (Defaults to \code{NULL}.)}
@@ -250,15 +254,6 @@ directory. (Defaults to \code{NULL}.)}
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
 If \code{NULL}, the output file will be saved to the current working
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
-
-\item{compound.conc}{(Numeric) The concentration
-of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only,
-use only if all tested compounds have the same concentration for calibration curves.)}
-
-\item{compound.conc.col}{(Character) Column name containing \code{compound.conc}
-information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
-necessarily have this field. If this field is missing, it can be auto-filled with the value
-specified in \code{compound.conc}.)}
 }
 \value{
 A Level-1 data frame with a standardized format containing a  

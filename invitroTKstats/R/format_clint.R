@@ -65,14 +65,14 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{density}.)
 #' 
-#' @param compound.conc (Numeric) The concentration
-#' of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only,
-#' use only if all tested compounds have the same concentration for calibration curves.)
-#' 
-#' @param compound.conc.col (Character) Column name containing \code{compound.conc}
-#' information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
-#' necessarily have this field. If this field is missing, it can be auto-filled with the value
-#' specified in \code{compound.conc}.)
+# @param compound.conc (Numeric) The concentration
+# of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only,
+# use only if all tested compounds have the same concentration for calibration curves.)
+# 
+# @param compound.conc.col (Character) Column name containing \code{compound.conc}
+# information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+# necessarily have this field. If this field is missing, it can be auto-filled with the value
+# specified in \code{compound.conc}.)
 #' 
 #' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
 #' indices or dates to represent if the analyses were done on different machines on 

@@ -51,6 +51,7 @@ format_caco2(
   level0.sheet.col = "Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
+  sig.figs = 5,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -249,6 +250,9 @@ table (Level-1) will be exported the current directory as a .tsv file.
 due to inappropriate sample types. See the Detail section for the required sample types. 
 (Defaults to \code{FALSE}.)}
 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-1). 
+(Defaults to \code{5}.)}
+
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
 If \code{NULL}, looking for the input level-0 file in the current working
 directory. (Defaults to \code{NULL}.)}
@@ -295,6 +299,7 @@ Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
 library(invitroTKstats)
+\dontrun{
 level0 <- TO1caco2
 level1 <- format_caco2(level0,
                        FILENAME="EPACyprotex2021",
@@ -311,6 +316,7 @@ level1 <- format_caco2(level0,
                        analysis.instrument="GC or LC",
                        analysis.method="Mass Spec"
                       )
+}
 
 }
 \references{

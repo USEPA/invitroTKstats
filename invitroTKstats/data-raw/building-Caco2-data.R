@@ -13,7 +13,7 @@
 ## load necessary package
 library(readxl)
 # library(invitroTKstats) ## use when installed package is up-to-date
-devtools::load_all("~/Git/invitrotkstats/invitroTKstats") ## use when installed package is not up-to-date
+devtools::load_all("~/Git/invitrotkstats/invitroTKstats") ## use when installed package is not up-to-date, but branch is up-to-date with 'dev' branch
 
 ## Build the data guide 
 level0.catalog <- create_catalog(file = "Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm",

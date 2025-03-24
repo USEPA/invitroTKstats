@@ -641,7 +641,7 @@
 #'
 #' \insertRef{smeltz2023plasma}{invitroTKstats}
 #' @keywords data
-"fup_uc_L1"
+"fup_red_L1"
 
 #' Fup RED Level 2 Example Data set
 #'
@@ -817,3 +817,28 @@
 #' \insertRef{smeltz2023plasma}{invitroTKstats}
 #'
 "clint_L2"
+
+#' Common Columns in Level-1
+#' 
+#' Common column names across the various *in vitro* assays used for collecting
+#' HTTK relevant physiological parameters.
+#' 
+#' @name L1.common.col
+#' @aliases L1.common.col
+#' @docType data
+#' @format A named character vector containing the default/standard column names
+#' across HTTK assays, where the element names are the corresponding L1 arguments.
+"L1.common.cols"
+
+#' Standard Data Catalog (Data Guide) Columns
+#' 
+#' Standardized column names for data catalogs (i.e. data guides) used for
+#' collecting the minimum information to merge level-0 data files.
+#' 
+#' @name std.catcols
+#' @aliases std.catcols
+#' @docType data
+#' @format A named character vector containing the default/standard column names
+#' for data catalogs, where the element names are the corresponding `create_catalog`
+#' arguments. 
+"std.catcols"

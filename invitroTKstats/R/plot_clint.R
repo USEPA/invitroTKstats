@@ -28,8 +28,11 @@
 #' @import ggplot2
 plot_clint <- function(level2,dtxsid,color.palette = "viridis")
 {
-# We need all these columns in clint.data
-# Standardize the column names:
+  #assigning global variables
+  DTXSID <- Time <- Response <- Sample.Type <- Calibration <- NULL
+  
+  # We need all these columns in clint.data
+  # Standardize the column names:
   sample.col <- "Lab.Sample.Name"
   date.col <- "Date"
   compound.col <- "Compound.Name"

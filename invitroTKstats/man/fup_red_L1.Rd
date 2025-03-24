@@ -3,7 +3,6 @@
 \docType{data}
 \name{fup_red_L1}
 \alias{fup_red_L1}
-\alias{fup_uc_L1}
 \title{Fup RED Level 1 Example Data set}
 \format{
 A level 1 data.frame with 492 rows and 24 variables: \describe{
@@ -34,7 +33,7 @@ A level 1 data.frame with 492 rows and 24 variables: \describe{
 }
 }
 \usage{
-fup_uc_L1
+fup_red_L1
 }
 \description{
 Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 

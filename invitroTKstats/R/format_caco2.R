@@ -240,6 +240,7 @@
 #' @author John Wambaugh
 #'
 #' @examples
+
 #' ## Load example level-0 data
 #' level0 <- invitroTKstats::caco2_L0
 #' level1 <- format_caco2(data.in = level0,
@@ -258,6 +259,7 @@
 #'                        analysis.method.col = "Analysis.Params",
 #'                        analysis.instrument = "Agilent.GCMS",
 #'                        analysis.parameters = "TBD",
+#'                        note.col = NULL,
 #'                        output.res = FALSE
 #' )
 #'
@@ -319,7 +321,12 @@ format_caco2 <- function(
   OUTPUT.DIR = NULL
   )
 {
-
+  #assigning global variables
+  dilution.factor.col <- NULL
+  
+  # These are the required data types as indicated by type.col.
+  # In order to calculate the parameter a chemical must have peak areas for each
+  # of these measurements:
   if (!missing(data.in)) {
     data.out <- as.data.frame(data.in)
     # Force code to throw error if data.in accessed after this point:

@@ -15,6 +15,7 @@ calc_fup_red(
   JAGS.PATH = NA,
   Physiological.Protein.Conc = 70/(66.5 * 1000) * 1e+06,
   save.MCMC = FALSE,
+  sig.figs = 3,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -52,6 +53,11 @@ assume all protein is albumin to estimate default in uM.)}
 
 \item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
 as an .RData file. (Defaults to \code{FALSE}.)}
+
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported unverified data (Level-2). 
+The exported result table (Level-4) is left unrounded for reproducibility. 
+(Note: console print statements are also rounded to specified significant figures.) 
+(Defaults to \code{3}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
 If \code{NULL}, looking for the input level-2 file in the current working
