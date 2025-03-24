@@ -376,17 +376,6 @@ format_fup_red <- function(
                     plasma.percent.col = "Percent.Physiologic.Plasma"
   )
   
-  # ## allow either one of the two, or both replicate columns in the data
-  # if (biological.replicates.col %in% colnames(data.in))
-  #   fup.red.cols <- c(fup.red.cols, 
-  #                   biological.replicates.col = "Biological.Replicates")
-  # if (technical.replicates.col %in% colnames(data.in))
-  #   fup.red.cols <- c(fup.red.cols, 
-  #                   technical.replicates.col = "Technical.Replicates")
-  # if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.in)))
-  #   stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
-  #              paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
-  
   ## throw warning for tech reps but require bio reps
   if (!biological.replicates.col %in% colnames(data.in))
     stop(paste("Missing columns named: Biological.Replicates"))
