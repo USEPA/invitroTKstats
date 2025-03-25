@@ -11,6 +11,7 @@ create_catalog(
   date,
   compound,
   istd,
+  col.names.loc,
   sample,
   type,
   peak,
@@ -40,6 +41,9 @@ the relevant chemical identifier.}
 
 \item{istd}{(\emph{character vector}) Vector of character strings with the
 internal standard.}
+
+\item{col.names.loc}{(\emph{numeric vector}) Numeric vector containing the 
+row locations of the column names.}
 
 \item{sample}{(\emph{character vector}) Vector of character strings with
 column names containing samples.}
@@ -80,7 +84,8 @@ All arguments are required, with exception of `additional.info`.
 create_catalog(
   file = "testME.xlsx",sheet = "3",skip.rows = 0,
   date = "112723",compound = "80-05-7",
-  istd = "Chemical A",sample = "Sample.Name",type = "Type",
+  istd = "Chemical A", col.names.loc = 1, 
+  sample = "Sample.Name",type = "Type",
   peak = "Response.Area",istd.peak = "ISTD.Peak.Area",
   conc = "Intended.Concentration",analysis.param = "A,B,C"
 )

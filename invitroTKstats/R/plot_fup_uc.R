@@ -37,7 +37,10 @@
 #' @export plot_fup_uc
 plot_fup_uc <- function(level2,dtxsid, compare = "type",good.col="Verified", color.palette = "viridis")
 {
-# We need all these columns in uc data
+  #assigning global variables
+  DTXSID <- Verified <- Response <- Sample.Type <- Calibration <- Dilution.Factor <- NULL
+  
+  # We need all these columns in uc data
   # Standardize the column names:
     sample.col <- "Lab.Sample.Name"
     date.col <- "Date"

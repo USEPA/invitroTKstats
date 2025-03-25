@@ -9,6 +9,7 @@ calc_caco2_point(
   data.in,
   good.col = "Verified",
   output.res = TRUE,
+  sig.figs = 3,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -29,6 +30,10 @@ verified, data rows valid for analysis are indicated with a "Y".
 table (Level-3) will be exported the current directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-3). 
+(Note: console print statements are also rounded to specified significant figures.) 
+(Defaults to \code{3}.)}
+
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-2 file exists. 
 If \code{NULL}, looking for the input level-2 file in the current working
 directory. (Defaults to \code{NULL}.)}
@@ -47,6 +52,10 @@ directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
   dQdt_B2A \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
   Papp_B2A \tab Apparent membrane permeability \tab 10^-6 cm/s\cr
   Refflux \tab Efflux ratio \tab unitless\cr
+  Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
+  Frec_B2B.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
+  Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
+  Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
 }
 }
 \description{
@@ -73,7 +82,7 @@ of concentration measured:
 Apparent membrane permeability (\eqn{P_{app}}) is calculated from MS responses as:
 
 
-\eqn{P_{app} = \frac{dQ/dt}{c_0/A}}
+\eqn{P_{app} = \frac{dQ/dt}{c_0*A}}
 
 The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\text{time (s)}} \right)} is calculated as:
 
@@ -86,9 +95,11 @@ where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is B
 ## Load example level-2 data
 level2 <- invitroTKstats::caco2_L2
 
+\dontrun{
 ## scenario 1: 
 ## input level-2 data from the R session and do not export the result table
 level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
+}
 
 ## scenario 2: 
 ## import level-2 data from a 'tsv' file and export the result table

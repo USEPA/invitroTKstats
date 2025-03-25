@@ -1313,7 +1313,6 @@ write.table(level2,
       quote=F)
 ```
 
-
 # maximum likelihood analysis:
 
 The package has been undergoing further development since the example dataset `kreutz2023.uc` was compiled. Some of the columns are named differently from how they were named in the previous version, for example, "Series" column is now called "Biological.Replicates" and "Standard.Conc" column is now called "Test.Compound.Conc".

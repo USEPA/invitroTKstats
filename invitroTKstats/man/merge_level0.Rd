@@ -18,6 +18,8 @@ merge_level0(
   date.col = "Date",
   compound.col = "Chemical.ID",
   istd.col = "ISTD",
+  col.names.loc = NULL,
+  col.names.loc.col = "Col.Names.Loc",
   sample.colname = NULL,
   sample.colname.col = "Sample.ColName",
   type.colname = NULL,
@@ -90,6 +92,13 @@ test compound. (Defaults to "Chemical.ID")}
 
 \item{istd.col}{(Character) Column name of input.data (level0?) indicating the
 MS peak area for the internal standard. (Defaults to "ISTD")}
+
+\item{col.names.loc}{(Numeric) Row location of data column names. (Defaults to 
+'NULL'.) (Note: Single entry only, use only if all files have column names 
+in the same row location, typically the first row.)}
+
+\item{col.names.loc.col}{(Character) Catalog column name containing `col.names.loc`
+information. (Defaults to "Col.Names.Loc")}
 
 \item{sample.colname}{(Character) Column name of level 0 data containing
 sample information. (Defaults to `NULL`.) (Note: Single entry only, use only
@@ -201,6 +210,7 @@ the argument `level0.catalog` should be a data frame with the following columns:
   Date \tab The date the measurements were made\cr
   Chemical.ID \tab The laboratory chemical identity\cr
   ISTD \tab The internal standard used\cr
+  Col.Names.Loc \tab The row locations of the column names\cr
   Sample.ColName \tab The column name on the sheet that contains sample identity\cr
   Type.ColName \tab The column name on the sheet that contains the type of sample\cr
   Peak.ColName \tab The column name on the sheet that contains the analyte MS peak area \cr
