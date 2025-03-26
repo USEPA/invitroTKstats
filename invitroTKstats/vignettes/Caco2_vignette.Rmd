@@ -179,12 +179,8 @@ req_cols %>%
 By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward.
 
 ```{r L1 processing}
-# Manually add note column
-caco2_L0_curated <- caco2_L0 %>% 
-  mutate(Note = "")
-
 caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
-                                 data.in = caco2_L0_curated,
+                                 data.in = caco2_L0,
                                  # columns present in L0 data 
                                  sample.col = "Sample",
                                  lab.compound.col = "Lab.Compound.ID",
@@ -203,6 +199,7 @@ caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  nominal.test.conc = 10,
                                  analysis.instrument = "Agilent.GCMS",
                                  analysis.parameters = "Unknown",
+                                 note.col = NULL,
                                  # don't export output TSV file
                                  output.res = FALSE
                                  )
@@ -239,17 +236,17 @@ head(n = 3) %>%
 
 Currently, when the ISTD.Area measurement for a sample is 0, the calculated Response is NaN, or not a number, because of the division by 0. In this particular case, all of our samples that have a NaN Response are "Blank" sample types. But, these sample types are needed for point estimation. Users can verify this with the following check. 
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 all(caco2_L1_curated[is.nan(caco2_L1_curated$Response), "Sample.Type"] == "Blank")
 ```
 
-Therefore, we replace the NaNs with 0 so that the "Blank" samples types are kept in the datset and our estimates are accurate. 
+Therefore, we replace the NaNs with 0 so that the "Blank" sample types are kept in the dataset and our estimates are accurate. 
 
 ```{r}
 # Response = Peak.Area/ISTD.Area --> NaN when ISTD.Area = 0 
 # Replace the NaNs with 0
 caco2_L1_curated <- caco2_L1_curated %>% 
-  mutate(Response = ifelse(is.nan(Response), 0, Response))
+  mutate(Response = ifelse(is.nan(Response) & Sample.Type == "Blank", 0, Response))
 ```
 
 ## Level 2 processing 
@@ -323,25 +320,24 @@ caco2_L2_curated %>%
 
 Mathematically, P~app~ is the amount of compound transported per unit time and is defined as $$P_{app} = \frac{dQ/dt}{c_0*A}$$ where $dQ/dt$ is the rate of permeation, $c_0$ is the initial concentration in the donor compartment, and $A$ is the surface area of the cell monolayer. 
 
-First, the rate of permeation can be understood as the amount of compound passing through the monolayer per unit time. Therefore, it can be expressed as 
+First, we define the rate of permeation as the amount of compound passing through the monolayer per unit time. It is expressed as 
 $$\frac{dQ}{dt} = \frac{c_{\textrm{receiver}}V_{\textrm{receiver}}}{\Delta t}$$ where $c_{\textrm{receiver}}$ is the concentration of the test compound in the receiver compartment, $V_{\textrm{receiver}}$ is the volume of the receiver compartment, and $\Delta t$ is the total elapsed time. This rate is a type of flux and therefore has units of $\mu \textrm{mol}/s$. The dimensional analysis is described below. 
 $$\left[\frac{dQ}{dt}\right] = \frac{[c_{\textrm{receiver}}][V_{\textrm{receiver}}]}{[\Delta t]} = \frac{[\mu \textrm{mol/L}][L]}{[s]} = \frac{[\mu \textrm{mol}]}{[s]} $$
 
-$c_{\textrm{receiver}}$ is defined as the mean R2 response multiplied by its dilution factor. To account for background noise, we also subtract the mean blank response. $V_{\textrm{receiver}}$ is defined by our `Vol.Receiver` column and $\Delta t$ is defined by our `Time` column. 
+Next, to estimate $c_\textrm{receiver}$, we multiply the mean R2 response with its corresponding dilution factor and subtract the mean blank response to account for noise such that $$c_\textrm{receiver} = \textrm{dilution factor}_{R2} * \overline{Response}_{R2} - \textrm{dilution factor}_{Blank} * \overline{Response}_{Blank}$$. 
 
-$c_0$ is calculated similarly to $c_{\textrm{receiver}}$ but with the mean D0 response instead of R2 such that 
+The initial concentration in the donor compartment, $c_0$, is calculated similarly but with the mean D0 response instead of the mean R2 response. 
 
-$$c_0 = \textrm{dilution factor}_{D0} * \overline{Response}_{D0} - \textrm{dilution factor}_{Blank} * \overline{Response}_{Blank}$$. 
+The last remaining arguments are estimated with columns in our data; $V_\textrm{receiver}$ is defined by our `Vol.Receiver` column, $\Delta t$ is defined by our `Time` column, and $A$ is defined by our `Membrane.Area` column. 
 
-Lastly, $A$ is defined by our `Membrane.Area` column. 
-
-With this information, we can calculate P~app~ from the donor to the receiver compartments in the well. The user can switch the roles of donor and receiver and produce a second set of estimates for P~app~ in the opposite direction. The estimate directions are annotated according to Figure 1. 
+With this information, we calculate P~app~ in the donor to receiver direction. The estimate's direction is annotated according to Figure 1. For example, results annotated with the "A2B" suffix denote the apical side as the donor and the basal side as the receiver. 
 
 ```{r}
 caco2_L3_curated <- calc_caco2_point(FILENAME = "Caco2_vignette",
                                      data.in = caco2_L2_curated, 
                                      # don't export output TSV file 
-                                     output.res = FALSE)
+                                     output.res = FALSE
+                                     )
 ```
 
 ```{r, echo = FALSE}
@@ -359,7 +355,15 @@ caco2_L3_curated %>%
   theme_vanilla()
 ```
 
-Our Level 3 data contains estimates for `C0`, `dQdt`, and `Papp` in both directions and a `Refflux` estimate. The Efflux ratio, or the ratio between the two apparent membrane permeabilities is expressed as $R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$. 
+In addition to returning an estimate for `Papp` and its components (`C0`, `dQdt`) in both directions, our Level 3 data contains estimates for the efflux ratio (`Refflux`), the fraction recovered (`Frec`), and the qualitative category of the fraction recovered (`Recovery_Class`). 
+
+The efflux ratio is the ratio between the apparent membrane permeabilities and is expressed as $$R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$$. 
+
+The fraction recovered is the fraction of the initial donor amount recovered in the receiver compartment; it assesses the accuracy of the analytical chemistry method used to determine concentration values. It is expressed as $$ \frac{V_{D2}*\textrm{DF}_{D2}*(Responses_{D2} - \overline{Response}_{Blank}) + V_{R2}*\textrm{DF}_{R2}*(Responses_{R2} - \overline{Response}_{Blank})}{V_{D0}*\textrm{DF}_{D0}*(Responses_{D0} - \overline{Response}_{Blank})} $$ where $V$ is the corresponding volume, $\textrm{DF}$ is the corresponding dilution factor, $Responses$ are the corresponding responses, and $\overline{Response}_{Blank}$ is the mean blank response. 
+
+Fraction recovered values are then classified and provided as the `Recovery_Class` value. Values $<0.4$ are classified as "Low Recovery" and values $>2$ are classified as "High Recovery". Values within this range, $0.4 \leq \textrm{Frec} \leq 2$, are considered normal and are not given a classification. 
+
+Looking at our results, some of our `Frec` values are less than $0.4$ and are therefore classified as "Low Recovery". Others are within the $[0.4, 2]$ range and are therefore considered normal, which is why they are not classified. 
 
 ## Best Practices: Food for thought 
 
