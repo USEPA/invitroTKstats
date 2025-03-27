@@ -15,9 +15,9 @@ A level 1 data.frame with 48 rows and 24 variables: \describe{
 \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
-\item{\code{Series}}{Identier for replicate series of measurements}
-\item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
-\item{\code{Test.Target.Conc}}{Test concentration of chemical (uM)}
+\item{\code{Biological.Replicates}}{Replicate series of measurements with the same analyte}
+\item{\code{Nominal.Conc}}{Concentration of test chemical (for calibration curve) (uM)}
+\item{\code{Test.Target.Conc}}{Test concentration of chemical (uM) at time zero}
 \item{\code{Time}}{Time point sample measured (h)}
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
@@ -29,6 +29,9 @@ A level 1 data.frame with 48 rows and 24 variables: \describe{
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
 \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
 \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
+\item{\code{Note}}{Additional information}
+\item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
+\item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 }
 }
