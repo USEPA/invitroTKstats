@@ -324,13 +324,13 @@ First, we define the rate of permeation as the amount of compound passing throug
 $$\frac{dQ}{dt} = \frac{c_{\textrm{receiver}}V_{\textrm{receiver}}}{\Delta t}$$ where $c_{\textrm{receiver}}$ is the concentration of the test compound in the receiver compartment, $V_{\textrm{receiver}}$ is the volume of the receiver compartment, and $\Delta t$ is the total elapsed time. This rate is a type of flux and therefore has units of $\mu \textrm{mol}/s$. The dimensional analysis is described below. 
 $$\left[\frac{dQ}{dt}\right] = \frac{[c_{\textrm{receiver}}][V_{\textrm{receiver}}]}{[\Delta t]} = \frac{[\mu \textrm{mol/L}][L]}{[s]} = \frac{[\mu \textrm{mol}]}{[s]} $$
 
-Next, to estimate $c_\textrm{receiver}$, we multiply the mean R2 response with its corresponding dilution factor and subtract the mean blank response to account for noise such that $$c_\textrm{receiver} = \textrm{dilution factor}_{R2} * \overline{Response}_{R2} - \textrm{dilution factor}_{Blank} * \overline{Response}_{Blank}$$. 
+Next, to estimate $c_\textrm{receiver}$, we first multiply each R2 response with the corresponding R2 dilution factor and find the mean. To account for background noise, we follow a similar procedure with the blank response and dilution factor. We then subtract the two such that $$c_\textrm{receiver} = \textrm{mean}(\textrm{dilution factor}_{R2} * \textrm{Response}_{R2}) - \textrm{mean}(\textrm{dilution factor}_{Blank} * \textrm{Response}_{Blank})$$ 
 
-The initial concentration in the donor compartment, $c_0$, is calculated similarly but with the mean D0 response instead of the mean R2 response. 
+The initial concentration in the donor compartment, $c_0$, is calculated similarly but with the D0 response instead of the R2 response. 
 
-The last remaining arguments are estimated with columns in our data; $V_\textrm{receiver}$ is defined by our `Vol.Receiver` column, $\Delta t$ is defined by our `Time` column, and $A$ is defined by our `Membrane.Area` column. 
+The last remaining arguments are estimated with columns in our data: $V_\textrm{receiver}$ is defined by our `Vol.Receiver` column, $\Delta t$ is defined by our `Time` column, and $A$ is defined by our `Membrane.Area` column. 
 
-With this information, we calculate P~app~ in the donor to receiver direction. The estimate's direction is annotated according to Figure 1. For example, results annotated with the "A2B" suffix denote the apical side as the donor and the basal side as the receiver. 
+With this information, we calculate P~app~ in the donor to receiver direction. The estimate's direction is annotated according to Figure 1. For example, results annotated with the "A2B" suffix denote the apical side as the donor and the basal side as the receiver. Contrastingly, results annotated with the "B2A" suffix denote the basal side as the donor and the apical side as the receiver.
 
 ```{r}
 caco2_L3_curated <- calc_caco2_point(FILENAME = "Caco2_vignette",
@@ -355,15 +355,26 @@ caco2_L3_curated %>%
   theme_vanilla()
 ```
 
-In addition to returning an estimate for `Papp` and its components (`C0`, `dQdt`) in both directions, our Level 3 data contains estimates for the efflux ratio (`Refflux`), the fraction recovered (`Frec`), and the qualitative category of the fraction recovered (`Recovery_Class`). 
+In addition to returning an estimate for `Papp` and its components (`C0`, `dQdt`) in both directions, our Level 3 data contains estimates for the efflux ratio (`Refflux`), the fraction recovered (`Frec`) in both directions, and the qualitative category of each fraction recovered value (`Recovery_Class`).  
 
 The efflux ratio is the ratio between the apparent membrane permeabilities and is expressed as $$R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$$. 
 
-The fraction recovered is the fraction of the initial donor amount recovered in the receiver compartment; it assesses the accuracy of the analytical chemistry method used to determine concentration values. It is expressed as $$ \frac{V_{D2}*\textrm{DF}_{D2}*(Responses_{D2} - \overline{Response}_{Blank}) + V_{R2}*\textrm{DF}_{R2}*(Responses_{R2} - \overline{Response}_{Blank})}{V_{D0}*\textrm{DF}_{D0}*(Responses_{D0} - \overline{Response}_{Blank})} $$ where $V$ is the corresponding volume, $\textrm{DF}$ is the corresponding dilution factor, $Responses$ are the corresponding responses, and $\overline{Response}_{Blank}$ is the mean blank response. 
+The fraction recovered is the fraction of the initial donor amount recovered in the receiver compartment. It assesses the accuracy of the analytical chemistry method used to determine concentration values. It is expressed as $$ \frac{V_{D2}*\textrm{DF}_{D2}*(Responses_{D2} - \overline{Response}_{Blank}) + V_{R2}*\textrm{DF}_{R2}*(Responses_{R2} - \overline{Response}_{Blank})}{V_{D0}*\textrm{DF}_{D0}*(Responses_{D0} - \overline{Response}_{Blank})} $$ where $V$ is the corresponding volume, $\textrm{DF}$ is the corresponding dilution factor, $Responses$ are the corresponding responses, and $\overline{Response}_{Blank}$ is the mean blank response. 
 
-Fraction recovered values are then classified and provided as the `Recovery_Class` value. Values $<0.4$ are classified as "Low Recovery" and values $>2$ are classified as "High Recovery". Values within this range, $0.4 \leq \textrm{Frec} \leq 2$, are considered normal and are not given a classification. 
+Fraction recovered values are then classified and provided as the `Recovery_Class` value. Values $<0.4$ are classified as "Low Recovery" and values $>2$ are classified as "High Recovery". Values within the range, $0.4 \leq \textrm{Frec} \leq 2$, are considered normal and are not given an explicit classification. 
 
-Looking at our results, some of our `Frec` values are less than $0.4$ and are therefore classified as "Low Recovery". Others are within the $[0.4, 2]$ range and are therefore considered normal, which is why they are not classified. 
+If there are multiple samples per sample type per chemical, (i.e. biological replicates), a vector of fraction recovered values will be returned with a "|" separating each value.
+
+The following columns are always returned involving the fraction recovered in the A to B direction: 
+
+1. `Frec_A2B.vec` - vector of fraction recovered values 
+2. `Recovery_Class_A2B.vec` - vector of recovery classifications 
+3. `Frec_A2B.mean` - mean of fraction recovered values 
+4. `Frec_A2B.max` - maximum of fraction recovered values
+
+Note that even if there are no biological replicates, the above four columns are still returned; all of the `Frec` estimates will just be equivalent. Estimates are also returned in the B to A direction. 
+
+Looking at our results, some of our `Frec_A2B.vec` and `Frec_B2A.vec` values are less than $0.4$ and are therefore classified as "Low Recovery". Others are within the $[0.4, 2]$ range and are therefore considered normal.  
 
 ## Best Practices: Food for thought 
 
