@@ -202,6 +202,10 @@ calc_caco2_point <- function(
         
         # Calculate C0
         # only can handle one dilution factor right now:
+        cat(length(unique(this.dosing$Dilution.Factor))>1,"\t")
+        cat(unique(this.dosing$Dilution.Factor),"\n")
+        print(this.dosing)
+        
         if (length(unique(this.dosing$Dilution.Factor))>1){
           stop("calc_caco2_point - There is more than one `Dilution.Factor` for `D0` samples of `",this.chem,"` in direction ",this.direction,".")
           # browser()
@@ -237,7 +241,11 @@ calc_caco2_point <- function(
         if (length(unique(this.donor$Dilution.Factor))>1 |
             length(unique(this.dosing$Dilution.Factor))>1 |
             length(unique(this.receiver$Dilution.Factor))>1 |
-            length(unique(this.receiver$Vol.Receiver))>1) browser()
+            length(unique(this.receiver$Vol.Receiver))>1){
+          
+          stop("calc_caco2_point - There is more than one `Dilution.Factor` for 'D0', 'D2', or 'R2' samples, or more than one `Vol.Receiver` for 'R2' samples for `",this.chem,"` in direction ",this.direction,".")
+          # browser()
+        } 
         this.row[paste("Frec",dir.string,sep="_")] <- max(0,
                                                           (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
                                                                                                                                       length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
