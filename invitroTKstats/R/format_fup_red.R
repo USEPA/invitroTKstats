@@ -377,8 +377,11 @@ format_fup_red <- function(
   )
   
   ## throw warning for tech reps but require bio reps
-  if (!biological.replicates.col %in% colnames(data.in))
+  if (!biological.replicates.col %in% colnames(data.in)) {
     stop(paste("Missing columns named: Biological.Replicates"))
+  } else if (any(is.na(data.in[,biological.replicates.col]))) {
+      stop(paste("Provide non-NA value for Biological.Replicates"))
+  }
   if (!technical.replicates.col %in% colnames(data.in)) {
     data.in[,technical.replicates.col] <- NA
     warning("Technical replicates were not provided and are all assigned to NA.\n")

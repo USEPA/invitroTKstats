@@ -132,7 +132,13 @@ calc_fup_red_point <- function(
     warning("Run format_fup_red first (level 1) then curate to (level 2).")
     stop(paste("Missing replication columns named:", 
                paste(reps[!(reps %in% colnames(MS.data))], collapse = ", ")))
-  }
+  } else if (any(is.na(MS.data[,"Biological.Replicates"]))) 
+    {
+      warning("Run format_fup_red first (level 1) then curate to (level 2).")
+      stop("NA values provided for Biological.Replicates")
+    } 
+      
+  
   
   if (!(all(cols %in% colnames(MS.data))))
   {
