@@ -144,7 +144,7 @@ calc_fup_red_point <- function(
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
     "Plasma","PBS","T0","Plasma.Blank","NoPlasma.Blank"))
 
-  # Only used verfied data:
+  # Only used verified data:
   MS.data <- subset(MS.data, MS.data[,good.col] == "Y")
 
   out.table <-NULL

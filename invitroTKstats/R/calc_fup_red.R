@@ -338,7 +338,7 @@ calc_fup_red <- function(
 
   # Only include the data types used:
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
-    "Plasma.Blank","NoPlasma.Blank","PBS","Plasma","T0","Stability","EQ1","EQ2","CC"))
+    "Plasma.Blank","NoPlasma.Blank","PBS","Plasma","T0","Stability","EC_acceptor","EC_donor","CC"))
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")

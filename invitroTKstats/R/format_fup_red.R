@@ -10,13 +10,14 @@
 #'
 #' The data frame of observations should be annotated according to these types:
 #' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
+#'   No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+#'   Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr 
 #'   Plasma well concentration \tab Plasma\cr
 #'   Phosphate-buffered well concentration\tab PBS\cr
 #'   Time zero plasma concentration \tab T0\cr
 #'   Plasma stability sample \tab Stability\cr
-#'   Equilibrium Control Well 1 \tab EC1\cr
-#'   Equilibrium Control Well 2 \tab EC2\cr
+#'   Acceptor Equilibrium Control Well \tab EC_acceptor\cr
+#'   Donor Equilibrium Control Well \tab EC_donor\cr
 #'   Calibration Curve \tab CC\cr
 #' }
 #' Chemical concentration is calculated qualitatively as a response and 
@@ -397,7 +398,7 @@ format_fup_red <- function(
 
   # Only include the data types used:
   req.types = c("Plasma", "PBS", "T0", "Plasma.Blank", "NoPlasma.Blank",
-                "CC", "Stability", "EQ1", "EQ2")
+                "CC", "Stability", "EC_acceptor", "EC_donor")
   
   data.out <- subset(data.in,data.in[,type.col] %in% req.types)
   data.in.badtype <- subset(data.in,!(data.in[,type.col] %in% req.types))
