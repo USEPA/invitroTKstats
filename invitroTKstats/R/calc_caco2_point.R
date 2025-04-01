@@ -68,9 +68,13 @@
 #'   Papp_B2A \tab Apparent membrane permeability \tab 10^-6 cm/s\cr
 #'   Refflux \tab Efflux ratio \tab unitless\cr
 #'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
-#'   Frec_B2B.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
-#'   Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
-#'   Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
+#'   Frec_A2B.mean \tab Mean of the fraction recovered for the apical-basal direction \tab unitless \cr
+#'   Frec_B2A.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
+#'   Frec_B2A.mean \tab Mean of the fraction recovered for the basal-apical direction \tab unitless \cr
+#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_A2B.mean \tab Recovery classification for the mean apical-to-basal permeability("Low Recovery" if Frec_A2B.mean < 0.4 or "High Recovery" if Frec_A2B.mean > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_B2A.mean \tab Recovery classification for the mean basal-to-apical permeability("Low Recovery" if Frec_B2A.mean < 0.4 or "High Recovery" if Frec_B2A.mean > 2.0) \tab qualitative category \cr
 #' }
 #'
 #' @author John Wambaugh
@@ -172,8 +176,11 @@ calc_caco2_point <- function(
     this.row <- cbind(this.subset[1,
                                   c(compound.col, dtxsid.col, time.col, membrane.area.col)],
                       data.frame(Calibration="All Data",
-                                 C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN, Frec_A2B=NaN,
-                                 C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Frec_B2A=NaN, Refflux=NaN))
+                                 C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN, Frec_A2B.vec=NaN, Frec_A2B.mean = NaN,
+                                 Recovery_Class_A2B.vec = NA, Recovery_Class_A2B.mean = NA,
+                                 C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Frec_B2A.vec=NaN, Frec_B2A.mean = NaN,
+                                 Recovery_Class_B2A.vec = NA, Recovery_Class_B2A.mean = NA,
+                                 Refflux=NaN))
     for (this.direction in c("AtoB","BtoA"))
     {
       this.blank <- subset(this.subset, Sample.Type=="Blank" &
@@ -238,13 +245,27 @@ calc_caco2_point <- function(
             length(unique(this.dosing$Dilution.Factor))>1 |
             length(unique(this.receiver$Dilution.Factor))>1 |
             length(unique(this.receiver$Vol.Receiver))>1) browser()
-        this.row[paste("Frec",dir.string,sep="_")] <- max(0,
-                                                          (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
-                                                                                                                                      length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
-                                                             (this.receiver$Response-rep(mean(this.blank$Response),
-                                                                                         length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
-                                                                                                                              (this.dosing$Response-rep(mean(this.blank$Response),
-                                                                                                                                                        length(this.dosing$Response)))))
+        this.Frec.vec <- pmax(0,
+                             (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
+                                                                                                         length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
+                                (this.receiver$Response-rep(mean(this.blank$Response),
+                                                            length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
+                                                                                                 (this.dosing$Response-rep(mean(this.blank$Response),
+                                                                                                                           length(this.dosing$Response)))))
+        this.mean.Frec.vec <- mean(this.Frec.vec)
+        this.row[paste0("Frec_",dir.string,".vec")] <- paste(this.Frec.vec, collapse = "|")
+        this.row[paste0("Frec_",dir.string,".mean")] <- as.numeric(this.mean.Frec.vec)
+        
+        #Calculate Recovery Class
+        this.Recovery.vec = NA
+        for (i in 1:length(this.Frec.vec)){
+          if (this.Frec.vec[i] < 0.4) this.Recovery.vec[i] <- "Low Recovery"
+          else if (this.Frec.vec[i] > 2) this.Recovery.vec[i] <- "High Recovery"
+        }
+        this.row[paste0("Recovery_Class_",dir.string,".vec")] <- paste(this.Recovery.vec, collapse = "|")
+        
+        if (this.mean.Frec.vec < 0.4) this.row[paste0("Recovery_Class_",dir.string,".mean")] <- "Low Recovery"
+        else if (this.mean.Frec.vec > 2) this.row[paste0("Recovery_Class_",dir.string,".mean")] <- "High Recovery"
       }
     }
     
@@ -273,17 +294,16 @@ calc_caco2_point <- function(
   out.table[,"Papp_A2B"] <- as.numeric(out.table[,"Papp_A2B"])
   out.table[,"Papp_B2A"] <- as.numeric(out.table[,"Papp_B2A"])
   out.table[,"Refflux"] <- as.numeric(out.table[,"Refflux"])
+  out.table[,"Frec_A2B.mean"] <- as.numeric(out.table[,"Frec_A2B.mean"])
+  out.table[,"Frec_B2A.mean"] <- as.numeric(out.table[,"Frec_B2A.mean"])
+  
+  out.table[,"Frec_A2B.vec"] <- as.character(out.table[,"Frec_A2B.vec"])
+  out.table[,"Frec_B2A.vec"] <- as.character(out.table[,"Frec_B2A.vec"])
+  out.table[,"Recovery_Class_A2B.vec"] <- as.character(out.table[,"Recovery_Class_A2B.vec"])
+  out.table[,"Recovery_Class_B2A.vec"] <- as.character(out.table[,"Recovery_Class_B2A.vec"])
+  out.table[,"Recovery_Class_A2B.mean"] <- as.character(out.table[,"Recovery_Class_A2B.mean"])
+  out.table[,"Recovery_Class_B2A.mean"] <- as.character(out.table[,"Recovery_Class_B2A.mean"])
   out.table <- as.data.frame(out.table)
-  
-  # Create new columns to store recovery classification separately
-  out.table$Recovery_Class_A2B=NA
-  out.table$Recovery_Class_B2A=NA
-  
-  # Assign recovery classifications without changing Papp values
-  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec < 0.4] <- "Low Recovery"
-  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec > 2.0] <- "High Recovery"
-  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec < 0.4] <- "Low Recovery"
-  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec > 2.0] <- "High Recovery"
   
   # Calculate efflux ratio:
   out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
