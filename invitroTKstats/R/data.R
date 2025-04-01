@@ -330,7 +330,7 @@
 #' \item{\code{Date}}{Date sample was acquired}
 #' \item{\code{Sample}}{Sample Name}
 #' \item{\code{Type}}{Type of Caco2 sample}
-#' \item{\code{Compound.Conc}}{Concentration of test chemical (for calibration curve) (uM)}
+#' \item{\code{Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
 #' \item{\code{Peak.Area}}{Peak area of analyte (target compound)}
 #' \item{\code{ISTD.Peak.Area}}{Peak area of internal standard (pixels)}
 #' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
