@@ -376,16 +376,20 @@ format_fup_red <- function(
                     plasma.percent.col = "Percent.Physiologic.Plasma"
   )
   
-  ## allow either one of the two, or both replicate columns in the data
-  if (biological.replicates.col %in% colnames(data.in))
-    fup.red.cols <- c(fup.red.cols, 
-                    biological.replicates.col = "Biological.Replicates")
-  if (technical.replicates.col %in% colnames(data.in))
-    fup.red.cols <- c(fup.red.cols, 
+  ## throw warning for tech reps but require bio reps
+  if (!biological.replicates.col %in% colnames(data.in)) {
+    stop(paste("Missing columns named: Biological.Replicates"))
+  } else if (any(is.na(data.in[,biological.replicates.col]))) {
+      stop(paste("Provide non-NA value for Biological.Replicates"))
+  }
+  if (!technical.replicates.col %in% colnames(data.in)) {
+    data.in[,technical.replicates.col] <- NA
+    warning("Technical replicates were not provided and are all assigned to NA.\n")
+  }
+  
+  # Assign bio and tech replicate col names 
+  fup.red.cols <- c(fup.red.cols, biological.replicates.col = "Biological.Replicates",
                     technical.replicates.col = "Technical.Replicates")
-  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.in)))
-    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
-               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
   
   cols <- unlist(mget(names(fup.red.cols)))
 
