@@ -60,8 +60,9 @@
 #' 
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table
+#' \dontrun{
 #' level3 <- calc_clint_point(data.in = level2, output.res = FALSE)
-#'
+#' }
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
 #' \dontrun{
@@ -110,7 +111,7 @@ calc_clint_point <- function(
   clint.cols <- c(L1.common.cols,
                   time.col = "Time",
                   test.conc.col = "Test.Compound.Conc",
-                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  test.nominal.conc.col = "Test.Nominal.Conc",
                   density.col = "Hep.Density"
   )
   list2env(as.list(clint.cols), envir = environment())
@@ -156,7 +157,7 @@ calc_clint_point <- function(
     N <- dim(this.data)[1]
     pred <- decay(
       time.hours=this.data$Time,
-      conc=this.data$Clint.Assay.Conc,
+      conc=this.data$Test.Nominal.Conc,
       cal=cal,
       k_elim=k_elim)
     ll <- log(1/sigma/sqrt(2*pi))*N
@@ -186,7 +187,7 @@ calc_clint_point <- function(
     N <- dim(this.data)[1]
     pred <- satdecay(
       time.hours=this.data$Time,
-      conc=this.data$Clint.Assay.Conc,
+      conc=this.data$Test.Nominal.Conc,
       cal=cal,
       k_elim=k_elim,
       sat=sat)
@@ -224,7 +225,7 @@ calc_clint_point <- function(
     if (dim(this.cvt)[1] > 1)
     {
       this.data <- rbind(this.blank,this.cvt)
-      this.data[this.data$Sample.Type=="Blank","Clint.Assay.Conc"] <- 0
+      this.data[this.data$Sample.Type=="Blank","Test.Nominal.Conc"] <- 0
       this.data[this.data$Sample.Type=="Blank","Time"] <- 0
       this.data[this.data$Sample.Type=="Cvst","Response"] <-
         this.data[this.data$Sample.Type=="Cvst","Response"]*df.cvt
@@ -252,14 +253,14 @@ calc_clint_point <- function(
         # hep density is 10^6 hepatocytes/mL
         this.row$Clint <- 1000*coef(this.fit)["k_elim"]/hep.density/60
         this.row$Clint.pValue <- min(exp(-(AIC(this.null)-AIC(this.fit))),1)
-        this.row$Fit <- paste(paste(unique(this.data$Clint.Assay.Conc),collapse=", "),"uM")
+        this.row$Fit <- paste(paste(unique(this.data$Test.Nominal.Conc),collapse=", "),"uM")
         this.row$AIC <- AIC(this.fit)
         this.row$AIC.Null <- AIC(this.null)
         this.row$Clint.1 <- NA
         this.row$Clint.10 <- NA
         this.row$AIC.Sat <- NA
         this.row$Sat.pValue <- NA
-        if (all(c(1,10)%in%unique(this.data$Clint.Assay.Conc)))
+        if (all(c(1,10)%in%unique(this.data$Test.Nominal.Conc)))
         {
           this.sat.fit <- try(mle(llsatdecay,
             start=list(cal=1, k_elim=0.1, sigma=0.1, sat=0.5),
