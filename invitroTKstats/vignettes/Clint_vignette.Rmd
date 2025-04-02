@@ -463,3 +463,114 @@ Generally, data processing pipelines should include minimal to no manual coding.
 Breen, M., Ring, C. L., Kreutz, A., Goldsmith, M. R., & Wambaugh, J. F. (2021). High-throughput PBTK models for in vitro to in vivo extrapolation. Expert opinion on drug metabolism & toxicology, 17(8), 903-921.
 
 Shibata, Y., Takahashi, H., Chiba, M., & Ishii, Y. (2002). Prediction of hepatic clearance and availability by cryopreserved human hepatocytes: an application of serum incubation method. Drug Metabolism and disposition, 30(8), 892-896.
+
+
+## Appendix
+
+### L4 Bayesian Modeling Information
+
+|       Data        |   Denotation    |
+|-------------------|-----------------|
+| Test.Nominal.Conc | $conc_{target}$ |
+| Blank.Dilution.Factor | $df_{blank}$ |
+
+
+
+| JAGS Parameter Name | Parameter | Distribution |
+|---------------------|-----------|--------------|
+| log.const.analytic.sd | $log(\sigma_a)$ | Uniform   |
+|log.hetero.analytic.slope | $log(m_h)$ | Uniform |
+|C.thresh | $C_{thresh}$| Uniform |
+|log.calibration | $log(cal)$ | Normal |
+|background | $\gamma$ | Exponential |
+|const.analytic.sd | $\sigma_a$ | |
+|hetero.analytic.slope | $m_h$ | |
+|calibration | $cal$ | |
+|Blank.pred | $x_{blank}$ | |
+|Blank.prec | $p_{blank}$ | |
+|Blank.obs | $y_{blank}$ | Normal |
+|cc.slope | $m_{cc}$ | |
+|cc.intercept | $\alpha_{cc}$ | |
+|cc.pred | $x_{cc}$ | |
+|cc.prec | $p_{cc}$ | |
+|cc.obs | $y_{cc}$ | Normal |
+|decreases | $d_c$ | Bernoulli |
+|degrades | $d_g$ | Bernoulli |
+|bio.rate | $\delta_{bio}$ | Uniform |
+|abio.rate | $\delta_{abio}$ | Uniform |
+|slope | $m$ | |
+|bio.slope | $m_{bio}$| |
+|saturates | $s_f$ | Bernoulli |
+|saturation | $s_a$ | Uniform |
+|C | $C$ | |
+|obs.pred | $y$ | | 
+|obs.prec | $p$ | |
+|obs | $y$ | Normal |
+|abio.slope | $m_{abio}$ | |
+|abio.C | $C_{abio}$ | |
+|abio.obs.pred | $x_{abio}$ | |
+|abio.obs.prec | $p_{abio}$ | |
+|abio.obs | $y_{abio}$ | Normal |
+| abio.obs.time | $t_{abio}$ | |
+| DECREASE.PROB | $p_{d_c}$ | |
+| DEGRADES.PROB | $p_{d_g}$ | |
+| SATURATE.PROB | $p_{s_f}$ | |
+
+
+$$ log(\sigma_a) \sim Unif(-6,1) $$
+$$ log(m_h) \sim Unif(-6,1) $$
+$$ C_{thresh} \sim Unif(0,\frac{conc_{target}}{10})$$
+
+* Question: Is 10 meant to be a dilution factor or where does this come from?  If it is the dilution factor then why are we not using that here...
+
+$$ log(cal) \sim N(0,0.01)$$
+$$ \gamma \sim Exp(100)$$
+
+$$ \sigma_a = 10^{log(\sigma_a)} $$
+
+$$ m_h = 10^{log(m_h)} $$
+$$ cal = 10^{log(cal)} $$
+
+$$ x_{blank} = \frac{\gamma}{df_{blank}}$$
+
+$$ p_{blank} = \frac{1}{(\sigma_a + m_h *x_{blank})^2} $$
+$$ y_{blank} \sim N(x_{blank},p_{blank}) $$
+$$ x_{cc} = m_{cc} * (\frac{y_{cc}}{df_{cc}} - \frac{C_{thresh}}{df_{cc}}) * step(\frac{y_{cc}}{df_{cc}} - \frac{C_{thresh}}{df_{cc}}) + \frac{\alpha_{cc}}{df_{cc}}  $$
+
+$$ p_{cc} = \frac{1}{(\sigma_a + m_h * x_{cc})^2} $$
+$$ y_{cc} \sim N(x_{cc},p_{cc})$$
+$$ d_c \sim Bern(p_{d_c}) $$
+$$ d_g \sim Bern(p_{d_g}) $$
+$$ \delta_{bio} \sim Unif(0,-log(\frac{C_{thresh}}{conc_{target}}))$$
+
+$$ \delta_{abio} \sim Unif(0,-log(\frac{C_{thresh}}{conc_{target}}))$$
+$$ m_1 = d_c * \delta_{bio} + d_g * \delta_{abio} $$
+$$ \delta_{bio,1} = d_c * \delta_{bio} $$
+$$ s_f \sim Bern(p_{s_f})$$
+$$ s_a \sim Unif(0,1) $$
+$$ m_2 = d_g * \delta_{abio} + d_c * \delta_{bio} *(1-s_f*s_a) $$
+$$ C = conc_{target}*exp(-m) $$
+$$ x = cal * (\frac{C}{df} - \frac{C_{thresh}}{df}) * step(\frac{C}{df} - \frac{C_{thresh}}{df}) + \frac{\gamma}{df} $$
+
+$$ p = \frac{1}{(\sigma_a + m_h*x)^2}$$
+
+$$ y \sim N(x,p)$$
+$$ m_{abio} = d_g * \delta_{abio} $$
+
+$$ C_{abio} = conc_{target} * exp(-m_{abio}*t_{abio}) $$
+$$ x_{abio} = cal * (\frac{C_{abio}}{df_{abio}} - \frac{C_{thresh}}{df_{abio}}) * step(\frac{C_{abio}}{df_{abio}} - \frac{C_{thresh}}{df_{abio}}) + \frac{\gamma}{df_{abio}}$$
+$$ p_{abio} = \frac{1}{(\sigma_a + m_h * x_{abio})^2}$$
+$$ y_{abio} \sim N(x_{abio},p_{abio}) $$
+
+Conversion of disappearance rates (1/hr) to hepatic clearance ($\mu L/min/10^6$) for $1 \mu M$:
+
+$$ \mathbf{Clint.1} = 1000*\frac{m_{bio,1 \mu M}}{\rho_{hep}*60} $$
+where $\rho_{hep}$ is the hepatic density and $m_{bio,1 \mu M}$ is the slope for "bio" at $1 \mu M$.
+
+Conversion of disappearance rates (1/hr) to hepatic clearance ($\mu L/min/10^6$) for $10 \mu M$:
+
+$$ \mathbf{Clint.10} = 1000*\frac{m_{bio,10 \mu M}}{\rho_{hep}*60} $$
+where $\rho_{hep}$ is the hepatic density and $m_{bio,1 \mu M}$ is the slope for "bio" at $10 \mu M$.
+
+
+$$ \mathbf{Clint.pValue} = \frac{\sum_{k=1}^{n_{MCMC}} d_c == 0 }{n_{MCMC}}$$
