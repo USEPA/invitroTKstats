@@ -12,7 +12,7 @@ A level 0 data.frame with 48 rows and 17 variables: \describe{
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Sample}}{Sample Name}
 \item{\code{Type}}{Type of Caco2 sample}
-\item{\code{Compound.Conc}}{Test concentration (uM)}
+\item{\code{Compound.Conc}}{Concentration of test chemical (for calibration curve) (uM)}
 \item{\code{Peak.Area}}{Peak area of analyte (target compound)}
 \item{\code{ISTD.Peak.Area}}{Peak area of internal standard (pixels)}
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
@@ -23,6 +23,7 @@ A level 0 data.frame with 48 rows and 17 variables: \describe{
 \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
 \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+\item{\code{Note}}{Additional information}
 }
 }
 \usage{
