@@ -675,8 +675,8 @@
 #' \item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
 #' \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
 #' \item{\code{Time}}{Time point the sample was measured - in hours (h)}
-#' \item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
-#' \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
+#' \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
+#' \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to RED plate (uM)}
 #' \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
 #' \item{\code{Technical.Replicates}}{Identifier for repeated measurements of a sample of a compound}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
