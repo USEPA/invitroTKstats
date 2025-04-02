@@ -297,7 +297,7 @@ calc_clint <- function(
   clint.cols <- c(L1.common.cols,
                   time.col = "Time",
                   test.conc.col = "Test.Compound.Conc",
-                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  test.nominal.conc.col = "Test.Nominal.Conc",
                   density.col = "Hep.Density"
   )
   list2env(as.list(clint.cols), envir = environment())
