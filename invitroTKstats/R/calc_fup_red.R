@@ -270,8 +270,9 @@ model {
 #' }
 #'
 #' @import coda
-#'
 #' @import Rdpack
+#' @importFrom utils read.csv write.table read.table
+#' @importFrom stats quantile
 #'
 #' @export calc_fup_red
 calc_fup_red <- function(
@@ -290,6 +291,10 @@ calc_fup_red <- function(
   OUTPUT.DIR = NULL
   )
 {
+  
+  #assigning global variables
+  Compound.Name <- Response <- NULL
+  
   
   if (!missing(data.in)) {
     if (missing(FILENAME)) stop("FILENAME is required to save the model results. Please provide input for this argument.")
@@ -320,9 +325,18 @@ calc_fup_red <- function(
   list2env(as.list(fup.red.cols), envir = environment())
   cols <- c(unlist(mget(names(fup.red.cols))), "Response", good.col)
   
-  # Throw error if not all columns present with expected names:
-  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
-    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_red first (level 1) then curate to (level 2).")
+  # # Throw error if not all columns present with expected names:
+  reps = c("Biological.Replicates", "Technical.Replicates")
+  if (!(all(reps %in% colnames(MS.data))))
+  {
+    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    stop(paste("Missing replication columns named:", 
+               paste(reps[!(reps %in% colnames(MS.data))], collapse = ", ")))
+  } else if (any(is.na(MS.data[,"Biological.Replicates"]))) 
+  {
+    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    stop("NA values provided for Biological.Replicates")
+  } 
   
   if (!(all(cols %in% colnames(MS.data))))
   {
@@ -333,7 +347,7 @@ calc_fup_red <- function(
 
   # Only include the data types used:
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
-    "Plasma.Blank","NoPlasma.Blank","PBS","Plasma","T0","Stability","EQ1","EQ2","CC"))
+    "Plasma.Blank","NoPlasma.Blank","PBS","Plasma","T0","Stability","EC_acceptor","EC_donor","CC"))
 
   # Only used verified data:
   unverified.data <- subset(MS.data, MS.data[,good.col] != "Y")
@@ -505,7 +519,7 @@ calc_fup_red <- function(
   }
   stopCluster(CPU.cluster)
 
-  View(Results)
+  #View(Results)
   
 
   # Write out a "level 4" result table:

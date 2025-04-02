@@ -40,9 +40,11 @@
 #' @examples
 #' library(invitroTKstats)
 #'
+#' \dontrun{
 #' create_method_table(smeltz2020)
 #' create_method_table(kreutz2020,compound.col="Name")
-#'
+#' }
+#' 
 #' @export create_method_table
 create_method_table <- function(input.table,
   dtxsid.col="DTXSID",

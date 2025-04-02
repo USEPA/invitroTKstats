@@ -50,6 +50,7 @@ format_fup_red(
   level0.sheet.col = "Level0.Sheet",
   output.res = TRUE,
   save.bad.types = FALSE,
+  sig.figs = 5,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -242,6 +243,9 @@ table (Level-1) will be exported the current directory as a .tsv file.
 due to inappropriate sample types. See the Detail section for the required sample types. 
 (Defaults to \code{FALSE}.)}
 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-1). 
+(Defaults to \code{5}.)}
+
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
 If \code{NULL}, looking for the input level-0 file in the current working
 directory. (Defaults to \code{NULL}.)}
@@ -266,13 +270,14 @@ to a tab-separated text file.
 \details{
 The data frame of observations should be annotated according to these types:
 \tabular{rrrrr}{
-  Blank (ignored) \tab Blank\cr
+  No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+  Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr 
   Plasma well concentration \tab Plasma\cr
   Phosphate-buffered well concentration\tab PBS\cr
   Time zero plasma concentration \tab T0\cr
   Plasma stability sample \tab Stability\cr
-  Equilibrium Control Well 1 \tab EC1\cr
-  Equilibrium Control Well 2 \tab EC2\cr
+  Acceptor Equilibrium Control Well \tab EC_acceptor\cr
+  Donor Equilibrium Control Well (chemical spiked side) \tab EC_donor\cr
   Calibration Curve \tab CC\cr
 }
 Chemical concentration is calculated qualitatively as a response and 
