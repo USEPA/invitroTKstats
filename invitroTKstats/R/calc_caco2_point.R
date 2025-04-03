@@ -71,9 +71,9 @@
 #'   Frec_A2B.mean \tab Mean of the fraction recovered for the apical-basal direction \tab unitless \cr
 #'   Frec_B2A.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr 
 #'   Frec_B2A.mean \tab Mean of the fraction recovered for the basal-apical direction \tab unitless \cr
-#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) (collapsed numeric vector, values for replicates separated by a "|") \tab qualitative category \cr
+#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
 #'   Recovery_Class_A2B.mean \tab Recovery classification for the mean apical-to-basal permeability("Low Recovery" if Frec_A2B.mean < 0.4 or "High Recovery" if Frec_A2B.mean > 2.0) \tab qualitative category \cr
-#'   Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) (collapsed numeric vector, values for replicates separated by a "|") \tab qualitative category \cr
+#'   Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
 #'   Recovery_Class_B2A.mean \tab Recovery classification for the mean basal-to-apical permeability("Low Recovery" if Frec_B2A.mean < 0.4 or "High Recovery" if Frec_B2A.mean > 2.0) \tab qualitative category \cr
 #' }
 #'
