@@ -16,51 +16,85 @@ knitr::opts_chunk$set(
 
 # Overview
 
-The `invitroTKstats` R package is designed to work as a data processing pipeline for *in vitro* assays collecting various physiological parameters used in high-throughput toxicokinetic (HTTK) modeling.  This pipeline is meant to take mass spectrometry (MS) data to estimate the various physiological parameters.
+The `invitroTKstats` R package is designed to work as a data processing pipeline for *in vitro* assays collecting various physiological parameters used in high-throughput toxicokinetic (HTTK) modeling.  This pipeline is meant to take mass spectrometry (MS) data and estimate the physiological parameters from the relevant *in vitro* assays. These include but are not limited to:
 
-Here, we discuss the first steps of the data processing pipeline, which include creating the data guide and compliation of level-0 (raw) data. *Note, these steps are meant to be consistent across the various assays that may be pipelined by this package, i.e. not assay specific.*
+- Fraction Unbound in Plasma $f_{up}$, either via Rapid Equilibrium Dialysis (RED) or Ultracentrifugation (UC) assays
+- Intrinsic Hepatic Clearance $Cl_{int}$
+- Membrane Permeability via the Caco-2 assay
+
+Here, we discuss the first steps of the data processing pipeline, including the creation of the data guide (a.k.a. data catalog) and compilation of the level-0 (raw) data into a single data.frame. *Note, these steps are meant to be consistent across the various assays/physiological parameter that may be pipelined by this package, i.e. not assay specific. **However, the pipeline is not set up to simultaneously process data from various assays (e.g. $f_{up}$ from RED and $f_{up}$ from UC).***
+
+In this vignette, we are going to use data from the intrinsic hepatic clearance assays (Cl~int~) collected as part of the Kruetz et al. (2023) PFAS manuscript for demonstration purposes.
 
 ## Suggested packages for use with this vignette
 
-```{r setup}
+```{r setup,message=FALSE,warning=FALSE}
 # Primary Packages #
 library(invitroTKstats)
 # Data Formatting Packages #
 library(dplyr)
 library(magrittr)
 library(stringr)
+library(readxl)
+# Table formatting package 
+library(flextable)
 ```
 
-# Data Catalog Creation
+# Raw Excel File Exploration
 
-The data catalog creation step can be thought of as a log of all the relevant raw data files for a given physiological parameter that we wish to pipeline.  It is a crucial part of the pipeline in that it allows us to identify where all of the raw datafiles are coming from and where we are pulling raw (Level-0) data from within those datasets.  This provides key meta-data information that can be used for evaluating data provenance.
-
-Though this `data.frame` may be created manually through an Excel file, the `invitroTKstats` package includes a function called `create_data_catalog` that will automatically generate and document the creation of the data catalog.  This allows for maximum reproducibility, transparency, and efficiency in compiling the necessary data guide/catalog.  Thus, it is a best practice to utilize this function for creating the data file.
+The first thing we need to do for the pipeling process is to construct a data guide (i.e. data catalog) itemizing which data files and sheets therein contain relevant raw data, as well as other relevant meta-data information. Before creating a data guide with `invitroTKstats` functions, let us first consider the raw data files and their structure in the relevant data directory, called "KreutzPFAS".
 
 *NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
-Below is an example of how to use this function
+Since these datasets are not stored as part of the R package it is necessary to clone the repository containing the "KreutzPFAS" sub-directory. The "KreutzPFAS" sub-directory contains all of the raw data files, original data processing scripts, and resulting datasets after processing and parameter estimation. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "<path_to_directory>", in the code chunk below, with the file path to the local repository clone and the "KreutzPFAS" sub-directory.
 
-```{r eval=FALSE}
-### DO NOT EVALUATE THIS CODE CHUNK ###
-# create a data catalog listing where Fup data is held
-DC <- create_catalog(
-  # file path(s) -> file name(s): "<file_path>/my_raw_MS_data_Clint_MMDDYYYY.xlsx"
-  file = "<file_path>/my_raw_MS_data_Clint_MMDDYYYY.xlsx",
-  # sheet name/number
-  sheet = c(rep(1,5),rep(2,5),rep(3,5)),
-  # number of rows in Excel file to skip
-  skip.rows = rep(c(1,10,19,28,37),3),
-  # number of rows to read in may be the same and/or different
-  num.rows = 8,
-  # date with 2-digt month, 2-digit day, and 4-digit year
-  date = "MMDDYYYY"
-  )
+```{r raw_data_dir,echo=FALSE}
+# this code chunk is hidden since it may not be applicable for the R pckg user
+raw_data_dir <- "~/Git/invitrotkstats/working/KreutzPFAS/"
+```
+```{r raw_data_dir_show,eval=FALSE}
+# raw data directory - put together the path to where the sub-directory for KreutzPFAS is in your local
+raw_data_dir <- "<path_to_directory>/KreutzPFAS/"
 ```
 
-We are going to construct a data guide for the Kruetz et al. (2023) PFAS Cl~int~ Data.
+More than one experiment (i.e. data collection run) is typically necessary to obtain all the relevant data for an analysis.  Thus, there is likely to be more than one Excel file containing raw data that needs to be processed.
 
-```{r}
+For this exercise, it is known that the Excel (.xlsx) files containing intrinsic hepatic clearance data are denoted with prefixes of "Hep" and "G<number>". Thus, we can programmatically search in the sub-directory for all the relevant Excel files we need to pull and compile raw data from.
+
+```{r raw_data_files}
+# identify the hepatic clearance raw datasets
+hep_clint_xlsx <- list.files(raw_data_dir,
+                             pattern = paste(
+                               paste(c("^Hep","^G\\d"),"[.]xlsx$",sep = ".+"),
+                               collapse = "|"))
+# show the data file names
+hep_clint_xlsx
+# add the raw data file directory path
+hep_clint_xlsx <- paste0(raw_data_dir,hep_clint_xlsx)
+```
+
+In cases where one is unfamiliar with the raw data Excel files, it may be useful to do some programmatic evaluation of the file structure.  For example, listing the sheets within the Excel file to determine where data exists and should be pulled from.  It should be noted this will likely, or may not always, replace the need to visually inspect the file.  To demonstrate this type of investigation consider the first hepatic clearance dataset identified above. 
+
+```{r rdfile1_sheets}
+# for the first dataset see the sheets contained in the raw data file
+readxl::excel_sheets(hep_clint_xlsx[1])
+```
+
+Here, it is already know that the "Raw" data sheet is the only one containing raw MS data for parameter estimation.  However, other data sheets (e.g. "Cover Sheet") may also provide valuable information about the original experiment, chemicals evaluated, meta data, etc. Clear communication between the lab staff and data analyst about the structure of the data files and general expectations is highly encouraged to enable accurate, efficient, and transparent data pipelining.
+
+*It should be noted, other exploratory steps may be necessary, but we leave this up to the reader to determine the necessary steps for raw data exploration given their data and use case.*
+
+# Data Catalog
+
+Now that the Excel files containing the raw data are identified and we have a general idea of how to programmtically explore the data, we need to create the data guide. The data guide (a.k.a. data catalog) creation step, as previously mentioned, can be thought of as logging all the relevant raw data files for a given physiological parameter we wish to pipeline (i.e. data inventory if you will).  This is a crucial part of the pipeline in that it allows us to identify where all of the raw datafiles are coming from and where we are pulling raw (Level-0) data from within those datasets. Thus, setting up a standard and transparent level-0 data compilation process.  This also provides key meta-data information that can be used for tracking/evaluating data provenance.
+
+Though the data guide (which is ultimately a `data.frame` format) may be created manually through an Excel file, the `invitroTKstats` package includes a function called `create_data_catalog` enabling that automatically generates and documents the data guide creation. Furthermore, this function has built in checks to ensure all the necessary information is provided and in the correct format expected by the pipeline. This allows for maximum reproducibility, transparency, and efficiency in compiling the data guide. Thus, it is highly encouraged and considered best practice to utilize the `create_data_catalog` function for this step.
+
+Typically, one will want to include all the datasets "delivered" to the data analyst. As mentioned before, the data catalog logs where the raw MS data is for the respective files and allows us to efficiently pull level-0 data (raw data) from those disparate files and compile them into a comprehensive level-0 dataset. In this sub-section, however, we are going to demonstrate how to put together the data catalog for a single Excel file.
+
+Here, we are going to use the third Excel file (and only the "Data063021" sheet) to demonstrate putting together the data catalog programmatically using the `create_catalog` function within `invitroTKstats`.  It should be noted, the information provided in `create_data_catalog` is obtained by visual inspection of the file of interest and identifying the corresponding input values for each of the arguments.
+
+```{r data_catalog}
 DC_kreutz.pfas <- create_catalog(
   # filename (no file path)
   file = c(rep("Hep_745_949_959_082421_final.xlsx",3)), 
@@ -88,39 +122,72 @@ DC_kreutz.pfas <- create_catalog(
   # column name(s) for experimental concentration
   conc = c("Final Conc....11","Final Conc....11","Final Conc....11"),
   # column name(s) with analysis parameters
-  analysis.param = c("Exp. Conc....10","Exp. Conc....17","Exp. Conc....24")
+  analysis.param = c("Exp. Conc....10","Exp. Conc....17","Exp. Conc....24"),
+  # column name - row locations
+  col.names.loc = 2
   # note = "RT...12"
 )
 ```
 
-Show the constructed data guide/catalog for the Kreutz PFAS Cl~int~ data.
-
-```{r}
-DC_kreutz.pfas
+```{r echo=FALSE}
+# show the data catalog
+DC_kreutz.pfas %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        
+      )
+    )
+  ) %>% 
+  set_caption(caption = "Table 1: Data Catalog for the Kruetz et al. (2023) PFAS Cl~int~ Experiment.", 
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
 ```
 
-# Merge Level-0 (L0) Data
+In cases where an data analyst is working with a set of raw data Excel files with a standardized form (typically lab-specific) it may be advantageous to have a wrapper function for streamlining the data guide creation process, such that the function automatically extracts the necessary meta-data to provide for populating the data catalog. This exercise is left up to the reader.
 
-Now that we have a data guide we want to pull in all of the 'raw' level-0 data.
+# Chemical ID Map
 
-**********RETURN HERE**********
+Once the data catalog is compiled, the only remaining experimental meta-data to collect prior to compiling the comprehensive level-0 data files is the chemical identification mapping table (i.e. chemical ID map). The chemical ID map provides the pipeline with the compound name used by the lab, EPA DSSTox identifier (see [Distributed Structure-Searchable Toxicity (DSSTox) Database](https://www.epa.gov/comptox-tools/distributed-structure-searchable-toxicity-dsstox-database)), and the common compound name.  This typically will be provided by the lab within the Excel files with raw data and/or in a separate "meta-data" file, and this may be lab dependent given the potential for differing lab protocols.
 
-```{r raw_data_path,echo=TRUE}
-raw_data_path <- "~/Git/invitrotkstats/working/KreutzPFAS"
-```
+For our purposes, the "Cover Sheet" contains a table with the chemical ID mapping along with some physico-chemical properties, the corresponding reference, and the corresponding internal standard. 
 
-```{r chem_id_table}
+```{r assay_cover_sheet_metadata}
 # obtain the chemical identification mapping information from the MS-data
 #   cover sheet (i.e. raw data summary information)
 assay_cover_sheet <-
   readxl::read_xlsx(
-    paste(raw_data_path,"Hep_745_949_959_082421_final.xlsx",sep = "/"),
+    paste(raw_data_dir,"Hep_745_949_959_082421_final.xlsx",sep = "/"),
     sheet = "Cover Sheet",skip = 35,n_max = 4) %>% 
   as.data.frame()
+```
 
+```{r echo=FALSE}
 # show the assay cover sheet
-assay_cover_sheet
+assay_cover_sheet %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        
+      )
+    )
+  ) %>% 
+  set_caption(caption = "Table 2: Chemical Mapping Information from the Raw Excel File.", 
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
 
+The `invitroTKstats` package has a function that can take a `data.frame`, such as `assay_cover_sheet`, and generate the required chemical mapping table necessary for the `merge_level0` function. This function is called `create_chem_table`.  Though the chemical mapping table can be manually constructed it is highly encouraged analysts using `invitroTKstats` leverage the utility of this function.
+
+```{r chem_id_table}
 # create a chemical table necessary for the L0 compilation function, using the
 #   assay cover sheet chemical identification mapping information
 chem.ids <- create_chem_table(
@@ -133,15 +200,40 @@ chem.ids <- create_chem_table(
   # column name with lab chemical ID's
   lab.compound.col = "Sample ID"
 )
-
-# show the chemical ID mapping data
-chem.ids
 ```
 
-```{r}
+```{r echo=FALSE}
+# show the chemical ID mapping data
+chem.ids %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        
+      )
+    )
+  ) %>% 
+  set_caption(caption = "Table 3: Chemical ID Mapping Information for the `merge_level0` Function.", 
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
+
+# Level-0 (L0) Data Compilation
+
+Once the data guide and chemical ID map `data.frame`'s are compiled we can use the `merge_level0` function to pull in all of the 'raw' level-0 data and compile it into a single `data.frame`.
+
+*It should be noted here we are <u> not </u> exporting the data catalog or level-0 data file, as denoted by the arguments `catalog.out` and `output.res` (respectively) both being set to `FALSE`. Furthermore, since we are not exporting either of these `data.frame`'s the `FILENAME` argument is not required and thereby not provided.*
+
+Any of the column names from the raw data not matching the anticipated column name convention are specified to their corresponding argument.  For more details on using the `merge_level0` function we direct the user to the help file, which can be accessed via `help("merge_level0")` or `?merge_level0` in the R console.
+
+```{r level0_comp,message=FALSE}
+# compile the l0 files
 kreutz.pfas_L0 <- merge_level0(
   level0.catalog = DC_kreutz.pfas, # data catalog
-  INPUT.DIR = raw_data_path, # the path to your raw data files
+  INPUT.DIR = raw_data_dir, # the path to your raw data files
   istd.col = "ISTD.Name",
   type.colname.col = "Type.ColName",
   chem.ids = chem.ids, # chemical ID mapping data
@@ -149,11 +241,53 @@ kreutz.pfas_L0 <- merge_level0(
   chem.name.col = "Compound.Name",
   catalog.out = FALSE, # do not export the data catalog during this function
   output.res = FALSE # do not export the compiled L0 during this function
-) # hitting a browser statement - this will need to be fixed in 'dev' first
+)
+# show the dimension of the the Kruetz PFAS data
+dim(kreutz.pfas_L0)
 ```
 
+```{r echo=FALSE}
+# show the resulting merge level 0 output data
+head(kreutz.pfas_L0) %>% 
+  flextable() %>% 
+  bg(bg = "#DDDDDD", part = "header") %>% 
+  autofit() %>% 
+  set_table_properties(
+    opts_html = list(
+      scroll = list(
+        
+      )
+    )
+  ) %>% 
+  set_caption(caption = "Table 3: Chemical ID Mapping Information for the `merge_level0` Function.", 
+              align_with_table = FALSE) %>% 
+  fontsize(size = 10, part = "all") %>% 
+  theme_vanilla()
+```
+
+The level-0 data file is now ready to undergo the assay-specific processing steps, which can be found in the assay-specific vignettes:
+
+- "Clint_vignette"
+- "FupRED_vignette"
+- "FupUC_vignette"
+- "Caco2_vignette"
 
 # Best Practices for Data Processing
 
-* The data catalog can be manually constructed as done in this markdown. This is the minimum expectation.  However, the best practice would be to create a wrapper function for your particular Mass-Spectrometry data to leverage the `create_catalog` function, but to auto-generate the input for this function programmatically (e.g. a lab-specific processing function).
-* Users may manually construct data catalogs in Excel files, this is not recommended but may occur in cases of working with legacy data (i.e. data processed prior to 2025).  In this scenario, it is recommended to use the `check_catalog` to ensure the data catalog meets the minimum meta-data reporting requirements to use `merge_level0`.
+- The data catalog can be manually constructed as done in this markdown. This is the minimum expectation.  However, the best practice would be to create a wrapper function for your particular Mass-Spectrometry data to leverage the `create_catalog` function, but to auto-generate the input for this function programmatically (e.g. a lab-specific processing function).
+- Users may manually construct data catalogs in Excel files, this is not recommended but may occur in cases of working with legacy data (i.e. data processed prior to 2025).  In this scenario, it is recommended to use the `check_catalog` to ensure the data catalog meets the minimum meta-data reporting requirements to use `merge_level0`.
+- In an ideal scenario, the lab will deliver the relevant data files for processing with the following guidelines:
+  - All data sets to be processed together are the the analyst at one time and stored in a common directory location.
+  - A standardized filenaming conventions are used to convey the assay type (i.e. physiological parameter), date of generation, and other relevant distinguishing information.
+  - Excel files have a standardized structure enabling more programmatic and/or efficient processing by the analyst.
+  - The raw data sheet(s) are direct computerized read-outs from the mass-spectrometer.
+  - Notification/relaying of any necessary orientation or additional notes the data analyst may need to be aware of.
+- In an ideal scenario, the analyst organized the data files and data processing code as such:
+  - A single directory storing all the relevant raw data files, processing scripts, and results together.
+  - All the raw data in their own sub-directory.
+  - All data scripts in their own sub-directory.
+  - Create a sub-directory to export the results output to.
+- Raw data files are ideally constructed such that at least one sheet contains the raw read-out directly from the mass-spectrometer and this is the data that should be used in the analysis
+- Minimal to no data manipulation in the raw data Excel files should be done by the analyst.  In cases where data manipulation is necessary, it is ideal to programmatically implement the changes (i.e. make changes via coding scripts) to enable transparent and reproducible work, then save the updated file with a "tag" indicating the file has been edited from the originally delivered data.
+- Data analysts should generally take the approach of little "data touching", i.e. evaluation of Excel files should largely be programmatic (when possible).  In cases where this is not feasible, no manual changes to the Excel files should be made.
+  
