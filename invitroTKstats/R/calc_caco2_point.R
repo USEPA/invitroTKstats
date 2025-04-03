@@ -67,13 +67,13 @@
 #'   dQdt_B2A \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
 #'   Papp_B2A \tab Apparent membrane permeability \tab 10^-6 cm/s\cr
 #'   Refflux \tab Efflux ratio \tab unitless\cr
-#'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
+#'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr
 #'   Frec_A2B.mean \tab Mean of the fraction recovered for the apical-basal direction \tab unitless \cr
-#'   Frec_B2A.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
+#'   Frec_B2A.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr 
 #'   Frec_B2A.mean \tab Mean of the fraction recovered for the basal-apical direction \tab unitless \cr
-#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) (collapsed numeric vector, values for replicates separated by a "|") \tab qualitative category \cr
 #'   Recovery_Class_A2B.mean \tab Recovery classification for the mean apical-to-basal permeability("Low Recovery" if Frec_A2B.mean < 0.4 or "High Recovery" if Frec_A2B.mean > 2.0) \tab qualitative category \cr
-#'   Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) (collapsed numeric vector, values for replicates separated by a "|") \tab qualitative category \cr
 #'   Recovery_Class_B2A.mean \tab Recovery classification for the mean basal-to-apical permeability("Low Recovery" if Frec_B2A.mean < 0.4 or "High Recovery" if Frec_B2A.mean > 2.0) \tab qualitative category \cr
 #' }
 #'
@@ -245,7 +245,7 @@ calc_caco2_point <- function(
             length(unique(this.dosing$Dilution.Factor))>1 |
             length(unique(this.receiver$Dilution.Factor))>1 |
             length(unique(this.receiver$Vol.Receiver))>1) browser()
-        this.Frec.vec <- pmax(0,
+        this.Frec.vec <- base::pmax(0,
                              (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
                                                                                                          length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
                                 (this.receiver$Response-rep(mean(this.blank$Response),
@@ -257,12 +257,12 @@ calc_caco2_point <- function(
         this.row[paste0("Frec_",dir.string,".mean")] <- as.numeric(this.mean.Frec.vec)
         
         #Calculate Recovery Class
-        this.Recovery.vec = NA
+        this.Recovery.vec = rep(NA, length(this.Frec.vec))
         for (i in 1:length(this.Frec.vec)){
           if (this.Frec.vec[i] < 0.4) this.Recovery.vec[i] <- "Low Recovery"
           else if (this.Frec.vec[i] > 2) this.Recovery.vec[i] <- "High Recovery"
         }
-        this.row[paste0("Recovery_Class_",dir.string,".vec")] <- paste(this.Recovery.vec, collapse = "|")
+        if (any(!is.na(this.Recovery.vec))) this.row[paste0("Recovery_Class_",dir.string,".vec")] <- paste(this.Recovery.vec, collapse = "|")
         
         if (this.mean.Frec.vec < 0.4) this.row[paste0("Recovery_Class_",dir.string,".mean")] <- "Low Recovery"
         else if (this.mean.Frec.vec > 2) this.row[paste0("Recovery_Class_",dir.string,".mean")] <- "High Recovery"
@@ -305,9 +305,6 @@ calc_caco2_point <- function(
   out.table[,"Recovery_Class_B2A.mean"] <- as.character(out.table[,"Recovery_Class_B2A.mean"])
   out.table <- as.data.frame(out.table)
   
-  # Calculate efflux ratio:
-  out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
-  
   if (output.res) {
     # Determine the path for output
     if (!is.null(OUTPUT.DIR)) {
@@ -329,6 +326,19 @@ calc_caco2_point <- function(
       rounded.out.table[,"Papp_A2B"] <- signif(rounded.out.table[,"Papp_A2B"], sig.figs)
       rounded.out.table[,"Papp_B2A"] <- signif(rounded.out.table[,"Papp_B2A"], sig.figs)
       rounded.out.table[,"Refflux"] <- signif(rounded.out.table[,"Refflux"], sig.figs)
+      rounded.out.table[,"Frec_A2B.mean"] <- signif(rounded.out.table[,"Frec_A2B.mean"], sig.figs)
+      rounded.out.table[,"Frec_B2A.mean"] <- signif(rounded.out.table[,"Frec_B2A.mean"], sig.figs)
+      # split collapsed numeric vector and round according to sig.figs
+      split_round = function(val){
+        val = val %>% 
+          base::strsplit(split = "\\|") %>% 
+          unlist() %>% 
+          as.numeric() %>% 
+          signif(sig.figs) %>% 
+          paste(collapse = "|")
+      }
+      rounded.out.table[,"Frec_A2B.vec"] <- base::sapply(rounded.out.table[,"Frec_A2B.vec"], split_round, USE.NAMES = F)
+      rounded.out.table[,"Frec_B2A.vec"] <- base::sapply(rounded.out.table[,"Frec_B2A.vec"], split_round, USE.NAMES = F)
       cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
     }
     
