@@ -10,13 +10,14 @@
 #'
 #' The data frame of observations should be annotated according to these types:
 #' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
+#'   No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+#'   Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr 
 #'   Plasma well concentration \tab Plasma\cr
 #'   Phosphate-buffered well concentration\tab PBS\cr
 #'   Time zero plasma concentration \tab T0\cr
 #'   Plasma stability sample \tab Stability\cr
-#'   Equilibrium Control Well 1 \tab EC1\cr
-#'   Equilibrium Control Well 2 \tab EC2\cr
+#'   Acceptor Equilibrium Control Well \tab EC_acceptor\cr
+#'   Donor Equilibrium Control Well (chemical spiked side) \tab EC_donor\cr
 #'   Calibration Curve \tab CC\cr
 #' }
 #' Chemical concentration is calculated qualitatively as a response and 
@@ -376,16 +377,20 @@ format_fup_red <- function(
                     plasma.percent.col = "Percent.Physiologic.Plasma"
   )
   
-  ## allow either one of the two, or both replicate columns in the data
-  if (biological.replicates.col %in% colnames(data.in))
-    fup.red.cols <- c(fup.red.cols, 
-                    biological.replicates.col = "Biological.Replicates")
-  if (technical.replicates.col %in% colnames(data.in))
-    fup.red.cols <- c(fup.red.cols, 
+  ## throw warning for tech reps but require bio reps
+  if (!biological.replicates.col %in% colnames(data.in)) {
+    stop(paste("Missing columns named: Biological.Replicates"))
+  } else if (any(is.na(data.in[,biological.replicates.col]))) {
+      stop(paste("Provide non-NA value for Biological.Replicates"))
+  }
+  if (!technical.replicates.col %in% colnames(data.in)) {
+    data.in[,technical.replicates.col] <- NA
+    warning("Technical replicates were not provided and are all assigned to NA.\n")
+  }
+  
+  # Assign bio and tech replicate col names 
+  fup.red.cols <- c(fup.red.cols, biological.replicates.col = "Biological.Replicates",
                     technical.replicates.col = "Technical.Replicates")
-  if (!any(c(biological.replicates.col, technical.replicates.col) %in% colnames(data.in)))
-    stop(paste("Missing columns, need to specify/auto-fill least one replicate columns:", 
-               paste(c(biological.replicates.col, technical.replicates.col),collapse = ", ")))
   
   cols <- unlist(mget(names(fup.red.cols)))
 
@@ -397,7 +402,7 @@ format_fup_red <- function(
 
   # Only include the data types used:
   req.types = c("Plasma", "PBS", "T0", "Plasma.Blank", "NoPlasma.Blank",
-                "CC", "Stability", "EQ1", "EQ2")
+                "CC", "Stability", "EC_acceptor", "EC_donor")
   
   data.out <- subset(data.in,data.in[,type.col] %in% req.types)
   data.in.badtype <- subset(data.in,!(data.in[,type.col] %in% req.types))

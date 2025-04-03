@@ -129,9 +129,20 @@ calc_fup_red_point <- function(
   list2env(as.list(fup.red.cols), envir = environment())
   cols <- c(unlist(mget(names(fup.red.cols))), "Response", good.col)
   
-  # Throw error if not all columns present with expected names:
-  if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
-    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_red first (level 1) then curate to (level 2).")
+  # # Throw error if not all columns present with expected names:
+  reps = c("Biological.Replicates", "Technical.Replicates")
+  if (!(all(reps %in% colnames(MS.data))))
+  {
+    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    stop(paste("Missing replication columns named:", 
+               paste(reps[!(reps %in% colnames(MS.data))], collapse = ", ")))
+  } else if (any(is.na(MS.data[,"Biological.Replicates"]))) 
+    {
+      warning("Run format_fup_red first (level 1) then curate to (level 2).")
+      stop("NA values provided for Biological.Replicates")
+    } 
+      
+  
   
   if (!(all(cols %in% colnames(MS.data))))
   {
@@ -144,7 +155,7 @@ calc_fup_red_point <- function(
   MS.data <- subset(MS.data,MS.data[,type.col] %in% c(
     "Plasma","PBS","T0","Plasma.Blank","NoPlasma.Blank"))
 
-  # Only used verfied data:
+  # Only used verified data:
   MS.data <- subset(MS.data, MS.data[,good.col] == "Y")
 
   out.table <-NULL

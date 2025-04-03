@@ -24,13 +24,14 @@
 #' Samples types used in rapid equilibrium dialysis (RED) data collected for calculation of 
 #' chemical fraction unbound in plasma (Fup) should be annotated as follows:
 #' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
+#'   Blank without plasma (no chemical, no plasma) \tab NoPlasma.Blank\cr
+#'   Blank with plasma (no chemical, just plasma) \tab Plasma.Blank\cr
 #'   Plasma well concentration \tab Plasma\cr
 #'   Phosphate-buffered well concentration\tab PBS\cr
 #'   Time zero plasma concentration \tab T0\cr
 #'   Plasma stability sample \tab Stability\cr
-#'   Equilibrium Control Well 1 \tab EC1\cr
-#'   Equilibrium Control Well 2 \tab EC2\cr
+#'   Acceptor Equilibrium Control Well \tab EC_acceptor\cr
+#'   Donor Equilibrium Control Well (chemical spiked side) \tab EC_donor\cr
 #'   Calibration Curve \tab CC\cr
 #' }
 #'

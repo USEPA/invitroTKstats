@@ -407,10 +407,10 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
     #       'Stability.data' = Stability.data[,"ISTDResponseRatio"],
     #      'Num.Stability.obs' = Num.Stability.obs,
     ## Equilibriation data:
-    #      'EQ1.data' = EQ1.data[,"ISTDResponseRatio"],
-    #      'Num.EQ1.obs' = Num.EQ1.obs,
-    #      'EQ2.data' = EQ2.data[,"ISTDResponseRatio"],
-    #      'Num.EQ2.obs' = Num.EQ2.obs,
+    #      'EC_acceptor.data' = EC_acceptor.data[,"ISTDResponseRatio"],
+    #      'Num.EC_acceptor.obs' = Num.EC_acceptor.obs,
+    #      'EC_donor.data' = EC_donor.data[,"ISTDResponseRatio"],
+    #      'Num.EC_donor.obs' = Num.EC_donor.obs,
     # RED data:
     'Num.rep' = Num.rep,
     # PBS data:
