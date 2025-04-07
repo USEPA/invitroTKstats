@@ -7,6 +7,7 @@
 ## load necessary package
 library(readxl)
 library(invitroTKstats)
+library(here)
 
 ## Picked three compounds from the data that we know all samples are verified (with "Y").
 red.list <- c("DTXSID6062599","DTXSID5030030","DTXSID8031865")
@@ -23,13 +24,19 @@ unique(smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, "Level0.Sheet"])
 ## The Excel file is not tracked with the package. When re-creating the data,
 ## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
 ## and save it to the path: "data-raw/Smeltz-RED". Create the folder if need to. 
-chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
+chem.ids <- readxl::read_xlsx(
+  path = here::here("data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx"),
+  sheet = "Summary",skip = 1,n_max = 29,col_names = TRUE
+)
 chem.ids <- as.data.frame(chem.ids)
-chem.ids <- subset(chem.ids, !duplicated(chem.ids[,2]))
+chem.ids <- subset(chem.ids, !duplicated(chem.ids[,"DTXSID"]))
 ## In this table, the chemical names and their lab IDs are in the same column 
 ## Extract them into two separate columns
 chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
 chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[2]])))
+
+## Save the fup red chemical ID mapping information for the package
+fup_red_cheminfo <- chem.ids
 
 ## Read in level-0 file
 ## Prepare a data guide for merge_level0 
@@ -290,7 +297,7 @@ all.equal(ex_level3$Fup,og_level3$Fup)
 ##---------------------------------------------##
 
 ## Save level-0 and level-1 data to use for function demo/example documentations 
-save(fup_red_L0, fup_red_L1, fup_red_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-RED-example.RData")
+save(fup_red_cheminfo,fup_red_L0, fup_red_L1, fup_red_L2, file = here::here("data/Fup-RED-example.RData"))
 
 ## Include session info
 utils::sessionInfo()

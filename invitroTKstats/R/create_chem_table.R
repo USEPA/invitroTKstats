@@ -29,14 +29,28 @@
 #' @examples
 #'
 #' library(invitroTKstats)
-#' \dontrun{
 #' # Smeltz et al. (2020) data:
-#' create_chem_table(smeltz2020)
-#' }
-#' \dontrun{
-#' # Kreutz et al. (2020) data:
-#' create_chem_table(kreutz2020,compound.col="Name")
-#' }
+#' ##  Clint ##
+#' create_chem_table(
+#'   input.table = clint_cheminfo,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "Compound",
+#'   lab.compound.col = "Chem.Lab.ID"
+#'   )
+#' ## Fup RED ##
+#' create_chem_table(
+#'   input.table = fup_red_cheminfo,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "Compound",
+#'   lab.compound.col = "Chem.Lab.ID"
+#'   )
+#' ## Fup UC ##
+#' create_chem_table(
+#'   input.table = fup_uc_cheminfo,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "Compound",
+#'   lab.compound.col = "Chem.Lab.ID"
+#'   )
 #' 
 #' @export create_chem_table
 create_chem_table <- function(input.table,

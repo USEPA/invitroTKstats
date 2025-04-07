@@ -7,6 +7,7 @@
 ## load necessary packages
 library(readxl)
 library(invitroTKstats)
+library(here)
 
 ## Chose three compounds that have all samples verified
 uc.list <- c("DTXSID00192353", "DTXSID0059829", "DTXSID3037707")
@@ -42,14 +43,19 @@ while (this.row <= dim(assayinfo)[1])
 assayinfo[,1] <- sapply(assayinfo[,1],function(x) gsub("  UTC","",x))
 
 ## Read in chem.ids
-cheminfo <- read_excel(
-  "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC/20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
-  sheet=2)[, 1:2]
-cheminfo <- as.data.frame(cheminfo)
+chem.ids <- readxl::read_xlsx(
+  path = here::here("data-raw/Smeltz-UC/20220201_PFAS-LC_FractionUnbound_MGS.xlsx"),
+  sheet = "Summarized Wetmore Fu Values"
+)
+chem.ids <- as.data.frame(chem.ids)
+chem.ids <- subset(chem.ids, !duplicated(chem.ids[,"DTXSID"]))
 ## In this table, the chemical names and their lab IDs are in the same column 
 ## Extract them into two separate columns
-cheminfo$Compound <- unlist(lapply(strsplit(cheminfo[,2]," \\("),function(x) x[[1]])) 
-cheminfo$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(cheminfo[,2]," \\("),function(x) if (length(x) != 1) x[[2]] else NA)))
+chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
+chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) if (length(x) != 1) x[[2]] else NA)))
+
+## Save the fup uc chemical ID mapping information for the package
+fup_uc_cheminfo <- chem.ids
 
 ## Prepare a data guide for merge_level0 
 this.file <- "20220201_PFAS-LC_FractionUnbound_MGS.xlsx"
@@ -80,7 +86,7 @@ fup_uc_L0 <- merge_level0(level0.catalog  = data.guide,
                            type.colname.col="Type.ColName",
                            additional.colnames = "Sample Text",
                            additional.colname.cols = "SampleText.ColName",
-                           chem.ids = cheminfo,
+                           chem.ids = chem.ids,
                            output.res = FALSE,
                            catalog.out = FALSE,
                            INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC")
@@ -307,7 +313,7 @@ all.equal(ex_level3$Fup,og_level3$Fup)
 ##---------------------------------------------##
 
 ## Save level-0 to level-2 data to use for function demo/example documentation 
-save(fup_uc_L0, fup_uc_L1, fup_uc_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-UC-example.RData")
+save(fup_uc_cheminfo,fup_uc_L0, fup_uc_L1, fup_uc_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-UC-example.RData")
 
 ## Include session info
 utils::sessionInfo()
