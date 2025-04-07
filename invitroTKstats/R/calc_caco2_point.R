@@ -139,8 +139,8 @@ calc_caco2_point <- function(
   caco2.cols <- c(L1.common.cols, 
                   time.col = "Time",
                   direction.col="Direction",
-                  compound.conc.col="Nominal.Conc",
-                  nominal.test.conc.col="Test.Target.Conc",
+                  test.conc.col="Test.Compound.Conc",
+                  test.nominal.conc.col="Test.Nominal.Conc",
                   membrane.area.col="Membrane.Area",
                   receiver.vol.col="Vol.Receiver",
                   donor.vol.col="Vol.Donor"

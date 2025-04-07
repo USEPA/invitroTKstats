@@ -132,14 +132,14 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{test.conc}.)
 #' 
-#' @param clint.assay.conc (Numeric) The initial test chemical concentration for 
-#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
-#' use only if the same initial concentration was used for all tested compounds.)
+#' @param test.nominal.conc (Numeric) The nominal concentration added to the well at time 0. 
+#' (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if all tested compounds used the same concentration at time 0.)
 #' 
-#' @param clint.assay.conc.col (Character) Column name containing \code{clint.assay.conc} 
-#' information. (Defaults to "Clint.Assay.Conc".) (Note: \code{data.in} does not
+#' @param test.nominal.conc.col (Character) Column name containing \code{test.nominal.conc} 
+#' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{clint.assay.conc}.)
+#' specified in \code{test.nominal.conc}.)
 #' 
 #' @param area.col (Character) Column name of \code{data.in} containing the target analyte (that
 #' is, the test compound) MS peak area. (Defaults to "Area".)
@@ -259,7 +259,7 @@
 #'                        istd.col= "ISTD.Peak.Area",
 #'                        area.col = "Peak.Area",
 #'                        density = 0.5,
-#'                        clint.assay.conc = 1,
+#'                        test.nominal.conc = 1,
 #'                        biological.replicates = 1,
 #'                        test.conc.col="Compound.Conc",
 #'                        time.col = "Time",
@@ -303,8 +303,8 @@ format_clint <- function(
   istd.conc.col="ISTD.Conc",
   test.conc=NULL,
   test.conc.col="Test.Compound.Conc",
-  clint.assay.conc=NULL,
-  clint.assay.conc.col="Clint.Assay.Conc",
+  test.nominal.conc=NULL,
+  test.nominal.conc.col="Test.Target.Conc",
   area.col="Area",
   biological.replicates = NULL,
   biological.replicates.col = "Biological.Replicates",
@@ -364,7 +364,7 @@ format_clint <- function(
     file.path <- getwd()
   }
 
-# These arguments allow the user to specify a single value for every obseration
+# These arguments allow the user to specify a single value for every observation
 # in the table:
   if (!is.null(date)) data.in[,date.col] <- date
   #if (!is.null(compound.conc)) data.in[,compound.conc.col] <- compound.conc
@@ -375,8 +375,8 @@ format_clint <- function(
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
   if (!is.null(test.conc)) data.in[,test.conc.col] <- test.conc
-  if (!is.null(clint.assay.conc)) data.in[,clint.assay.conc.col] <-
-    clint.assay.conc
+  if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <-
+    test.nominal.conc
   if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
   if (!is.null(analysis.instrument)) data.in[,analysis.instrument.col] <-
     analysis.instrument
@@ -391,7 +391,7 @@ format_clint <- function(
   clint.cols <- c(L1.common.cols,
                   time.col = "Time",
                   test.conc.col = "Test.Compound.Conc",
-                  clint.assay.conc.col = "Clint.Assay.Conc",
+                  test.nominal.conc.col = "Test.Nominal.Conc",
                   density.col = "Hep.Density"
                   )
   

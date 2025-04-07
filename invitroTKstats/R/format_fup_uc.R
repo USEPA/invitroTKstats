@@ -52,7 +52,7 @@
 #' under Details). (Defaults to "Sample.Type".)
 #' 
 #' @param test.conc (Numeric) The standard test chemical concentration for 
-#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' the fup UC assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same standard concentration was used for all tested compounds.)
 #'
 #' @param test.conc.col (Character) Column name containing \code{test.conc} 
@@ -101,15 +101,15 @@
 #' necessarily have this field. If this field is missing, it can be
 #' auto-filled with the value specified in \code{istd.conc}.)
 #' 
-#' @param uc.assay.conc (Numeric) The intended initial test chemical
-#' concentration in the UC assay in uM. (Defaults to \code{NULL}.)
-#' (Note: Single entry only,  use only if the intended initial concentration
-#' was the same for all tested compounds.)
+#' @param test.nominal.conc (Numeric) The nominal concentration added to the UC assay
+#' at time 0. (Defaults to \code{NULL}.)
+#' (Note: Single entry only,  use only if all tested compounds used the same 
+#' concentration at time 0.)
 #'
-#' @param uc.assay.conc.col (Character) Column name containing \code{uc.assay.conc} 
-#' information. (Defaults to "UC.Assay.Conc".) (Note: \code{data.in} does not
+#' @param test.nominal.conc.col (Character) Column name containing \code{test.nominal.conc} 
+#' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled
-#' with the value specified in \code{uc.assay.conc}.)
+#' with the value specified in \code{test.nominal.conc}.)
 #' 
 #' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
 #' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
@@ -230,7 +230,7 @@
 #'                         area.col = "Peak.Area",
 #'                         istd.conc = 1,
 #'                         note.col = NULL,
-#'                         uc.assay.conc = 10,
+#'                         test.nominal.conc = 10,
 #'                         analysis.method = "UPLC-MS/MS",
 #'                         analysis.instrument = "Waters Xevo TQ-S micro (QEB0036)",
 #'                         analysis.parameters.col = "Analysis.Params",
@@ -265,8 +265,8 @@ format_fup_uc <- function(
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  uc.assay.conc=NULL,
-  uc.assay.conc.col="UC.Assay.Conc",
+  test.nominal.conc=NULL,
+  test.nominal.conc.col="Test.Target.Conc",
   biological.replicates = NULL,
   biological.replicates.col = "Biological.Replicates",
   technical.replicates = NULL,
@@ -324,7 +324,7 @@ format_fup_uc <- function(
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
   if (!is.null(test.conc)) data.in[,test.conc.col] <- test.conc
-  if (!is.null(uc.assay.conc)) data.in[,uc.assay.conc.col] <- uc.assay.conc
+  if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <- test.nominal.conc
   if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
   if (!is.null(analysis.instrument)) data.in[,analysis.instrument.col] <-
     analysis.instrument
@@ -338,7 +338,7 @@ format_fup_uc <- function(
   # We need all these columns in data.in
   fup.uc.cols <- c(L1.common.cols,
                    test.conc.col = "Test.Compound.Conc",
-                   uc.assay.conc.col = "UC.Assay.T1.Conc"
+                   test.nominal.conc.col = "Test.Nominal.Conc"
   )
   
   ## allow either one of the two, or both replicate columns in the data
