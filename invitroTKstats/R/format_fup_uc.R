@@ -39,8 +39,12 @@
 #' @param dtxsid.col (Character) Column name from \code{data.in} containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param date.col (Character) Column name from \code{data.in} containing the laboratory measurement
-#' date. (Defaults to "Date".)
+#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all data were collected on the same date.)
+#'
+#' @param date.col (Character) Column name containing \code{date} information. (Defaults to "Date".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{date}.)
 #'
 #' @param compound.col (Character) Column name from \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -250,6 +254,7 @@ format_fup_uc <- function(
   sample.col="Lab.Sample.Name",
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
+  date=NULL,
   date.col="Date",
   compound.col="Compound.Name",
   area.col="Area",
@@ -319,6 +324,7 @@ format_fup_uc <- function(
 
 # These arguments allow the user to specify a single value for every observation
 # in the table:
+  if (!is.null(date)) data.in[,date.col] <- date
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
