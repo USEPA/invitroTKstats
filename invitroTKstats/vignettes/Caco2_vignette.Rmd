@@ -76,9 +76,9 @@ If the Level 0 data does not already contain the required column, then the entir
 
 Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `date.col`, `compound.col`, `area.col`, `istd.col`, `type.col`, `direction.col`, `receiver.vol.col`, `donor.vol.col`, and `note.col`.
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `compound.col`, `area.col`, `istd.col`, `type.col`, `direction.col`, `receiver.vol.col`, `donor.vol.col`, and `note.col`.
 
-The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `membrane.area.col` or `membrane.area`, `compound.conc.col` or `compound.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `nominal.test.conc.col` or `nominal.test.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`.
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `date.col` or `date`, `membrane.area.col` or `membrane.area`, `test.conc.col` or `test.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `test.nominal.conc.col` or `test.nominal.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`.
 
 ```{r required cols, echo = FALSE}
 # Create a table of required arguments for Level 1
@@ -90,8 +90,8 @@ colnames(req_cols) <- vars
 # Argument names 
 arguments <- c("FILENAME", "data.in", "sample.col", "lab.compound.col", "dtxsid.col", "date.col", 
                 "compound.col", "area.col", "istd.col", "type.col", "direction.col", "membrane.area.col",
-                "receiver.vol.col", "donor.vol.col", "compound.conc.col", "cal.col", "dilution.col",
-                "time.col", "istd.name.col", "istd.conc.col", "nominal.test.conc.col", "biological.replicates.col",
+                "receiver.vol.col", "donor.vol.col", "test.conc.col", "cal.col", "dilution.col",
+                "time.col", "istd.name.col", "istd.conc.col", "test.nominal.conc.col", "biological.replicates.col",
                 "technical.replicates.col", "analysis.method.col", "analysis.instrument.col", "analysis.parameters.col",
                 "note.col", "level0.file.col", "level0.sheet.col", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR")
 req_cols[, "Argument"] <- arguments
@@ -100,7 +100,7 @@ req_cols[, "Argument"] <- arguments
 defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name",
               "DTXSID", "Date", "Compound.Name", "Area", 
               "ISTD.Area", "Type", "Direction", "Membrane.Area",
-              "Vol.Receiver", "Vol.Donor", "Nominal.Conc", 
+              "Vol.Receiver", "Vol.Donor", "Test.Compound.Conc", 
               "Cal", "Dilution.Factor", "Time", "ISTD.Name", 
               "ISTD.Conc", "Test.Target.Conc",
               "Biological.Replicates", "Technical.Replicates",
@@ -112,7 +112,7 @@ req_cols[, "Default"] <- defaults
 # Argument required in L0?
 req_cols <- req_cols %>% 
   mutate("Required in L0?" = case_when(
-    Argument %in% c("sample.col", "lab.compound.col", "dtxsid.col", "date.col", "compound.col", "area.col", "istd.col", 
+    Argument %in% c("sample.col", "lab.compound.col", "dtxsid.col", "compound.col", "area.col", "istd.col", 
   "type.col", "direction.col", "receiver.vol.col", "donor.vol.col", "note.col") ~ "Y",
   Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A",
   .default = "N"
@@ -138,13 +138,13 @@ description <- c("Output and input filename",
                  "Membrane area",
                  "Receiver compartment volume",
                  "Donor compartment volume",
-                 "Test chemical concentration",
+                 "Standard test chemical concentration",
                  "MS calibration",
                  "Number of times sample was diluted",
                  "Time before compartments were measured",
                  "Internal standard name",
                  "Internal standard concentration",
-                 "Initial test chemical concentration added to donor",
+                 "Expected initial chemical concentration added to donor",
                  "Replicates with the same analyte",
                  "Repeated measurements from one sample",
                  "Analytical chemistry analysis method",
@@ -153,7 +153,7 @@ description <- c("Output and input filename",
                  "Additional notes",
                  "Raw data filename",
                  "Raw data sheet name",
-                 "Export restuls (TSV)?",
+                 "Export results (TSV)?",
                  "Export bad data (TSV)?",
                  "Number of sig figs",
                  "Input directory of Level 0 file",
@@ -204,8 +204,30 @@ caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  output.res = FALSE
                                  )
 ```
+We receive a message that "Responses of samples with a "Blank" sample type and a NA response have been reassigned to 0." Currently, when the `ISTD.Area` measurement for a sample is 0, the calculated `Response` is NaN, or not a number, because of the division by 0. In this particular case, all of our samples that have a NaN `Response` are "Blank" sample types. But, these "Blank" sample types are needed for point estimation. (Note: NA responses of other sample types are appropriately removed.) Users can verify this with the following check. 
 
-All of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types
+```{r, eval = TRUE}
+all(caco2_L1_curated[caco2_L1_curated$ISTD.Area == 0, "Sample.Type"] == "Blank")
+```
+
+Therefore, the NaNs are replaced with 0 so that the "Blank" sample types are kept in the dataset and our estimates are accurate. Users can verify that all "Blank" samples with `ISTD.Area` = 0 have their `Response` values reassigned to 0 with the following check.  
+
+```{r, eval = F}
+# Verify Blank samples with ISTD.Area = 0 also have Response = 0
+resp <- caco2_L1_curated %>% 
+  dplyr::filter(Sample.Type == "Blank" & ISTD.Area == 0) %>% 
+  dplyr::select(Response) %>% 
+  unlist()
+
+all(resp == 0)
+```
+
+```{r}
+caco2_L1_curated <- caco2_L1_curated %>% 
+  mutate(Response = ifelse(is.nan(Response) & Sample.Type == "Blank", 0, Response))
+```
+
+Now, all of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types
 
 1. Blank with no chemical added (Blank)
 2. Dosing vehicle (C0) at target concentration (D0)
@@ -234,20 +256,6 @@ head(n = 3) %>%
   theme_vanilla()
 ```
 
-Currently, when the ISTD.Area measurement for a sample is 0, the calculated Response is NaN, or not a number, because of the division by 0. In this particular case, all of our samples that have a NaN Response are "Blank" sample types. But, these sample types are needed for point estimation. Users can verify this with the following check. 
-
-```{r, eval = TRUE}
-all(caco2_L1_curated[is.nan(caco2_L1_curated$Response), "Sample.Type"] == "Blank")
-```
-
-Therefore, we replace the NaNs with 0 so that the "Blank" sample types are kept in the dataset and our estimates are accurate. 
-
-```{r}
-# Response = Peak.Area/ISTD.Area --> NaN when ISTD.Area = 0 
-# Replace the NaNs with 0
-caco2_L1_curated <- caco2_L1_curated %>% 
-  mutate(Response = ifelse(is.nan(Response) & Sample.Type == "Blank", 0, Response))
-```
 
 ## Level 2 processing 
 
@@ -324,7 +332,7 @@ First, we define the rate of permeation as the amount of compound passing throug
 $$\frac{dQ}{dt} = \frac{c_{\textrm{receiver}}V_{\textrm{receiver}}}{\Delta t}$$ where $c_{\textrm{receiver}}$ is the concentration of the test compound in the receiver compartment, $V_{\textrm{receiver}}$ is the volume of the receiver compartment, and $\Delta t$ is the total elapsed time. This rate is a type of flux and therefore has units of $\mu \textrm{mol}/s$. The dimensional analysis is described below. 
 $$\left[\frac{dQ}{dt}\right] = \frac{[c_{\textrm{receiver}}][V_{\textrm{receiver}}]}{[\Delta t]} = \frac{[\mu \textrm{mol/L}][L]}{[s]} = \frac{[\mu \textrm{mol}]}{[s]} $$
 
-Next, to estimate $c_\textrm{receiver}$, we first multiply each R2 response with the corresponding R2 dilution factor and find the mean. To account for background noise, we follow a similar procedure with the blank response and dilution factor. We then subtract the two such that $$c_\textrm{receiver} = \textrm{mean}(\textrm{dilution factor}_{R2} * \textrm{Response}_{R2}) - \textrm{mean}(\textrm{dilution factor}_{Blank} * \textrm{Response}_{Blank})$$ 
+Next, to estimate $c_\textrm{receiver}$, we first multiply each R2 response with the corresponding R2 dilution factor and estimate the mean. To account for background noise, we follow a similar procedure with the blank response and dilution factor. We then subtract the two such that $$c_\textrm{receiver} = \textrm{mean}(\textrm{dilution factor}_{R2} * \textrm{Response}_{R2}) - \textrm{mean}(\textrm{dilution factor}_{Blank} * \textrm{Response}_{Blank})$$ 
 
 The initial concentration in the donor compartment, $c_0$, is calculated similarly but with the D0 response instead of the R2 response. 
 
@@ -363,14 +371,14 @@ The fraction recovered is the fraction of the initial donor amount recovered in 
 
 Fraction recovered values are then classified and provided as the `Recovery_Class` value. Values $<0.4$ are classified as "Low Recovery" and values $>2$ are classified as "High Recovery". Values within the range, $0.4 \leq \textrm{Frec} \leq 2$, are considered normal and are not given an explicit classification. 
 
-If there are multiple samples per sample type per chemical, (i.e. biological replicates), a vector of fraction recovered values will be returned with a "|" separating each value.
+If there are multiple samples per sample type per chemical, (i.e. biological replicates), a vector of fraction recovered values will be returned with a "|" separating each value. Similarly, a vector of recovery classifications will be returned for each value in the vector of fraction recovered values with a "|" separating each value. 
 
 The following columns are always returned involving the fraction recovered in the A to B direction: 
 
 1. `Frec_A2B.vec` - vector of fraction recovered values 
 2. `Recovery_Class_A2B.vec` - vector of recovery classifications 
 3. `Frec_A2B.mean` - mean of fraction recovered values 
-4. `Frec_A2B.max` - maximum of fraction recovered values
+4. `Recovery_Class_A2B.mean` - recovery classification of mean fraction recovered value
 
 Note that even if there are no biological replicates, the above four columns are still returned; all of the `Frec` estimates will just be equivalent. Estimates are also returned in the B to A direction. 
 
