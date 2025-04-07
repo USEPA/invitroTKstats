@@ -78,9 +78,9 @@ If the Level 0 data does not already contain the required column, then the entir
 
 Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `date.col`, `compound.col`, `area.col`, `type.col`, `istd.col`, and `note.col`.
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `compound.col`, `area.col`, `type.col`, `istd.col`, and `note.col`.
 
-The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `test.conc.col` or `test.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `uc.assay.conc.col` or `uc.assay.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `date.col` or `date`, `test.conc.col` or `test.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `uc.assay.conc.col` or `uc.assay.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
 
 ```{r required cols, echo = FALSE}
 # Create table of required arguments for Level 1 
@@ -114,7 +114,7 @@ req_cols[, "Default"] <- defaults
 req_cols <- req_cols %>% 
   mutate("Required in L0?" = case_when(
     Argument %in% c("sample.col", "lab.compound.col", "dtxsid.col",
-                    "date.col", "compound.col", "area.col", "type.col", 
+                    "compound.col", "area.col", "type.col", 
                     "istd.col", "note.col") ~ "Y", 
     Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", 
                     "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A",
