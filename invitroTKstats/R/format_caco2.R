@@ -442,6 +442,13 @@ format_caco2 <- function(
   data.out[,"Response"] <- data.out[,"Area"] /
                                     data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"]
   
+  # Non-detects of blank sample types are OK but needed for point estimate calculations
+  # So, if samples with sample.type == "Blank" have a NA response, convert responses to 0
+  if (any(data.out$Sample.Type == "Blank" & is.na(data.out$Response))) {
+    data.out$Response[data.out$Sample.Type == "Blank" & is.na(data.out$Response)] <- 0
+    cat(paste0("Responses of samples with a \"Blank\" sample type and a NA response have been reassigned to 0.\n"))
+  }
+  
   if (output.res) {
   
     rounded.data.out <- data.out 
