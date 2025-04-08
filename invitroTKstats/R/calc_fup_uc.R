@@ -228,7 +228,7 @@ calc_fup_uc <- function(
   
   fup.uc.cols <- c(L1.common.cols,
                    test.conc.col = "Test.Compound.Conc",
-                   uc.assay.conc.col = "UC.Assay.T1.Conc"
+                   test.nominal.conc.col = "Test.Nominal.Conc"
   )
   list2env(as.list(fup.uc.cols), envir = environment())
   cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)

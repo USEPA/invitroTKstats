@@ -298,25 +298,27 @@ returned as a column in the output data frame:
 Response <- AREA / ISTD.AREA * ISTD.CONC
 }
 \examples{
-library(invitroTKstats)
-\dontrun{
-level0 <- TO1caco2
-level1 <- format_caco2(level0,
-                       FILENAME="EPACyprotex2021",
-                       sample.col="SampleName",
-                       dtxsid.col="CompoundName",
-                       lab.compound.col="CompoundName",
-                       cal=1,
-                       istd.conc.col="ISTD.Conc",
-                       compound.col="CompoundName",
-                       compound.conc.col="Test.Target.Conc",
-                       membrane.area=0.11,
-                       series=1,
-                       analysis.parameters="Feature",
-                       analysis.instrument="GC or LC",
-                       analysis.method="Mass Spec"
-                      )
-}
+## Load example level-0 data
+level0 <- invitroTKstats::caco2_L0
+level1 <- format_caco2(data.in = level0,
+                       sample.col = "Sample",
+                       lab.compound.col = "Lab.Compound.ID",
+                       compound.col = "Compound",
+                       area.col = "Peak.Area",
+                       istd.col = "ISTD.Peak.Area",
+                       membrane.area = 0.11,
+                       compound.conc.col = "Compound.Conc",
+                       cal = 1, 
+                       time = 2, 
+                       istd.conc = 1, 
+                       nominal.test.conc = 10, 
+                       biological.replicates = 1, 
+                       analysis.method.col = "Analysis.Params",
+                       analysis.instrument = "Agilent.GCMS",
+                       analysis.parameters = "TBD",
+                       note.col = NULL,
+                       output.res = FALSE
+)
 
 }
 \references{
