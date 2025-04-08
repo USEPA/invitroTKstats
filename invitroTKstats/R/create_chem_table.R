@@ -51,6 +51,14 @@
 #'   compound.col = "Compound",
 #'   lab.compound.col = "Chem.Lab.ID"
 #'   )
+#' # Honda et al. () data:
+#' ## Caco2 ##
+#' create_chem_table(
+#'   input.table = caco2_cheminfo,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "PREFERRED_NAME",
+#'   lab.compound.col = "test_article"
+#'   )
 #' 
 #' @export create_chem_table
 create_chem_table <- function(input.table,
