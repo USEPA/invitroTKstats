@@ -8,6 +8,7 @@
 library(readxl)
 library(invitroTKstats)
 library(here)
+library(dplyr)
 
 ## Picked three compounds from the data that we know all samples are verified (with "Y").
 red.list <- c("DTXSID6062599","DTXSID5030030","DTXSID8031865")
@@ -35,8 +36,17 @@ chem.ids <- subset(chem.ids, !duplicated(chem.ids[,"DTXSID"]))
 chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
 chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[2]])))
 
-## Save the fup red chemical ID mapping information for the package
-fup_red_cheminfo <- chem.ids
+## Save the fup red chemical ID mapping information for the package - remove columns not needed
+fup_red_cheminfo <- dplyr::select(chem.ids,-c(3:64))
+
+# check that the number of rows in the chem information matches the number of unique DTXSID's
+length(unique(fup_red_cheminfo$DTXSID))==nrow(fup_red_cheminfo)
+
+# create chem ID mapping table for level-0 compilation - we can overwrite previous `chem.ids`
+chem.ids <- create_chem_table(input.table = fup_red_cheminfo,
+                              dtxsid.col = "DTXSID",
+                              compound.col = "Compound",
+                              lab.compound.col = "Chem.Lab.ID")
 
 ## Read in level-0 file
 ## Prepare a data guide for merge_level0 

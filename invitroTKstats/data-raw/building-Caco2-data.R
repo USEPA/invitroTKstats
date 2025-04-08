@@ -14,6 +14,43 @@
 library(readxl)
 # library(invitroTKstats) ## use when installed package is up-to-date
 devtools::load_all("~/Git/invitrotkstats/invitroTKstats") ## use when installed package is not up-to-date, but branch is up-to-date with 'dev' branch
+library(here)
+library(dplyr)
+
+## Build chem.ids table 
+## The Excel file ("SupTable1-AnalyticMethods.xlsx" and "Caco2.xlsx") containing the chemical ID mapping is not tracked with the package. 
+## When re-creating the data, retrieve the file from the directory "<...>\CCTE_ExpoCast\ExpoCast2019\HTTKNewData\Summary"
+## and save it to the path: "data-raw/Honda-Caco2".
+## Create the folder if need to.
+suptab1 <- readxl::read_xlsx(
+  path = here::here("data-raw/Honda-Caco2/SupTable1-AnalyticalMethods.xlsx"),
+  sheet = "SupTable1-AnalyticalMethods"
+)
+suptab1 <- as.data.frame(suptab1)
+
+caco2_compdata <- readxl::read_xlsx(
+  path = here::here("data-raw/Honda-Caco2/Caco2.xlsx"),
+  sheet = "Caco2"
+)
+caco2_compdata <- as.data.frame(caco2_compdata)
+caco2_compdata <- dplyr::select(caco2_compdata,c("test_article","dtxsid","casrn")) # keep only the columns we need for chemical ID mapping
+caco2_compdata <- dplyr::mutate(caco2_compdata,CASRN = `casrn`) # create a new column to enable merging `suptab1` and `caco2_compdata`
+
+# combine the two sources of chemical ID mapping
+chem.ids <- dplyr::left_join(suptab1,caco2_compdata,by = "CASRN")
+chem.ids <- dplyr::filter(chem.ids,duplicated(`DTXSID`))
+
+## Save the caco2 chemical ID mapping information for the package - remove columns not needed
+caco2_cheminfo <- dplyr::select(chem.ids,-c("LC","Agilent.QQQ","Water.s.Xevo","AB.Sciex.Qtrap","GC","Agilent.GCMS","GCTOF","Comment","dtxsid","casrn"))
+
+# check that the number of rows in the chem information matches the number of unique DTXSID's
+length(unique(caco2_cheminfo$DTXSID))==nrow(caco2_cheminfo)
+
+# create chem ID mapping table for level-0 compilation - we can overwrite previous `chem.ids`
+chem.ids <- create_chem_table(input.table = caco2_cheminfo,
+                              dtxsid.col = "DTXSID",
+                              compound.col = "PREFERRED_NAME",
+                              lab.compound.col = "test_article")
 
 ## Build the data guide 
 level0.catalog <- create_catalog(file = "Edited_EPA_Task 10_13_Caco-2 Compiled_LCMSGC_10032017_Data Summary_GZ.xlsm",
@@ -33,12 +70,6 @@ level0.catalog <- create_catalog(file = "Edited_EPA_Task 10_13_Caco-2 Compiled_L
                                  conc = "Test Concentration",
                                  analysis.param = "Transition"
                                  )
-
-## Build chem.ids table 
-## Chemical information can be found in the files in "HTTKNewData/Summary/Caco2.xlsx & SupTable1-AnalyticMethods.xlsx)".
-chem.ids <- data.frame(Compound = c("Thiobencarb","Nitrapyrin","4-Chloro-2-methylaniline"),
-                       DTXSID = c("DTXSID6024337", "DTXSID0024216", "DTXSID1041508"),
-                       Chem.Lab.ID = c("BF175258","BF175270","EV0000613"))
 
 ## Specify the path to the Excel file 
 ## The Excel file is not tracked with the package. When re-creating the data,
@@ -138,7 +169,7 @@ level2_TSV <- read.delim("~/Git/invitrotkstats/invitroTKstats/vignettes/Examples
 isTRUE(all.equal(level2_TSV$Response,caco2_L2$Response))
 
 ## Save level-0 and level-1 data to use for function demo/example documentation 
-save(caco2_L0, caco2_L1, caco2_L2, file = "~/Git/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
+save(caco2_cheminfo,caco2_L0, caco2_L1, caco2_L2, file = "~/Git/invitrotkstats/invitroTKstats/data/Caco2-example.RData")
 
 ## Include session info
 utils::sessionInfo()

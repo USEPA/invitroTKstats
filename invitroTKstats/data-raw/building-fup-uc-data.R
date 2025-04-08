@@ -8,6 +8,7 @@
 library(readxl)
 library(invitroTKstats)
 library(here)
+library(dplyr)
 
 ## Chose three compounds that have all samples verified
 uc.list <- c("DTXSID00192353", "DTXSID0059829", "DTXSID3037707")
@@ -54,8 +55,17 @@ chem.ids <- subset(chem.ids, !duplicated(chem.ids[,"DTXSID"]))
 chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
 chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) if (length(x) != 1) x[[2]] else NA)))
 
-## Save the fup uc chemical ID mapping information for the package
-fup_uc_cheminfo <- chem.ids
+## Save the fup uc chemical ID mapping information for the package - remove columns not needed
+fup_uc_cheminfo <- dplyr::select(chem.ids,-c("Mean fu","SD fu","CV fu","Category","...7"))
+
+# check that the number of rows in the chem information matches the number of unique DTXSID's
+length(unique(fup_uc_cheminfo$DTXSID))==nrow(fup_uc_cheminfo)
+
+# create chem ID mapping table for level-0 compilation - we can overwrite previous `chem.ids`
+chem.ids <- create_chem_table(input.table = fup_uc_cheminfo,
+                              dtxsid.col = "DTXSID",
+                              compound.col = "Compound",
+                              lab.compound.col = "Chem.Lab.ID")
 
 ## Prepare a data guide for merge_level0 
 this.file <- "20220201_PFAS-LC_FractionUnbound_MGS.xlsx"
