@@ -516,29 +516,38 @@ Shibata, Y., Takahashi, H., Chiba, M., & Ishii, Y. (2002). Prediction of hepatic
 | DEGRADES.PROB | $p_{d_g}$ | |
 | SATURATE.PROB | $p_{s_f}$ | |
 
+#### JAGS 
 
-$$ log(\sigma_a) \sim Unif(-6,1) $$
-$$ log(m_h) \sim Unif(-6,1) $$
+##### Measurement Model
+
+$$ log(\sigma_a) \sim Unif(-6,1); \space \sigma_a = 10^{log(\sigma_a)} $$
+$$ log(m_h) \sim Unif(-6,1); \space m_h = 10^{log(m_h)} $$
+
 $$ C_{thresh} \sim Unif(0,\frac{conc_{target}}{10})$$
 
-* Question: Is 10 meant to be a dilution factor or where does this come from?  If it is the dilution factor then why are we not using that here...
+$$ log(cal) \sim N(0,0.01); \space cal = 10^{log(cal)}$$
 
-$$ log(cal) \sim N(0,0.01)$$
 $$ \gamma \sim Exp(100)$$
 
-$$ \sigma_a = 10^{log(\sigma_a)} $$
+##### Likelihood for Blank Observations
 
-$$ m_h = 10^{log(m_h)} $$
-$$ cal = 10^{log(cal)} $$
+$$ y_{blank} \sim N(x_{blank}= \frac{\gamma}{df_{blank}},p_{blank} = \frac{1}{(\sigma_a + m_h *x_{blank})^2}) $$
 
-$$ x_{blank} = \frac{\gamma}{df_{blank}}$$
+##### Likelihood for Calibration Curve
 
-$$ p_{blank} = \frac{1}{(\sigma_a + m_h *x_{blank})^2} $$
-$$ y_{blank} \sim N(x_{blank},p_{blank}) $$
-$$ x_{cc} = m_{cc} * (\frac{y_{cc}}{df_{cc}} - \frac{C_{thresh}}{df_{cc}}) * step(\frac{y_{cc}}{df_{cc}} - \frac{C_{thresh}}{df_{cc}}) + \frac{\alpha_{cc}}{df_{cc}}  $$
+$$
+\beta_{cc} =
+\begin{cases}
+1 & if \space (\frac{y_{cc}}{df_{cc}} - \frac{C_{thresh}}{df_{cc}}) \ge 0 \\
+0 & o.w. 
+\end{cases}
+$$
 
-$$ p_{cc} = \frac{1}{(\sigma_a + m_h * x_{cc})^2} $$
-$$ y_{cc} \sim N(x_{cc},p_{cc})$$
+
+$$ y_{cc} \sim N(x_{cc} = m_{cc} * (\frac{y_{cc}}{df_{cc}} - \frac{C_{thresh}}{df_{cc}}) * \beta_{cc} + \frac{\alpha_{cc}}{df_{cc}},p_{cc} = \frac{1}{(\sigma_a + m_h * x_{cc})^2})$$
+
+##### Clearance Model
+
 $$ d_c \sim Bern(p_{d_c}) $$
 $$ d_g \sim Bern(p_{d_g}) $$
 $$ \delta_{bio} \sim Unif(0,-log(\frac{C_{thresh}}{conc_{target}}))$$
@@ -550,27 +559,59 @@ $$ s_f \sim Bern(p_{s_f})$$
 $$ s_a \sim Unif(0,1) $$
 $$ m_2 = d_g * \delta_{abio} + d_c * \delta_{bio} *(1-s_f*s_a) $$
 $$ C = conc_{target}*exp(-m) $$
-$$ x = cal * (\frac{C}{df} - \frac{C_{thresh}}{df}) * step(\frac{C}{df} - \frac{C_{thresh}}{df}) + \frac{\gamma}{df} $$
 
-$$ p = \frac{1}{(\sigma_a + m_h*x)^2}$$
+$$
+\beta = 
+\begin{cases}
+1 & if \space \frac{C}{df} - \frac{C_{thresh}}{df} \ge 0 \\
+0 & o.w.
+\end{cases}
+$$
 
-$$ y \sim N(x,p)$$
+$$ y \sim N(x = cal * (\frac{C}{df} - \frac{C_{thresh}}{df}) * \beta + \frac{\gamma}{df},p = \frac{1}{(\sigma_a + m_h*x)^2})$$
+
+##### Non-biological Clearance Model
+
 $$ m_{abio} = d_g * \delta_{abio} $$
 
 $$ C_{abio} = conc_{target} * exp(-m_{abio}*t_{abio}) $$
-$$ x_{abio} = cal * (\frac{C_{abio}}{df_{abio}} - \frac{C_{thresh}}{df_{abio}}) * step(\frac{C_{abio}}{df_{abio}} - \frac{C_{thresh}}{df_{abio}}) + \frac{\gamma}{df_{abio}}$$
-$$ p_{abio} = \frac{1}{(\sigma_a + m_h * x_{abio})^2}$$
-$$ y_{abio} \sim N(x_{abio},p_{abio}) $$
+$$
+\beta_{abio} = 
+\begin{cases}
+1 & if \space (\frac{C_{abio}}{df_{abio}} - \frac{C_{thresh}}{df_{abio}}) \ge 0 \\
+0 & o.w.
+\end{cases}
+$$
+
+$$ y_{abio} \sim N(x_{abio} = cal * (\frac{C_{abio}}{df_{abio}} - \frac{C_{thresh}}{df_{abio}}) * \beta_{abio} + \frac{\gamma}{df_{abio}},p_{abio} = \frac{1}{(\sigma_a + m_h * x_{abio})^2}) $$
+
+#### Estimates post-MCMC
 
 Conversion of disappearance rates (1/hr) to hepatic clearance ($\mu L/min/10^6$) for $1 \mu M$:
 
 $$ \mathbf{Clint.1} = 1000*\frac{m_{bio,1 \mu M}}{\rho_{hep}*60} $$
 where $\rho_{hep}$ is the hepatic density and $m_{bio,1 \mu M}$ is the slope for "bio" at $1 \mu M$.
 
+
 Conversion of disappearance rates (1/hr) to hepatic clearance ($\mu L/min/10^6$) for $10 \mu M$:
 
 $$ \mathbf{Clint.10} = 1000*\frac{m_{bio,10 \mu M}}{\rho_{hep}*60} $$
 where $\rho_{hep}$ is the hepatic density and $m_{bio,1 \mu M}$ is the slope for "bio" at $10 \mu M$.
 
+Posterior probability for intrinsic hepatic clearance:
 
-$$ \mathbf{Clint.pValue} = \frac{\sum_{k=1}^{n_{MCMC}} d_c == 0 }{n_{MCMC}}$$
+$$ \mathbf{Clint.pValue} = \frac{\sum_{k=1}^{n_{M}} d_{c,k} }{n_{M}}$$
+
+where $n_{M}$ is the number of MCMC iterations and $d_{c,k}$ is the binary result for MCMC iteration $k$ indicating whether the chemical decreases (i.e. is biologically cleared).
+
+Posterior probability for the chemical saturation:
+
+$$ \mathbf{Sat.pValue} = \frac{\sum_{k=1}^{n_{M}}s_{f,k}}{n_{M}} $$
+
+where $n_{M}$ is the number of MCMC iterations and $s_{f,k}$ is the binary result for MCMC iteration $k$ indicating whether the saturation is hit in each of the MCMC iterations.
+
+Posterior probability of the chemical degradation:
+
+$$ \mathbf{degrades.pValue} = \frac{\sum_{k=1}^{n_{M}}d_{g,k}}{n_{M}}$$
+
+where $n_{M}$ is the number of MCMC iterations and $d_{g,k}$ is the binary result for MCMC iteration $k$ indicating whether the chemical degradation is hit (i.e. is non-biologically cleared).
