@@ -29,7 +29,7 @@ Author: John Wambaugh [aut, cre] (<https://orcid.org/0000-0002-4024-534X>),
   Lindsay Knupp [ctb],
   Zhao Zhihui [ctb],
   Chantel Nicolas [ctb] (<https://orcid.org/0000-0003-2061-5830>),
-  Anna Kreutz [ctb],
+  Anna Kreutz [ctb]
 Depends: R (>= 2.10)
 Imports: runjags, parallel, readxl, coda, ggplot2, scales, stats4, Rdpack, methods, stats, utils, dplyr, rlang
 RdMacros: Rdpack
