@@ -1,6 +1,6 @@
 Package: invitroTKstats
 Version: 0.0.13
-Date: 2025-03-05
+Date: 2025-04-09
 Title: In Vitro Toxicokinetic Data Processing and Analysis Pipeline
 Description: A set of tools for processing and analyzing in vitro toxicokinetic
              measurements in a standardized and reproducible pipeline. The package
