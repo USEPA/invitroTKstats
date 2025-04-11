@@ -195,7 +195,7 @@ clint_L1_curated <- format_clint(FILENAME = "Clint_vignette",
                          analysis.parameters.col = "Analysis.Params",
                          # columns not present in L0 data
                          density = 0.5,
-                         clint.assay.conc = 1,
+                         test.nominal.conc = 1,
                          analysis.instrument = "Unknown",
                          analysis.method = "LCMS",
                          istd.conc = 0.01,

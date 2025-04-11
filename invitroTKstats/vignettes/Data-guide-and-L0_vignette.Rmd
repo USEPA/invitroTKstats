@@ -77,7 +77,7 @@ Since these datasets are not stored as part of the R package it is necessary to 
 
 ```{r raw_data_dir,echo=FALSE}
 # this code chunk is hidden since it may not be applicable for the R pckg user
-raw_data_dir <- "../../working/KreutzPFAS/"
+raw_data_dir <- "../data-raw/KreutzPFAS/"
 ```
 ```{r raw_data_dir_show,eval=FALSE}
 # raw data directory - put together the path to where the sub-directory for KreutzPFAS is in your local
