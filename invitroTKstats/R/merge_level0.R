@@ -322,12 +322,15 @@ merge_level0 <- function(FILENAME="MYDATA",
     this.skip <- as.numeric(level0.catalog[this.row, "Skip.Rows"]) 
     this.date <- as.character(level0.catalog[this.row, "Date"])
     this.chem <- as.character(level0.catalog[this.row, "Chemical.ID"])
-    if (!(this.chem %in% chem.ids[,chem.lab.id.col]))
+    # Compound may have multiple lab compound names
+    chem.lab.id.names <- strsplit(chem.ids[,chem.lab.id.col], ", ")
+    b <- unlist(lapply(chem.lab.id.names, function(X) {this.chem %in% X}))
+    if (!(any(b)))
     {
       stop(paste0("Chem ID ",this.chem," not found in table chem.ids column ",
                   chem.lab.id.col))
     } else {
-      id.index <- which(chem.ids[, chem.lab.id.col]==this.chem)
+      id.index <- which(b)
       this.name <- chem.ids[id.index, chem.name.col]
       this.dtxsid <- chem.ids[id.index, chem.dtxsid.col]
     }
