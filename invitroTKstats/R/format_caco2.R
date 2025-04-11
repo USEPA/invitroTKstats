@@ -47,8 +47,12 @@
 #' @param dtxsid.col (Character) Column name of \code{data.in} containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param date.col (Character) Column name of \code{data.in} containing the laboratory measurement
-#' date. (Defaults to "Date".)
+#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all data were collected on the same date.)
+#' 
+#' @param date.col (Character) Column name containing \code{date} information. (Defaults to "Date".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{date}.)
 #'
 #' @param compound.col (Character) Column name of \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -83,14 +87,14 @@
 #' (in cm^3) of the donor portion of the Caco-2 experimental well where the
 #' test chemical is added. (Defaults to "Vol.Donor".)
 #' 
-#' @param compound.conc (Numeric) The concentration
-#' of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
-#' use only if all test compounds have the same concentration for calibration curves.) 
+#' @param test.conc (Numeric) The standard test chemical concentration for the
+#' caco2 assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' use only if the same standard concentration was used for all tested compounds.) 
 #' 
-#' @param compound.conc.col (Character) Column name containing \code{compound.conc} 
-#' information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+#' @param test.conc.col (Character) Column name containing \code{test.conc} 
+#' information. (Defaults to "Test.Compound.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{compound.conc}.)
+#' specified in \code{test.conc}.)
 #' 
 #' @param cal (Character) MS calibration the samples were based on. Typically, this uses 
 #' indices or dates to represent if the analyses were done on different machines on 
@@ -135,15 +139,14 @@
 #' (Note: \code{data.in} does not necessarily have this field. If this field is missing, 
 #' it can be auto-filled with the value specified in \code{istd.conc}.)
 #'
-#' @param nominal.test.conc (Numeric) The test chemical concentration in the dosing solution
-#' that is added to the donor side at time zero. (Defaults to \code{NULL}.)
-#' (Note: Single entry only, use only if the same initial 
-#' concentration was used for all tested compounds.)
+#' @param test.nominal.conc (Numeric) The nominal concentration added to the donor
+#' compartment at time 0. (Defaults to \code{NULL}.) (Note: Single entry only,
+#' use only if all tested compounds used the same concentration at time 0.
 #'
-#' @param nominal.test.conc.col (Character) Column name containing \code{nominal.test.conc} 
+#' @param test.nominal.conc.col (Character) Column name containing \code{test.nominal.conc} 
 #' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
-#' specified in \code{nominal.test.conc}.)
+#' specified in \code{test.nominal.conc}.)
 #' 
 #' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
 #' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
@@ -250,11 +253,11 @@
 #'                        area.col = "Peak.Area",
 #'                        istd.col = "ISTD.Peak.Area",
 #'                        membrane.area = 0.11,
-#'                        compound.conc.col = "Compound.Conc",
+#'                        test.conc.col = "Compound.Conc",
 #'                        cal = 1, 
 #'                        time = 2, 
 #'                        istd.conc = 1, 
-#'                        nominal.test.conc = 10, 
+#'                        test.nominal.conc = 10, 
 #'                        biological.replicates = 1, 
 #'                        analysis.method.col = "Analysis.Params",
 #'                        analysis.instrument = "Agilent.GCMS",
@@ -275,6 +278,7 @@ format_caco2 <- function(
   sample.col="Lab.Sample.Name",
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
+  date=NULL,
   date.col="Date",
   compound.col="Compound.Name",
   area.col="Area",
@@ -285,8 +289,8 @@ format_caco2 <- function(
   membrane.area.col="Membrane.Area",
   receiver.vol.col="Vol.Receiver",
   donor.vol.col="Vol.Donor",
-  compound.conc=NULL,
-  compound.conc.col="Nominal.Conc",
+  test.conc=NULL,
+  test.conc.col="Test.Compound.Conc",
   cal=NULL,
   cal.col="Cal",
   dilution=NULL,
@@ -297,8 +301,8 @@ format_caco2 <- function(
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  nominal.test.conc=NULL,
-  nominal.test.conc.col="Test.Target.Conc",
+  test.nominal.conc=NULL,
+  test.nominal.conc.col="Test.Target.Conc",
   biological.replicates = NULL,
   biological.replicates.col = "Biological.Replicates",
   technical.replicates = NULL,
@@ -357,12 +361,13 @@ format_caco2 <- function(
   
 # These arguments allow the user to specify a single value for every observation
 # in the table:
+  if (!is.null(date)) data.out[,date.col] <- date
   if (!is.null(cal)) data.out[,cal.col] <- cal
   if (!is.null(dilution)) data.out[,dilution.factor.col] <- dilution
   if (!is.null(istd.name)) data.out[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.out[,istd.conc.col] <- istd.conc
-  if (!is.null(nominal.test.conc)) data.out[,nominal.test.conc.col] <-
-    nominal.test.conc
+  if (!is.null(test.nominal.conc)) data.out[,test.nominal.conc.col] <-
+    test.nominal.conc
   if (!is.null(analysis.method)) data.out[,analysis.method.col]<- analysis.method
   if (!is.null(analysis.instrument)) data.out[,analysis.instrument.col] <-
     analysis.instrument
@@ -370,7 +375,7 @@ format_caco2 <- function(
     analysis.parameters
   if (!is.null(membrane.area)) data.out[,membrane.area.col] <- membrane.area
   if (!is.null(time)) data.out[,time.col] <- time
-  if (!is.null(compound.conc)) data.out[,compound.conc.col] <- compound.conc
+  if (!is.null(test.conc)) data.out[,test.conc.col] <- test.conc
   if (!is.null(biological.replicates)) data.out[,biological.replicates.col] <- biological.replicates
   if (!is.null(technical.replicates)) data.out[,technical.replicates.col] <- technical.replicates
   
@@ -378,8 +383,8 @@ format_caco2 <- function(
   caco2.cols <- c(L1.common.cols, 
                   time.col = "Time",
                   direction.col="Direction",
-                  compound.conc.col="Nominal.Conc",
-                  nominal.test.conc.col="Test.Target.Conc",
+                  test.conc.col="Test.Compound.Conc",
+                  test.nominal.conc.col="Test.Nominal.Conc",
                   membrane.area.col="Membrane.Area",
                   receiver.vol.col="Vol.Receiver",
                   donor.vol.col="Vol.Donor"
@@ -436,6 +441,13 @@ format_caco2 <- function(
   data.out[,"ISTD.Conc"] <- as.numeric(data.out[,"ISTD.Conc"])
   data.out[,"Response"] <- data.out[,"Area"] /
                                     data.out[,"ISTD.Area"] *  data.out[,"ISTD.Conc"]
+  
+  # Non-detects of blank sample types are OK but needed for point estimate calculations
+  # So, if samples with sample.type == "Blank" have a NA response, convert responses to 0
+  if (any(data.out$Sample.Type == "Blank" & is.na(data.out$Response))) {
+    data.out$Response[data.out$Sample.Type == "Blank" & is.na(data.out$Response)] <- 0
+    cat(paste0("Responses of samples with a \"Blank\" sample type and a NA response have been reassigned to 0.\n"))
+  }
   
   if (output.res) {
   
