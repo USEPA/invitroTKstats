@@ -7,6 +7,8 @@
 ## Load necessary package
 library(invitroTKstats)
 library(readxl)
+library(here)
+library(dplyr)
 
 ## smeltz2023.clint only has data for seven compounds.
 ## Unfortunately there's only one compound which has all samples verified with a "Y",
@@ -23,13 +25,28 @@ clint.list <- c("DTXSID1021116", "DTXSID6023525", "DTXSID80380256")
 ## Create the folder if need to. 
 
 ## Read in chem.ids
-chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx", 
-                       sheet=1)
+chem.ids <- readxl::read_xlsx(
+  path = here::here("data-raw/Smeltz-Clint/Hep12 Data for Uncertainty Feb2022.xlsx"),
+  sheet = "Summary",col_names = TRUE
+)
 chem.ids <- as.data.frame(chem.ids)
+
 ## In this table, the chemical names and their lab IDs are in the same column 
 ## Extract them into two separate columns
 chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
 chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) if (length(x)!= 1) x[[2]] else tolower(x[[1]]))))
+
+## Save the clint chemical ID mapping information for the package - remove columns not needed
+clint_cheminfo <- dplyr::select(chem.ids,-c("Wetmore Derived Clint (uL/min/mill cells)","Comments"))
+
+# check that the number of rows in the chem information matches the number of unique DTXSID's
+length(unique(clint_cheminfo$DTXSID))==nrow(clint_cheminfo)
+
+# create chem ID mapping table for level-0 compilation - we can overwrite previous `chem.ids`
+chem.ids <- create_chem_table(input.table = clint_cheminfo,
+                              dtxsid.col = "DTXSID",
+                              compound.col = "Compound",
+                              lab.compound.col = "Chem.Lab.ID")
 
 ## Read in level-0 file
 ## Prepare a data guide for merge_level0 
@@ -316,8 +333,7 @@ all.equal(ex_level3$Fup,og_level3$Fup)
 ##---------------------------------------------##
 
 ## Save level-0 to level-2 data to use for function demo/example documentation 
-save(clint_L0, clint_L1, clint_L2, file = "~/invitrotkstats/invitroTKstats/data/Clint-example.RData")
+save(clint_assayinfo,clint_L0, clint_L1, clint_L2, file = here::here("data/Clint-example.RData"))
 
 ## Include session info
 utils::sessionInfo()
-
