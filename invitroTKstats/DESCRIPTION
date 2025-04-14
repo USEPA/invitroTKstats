@@ -13,10 +13,10 @@ Description: A set of tools for processing and analyzing in vitro toxicokinetic
              by the package were described in \insertCite{wambaugh2019assessing}.
 Authors@R: c(
            person("John", "Wambaugh", email = "wambaugh.john@epa.gov", 
-             role = c("aut", "cre"),
+             role = c("aut"),
              comment = c(ORCID = "0000-0002-4024-534X")), 
-           person("Sarah", "Davidson-Fritz", email = "davidsonfritz.sarah@epa.gov", 
-             role = c("aut"), comment = c(ORCID = "0000-0002-2891-9380")),
+           person("Sarah E.", "Davidson-Fritz", email = "davidsonfritz.sarah@epa.gov", 
+             role = c("aut","cre"), comment = c(ORCID = "0000-0002-2891-9380")),
            person("Lindsay","Knupp",email = "knupp.lindsay@epa.gov",
            role = c("ctb")), 
            person("Zhao", "Zhihui", role = c("ctb")),
@@ -24,12 +24,6 @@ Authors@R: c(
              comment = c(ORCID = "0000-0003-2061-5830")),
            person("Anna", "Kreutz", role = c("ctb"))
            )
-Author: John Wambaugh [aut, cre] (<https://orcid.org/0000-0002-4024-534X>),
-  Sarah Davidson-Fritz [aut] (<https://orcid.org/0000-0002-2891-9380>),
-  Lindsay Knupp [ctb],
-  Zhao Zhihui [ctb],
-  Chantel Nicolas [ctb] (<https://orcid.org/0000-0003-2061-5830>),
-  Anna Kreutz [ctb]
 Depends: R (>= 2.10)
 Imports: runjags, parallel, readxl, coda, ggplot2, scales, stats4, Rdpack, methods, stats, utils, dplyr, rlang
 RdMacros: Rdpack
