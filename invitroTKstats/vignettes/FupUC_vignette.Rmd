@@ -192,7 +192,7 @@ fup_uc_L1_curated <- format_fup_uc(FILENAME = "Fup_UC_vignette",
                                    analysis.parameters.col = "Analysis.Params",
                                    # columns not present in L0 data 
                                    istd.conc = 1, 
-                                   uc.assay.conc = 10, 
+                                   test.nominal.conc = 10, 
                                    biological.replicates = 1, 
                                    analysis.method = "UPLC-MS/MS",
                                    analysis.instrument = "Waters Xevo TQ-S micro(QEB0036)",
