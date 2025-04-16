@@ -5,7 +5,8 @@
 ## and vignettes. The data examples are small subsets of three compounds.
 
 ## Load necessary package
-library(invitroTKstats)
+# library(invitroTKstats) ## use when installed package is up-to-date
+devtools::load_all(here::here()) ## use when installed package is not up-to-date, but branch is up-to-date with 'dev' branch
 library(readxl)
 library(here)
 library(dplyr)
@@ -31,6 +32,13 @@ chem.ids <- readxl::read_xlsx(
 )
 chem.ids <- as.data.frame(chem.ids)
 
+# Check the correct mix for each compound before overriding chem.ids 
+# Two of the selected compounds are reference chemicals, so only need to check 
+# DTXSID80380256. 
+# DTXSID80380256 corresponds to WAX1 mix. Therefore will need to later remove any samples
+# corresponding to WAX2. 
+chem.ids[chem.ids$DTXSID %in% clint.list, c("DTXSID", "Mix")]
+
 ## In this table, the chemical names and their lab IDs are in the same column 
 ## Extract them into two separate columns
 chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
@@ -53,21 +61,24 @@ chem.ids <- create_chem_table(input.table = clint_cheminfo,
 this.file <- "Hep12 Data for Uncertainty Feb2022.xlsx"
 
 data.guide <- create_catalog(
-  file = rep(this.file, 3),
+  file = this.file, 
   sheet = c("Ref Chem Data","Ref Chem Data", "PFAS Data"),
-  skip.rows = c(6, 137, 6),
-  date = rep("012822", 3),
+  skip.rows = c(7, 138, 7),
+  col.names.loc = c(7, 138, 7),
+  date = "012822",
   compound = c("phenacetin", "propranolol", "TFMFPA"),
   istd = c("propranolol-d7", "propranolol-d7", "M5PFPeA"),
-  sample = rep("Name",3),
-  type = rep("Type", 3),
-  peak = rep("Area", 3),
-  istd.peak = rep("IS Area", 3),
-  conc = rep("nM", 3),
-  analysis.param = rep("RT",3),
   num.rows = c(127, 127, 165),
-  ## Need this sample text column to create new columns later
-  additional.info = list(SampleText.ColName = rep("Sample Text",3))
+  
+  # column names 
+  sample = "Name",
+  type = "Type",
+  peak = "Area",
+  istd.peak = "IS Area",
+  conc = "nM",
+  analysis.param = "RT",
+  additional.info = list(SampleText.ColName = rep("Sample Text", 3))
+  
 )
 
 ## Pull in level-0 data
@@ -80,9 +91,11 @@ clint_L0 <- merge_level0(level0.catalog  = data.guide,
                            additional.colnames = "Sample Text", 
                            additional.colname.cols = "SampleText.ColName",
                            chem.ids = chem.ids,
+                           chem.lab.id.col = "Lab.Compound.Name",
+                           chem.name.col = "Compound.Name",
                            output.res = FALSE,
                            catalog.out = FALSE,
-                           INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint")
+                           INPUT.DIR = here::here("data-raw/Smeltz-Clint"))
 
 ## There are some additional columns needed for clint_L0 to go to level-1.
 ## But these columns do not exist in the original data file and  
@@ -160,7 +173,7 @@ clint_L1 <- format_clint(data.in = clint_L0,
                        istd.col= "ISTD.Peak.Area",
                        area.col = "Peak.Area",
                        density = 0.5,
-                       clint.assay.conc = 1,
+                       test.nominal.conc = 1,
                        biological.replicates = 1,
                        test.conc.col="Compound.Conc",
                        time.col = "Time",
@@ -180,9 +193,8 @@ clint_L1 <- format_clint(data.in = clint_L0,
 ## summary table (chem.ids), exclude the sample due to wrong mix.
 
 ## Check the correct mix for each compound:
-## Two of the selected compounds are reference chemicals, so only to check 
-## DTXSID80380256. Exclude any samples with a note of WAX2 being used.
-chem.ids[chem.ids$DTXSID %in% clint.list, c("DTXSID", "Mix")]
+## Checked earlier that DTXSID80380256 only corresponds to WAX1 
+## Exclude any samples with a note of WAX2 being used.
 ## Look for notes contain the word "WAX2"
 unique(clint_L1[clint_L1$DTXSID == "DTXSID80380256", "Note"])
 ## Put the information into an exclusion criteria
@@ -254,15 +266,6 @@ for(i in common.cols){
 ## Convert to all lower case and check again:
 all(tolower(clint.sub[,"Lab.Compound.Name"]) == tolower(clint_L2[,"Lab.Compound.Name"]))
 
-## Discrepancies found in the Area and ISTD.Area columns:
-## Area and ISTD.Area were rounded to 5 significant digits in format_clint (lines 442-443)
-## when the example data set was complied. Rounding was not used when the 
-## original data set was complied.
-## In the example data set, areas larger than 10,000 were rounded to the nearest whole numbers.
-## Compare the columns in 5 significant digits: 
-all.equal(signif(clint.sub[,"Area"], 5), clint_L2[,"Area"])
-all.equal(signif(clint.sub[,"ISTD.Area"], 5), clint_L2[,"ISTD.Area"])
-
 ## Discrepancies found in the Time column:
 ## Time column contains missing values so the check with all() will return NA 
 ## Use other method to check for this column
@@ -285,7 +288,7 @@ all.equal(as.numeric(clint_L2$Analysis.Parameters), clint.sub$Analysis.Parameter
 ## the same issue happened with area and istd.area, and responses are calculated from them.
 diffs <- clint.sub[,"Response"]- clint_L2[,"Response"]
 summary(diffs[!is.na(diffs)])
-## The maximum difference is 1.000e-05 and the minimum difference is -1.000e-06
+## The maximum difference is 4.980e-6 and the minimum difference is -4.701e-06
 
 ## Set to the same precision and check again
 clint.og.resp <- signif(as.numeric(clint.sub[,"Response"]),6)
@@ -304,6 +307,7 @@ colnames(clint.sub)[which(!(colnames(clint.sub) %in% common.cols))]
 
 ## Biological.Replicates is a new required column filled with 1.
 ## Compare the concentration columns:
+## Concentration column used for calibration curves
 all(clint_L2[,"Test.Compound.Conc"] == clint.sub[,"Std.Conc"])
 
 clint.ex.conc <- signif(as.numeric(clint_L2[,"Test.Compound.Conc"]),6)
@@ -314,26 +318,55 @@ diffs[is.na(diffs)] <- 0
 ## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
 all(abs(diffs) <= 1e-4)
 
+## Concentration column used for initial concentration added to well
+all(clint_L2[,"Test.Nominal.Conc"] == clint.sub[,"Clint.Assay.Conc"])
+
 ## All columns are checked and any differences are documented
 
 ##---------------------------------------------##
 ## Run level-3 calculations with the example dataset.
-ex_level3 <- calc_clint_point(data.in = clint_L2, output.res = FALSE)
+clint_L3 <- calc_clint_point(data.in = clint_L2, output.res = FALSE)
 
 ## The original dataset needs to update some column names.
 og_level2 <- clint.sub
 og_level2$Biological.Replicates <- 1
 colnames(og_level2)[which(names(og_level2) == "Std.Conc")] <- "Test.Compound.Conc"
+colnames(og_level2)[which(names(og_level2) == "Clint.Assay.Conc")] <- "Test.Nominal.Conc"
 ## Run level-3 calculations with the original dataset.
 og_level3 <- calc_clint_point(data.in = og_level2, output.res = FALSE)
 
-## Compare the results. They are matched.
-## Note that calc_fup_uc_point rounds Fup to the fourth significant figures.
-all.equal(ex_level3$Fup,og_level3$Fup)
+## Compare the results. Slight differences between the two.
+all.equal(clint_L3$Clint,og_level3$Clint)
 ##---------------------------------------------##
 
+## Run level-4 calculations with the example dataset. 
+## Time how long it takes with tictoc package
+tictoc::tic() # start the timer 
+clint_L4 <- calc_clint(FILENAME = "Example",
+                       data.in = clint_L2, 
+                       JAGS.PATH = runjags::findjags(),
+                       TEMP.DIR = here::here("data-raw/Smeltz-Clint"),
+                       OUTPUT.DIR = here::here("data-raw/Smeltz-Clint")
+                       )
+tictoc::toc() # end the timer 
+## Initial processing took 430.83 seconds. 
+
+## Load Results dataframe
+## To recreate, will need to change FILENAME as date will be different 
+load(here::here("data-raw/Smeltz-Clint/Example-Clint-Level4Analysis-2025-04-10.RData"))
+clint_L4 <- Results 
+
+## Load L2 heldout dataframe 
+clint_L2_heldout <- read.delim(here::here("data-raw/Smeltz-Clint/Example-Clint-Level2-heldout.tsv"),
+                               sep = "\t")
+
+## Load PREJAGS dataframe 
+load(here::here("data-raw/Smeltz-Clint/Example-Clint-PREJAGS.RData"))
+clint_PREJAGS <- mydata
+
 ## Save level-0 to level-2 data to use for function demo/example documentation 
-save(clint_assayinfo,clint_L0, clint_L1, clint_L2, file = here::here("data/Clint-example.RData"))
+save(clint_cheminfo, clint_L0, clint_L1, clint_L2, clint_L3, clint_L4, clint_L2_heldout, 
+     clint_PREJAGS, file = here::here("data/Clint-example.RData"))
 
 ## Include session info
 utils::sessionInfo()
