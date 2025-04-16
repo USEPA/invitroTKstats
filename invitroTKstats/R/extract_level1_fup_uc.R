@@ -75,9 +75,6 @@
 #'
 #' @author John Wambaugh
 #'
-#' @examples
-#' 
-#'
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #'

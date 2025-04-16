@@ -3,7 +3,7 @@
 \docType{data}
 \name{fup_uc_L1}
 \alias{fup_uc_L1}
-\title{Fup-UC Level 1 Example Data set}
+\title{Fup UC Level 1 Example Data set}
 \format{
 A level 1 data.frame with 240 rows and 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -24,10 +24,10 @@ A level 1 data.frame with 240 rows and 23 variables: \describe{
 \item{\code{Note}}{Any laboratory notes about sample)}
 \item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
 \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
-\item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
-\item{\code{UC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
-\item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
-\item{\code{Technical.Replicates}}{Identifier for repeated measurements of a sample of a compound}
+\item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
+\item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to T1 sample (uM)}
+\item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
+\item{\code{Technical.Replicates}}{Identifier for repeated measurements of one sample of a compound}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 }
 }
@@ -37,7 +37,7 @@ fup_uc_L1
 \description{
 Mass Spectrometry measurements of plasma protein binding (PPB) via 
 ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
-(PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
+(PFAS) samples. Experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 
 \insertCite{smeltz2023plasma}{invitroTKstats}. 
 This data set is a subset of experimental data containing samples for 
 3 test analytes/compounds.

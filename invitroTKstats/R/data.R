@@ -711,13 +711,13 @@
 #' \item{\code{Num.cal}}{Unique number of \code{Calibration} values for the tested compound}
 #' \item{\code{Num.obs}}{Total number of observations for the tested compound}
 #' \item{\code{Response.obs}}{\code{Response} of all samples for the tested compound}
-#' \item{\code{obs.conc}}{}
-#' \item{\code{obs.cal}}{}
+#' \item{\code{obs.conc}}{REPLACE}
+#' \item{\code{obs.cal}}{REPLACE}
 #' \item{\code{Conc}}{\code{Test.Compound.Conc} of the "CC" sample types + three placeholder concentrations ("T1", "T5", "AF") per \code{Biological.Replicates} series}
-#' \itme{\code{Num.cc.obs}}{Number of "CC" sample types for the tested compound}
+#' \item{\code{Num.cc.obs}}{Number of "CC" sample types for the tested compound}
 #' \item{\code{Num.series}}{Unique number of \code{Biological.Replicates} series}
-#' \item{\code{Dilution.Factor}{}
-#' \item{\code{Test.Nominal.Conc}}{}
+#' \item{\code{Dilution.Factor}}{REPLACE}
+#' \item{\code{Test.Nominal.Conc}}{REPLACE}
 #' }
 #' 
 #' @references

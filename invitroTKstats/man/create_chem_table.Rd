@@ -41,14 +41,36 @@ by the laboratory.
 \examples{
 
 library(invitroTKstats)
-\dontrun{
 # Smeltz et al. (2020) data:
-create_chem_table(smeltz2020)
-}
-\dontrun{
-# Kreutz et al. (2020) data:
-create_chem_table(kreutz2020,compound.col="Name")
-}
+##  Clint ##
+create_chem_table(
+  input.table = invitroTKstats::clint_cheminfo,
+  dtxsid.col = "DTXSID",
+  compound.col = "Compound",
+  lab.compound.col = "Chem.Lab.ID"
+  )
+## Fup RED ##
+create_chem_table(
+  input.table = invitroTKstats::fup_red_cheminfo,
+  dtxsid.col = "DTXSID",
+  compound.col = "Compound",
+  lab.compound.col = "Chem.Lab.ID"
+  )
+## Fup UC ##
+create_chem_table(
+  input.table = invitroTKstats::fup_uc_cheminfo,
+  dtxsid.col = "DTXSID",
+  compound.col = "Compound",
+  lab.compound.col = "Chem.Lab.ID"
+  )
+# Honda et al. () data:
+## Caco2 ##
+create_chem_table(
+  input.table = invitroTKstats::caco2_cheminfo,
+  dtxsid.col = "DTXSID",
+  compound.col = "PREFERRED_NAME",
+  lab.compound.col = "test_article"
+  )
 
 }
 \author{

@@ -101,16 +101,17 @@ my.level2 <- sample_verification(data.in=level1,
 \dontrun{
 # Write the level-1 file to some folder
 write.table(level1,
-file="~/invitrotkstats/invitroTKstats/data-raw/kreutz-Clint-Level1.tsv",
+file=here::here("data-raw/kreutz-Clint-Level1.tsv"),
 sep="\t",
 row.names=F,
 quote=F)
 
 # Run the verification function.
 # Specify the path to import level-1 data with INPUT.DIR.
-# No exclusion.info data frame used will label all samples as verified.
+# If no exclusion.info data frame is used, will label all samples as verified.
+# A level-2 file is also saved to INPUT.DIR. 
 my.level2 <- sample_verification(FILENAME="kreutz", 
-assay="Clint", INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw")
+assay="Clint", INPUT.DIR = here::here("data-raw"))
 }
 
 }

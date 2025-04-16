@@ -102,11 +102,6 @@ of these types:
   Whole Plasma T5h Sample \tab T5\cr
 }
 }
-\examples{
-library(invitroTKstats)
-level0 <-
-
-}
 \references{
 \insertRef{redgrave1975separation}{invitroTKstats}
 }

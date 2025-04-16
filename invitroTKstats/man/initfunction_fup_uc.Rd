@@ -7,7 +7,7 @@
 initfunction_fup_uc(mydata, chain)
 }
 \arguments{
-\item{mydata}{(List) Output of \code{build_mydata_clint}.}
+\item{mydata}{(List) Output of \code{build_mydata_fup_uc}.}
 
 \item{chain}{(Numeric) The number of Markov Chains to use.}
 }

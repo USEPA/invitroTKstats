@@ -118,8 +118,9 @@ level2 <- invitroTKstats::fup_uc_L2
 # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 # findJAGS() from runjags package is a handy function to find JAGS path automatically.
 # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
-path.to.JAGS <- findJAGS()
-level4 <- calc_fup_uc(data.in = level2,
+path.to.JAGS <- runjags::findJAGS()
+level4 <- calc_fup_uc(FILENAME = "Example1",
+                      data.in = level2,
                       NUM.CORES=2,
                       JAGS.PATH=path.to.JAGS)
 }
@@ -130,11 +131,12 @@ level4 <- calc_fup_uc(data.in = level2,
 # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 # findJAGS() from runjags package is a handy function to find JAGS path automatically.
 # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
-path.to.JAGS <- findJAGS()
-level4 <- calc_fup_uc(FILENAME="KreutzPFAS",
+# Will need to replace FILENAME and INPUT.DIR with name and location of level-2 'tsv'.
+path.to.JAGS <- runjags::findJAGS()
+level4 <- calc_fup_uc(FILENAME="<level-2 FILENAME>",
                       NUM.CORES=2,
                       JAGS.PATH=path.to.JAGS,
-                      INPUT.DIR = "invitroTKstats/vignettes")
+                      INPUT.DIR = "<level-2 FILE LOCATION>")
 }
 
 }

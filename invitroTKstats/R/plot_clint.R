@@ -27,7 +27,7 @@
 #' @examples
 #' ## Load example level-2 data 
 #' level2 <- invitroTKstats::clint_L2
-#' plot_clint(level2, DTXSID = "DTXSID1021116")
+#' plot_clint(level2, dtxsid = "DTXSID1021116")
 #' 
 #' @export plot_clint
 #' @import ggplot2

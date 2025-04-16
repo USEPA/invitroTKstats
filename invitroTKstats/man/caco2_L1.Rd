@@ -5,7 +5,7 @@
 \alias{caco2_L1}
 \title{Caco2 Level 1 Example Data set}
 \format{
-A level 1 data.frame with 48 rows and 24 variables: \describe{
+A level 1 data.frame with 48 rows and 28 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}
@@ -15,15 +15,16 @@ A level 1 data.frame with 48 rows and 24 variables: \describe{
 \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
-\item{\code{Biological.Replicates}}{Replicate series of measurements with the same analyte}
-\item{\code{Nominal.Conc}}{Concentration of test chemical (for calibration curve) (uM)}
-\item{\code{Test.Target.Conc}}{Test concentration of chemical (uM) at time zero}
+\item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
+\item{\code{Technical.Replicates}}{Identifier for repeated measurements of one sample of a compound}
+\item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
+\item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to donor side (uM)}
 \item{\code{Time}}{Time point sample measured (h)}
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
 \item{\code{Area}}{Peak area of analyte (target compound)}
-\item{\code{Membrane.Area}}{The area of the Caco-2 monolayer.}
+\item{\code{Membrane.Area}}{The area of the Caco-2 monolayer}
 \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
 \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
