@@ -70,23 +70,6 @@ chem.ids <- create_chem_table(input.table = fup_uc_cheminfo,
 
 ## Prepare a data guide for merge_level0 
 this.file <- "20220201_PFAS-LC_FractionUnbound_MGS.xlsx"
-# data.guide <- create_catalog(
-#   file = rep(this.file, 3),
-#   sheet = c("20200103","20210308","20201123"),
-#   skip.rows = c(571,6,137),
-#   date = c("010320","030821","112320"),
-#   compound = c("8:2 FTS", "PFOA-F", "K-PFBS"),
-#   istd = c("M2-8:2FTS", "M8PFOA", "M3PFBS"),
-#   sample = rep("Name",3),
-#   type = rep("Type", 3),
-#   peak = rep("Area", 3),
-#   istd.peak = rep("IS Area", 3),
-#   conc = c("uM", "nM", "nM"),
-#   analysis.param = rep("RT",3),
-#   num.rows = c(109,106,127),
-#   ## Need this sample text column to create new columns later
-#   additional.info = list(SampleText.ColName = rep("Sample Text",3))
-# )
 
 data.guide <- create_catalog(
   file = this.file,
