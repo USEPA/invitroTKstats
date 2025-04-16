@@ -82,8 +82,9 @@
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR.
-#' level3 <- calc_fup_red_point(FILENAME="SmeltzPFAS", 
-#'                              INPUT.DIR = "invitroTKstats/vignettes")
+#' ## Will need to replace FILENAME and INPUT.DIR with name and location of level-2 'tsv'.
+#' level3 <- calc_fup_red_point(FILENAME="<level-2 FILENAME>", 
+#'                              INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #'
 #' @references

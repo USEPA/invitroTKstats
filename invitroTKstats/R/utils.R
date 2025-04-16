@@ -566,7 +566,7 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
 
 #' Set Initial Values for Fup UC Bayesian Model
 #' 
-#' @param mydata (List) Output of \code{build_mydata_clint}.
+#' @param mydata (List) Output of \code{build_mydata_fup_uc}.
 #' @param chain (Numeric) The number of Markov Chains to use.
 #' 
 #' @importFrom stats lm

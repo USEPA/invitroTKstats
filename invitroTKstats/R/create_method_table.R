@@ -39,11 +39,48 @@
 #'
 #' @examples
 #' library(invitroTKstats)
-#'
-#' \dontrun{
-#' create_method_table(smeltz2020)
-#' create_method_table(kreutz2020,compound.col="Name")
-#' }
+#' # Smeltz et al. (2020) data:
+#' ##  Clint ##
+#' create_method_table(
+#'   input.table = invitroTKstats::clint_L1,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "Compound.Name",
+#'   istd.name.col = "ISTD.Name",
+#'   analysis.method.col = "Analysis.Method",
+#'   analysis.instrument.col = "Analysis.Instrument",
+#'   analysis.parameters.col = "Analysis.Parameters"
+#'   )
+#' ## Fup RED ##
+#' create_method_table(
+#'   input.table = invitroTKstats::fup_red_L1,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "Compound.Name",
+#'   istd.name.col = "ISTD.Name",
+#'   analysis.method.col = "Analysis.Method",
+#'   analysis.instrument.col = "Analysis.Instrument",
+#'   analysis.parameters.col = "Analysis.Parameters"
+#'   )
+#' ## Fup UC ##
+#' create_method_table(
+#'   input.table = invitroTKstats::fup_uc_L1,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "Compound.Name",
+#'   istd.name.col = "ISTD.Name",
+#'   analysis.method.col = "Analysis.Method",
+#'   analysis.instrument.col = "Analysis.Instrument",
+#'   analysis.parameters.col = "Analysis.Parameters"
+#'   )
+#' # Honda et al. () data:
+#' ## Caco2 ##
+#' create_method_table(
+#'   input.table = invitroTKstats::caco2_L1,
+#'   dtxsid.col = "DTXSID",
+#'   compound.col = "Compound.Name",
+#'   istd.name.col = "ISTD.Name",
+#'   analysis.method.col = "Analysis.Method",
+#'   analysis.instrument.col = "Analysis.Instrument",
+#'   analysis.parameters.col = "Analysis.Parameters"
+#'   )
 #' 
 #' @export create_method_table
 create_method_table <- function(input.table,

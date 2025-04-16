@@ -45,6 +45,7 @@
 #' @seealso merge_level0
 #' 
 #' @examples 
+#' \dontrun{
 #' create_catalog(
 #'   file = "testME.xlsx",sheet = "3",skip.rows = 0,
 #'   date = "112723",compound = "80-05-7",
@@ -53,6 +54,7 @@
 #'   peak = "Response.Area",istd.peak = "ISTD.Peak.Area",
 #'   conc = "Intended.Concentration",analysis.param = "A,B,C"
 #' )
+#' }
 #' 
 #' @export
 create_catalog <- function(

@@ -23,7 +23,12 @@
 #' various sample types.}
 #'
 #' @author John Wambaugh
-#'
+#' 
+#' @examples
+#' ## Load example level-2 data 
+#' level2 <- invitroTKstats::clint_L2
+#' plot_clint(level2, DTXSID = "DTXSID1021116")
+#' 
 #' @export plot_clint
 #' @import ggplot2
 plot_clint <- function(level2,dtxsid,color.palette = "viridis")
@@ -45,7 +50,7 @@ plot_clint <- function(level2,dtxsid,color.palette = "viridis")
   istd.conc.col <- "ISTD.Conc"
   istd.col <- "ISTD.Area"
   density.col <- "Hep.Density"
-  std.conc.col <- "Std.Conc"
+  std.conc.col <- "Test.Compound.Conc"
   time.col <- "Time"
   area.col <- "Area"
   analysis.method.col <- "Analysis.Method"
