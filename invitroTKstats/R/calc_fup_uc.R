@@ -141,7 +141,7 @@ model {
 #' 
 #' @return A list of two objects: 
 #' \enumerate{
-#'    \item{Results: A data frame with Bayesian estimated fraction unbound
+#'    \item{Results: A Level-4 data frame with Bayesian estimated fraction unbound
 #'    in plasma (Fup) and credible intervals for all compounds in the input file.
 #'    Column includes:
 #'    Compound.Name - compound name,

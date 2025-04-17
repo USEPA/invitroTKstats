@@ -32,7 +32,7 @@ A level 3 data.frame with 3 rows and 20 variables: \describe{
 caco2_L3
 }
 \description{
-A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-This subset contains samples for 3 test analytes/compounds.
+A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+data. This subset contains samples for 3 test analytes/compounds.
 }
 \keyword{datasets}

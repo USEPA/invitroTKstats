@@ -15,12 +15,16 @@ scientific_10 <- function(x) {
 }
 
 #' Heaviside
+#' 
+#' Evaluate the Heaviside function with \code{threshold} indicating the discontinuity.
+#' If elements in \code{x} are greater than or equal to \code{threshold}, returns 1.
+#' Otherwise, returns 0.  
 #'
 #' @param x (Numeric) A numeric vector.
 #'
 #' @param threshold (Numeric) A threshold value used to compare to elements in \code{x}. (Defaults to 0.)
 #'
-#' @return A vector of 1 and 0 in which 1 indicates the element in \code{x} is larger or equal to the threshold.
+#' @return A vector of 1 and 0. 1 indicates the element in \code{x} is larger or equal to the \code{threshold}.
 #'
 #'
 Heaviside <- function(x, threshold=0)
@@ -51,6 +55,10 @@ runjagsdata.to.list <- function(runjagsdata.in)
 
 
 #' Build Data Object for Intrinsic Hepatic Clearance (Clint) Bayesian Model
+#'
+#' Builds list of arguments required for JAGS from subset of Level-2 data frame. 
+#' The list is used as an argument to JAGS during Level-4 processing. 
+#' 
 #'
 #' @param this.cvt (Data Frame) Subset of data containing all "Cvst" sample observations of one test compound.
 #' @param this.data (Data Frame) Subset of data containing all observations of one test compound.
@@ -222,6 +230,9 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
 
 #' Set Initial Values for Intrinsic Hepatic Clearance (Clint) Bayesian Model
 #' 
+#' Sets the initial values of arguments required for JAGS such as assumed initial probability
+#' distributions. The list is used as an argument to JAGS during Level-4 processing.
+#' 
 #' @param mydata (List) Output of \code{build_mydata_clint}.
 #' @param chain (Numeric) The number of Markov Chains to use.
 #' 
@@ -255,6 +266,9 @@ initfunction_clint <- function(mydata, chain)
 }
 
 #' Build Data Object for Fup RED Bayesian Model
+#' 
+#' Builds list of arguments required for JAGS from subset of Level-2 data frame. 
+#' The list is used as an argument to JAGS during Level-4 processing. 
 #' 
 #' @param this.data (Data Frame) Subset of data containing all observations of one test compound.
 #' @param Physiological.Protein.Conc (Numeric) The assumed physiological protein concentration 
@@ -430,6 +444,9 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
 
 #' Set Initial Values for Fup RED Bayesian Model
 #' 
+#' Sets the initial values of arguments required for JAGS such as assumed initial probability
+#' distributions. The list is used as an argument to JAGS during Level-4 processing.
+#' 
 #' @param mydata (List) Output of \code{build_mydata_fup_red}.
 #' @param chain (Numeric) The number of Markov Chains to use.
 #' 
@@ -460,6 +477,9 @@ initfunction_fup_red <- function(mydata, chain)
 }
 
 #' Build Data Object for Fup UC Bayesian Model
+#' 
+#' Builds list of arguments required for JAGS from subset of Level-2 data frame. 
+#' The list is used as an argument to JAGS during Level-4 processing.
 #'
 #' @param MS.data (Data Frame) Subset of data containing all observations of one test compound.
 #' @param CC.data (Data Frame) Subset of data containing observations of calibration curves samples.
@@ -565,6 +585,9 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
 
 
 #' Set Initial Values for Fup UC Bayesian Model
+#' 
+#' Sets the initial values of arguments required for JAGS such as assumed initial probability
+#' distributions. The list is used as an argument to JAGS during Level-4 processing. 
 #' 
 #' @param mydata (List) Output of \code{build_mydata_fup_uc}.
 #' @param chain (Numeric) The number of Markov Chains to use.

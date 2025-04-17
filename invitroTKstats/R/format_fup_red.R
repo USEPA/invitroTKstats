@@ -16,8 +16,8 @@
 #'   Phosphate-buffered well concentration\tab PBS\cr
 #'   Time zero plasma concentration \tab T0\cr
 #'   Plasma stability sample \tab Stability\cr
-#'   Acceptor Equilibrium Control Well \tab EC_acceptor\cr
-#'   Donor Equilibrium Control Well (chemical spiked side) \tab EC_donor\cr
+#'   Acceptor compartment of the equilibrium evaluation \tab EC_acceptor\cr
+#'   Donor compartment of the equilibrium evaluation (chemical spiked side) \tab EC_donor\cr
 #'   Calibration Curve \tab CC\cr
 #' }
 #' Chemical concentration is calculated qualitatively as a response and 

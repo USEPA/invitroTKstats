@@ -15,10 +15,10 @@
 #' The should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
-#'   Plasma well concentration \tab Plasma\cr
-#'   Phosphate-buffered well concentration\tab PBS\cr
-#'   Time zero plasma concentration \tab T0\cr
+#'   Calibration Curve \tab CC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab AF\cr
+#'   Whole Plasma T1h Sample  \tab T1\cr
+#'   Whole Plasma T5h Sample \tab T5\cr
 #' }
 #'
 #' \eqn{f_{up}} is calculated from MS responses as:
@@ -56,10 +56,10 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
-#' @return A data frame with one row per chemical, contains chemical identifiers 
+#' @return A Level-3 data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, compound name used by the laboratory, 
 #' EPA's DSSTox Structure ID, calibration, and point estimates for
-#' the fraction unbound in plasma (Fup) for all chemicals in the input data frame. 
+#' the fraction unbound in plasma (Fup) for all chemicals in the input data frame.
 #'
 #' @author John Wambaugh
 #'

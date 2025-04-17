@@ -10,11 +10,11 @@
 #' that each row is verified as usable for analysis (that is, the Level2 file).
 #'
 #' The data frame of observations should be annotated according to direction
-#' (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
+#' (either apical to basolateral -- "AtoB" -- or basolateral to apical -- "BtoA") and type
 #' of concentration measured:
 #' \tabular{rr}{
 #'   Blank with no chemical added \tab Blank \cr
-#'   Dosing vehicle (C0) at target concentration \tab D0\cr
+#'   Target concentration added to donor compartment at time 0 (C0) \tab D0\cr
 #'   Donor compartment at end of experiment \tab D2\cr
 #'   Receiver compartment at end of experiment\tab R2\cr
 #' }
@@ -58,7 +58,7 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
-#' @return \item{data.frame}{A data.frame in standardized format}
+#' @return \item{data.frame}{A Level-3 data.frame in standardized format}
 #' \tabular{rrr}{
 #'   C0_A2B \tab Time zero donor concentration \tab Mass Spec Response Ratio (RR) \cr
 #'   dQdt_A2B \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
@@ -67,14 +67,14 @@
 #'   dQdt_B2A \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
 #'   Papp_B2A \tab Apparent membrane permeability \tab 10^-6 cm/s\cr
 #'   Refflux \tab Efflux ratio \tab unitless\cr
-#'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr
-#'   Frec_A2B.mean \tab Mean of the fraction recovered for the apical-basal direction \tab unitless \cr
-#'   Frec_B2A.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr 
-#'   Frec_B2A.mean \tab Mean of the fraction recovered for the basal-apical direction \tab unitless \cr
-#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
-#'   Recovery_Class_A2B.mean \tab Recovery classification for the mean apical-to-basal permeability("Low Recovery" if Frec_A2B.mean < 0.4 or "High Recovery" if Frec_A2B.mean > 2.0) \tab qualitative category \cr
-#'   Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
-#'   Recovery_Class_B2A.mean \tab Recovery classification for the mean basal-to-apical permeability("Low Recovery" if Frec_B2A.mean < 0.4 or "High Recovery" if Frec_B2A.mean > 2.0) \tab qualitative category \cr
+#'   Frec_A2B.vec \tab Fraction recovered for the apical-basolateral direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr
+#'   Frec_A2B.mean \tab Mean of the fraction recovered for the apical-basolateral direction \tab unitless \cr
+#'   Frec_B2A.vec \tab Fraction recovered for the basolateral-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr 
+#'   Frec_B2A.mean \tab Mean of the fraction recovered for the basolateral-apical direction \tab unitless \cr
+#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basolateral permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
+#'   Recovery_Class_A2B.mean \tab Recovery classification for the mean apical-to-basolateral permeability("Low Recovery" if Frec_A2B.mean < 0.4 or "High Recovery" if Frec_A2B.mean > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_B2A.vec \tab Recovery classification for basolateral-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
+#'   Recovery_Class_B2A.mean \tab Recovery classification for the mean basolateral-to-apical permeability("Low Recovery" if Frec_B2A.mean < 0.4 or "High Recovery" if Frec_B2A.mean > 2.0) \tab qualitative category \cr
 #' }
 #'
 #' @author John Wambaugh
@@ -359,8 +359,8 @@ calc_caco2_point <- function(
                " has been exported to the following directory: ", file.path), "\n")
   }
   
-  print(paste("Apical to basal permeability calculated for",num.a2b,"chemicals."))
-  print(paste("Basal to apical permeability calculated for",num.b2a,"chemicals."))
+  print(paste("Apical to basolateral permeability calculated for",num.a2b,"chemicals."))
+  print(paste("Basolateral to apical permeability calculated for",num.b2a,"chemicals."))
   print(paste("Efflux ratio calculated for",num.efflux,"chemicals."))
   
   return(out.table)

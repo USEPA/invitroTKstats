@@ -91,7 +91,7 @@ A list of two objects:
 This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
 modeling on Hepatocyte Incubation data. Clint and the credible intervals,
 at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
-A summary table along with the full set of MCMC results is returned from
+A summary table (Level-4) along with the full set of MCMC results is returned from
 the function.
 }
 \details{
@@ -110,10 +110,11 @@ The data frame of observations should be annotated according to
 of these types:
 \tabular{rl}{
   Blank \tab Cell free blank with media\cr
-  CC \tab Cell and media free calibration curve \cr
+  CC \tab Cell free calibration curve \cr
   Cvst \tab Hepatocyte incubation concentration vs. time \cr
   Inactive \tab Concentration vs. time data with inactivated hepatocytes \cr
 }
+We currently require Cvst data. Blank, CC, and Inactive data are optional.
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of
 MS response as a function of time.

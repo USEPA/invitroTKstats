@@ -19,8 +19,8 @@ A chemical info data.frame with 554 rows and 7 variables: \describe{
 caco2_cheminfo
 }
 \description{
-The chemical ID mapping information from mass spectrometry (MS) measurements 
-of membrane permeability from Caco2 cells. 
+The chemical ID mapping information from tandem mass spectrometry (MS/MS) measurements 
+of Caco2 assay-specific data. 
 This data set contains 520 unique compounds/chemicals.
 }
 \keyword{datasets}

@@ -8,18 +8,18 @@
 #'
 #' In this experiment an
 #' in vitro well is separated into two by a membrane composed of a monolayer of
-#' Caco-2 cells. A test chemical is added to either the apical or basal side of
+#' Caco-2 cells. A test chemical is added to either the apical or basolateral side of
 #' of the monolayer at time 0, and after a set time samples are taken from both
-#' the "donor" (side where the test chemical was added) and the "receiver side.
+#' the "donor" (side where the test chemical was added) and the "receiver" side.
 #' Depending on the direction of the test the donor side can be either apical or
-#' basal.
+#' basolateral.
 #'
 #' The data frame of observations should be annotated according to direction
-#' (either apical to basal -- "AtoB" -- or basal to apical -- "BtoA") and type
+#' (either apical to basolateral -- "AtoB" -- or basolateral to apical -- "BtoA") and type
 #' of concentration measured:
 #' \tabular{rr}{
 #'   Blank with no chemical added \tab Blank \cr
-#'   Dosing vehicle (C0) at target concentration \tab D0\cr
+#'   Target concentration added to donor compartment at time 0 (C0) \tab D0\cr
 #'   Donor compartment at end of experiment \tab D2\cr
 #'   Receiver compartment at end of experiment\tab R2\cr
 #' }
@@ -67,8 +67,8 @@
 #' under Details). (Defaults to "Type".)
 #'
 #' @param direction.col (Character) Column name of \code{data.in} containing the direction of
-#' the Caco-2 permeability experiment: either apical donor to basal receiver (AtoB), or 
-#' basal donor to apical receiver (BtoA). (Defaults to "Direction".)
+#' the Caco-2 permeability experiment: either apical donor to basolateral receiver (AtoB), or 
+#' basolateral donor to apical receiver (BtoA). (Defaults to "Direction".)
 #' 
 #' @param membrane.area (Numeric) The area of the Caco-2 monolayer (in cm^2). 
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all tested compounds 

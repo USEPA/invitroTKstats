@@ -16,5 +16,6 @@ for plasma protein binding calculations.}
 A named list to be passed into the Bayesian model.
 }
 \description{
-Build Data Object for Fup RED Bayesian Model
+Builds list of arguments required for JAGS from subset of Level-2 data frame. 
+The list is used as an argument to JAGS during Level-4 processing.
 }

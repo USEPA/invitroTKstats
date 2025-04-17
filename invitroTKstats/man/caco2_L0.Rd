@@ -9,7 +9,7 @@ A level 0 data.frame with 48 rows and 17 variables: \describe{
 \item{\code{Compound}}{Compound name}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.ID}}{Compound ID used in the laboratory}
-\item{\code{Date}}{Date sample was acquired}
+\item{\code{Date}}{Date MS/MS assay data acquired from instrument}
 \item{\code{Sample}}{Sample Name}
 \item{\code{Type}}{Type of Caco2 sample}
 \item{\code{Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
@@ -20,8 +20,8 @@ A level 0 data.frame with 48 rows and 17 variables: \describe{
 \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
 \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
 \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
-\item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
-\item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+\item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+\item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 }
 }
@@ -29,7 +29,7 @@ A level 0 data.frame with 48 rows and 17 variables: \describe{
 caco2_L0
 }
 \description{
-A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-This subset contains samples for 3 test analytes/compounds.
+A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+data. This subset contains samples for 3 test analytes/compounds.
 }
 \keyword{datasets}

@@ -1,0 +1,59 @@
+---
+title: "Appendix"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Appendix}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE
+)
+```
+
+Throughout the `invitroTKstats` R package, there is standardized notation used to describe the data processing pipeline. This appendix serves as an overview for users to understand the data structure at each processing step. 
+
+The minimum information required to pipeline data through `invitroTKstats` can be found in each of the vignettes titled "<Assay>_vignette".  
+
+## Data Notation
+
+**L0** - Compiled raw data files (XLSX or XLSM files) containing mass spectrometry results 
+
+**L1** - Compiled L0 files with standardized column names 
+
+**L2** - L1 files with added "Verification" column 
+
+**L3** - Frequentist point estimates of desired chemical-specific toxicokinetic (TK) parameters 
+
+**L4** - Bayesian estimates of desired chemical-specific toxicokinetic (TK) parameters
+
+## Function Notation
+
+**build\_mydata\_\<assay\>** - function used to create data objects necessary for Bayesian Model 
+
+**calc\_\<assay\>\_point** - function used to calculate frequentist estimates from L2 file
+
+**calc_\<assay\>** - function used to calculate Bayesian estimates from L2 file
+
+**create_chem_table** - function used to create chemical ID mapping table
+
+**create_method_table** - function used to create chemical analysis method mapping table 
+
+**format_\<assay\>** - function used to create L1 file from L0 file
+
+**Heaviside** - function used to calculate Heaviside step function at desired values  
+
+**initfunction_\<assay\>** - function used to set initial values for Bayesian Model
+
+**merge_level0** - function used to create L0 file from compilation of raw data files
+
+**plot_clint** - function used to plot response vs. time plot for Cl~int~ estimates 
+
+**plot_fup_uc** - function used to plot response vs. sample type for f~up~ estimates collected used ultracentrifugation (UC)
+
+**sample_verification** - function used to create L2 file from L1 file 
+
+**summarize_table** - function used to summarize L2 file 
+

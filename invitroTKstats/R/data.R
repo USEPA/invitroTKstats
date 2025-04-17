@@ -144,7 +144,7 @@
 #' \insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equlibriation dialysis data set
 #'
 #' Mass Spectrometry measurements of plasma protein binding measured by
-#' rapid equlibriation dialysis for per- and poly-fluorinated alkyl substance
+#' rapid equilibrium dialysis for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 #'
 #' @name smeltz2023.red
@@ -189,8 +189,7 @@
 #'
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
 #' cryopreserved pooled human hepatocytes. Chemicals were per- and
-#' 'poly-fluorinated alkyl substance
-#' (PFAS) samples. The experiments were
+#' polyfluoroalkyl substance (PFAS) samples. The experiments were
 #' led by Dr.s Marci Smeltz and Barbara Wetmore.
 #'
 #' @name smeltz2023.clint
@@ -274,9 +273,8 @@
 #' \insertCite{kreutz2023category;textual}{invitroTKstats} intrinsic hepatic clearance data set
 #'
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
-#' cryopreserved pooled human hepatocytes. Chemicals were per- and
-#' 'poly-fluorinated alkyl substance
-#' (PFAS) samples. The experiments were
+#' cryopreserved pooled human hepatocyte suspensions. Chemicals were per- and
+#' 'polyfluoroalkyl substance (PFAS) samples. The experiments were
 #' led by Dr.s Anna Kreutz and Barbara Wetmore.
 #'
 #' @name kreutz2023.clint
@@ -317,8 +315,8 @@
 
 #' Caco2 Chemical Information Example Data set
 #'
-#' The chemical ID mapping information from mass spectrometry (MS) measurements 
-#' of membrane permeability from Caco2 cells. 
+#' The chemical ID mapping information from tandem mass spectrometry (MS/MS) measurements 
+#' of Caco2 assay-specific data. 
 #' This data set contains 520 unique compounds/chemicals.
 #' 
 #' @name caco2_cheminfo
@@ -337,9 +335,9 @@
 "caco2_cheminfo"
 
 #' Caco2 Level 0 Example Data set
-#'
-#' A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-#' This subset contains samples for 3 test analytes/compounds.
+#' 
+#' A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+#' data. This subset contains samples for 3 test analytes/compounds. 
 #' 
 #' @name caco2_L0
 #' @aliases caco2_L0
@@ -348,7 +346,7 @@
 #' \item{\code{Compound}}{Compound name}
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.ID}}{Compound ID used in the laboratory}
-#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Date}}{Date MS/MS assay data acquired from instrument}
 #' \item{\code{Sample}}{Sample Name}
 #' \item{\code{Type}}{Type of Caco2 sample}
 #' \item{\code{Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
@@ -359,8 +357,8 @@
 #' \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
 #' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
 #' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
-#' \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
-#' \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+#' \item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+#' \item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 #' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 #' }
 #'
@@ -368,15 +366,15 @@
 
 #' Caco2 Level 1 Example Data set
 #'
-#' A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-#' This subset contains samples for 3 test analytes/compounds.
+#' A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+#' data. This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L1
 #' @aliases caco2_L1
 #' @docType data
 #' @format A level 1 data.frame with 48 rows and 28 variables: \describe{
 #' \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
-#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Date}}{Date MS/MS assay data acquired from instrument}
 #' \item{\code{Compound.Name}}{Compound name}
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
@@ -393,9 +391,9 @@
 #' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 #' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
 #' \item{\code{Area}}{Peak area of analyte (target compound)}
-#' \item{\code{Membrane.Area}}{The area of the Caco-2 monolayer}
-#' \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
-#' \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+#' \item{\code{Membrane.Area}}{The area of the Caco-2 monolayer.}
+#' \item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+#' \item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 #' \item{\code{Analysis.Method}}{General description of chemical analysis method}
 #' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
 #' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
@@ -409,15 +407,15 @@
 
 #' Caco2 Level 2 Example Data set
 #'
-#' A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-#' This subset contains samples for 3 test analytes/compounds.
+#' A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+#' data. This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L2
 #' @aliases caco2_L2
 #' @docType data
 #' @format A level 2 data.frame with 48 rows and 29 variables: \describe{
 #' \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
-#' \item{\code{Date}}{Date sample was acquired}
+#' \item{\code{Date}}{Date MS/MS assay data acquired from instrument}
 #' \item{\code{Compound.Name}}{Compound name}
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
@@ -434,9 +432,9 @@
 #' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 #' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
 #' \item{\code{Area}}{Peak area of analyte (target compound)}
-#' \item{\code{Membrane.Area}}{The area of the Caco-2 monolayer}
-#' \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
-#' \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+#' \item{\code{Membrane.Area}}{The area of the Caco-2 monolayer.}
+#' \item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+#' \item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 #' \item{\code{Analysis.Method}}{General description of chemical analysis method}
 #' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
 #' \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
@@ -451,8 +449,8 @@
 
 #' Caco2 Level 3 Example Data set
 #'
-#' A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-#' This subset contains samples for 3 test analytes/compounds.
+#' A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+#' data. This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L3
 #' @aliases caco2_L3

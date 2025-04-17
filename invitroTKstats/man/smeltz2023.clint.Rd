@@ -39,8 +39,7 @@ smeltz2023.clint
 \description{
 Mass Spectrometry measurements of intrinsic hepatic clearance for
 cryopreserved pooled human hepatocytes. Chemicals were per- and
-'poly-fluorinated alkyl substance
-(PFAS) samples. The experiments were
+polyfluoroalkyl substance (PFAS) samples. The experiments were
 led by Dr.s Marci Smeltz and Barbara Wetmore.
 }
 \references{

@@ -7,7 +7,7 @@
 \format{
 A level 2 data.frame with 48 rows and 29 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
-\item{\code{Date}}{Date sample was acquired}
+\item{\code{Date}}{Date MS/MS assay data acquired from instrument}
 \item{\code{Compound.Name}}{Compound name}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
@@ -24,9 +24,9 @@ A level 2 data.frame with 48 rows and 29 variables: \describe{
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
 \item{\code{Area}}{Peak area of analyte (target compound)}
-\item{\code{Membrane.Area}}{The area of the Caco-2 monolayer}
-\item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
-\item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+\item{\code{Membrane.Area}}{The area of the Caco-2 monolayer.}
+\item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+\item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
 \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
 \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
@@ -41,7 +41,7 @@ A level 2 data.frame with 48 rows and 29 variables: \describe{
 caco2_L2
 }
 \description{
-A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-This subset contains samples for 3 test analytes/compounds.
+A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+data. This subset contains samples for 3 test analytes/compounds.
 }
 \keyword{datasets}

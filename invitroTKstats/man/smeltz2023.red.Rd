@@ -39,7 +39,7 @@ smeltz2023.red
 }
 \description{
 Mass Spectrometry measurements of plasma protein binding measured by
-rapid equlibriation dialysis for per- and poly-fluorinated alkyl substance
+rapid equilibrium dialysis for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 }
 \references{

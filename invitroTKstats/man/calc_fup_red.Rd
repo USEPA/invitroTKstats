@@ -70,7 +70,7 @@ directory. (Defaults to \code{NULL}.)}
 \value{
 A list of two objects: 
 \enumerate{
-   \item{Results: A data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
+   \item{Results: A Level-4 data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
    and credible interval for all compounds in the input file. Column includes:
    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
    the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
@@ -103,7 +103,10 @@ of these types:
   Time zero chemical and plasma \tab T0\cr
   Equilibrium chemical in phosphate-buffered well (no plasma) \tab PBS\cr
   Equilibrium chemical in plasma well \tab Plasma\cr
+  Calibration Curve \tab CC\cr
 }
+We currently require Plasma, PBS, and Plasma.Blank data. T0, CC, and NoPlasma.Blank
+data are optional.
 }
 \examples{
 ## Example 1: loading level-2 using data.in

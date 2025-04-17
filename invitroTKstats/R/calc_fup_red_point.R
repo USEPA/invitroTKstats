@@ -61,7 +61,7 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
-#' @return A data frame with one row per chemical, contains chemical identifiers 
+#' @return A Level-3 data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
 #' and point estimates for the fraction unbound in plasma (Fup)
 #' for all chemicals in the input data frame. 

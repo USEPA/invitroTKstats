@@ -68,14 +68,14 @@ chemical fraction unbound in plasma (Fup) should be annotated as follows:
 Samples types used in rapid equilibrium dialysis (RED) data collected for calculation of 
 chemical fraction unbound in plasma (Fup) should be annotated as follows:
 \tabular{rrrrr}{
-  Blank without plasma (no chemical, no plasma) \tab NoPlasma.Blank\cr
-  Blank with plasma (no chemical, just plasma) \tab Plasma.Blank\cr
+  No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+  Plamsa Blank (no chemical, just plasma) \tab Plasma.Blank\cr
   Plasma well concentration \tab Plasma\cr
   Phosphate-buffered well concentration\tab PBS\cr
   Time zero plasma concentration \tab T0\cr
   Plasma stability sample \tab Stability\cr
-  Acceptor Equilibrium Control Well \tab EC_acceptor\cr
-  Donor Equilibrium Control Well (chemical spiked side) \tab EC_donor\cr
+  Acceptor compartment of the equilibrium evaluation \tab EC_acceptor\cr
+  Donor compartment of the equilibrium evaluation (chemical spiked side) \tab EC_donor\cr
   Calibration Curve \tab CC\cr
 }
 
@@ -91,7 +91,7 @@ Samples types used in Caco-2 data to calculate membrane permeability should
 be annotated as follows:
 \tabular{rr}{
   Blank with no chemical added \tab Blank \cr
-  Dosing vehicle (C0) at target concentration \tab D0\cr
+  Target concentration added to donor compartment at time 0 (C0) \tab D0\cr
   Donor compartment at end of experiment \tab D2\cr
   Receiver compartment at end of experiment\tab R2\cr
 }
