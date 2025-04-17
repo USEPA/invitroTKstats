@@ -260,7 +260,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] dplyr_1.1.4           invitroTKstats_0.0.12 here_1.0.1           
+[1] dplyr_1.1.4           invitroTKstats_0.0.13 here_1.0.1           
 [4] readxl_1.4.3         
 
 loaded via a namespace (and not attached):
@@ -282,4 +282,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.95    0.59    7.37 
+   1.10    0.56   12.60 

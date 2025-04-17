@@ -483,14 +483,355 @@ TRUE
 +                        )
 
 Heldout L2 data to export has been rounded to 3 significant figures.
-A Level-4 file named Example-Clint-Level4Analysis-2025-04-16.RData has been exported to the following directory: C:/Users/lknupp/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Git/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint 
+[1] "Phenacetin (1 of 3)"
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+
+Auto-run JAGS
+
+Running a pilot chain...
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:04:19 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 75
+   Unobserved stochastic nodes: 11
+   Total graph size: 854
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 5000
+-------------------------------------------------| 5000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. Updating 20000
+-------------------------------------------------| 20000
+************************************************** 100%
+. . . . . . Updating 20000
+-------------------------------------------------| 20000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+Finished running the simulation
+
+Calculating the Gelman-Rubin statistic for 5 variables....
+The Gelman-Rubin statistic is below 1.1 for all parameters
+
+Calculating the necessary sample length based on the Raftery and
+Lewis's diagnostic...
+Indicated sample length achieved
+INFO: Could not find files for the given pattern(s).
+Auto-run JAGS complete
+
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:05:52 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 75
+   Unobserved stochastic nodes: 11
+   Total graph size: 854
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 1000
+-------------------------------------------------| 1000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. NOTE: Stopping adaptation
+
+. . . . Updating 50000
+-------------------------------------------------| 50000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+INFO: Could not find files for the given pattern(s).
+Calculating summary statistics...
+Note: The monitored variable 'decreases' appears to be stochastic in
+one chain but non-stochastic in another chain; it will not be included
+in the convergence diagnostic
+Calculating the Gelman-Rubin statistic for 5 variables....
+Finished running the simulation
+[1] "Final results for Phenacetin (1 of 3)"
+      bio.slope[1] bio.slope[2] decreases saturates degrades Clint.1 Clint.10
+2.5%         0.222       0.0296         1         0        0    7.39       NA
+50%          0.345       0.3260         1         0        0   11.50       NA
+97.5%        0.432       0.4270         1         1        0   14.40       NA
+           Compound.Name        DTXSID Lab.Compound.Name Clint.1.Med
+Phenacetin    Phenacetin DTXSID1021116        phenacetin        11.5
+           Clint.1.Low Clint.1.High Clint.10.Med Clint.10.Low Clint.10.High
+Phenacetin        7.39         14.4           NA           NA            NA
+           Clint.pValue Sat.pValue degrades.pValue
+Phenacetin      0.00188      0.749               1
+[1] "Propranolol (2 of 3)"
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+
+Auto-run JAGS
+
+Running a pilot chain...
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:07:40 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 74
+   Unobserved stochastic nodes: 11
+   Total graph size: 842
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 5000
+-------------------------------------------------| 5000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. Updating 20000
+-------------------------------------------------| 20000
+************************************************** 100%
+. . . . . . Updating 20000
+-------------------------------------------------| 20000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+Finished running the simulation
+
+Calculating the Gelman-Rubin statistic for 5 variables....
+The Gelman-Rubin statistic is below 1.1 for all parameters
+
+Calculating the necessary sample length based on the Raftery and
+Lewis's diagnostic...
+Indicated sample length achieved
+INFO: Could not find files for the given pattern(s).
+Auto-run JAGS complete
+
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:09:04 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 74
+   Unobserved stochastic nodes: 11
+   Total graph size: 842
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 1000
+-------------------------------------------------| 1000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. NOTE: Stopping adaptation
+
+. . . . Updating 50000
+-------------------------------------------------| 50000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+INFO: Could not find files for the given pattern(s).
+Calculating summary statistics...
+Note: The monitored variable 'decreases' appears to be non-stochastic;
+it will not be included in the convergence diagnostic
+Note: The monitored variable 'degrades' appears to be stochastic in one
+chain but non-stochastic in another chain; it will not be included in
+the convergence diagnostic
+Calculating the Gelman-Rubin statistic for 5 variables....
+Finished running the simulation
+[1] "Final results for Propranolol (2 of 3)"
+      bio.slope[1] bio.slope[2] decreases saturates degrades Clint.1 Clint.10
+2.5%         0.201       0.0291         1         0        0    6.71       NA
+50%          0.292       0.2760         1         0        0    9.72       NA
+97.5%        0.369       0.3650         1         1        0   12.30       NA
+            Compound.Name        DTXSID Lab.Compound.Name Clint.1.Med
+Propranolol   Propranolol DTXSID6023525       propranolol        9.72
+            Clint.1.Low Clint.1.High Clint.10.Med Clint.10.Low Clint.10.High
+Propranolol        6.71         12.3           NA           NA            NA
+            Clint.pValue Sat.pValue degrades.pValue
+Propranolol            0      0.749               1
+[1] "4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid (3 of 3)"
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+
+Auto-run JAGS
+
+Running a pilot chain...
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:10:33 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 70
+   Unobserved stochastic nodes: 11
+   Total graph size: 805
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 5000
+-------------------------------------------------| 5000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. Updating 20000
+-------------------------------------------------| 20000
+************************************************** 100%
+. . . . . . Updating 20000
+-------------------------------------------------| 20000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+Finished running the simulation
+
+Calculating the Gelman-Rubin statistic for 5 variables....
+The Gelman-Rubin statistic is below 1.1 for all parameters
+
+Calculating the necessary sample length based on the Raftery and
+Lewis's diagnostic...
+Indicated sample length achieved
+INFO: Could not find files for the given pattern(s).
+Auto-run JAGS complete
+
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:11:50 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 70
+   Unobserved stochastic nodes: 11
+   Total graph size: 805
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 1000
+-------------------------------------------------| 1000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. NOTE: Stopping adaptation
+
+. . . . Updating 50000
+-------------------------------------------------| 50000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+INFO: Could not find files for the given pattern(s).
+Calculating summary statistics...
+Note: The monitored variable 'degrades' appears to be stochastic in one
+chain but non-stochastic in another chain; it will not be included in
+the convergence diagnostic
+Calculating the Gelman-Rubin statistic for 5 variables....
+Finished running the simulation
+[1] "Final results for 4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid (3 of 3)"
+      bio.slope[1] bio.slope[2] decreases saturates degrades Clint.1 Clint.10
+2.5%             0            0         0         0        0       0       NA
+50%              0            0         0         0        0       0       NA
+97.5%            0            0         0         1        0       0       NA
+                                                                                  Compound.Name
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid 4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid
+                                                        DTXSID
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid DTXSID80380256
+                                                Lab.Compound.Name Clint.1.Med
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid            TFMFPA           0
+                                                Clint.1.Low Clint.1.High
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid           0            0
+                                                Clint.10.Med Clint.10.Low
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid           NA           NA
+                                                Clint.10.High Clint.pValue
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid            NA        0.997
+                                                Sat.pValue degrades.pValue
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid      0.746               1
+A Level-4 file named Example-Clint-Level4Analysis-2025-04-17.RData has been exported to the following directory: C:/Users/lknupp/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Git/invitrotkstats/invitroTKstats/data-raw/Smeltz-Clint 
 > tictoc::toc() # end the timer 
-0.72 sec elapsed
-> ## Initial build processing took 430.83 seconds. 
+544.64 sec elapsed
+> ## Initial processing took 430.83 seconds. 
 > 
 > ## Load Results dataframe
 > ## To recreate, will need to change FILENAME as date will be different 
-> load(here::here("data-raw/Smeltz-Clint/Example-Clint-Level4Analysis-2025-04-10.RData"))
+> load(here::here("data-raw/Smeltz-Clint/Example-Clint-Level4Analysis-2025-04-17.RData"))
 > clint_L4 <- Results 
 > 
 > ## Load L2 heldout dataframe 
@@ -529,7 +870,7 @@ attached base packages:
 
 other attached packages:
 [1] dplyr_1.1.4           here_1.0.1            readxl_1.4.3         
-[4] invitroTKstats_0.0.12
+[4] invitroTKstats_0.0.13
 
 loaded via a namespace (and not attached):
  [1] generics_0.1.3    lattice_0.22-6    digest_0.6.37     magrittr_2.0.3   
@@ -550,4 +891,4 @@ loaded via a namespace (and not attached):
 > 
 > proc.time()
    user  system elapsed 
-   0.67    0.39   18.56 
+   5.01    6.46  568.79 
