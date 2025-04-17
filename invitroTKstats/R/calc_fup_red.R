@@ -265,7 +265,8 @@ model {
 #' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
 #' # Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
 #' path.to.JAGS <- runjags::findJAGS()
-#' level4 <- calc_fup_red(FILENAME="<level-2 FILENAME prefix>", # e.g. "Examples" from "Examples-fup-RED-Level2.tsv"
+#' level4 <- calc_fup_red(# e.g. replace with "Examples" from "Examples-fup-RED-Level2.tsv"
+#'                        FILENAME="<level-2 FILENAME prefix>", 
 #'                        NUM.CORES=2,
 #'                        JAGS.PATH=path.to.JAGS,
 #'                        INPUT.DIR = "<level-2 FILE LOCATION>")

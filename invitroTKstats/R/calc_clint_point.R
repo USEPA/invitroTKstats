@@ -69,7 +69,8 @@
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR.
 #' ## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
-#' level3 <- calc_clint_point(FILENAME="<level-2 FILENAME prefix>", # e.g. "Examples" from "Examples-Clint-Level2.tsv" 
+#' level3 <- calc_clint_point(# e.g. replace with "Examples" from "Examples-Clint-Level2.tsv"
+#'                            FILENAME="<level-2 FILENAME prefix>",
 #'                            INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #'
