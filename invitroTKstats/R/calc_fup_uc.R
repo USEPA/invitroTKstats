@@ -90,6 +90,10 @@ model {
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
 #' We don't currently use the T1 data, but CC, AF, and T5 data are required.
+#' 
+#' Note: runjags::findjags() may not work as \code{JAGS.PATH} argument. Instead, 
+#' may need to manually remove the trailing path such that \code{JAGS.PATH} only 
+#' contains path information through "/x64" (e.g. \code{JAGS.PATH} = "/Program Files/JAGS/JAGS-4.3.1/x64").
 #'
 #' @param FILENAME (Character) A string used to identify the input Level-2 file,
 #' "<FILENAME>-fup-UC-Level2.tsv", and to name the exported model results. 
@@ -173,9 +177,9 @@ model {
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
 #' # findJAGS() from runjags package is a handy function to find JAGS path automatically.
 #' # In certain circumstances or cases, one may need to provide the absolute path to JAGS.
-#' # Will need to replace FILENAME and INPUT.DIR with name and location of level-2 'tsv'.
+#' # Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
 #' path.to.JAGS <- runjags::findJAGS()
-#' level4 <- calc_fup_uc(FILENAME="<level-2 FILENAME>",
+#' level4 <- calc_fup_uc(FILENAME="<level-2 FILENAME prefix>", # e.g. "Examples" from "Examples-fup-UC-Level2.tsv"
 #'                       NUM.CORES=2,
 #'                       JAGS.PATH=path.to.JAGS,
 #'                       INPUT.DIR = "<level-2 FILE LOCATION>")

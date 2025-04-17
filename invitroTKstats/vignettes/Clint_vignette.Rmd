@@ -43,7 +43,8 @@ First, we load in the example dataset from `invitroTKstats`.
 data("Clint-example")
 ```
 
-Many datasets are loaded in: `clint_L0`, `clint_L1`,`clint_L2`, `clint_L3`, and `clint_L4`. These datasets are Cl~int~ data at Level 0, 1, 2, 3, and 4 respectively. Additional datasets associated with Level 4 processing are also loaded in: `clint_L2_heldout` and `clint_PREJAGS`. These will be described later in the "Level 4 processing" section. For the purpose of this vignette, we'll start with `clint_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
+Many datasets are loaded in: `clint_L0`, `clint_L1`,`clint_L2`, `clint_L3`, and `clint_L4`. These datasets are Cl~int~ data at Level 0, 1, 2, 3, and 4 respectively. Additional datasets associated with Level 4 processing are also loaded in: `clint_L2_heldout` and `clint_PREJAGS`. These will be described later in the "Level 4 processing" section.
+Lastly, a `clint_cheminfo` dataset is loaded in that contains chemical information necessary for identification mapping; it is used to create Level 0 data. For the purpose of this vignette, we'll start with `clint_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
 
 `clint_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see the "Data Guide Creation and Level-0 Data Compilation" vignette. 
 
@@ -153,7 +154,7 @@ description <- c("Output and input filename",
                  "Raw data sheet name", 
                  "Export results (TSV)?",
                  "Export bad data (TSV)?",
-                 "Number of sig figs",
+                 "Number of significant figures",
                  "Input directory of Level 0 file",
                  "Export directory to save Level 1 files"
                  )

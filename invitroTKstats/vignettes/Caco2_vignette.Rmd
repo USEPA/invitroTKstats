@@ -43,7 +43,7 @@ First, we load in the example dataset from `invitroTKstats`.
 data("Caco2-example")
 ```
 
-Five datasets are loaded in: `caco2_cheminfo`, `caco2_L0`, `caco2_L1`, `caco2_L2`, and `caco2_L3`. The first, `caco2_cheminfo`, contains chemical information necessary for identification mapping. The user will not use this dataset in this vignette. Instead, for more information, users should see the "Data Guide Creation and Level-0 Data Compilation" vignette. The latter datasets contain Caco-2 data at Level 0, 1, 2, and 3 respectively. For the purpose of this vignette, we'll start with `caco2_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
+Five datasets are loaded in: `caco2_cheminfo`, `caco2_L0`, `caco2_L1`, `caco2_L2`, and `caco2_L3`. The first, `caco2_cheminfo`, contains chemical information necessary for identification mapping; it is used to create Level 0 data. The latter datasets contain Caco-2 data at Level 0, 1, 2, and 3 respectively. For the purpose of this vignette, we'll start with `caco2_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
 
 `caco2_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see the "Data Guide Creation and Level-0 Data Compilation" vignette. 
 
@@ -157,7 +157,7 @@ description <- c("Output and input filename",
                  "Raw data sheet name",
                  "Export results (TSV)?",
                  "Export bad data (TSV)?",
-                 "Number of sig figs",
+                 "Number of significant figures",
                  "Input directory of Level 0 file",
                  "Export directory to save Level 1 files")
 req_cols[, "Descr."] <- description
