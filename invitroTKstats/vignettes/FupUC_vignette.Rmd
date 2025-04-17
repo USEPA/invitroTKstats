@@ -44,9 +44,9 @@ First, we load in the example dataset from `invitroTKstats`.
 data("Fup-UC-example")
 ```
 
-Three datasets are loaded in: `fup_uc_L0`, `fup_uc_L1`, and `fup_uc_L2`. These datasets are f~up~ data at Level 0, 1, and 2 respectively. For the purpose of this vignette, we'll start with `fup_uc_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
+Many datasets are loaded in: `fup_uc_L0`, `fup_uc_L1`, `fup_uc_L2`, `fup_uc_L3`, and `fup_uc_L4`. These datasets are f~up~ data at Level 0, 1, 2, 3, and 4 respectively. Additional datasets associated with Level 4 processing are also loaded in: `fup_uc_L2_heldout` and `fup_uc_PREJAGS`. These will be described later in the "Level 4 processing" section. Lastly, a `fup_uc_cheminfo` dataset is loaded in that contains chemical information necessary for identification mapping; it is used to create Level 0 data. For the purpose of this vignette, we'll start with `fup_uc_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
 
-`fup_uc_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see "Creating dataguide from raw data vignette". 
+`fup_uc_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see the "Data Guide Creation and Level-0 Data Compilation" vignette.
 
 The following table displays the first three rows of `fup_uc_L0`, our Level 0 data. 
 
@@ -76,16 +76,18 @@ If the Level 0 data already contains the required column, then the existing colu
 
 If the Level 0 data does not already contain the required column, then the entire column can be populated with a single value. For example, `fup_uc_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the parameter without the `.col` suffix. 
 
-Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
+Users should be mindful if they choose to specify a single value for all of their samples; they should verify this action is one they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `date.col`, `compound.col`, `area.col`, `type.col`, `istd.col`, and `note.col`.
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `compound.col`, `area.col`, `type.col`, and `istd.col`.
 
-The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `test.conc.col` or `test.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `uc.assay.conc.col` or `uc.assay.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
+If there is no additional `note.col` in the Level 0 data, users should use `note.col = NULL` to fill the column with "Note".
+
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `date.col` or `date`, `test.conc.col` or `test.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `uc.assay.conc.col` or `uc.assay.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
 
 ```{r required cols, echo = FALSE}
 # Create table of required arguments for Level 1 
 
-req_cols <- data.frame(matrix(nrow = 28, ncol = 5))
+req_cols <- data.frame(matrix(nrow = 29, ncol = 5))
 vars <- c("Argument", "Default", "Required in L0?", "Corresp. single-entry Argument", "Descr.")
 colnames(req_cols) <- vars
 
@@ -96,8 +98,8 @@ arguments <- c("FILENAME", "data.in", "sample.col", "lab.compound.col", "dtxsid.
                "uc.assay.conc.col", "biological.replicates.col",
                "technical.replicates.col", "analysis.method.col", 
                "analysis.instrument.col", "analysis.parameters.col", "note.col", 
-               "level0.file.col", "level0.sheet.col", "output.res", "save.bad.types",
-               "INPUT.DIR", "OUTPUT.DIR"
+               "level0.file.col", "level0.sheet.col", "output.res", "save.bad.types", 
+               "sig.figs", "INPUT.DIR", "OUTPUT.DIR"
                )
 req_cols[, "Argument"] <- arguments 
 
@@ -107,15 +109,15 @@ defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name", "DTXSID",
               "Cal", "Dilution.Factor", "ISTD.Area", "ISTD.Name", "ISTD.Conc", 
               "UC.Assay.Conc", "Biological.Replicates", "Technical.Replicates", 
               "Analysis.Method", "Analysis.Instrument", "Analysis.Parameters", 
-              "Note", "Level0.File", "Level0.Sheet", TRUE, FALSE, NA, NA)
+              "Note", "Level0.File", "Level0.Sheet", TRUE, FALSE, 5, NA, NA)
 req_cols[, "Default"] <- defaults 
 
 # Argument required in L0?
 req_cols <- req_cols %>% 
   mutate("Required in L0?" = case_when(
     Argument %in% c("sample.col", "lab.compound.col", "dtxsid.col",
-                    "date.col", "compound.col", "area.col", "type.col", 
-                    "istd.col", "note.col") ~ "Y", 
+                    "compound.col", "area.col", "type.col", 
+                    "istd.col") ~ "Y", 
     Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", 
                     "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A",
     .default = "N"
@@ -123,7 +125,7 @@ req_cols <- req_cols %>%
 
 # Corresponding single-entry Argument 
 req_cols <- req_cols %>% 
-  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[3]]] == "N",
+  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[3]]] == "N" & .data[[vars[[1]]]] != "note.col",
                                                    gsub(".col", "", Argument), NA))
 
 # Brief description 
@@ -153,6 +155,7 @@ description <- c("Output and input filename",
                  "Raw data sheet name", 
                  "Export results (TSV)?", 
                  "Export bad data (TSV)?",
+                 "Number of significant figures",
                  "Input directory of Level 0 file", 
                  "Export directory to save Level 1 files")
 req_cols[, "Descr."] <- description
@@ -192,7 +195,7 @@ fup_uc_L1_curated <- format_fup_uc(FILENAME = "Fup_UC_vignette",
                                    analysis.parameters.col = "Analysis.Params",
                                    # columns not present in L0 data 
                                    istd.conc = 1, 
-                                   uc.assay.conc = 10, 
+                                   test.nominal.conc = 10, 
                                    biological.replicates = 1, 
                                    analysis.method = "UPLC-MS/MS",
                                    analysis.instrument = "Waters Xevo TQ-S micro(QEB0036)",
@@ -235,7 +238,7 @@ fup_uc_L1_curated %>%
 
 `sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) and credible interval (Level 4) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for f~up~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column.
 
-To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new f~up~ estimates. There is an open channel of communication between the user and the wet-lab scientists. 
+To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates or a chemist who may be able to provide reliable rationale for samples that should not be verified. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new f~up~ estimates. Thus, there is an open channel of communication between the user and the wet-lab scientists or chemists. 
 
 We will use the already processed Level 2 data frame, `fup_uc_L2`, to regenerate our exclusion data. Note, all of our samples are verified but we are explaining how to create an exclusion list for learning purposes. In general, the user would not have access to the exclusion information *a priori*. 
 
@@ -329,7 +332,7 @@ Our Level 3 data contains a `Fup` estimate and a `Calibration` column that detai
 
 To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must use `runjags::findjags()` as their argument for the `JAGS.PATH` parameter. 
 
-We pass `fup_uc_L2_curated`, the Level 2 data frame, and **not** `fup_uc_L3_curated`, the Level 3 data frame, into `calc_fup_uc`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
+We pass `fup_uc_L2_curated`, the Level 2 data frame, and **not** `fup_uc_L3_curated`, the Level 3 data frame, into `calc_fup_uc`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. The following code chunk takes a while to run; previous runtimes are around 10 minutes.
 
 ```{r L4 processing, message = FALSE, eval = FALSE}
 fup_uc_L4_curated <- calc_fup_uc(FILENAME = "Fup_UC_vignette",
@@ -338,14 +341,17 @@ fup_uc_L4_curated <- calc_fup_uc(FILENAME = "Fup_UC_vignette",
                                  )
 ```
 
-The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a credible interval for f~up~ and for f~stable~ which measures the compound's stability. Mathematically, $f_{stable} = \frac{\textrm{T5}}{\textrm{T1}}$ where a value of $1$ indicates no compound breakdown. 
+```{r, echo = FALSE}
+fup_uc_L4_curated <- fup_uc_L4
+```
 
-```{r, echo = FALSE, eval = FALSE}
-# Once Level 3 and Level 4 results are produced in R script and saved to /Data 
-# directory, Level 4 results can be read in and set `eval = TRUE` for this chunk. 
-file = "Fup_UC_vignette-fup-UC-Level4.tsv"
-fup_uc_L4_curated <- read.delim(file = file, sep = "\t")
+The f~up~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. If there are no crashes, then the exported TSV file is identical to the user's R session and the exported .RData file. `fup_uc_L4` is an example exported .RData file.  
 
+Additionally, intermediate files are saved to the user's current working directory if `TEMP.DIR = NULL`. These include a Level 2 heldout set, `fup_uc_L2_heldout`, containing unverified samples and a Level 4 PREJAGS list, `fup_uc_PREJAGS`, containing arguments provided to JAGS. Because the PREJAGS list is overwritten with each compound, `fup_uc_PREJAGS` only contains information relevant to the last tested compound, K-PFBS in this case.
+
+Our Level 4 data contains a credible interval for f~up~ and for f~stable~ which measures the compound's stability. Mathematically, $f_{stable} = \frac{\textrm{T5}}{\textrm{T1}}$ where a value of $1$ indicates no compound breakdown. 
+
+```{r, echo = FALSE}
 fup_uc_L4_curated %>% 
   flextable() %>% 
   bg(bg = "#DDDDDD", part = "header") %>% 

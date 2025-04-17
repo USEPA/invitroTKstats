@@ -32,6 +32,12 @@ data formatted with the \code{\link{format_clint}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for plotting.
 }
+\examples{
+## Load example level-2 data 
+level2 <- invitroTKstats::clint_L2
+plot_clint(level2, dtxsid = "DTXSID1021116")
+
+}
 \author{
 John Wambaugh
 }

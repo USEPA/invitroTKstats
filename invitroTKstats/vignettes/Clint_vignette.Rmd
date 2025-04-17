@@ -43,9 +43,10 @@ First, we load in the example dataset from `invitroTKstats`.
 data("Clint-example")
 ```
 
-Three datasets are loaded in: `clint_L0`, `clint_L1`, and `clint_L2`. These datasets are Cl~int~ data at Level 0, 1, and 2 respectively. For the purpose of this vignette, we'll start with `clint_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
+Many datasets are loaded in: `clint_L0`, `clint_L1`,`clint_L2`, `clint_L3`, and `clint_L4`. These datasets are Cl~int~ data at Level 0, 1, 2, 3, and 4 respectively. Additional datasets associated with Level 4 processing are also loaded in: `clint_L2_heldout` and `clint_PREJAGS`. These will be described later in the "Level 4 processing" section.
+Lastly, a `clint_cheminfo` dataset is loaded in that contains chemical information necessary for identification mapping; it is used to create Level 0 data. For the purpose of this vignette, we'll start with `clint_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
 
-`clint_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see "Creating dataguide from raw data vignette".
+`clint_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see the "Data Guide Creation and Level-0 Data Compilation" vignette. 
 
 The following table displays the first three rows of `clint_L0`, our Level 0 data.  
 
@@ -74,11 +75,13 @@ If the Level 0 data already contains the required column, then the existing colu
 
 If the Level 0 data does not already contain the required column, then the entire column can be populated with a single value. For example, `clint_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the parameter without the `.col` suffix. 
 
-Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
+Users should be mindful if they choose to specify a single value for all of their samples; they should verify this action is one they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `compound.col`, `dtxsid.col`, `lab.compound.col`, `type.col`, `istd.col`, `area.col`, and `note.col`. 
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `compound.col`, `dtxsid.col`, `lab.compound.col`, `type.col`, `istd.col`, and `area.col`. 
 
-The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `date.col` or `date`, `density.col` or `density`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `test.conc.col` or `test.conc`, `clint.assay.conc.col` or `clint.assay.conc`, `biological.replicates.col` or `biological.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
+If there is no additional `note.col` in the Level 0 data, users should use `note.col = NULL` to fill the column with "Note". 
+
+The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `date.col` or `date`, `density.col` or `density`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `test.conc.col` or `test.conc`, `test.nominal.conc.col` or `test.nominal.conc`, `biological.replicates.col` or `biological.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`. 
 
 ```{r required cols, echo = FALSE}
 # Create table of required parameters for Level 1 
@@ -91,7 +94,7 @@ colnames(req_cols) <- vars
 arguments <- c("FILENAME", "data.in", "sample.col", "date.col", "compound.col",
                 "dtxsid.col", "lab.compound.col", "type.col", "density.col", 
                 "cal.col", "dilution.col", "time.col", "istd.col", "istd.name.col", 
-                "istd.conc.col", "test.conc.col", "clint.assay.conc.col",
+                "istd.conc.col", "test.conc.col", "test.nominal.conc.col",
                 "area.col", "biological.replicates.col", "technical.replicates.col",
                 "analysis.method.col", "analysis.instrument.col",
                 "analysis.parameters.col", "note.col", "level0.file.col", 
@@ -103,7 +106,7 @@ req_cols[,"Argument"] <- arguments
 defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Date", "Compound.Name",
               "DTXSID", "Lab.Compound.Name", "Sample.Type", "Hep.Density", 
               "Cal", "Dilution.Factor", "Time", "ISTD.Area", "ISTD.Name", "ISTD.Conc", 
-              "Test.Compound.Conc", "Clint.Assay.Conc", "Area", 
+              "Test.Compound.Conc", "Test.Target.Conc", "Area", 
               "Biological.Replicates", "Technical.Replicates", "Analysis.Method", 
               "Analysis.Instrument", "Analysis.Parameters", "Note", 
               "Level0.File", "Level0.Sheet", "TRUE", "FALSE", 5, NA, NA)
@@ -112,14 +115,14 @@ req_cols[,"Default"] <- defaults
 # Argument required in L0?
 req_cols <- req_cols %>% 
   mutate("Required in L0?" = case_when(
-    Argument %in% c("sample.col","compound.col", "dtxsid.col", "lab.compound.col", "type.col", "istd.col", "area.col", "note.col") ~ "Y",
+    Argument %in% c("sample.col","compound.col", "dtxsid.col", "lab.compound.col", "type.col", "istd.col", "area.col") ~ "Y",
     Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A", 
     .default = "N"
   ))
 
 # Corresponding single-entry Argument 
 req_cols <- req_cols %>% 
-  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[[3]]]] == "N", gsub(".col","",Argument),
+  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[[3]]]] == "N" & .data[[vars[[1]]]] != "note.col", gsub(".col","",Argument),
                 NA))
 
 # Brief description 
@@ -151,7 +154,7 @@ description <- c("Output and input filename",
                  "Raw data sheet name", 
                  "Export results (TSV)?",
                  "Export bad data (TSV)?",
-                 "Number of sig figs",
+                 "Number of significant figures",
                  "Input directory of Level 0 file",
                  "Export directory to save Level 1 files"
                  )
@@ -195,7 +198,7 @@ clint_L1_curated <- format_clint(FILENAME = "Clint_vignette",
                          analysis.parameters.col = "Analysis.Params",
                          # columns not present in L0 data
                          density = 0.5,
-                         clint.assay.conc = 1,
+                         test.nominal.conc = 1,
                          analysis.instrument = "Unknown",
                          analysis.method = "LCMS",
                          istd.conc = 0.01,
@@ -296,7 +299,7 @@ clint_L1_curated %>%
 
 `sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) and credible interval (Level 4) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for Cl~int~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
 
-To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new Cl~int~ estimates. There is an open channel of communication between the user and the wet-lab scientists.
+To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates or a chemist who may be able to provide reliable rationale for samples that should not be verified. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new Cl~int~ estimates. Thus, there is always an open channel of communication between the user and the wet-lab scientists or chemists.
 
 We will use the already processed Level 2 data frame, `clint_L2`, to regenerate our exclusion data. In general, the user would not have access to the exclusion information *a priori*. 
 
@@ -424,19 +427,27 @@ clint_L3_curated %>%
 
 To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must use `runjags::findjags()` as their argument for the `JAGS.PATH` parameter. 
 
-We pass `clint_L2_curated`, the Level 2 data frame, and **not** `clint_L3_curated`, the Level 3 data frame, into `calc_clint`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. 
+We pass `clint_L2_curated`, the Level 2 data frame, and **not** `clint_L3_curated`, the Level 3 data frame, into `calc_clint`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. The following code chunk takes a while to run; previous runtimes are around 7 minutes.     
 
-```{r L4 Processing, message= FALSE}
+```{r L4 Processing, message= FALSE, eval = FALSE}
 clint_L4_curated <- calc_clint(FILENAME = "Clint_vignette",
                        data.in = clint_L2_curated, 
                        JAGS.PATH = runjags::findjags()
                        )
 ```
 
-The Cl~int~ intervals are returned to the user's R session, in an exported TSV file, and in an exported .RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. Our Level 4 data contains a Cl~int~ credible interval and the corresponding p-value for each chemical.
+```{r, echo = FALSE}
+clint_L4_curated <- clint_L4
+```
+
+The Cl~int~ intervals are returned to the user's R session, in an exported TSV file, and in an exported RData file. There is no parameter to prevent the TSV or RData files from being exported because of the potential for the simulations to crash. If there are no crashes, then the exported TSV file is identical to the user's R session and the exported RData file. `clint_L4` is an example exported RData file. 
+
+Additionally, intermediate files are saved to the user's current working directory if `TEMP.DIR = NULL`. These include a Level 2 heldout set, `clint_L2_heldout`, containing unverified samples and a Level 4 PREJAGS list, `clint_PREJAGS`, containing arguments provided to JAGS. Because the PREJAGS list is overwritten with each compound, `clint_PREJAGS` only contains information relevant to the last tested compound, TFMFPA in this case.
+
+Our Level 4 data contains a Cl~int~ credible interval and the corresponding p-value for each chemical.
 
 ```{r, echo = FALSE}
-clint_L4_curated[["Results"]] %>% 
+clint_L4_curated %>% 
   flextable() %>% 
   bg(bg = "#DDDDDD", part = "header") %>% 
   autofit() %>% 

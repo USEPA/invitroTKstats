@@ -5,7 +5,7 @@
 \alias{fup_red_L1}
 \title{Fup RED Level 1 Example Data set}
 \format{
-A level 1 data.frame with 492 rows and 24 variables: \describe{
+A level 1 data.frame with 636 rows and 25 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date the sample was added to the MS analyzer}
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
@@ -25,10 +25,11 @@ A level 1 data.frame with 492 rows and 24 variables: \describe{
 \item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
 \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
 \item{\code{Time}}{Time point the sample was measured - in hours (h)}
-\item{\code{Test.Compound.Conc}}{Expected (or nominal) concentration of analyte (for calibration curve)}
-\item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
+\item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
+\item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to RED plate (uM)}
 \item{\code{Percent.Physiologic.Plasma}}{Percent of physiological plasma concentration in RED plate (in percent)}
 \item{\code{Technical.Replicates}}{Identifier for repeated measurements of a sample of a compound}
+\item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 }
 }
@@ -38,7 +39,7 @@ fup_red_L1
 \description{
 Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
 equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
-(PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
+(PFAS) samples. Experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 
 \insertCite{smeltz2023plasma}{invitroTKstats}.
 This data set is a subset of experimental data containing samples for 
 3 test analytes/compounds.

@@ -39,8 +39,12 @@
 #' @param dtxsid.col (Character) Column name from \code{data.in} containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param date.col (Character) Column name from \code{data.in} containing the laboratory measurement
-#' date. (Defaults to "Date".)
+#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' (Note: Single entry only, use only if all data were collected on the same date.)
+#'
+#' @param date.col (Character) Column name containing \code{date} information. (Defaults to "Date".) (Note: \code{data.in} does not
+#' necessarily have this field. If this field is missing, it can be auto-filled with the value 
+#' specified in \code{date}.)
 #'
 #' @param compound.col (Character) Column name from \code{data.in} containing the test compound.
 #' (Defaults to "Compound.Name".)
@@ -52,7 +56,7 @@
 #' under Details). (Defaults to "Sample.Type".)
 #' 
 #' @param test.conc (Numeric) The standard test chemical concentration for 
-#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' the fup UC assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same standard concentration was used for all tested compounds.)
 #'
 #' @param test.conc.col (Character) Column name containing \code{test.conc} 
@@ -101,15 +105,15 @@
 #' necessarily have this field. If this field is missing, it can be
 #' auto-filled with the value specified in \code{istd.conc}.)
 #' 
-#' @param uc.assay.conc (Numeric) The intended initial test chemical
-#' concentration in the UC assay in uM. (Defaults to \code{NULL}.)
-#' (Note: Single entry only,  use only if the intended initial concentration
-#' was the same for all tested compounds.)
+#' @param test.nominal.conc (Numeric) The nominal concentration added to the UC assay
+#' at time 0. (Defaults to \code{NULL}.)
+#' (Note: Single entry only,  use only if all tested compounds used the same 
+#' concentration at time 0.)
 #'
-#' @param uc.assay.conc.col (Character) Column name containing \code{uc.assay.conc} 
-#' information. (Defaults to "UC.Assay.Conc".) (Note: \code{data.in} does not
+#' @param test.nominal.conc.col (Character) Column name containing \code{test.nominal.conc} 
+#' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled
-#' with the value specified in \code{uc.assay.conc}.)
+#' with the value specified in \code{test.nominal.conc}.)
 #' 
 #' @param biological.replicates (Character) Replicates with the same analyte. Typically, this uses 
 #' numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
@@ -230,11 +234,12 @@
 #'                         area.col = "Peak.Area",
 #'                         istd.conc = 1,
 #'                         note.col = NULL,
-#'                         uc.assay.conc = 10,
+#'                         test.nominal.conc = 10,
 #'                         analysis.method = "UPLC-MS/MS",
 #'                         analysis.instrument = "Waters Xevo TQ-S micro (QEB0036)",
 #'                         analysis.parameters.col = "Analysis.Params",
-#'                         biological.replicates.col = "Replicate",
+#'                         technical.replicates.col = "Replicate",
+#'                         biological.replicates = 1,
 #'                         output.res = FALSE
 #'                         )
 #'
@@ -250,6 +255,7 @@ format_fup_uc <- function(
   sample.col="Lab.Sample.Name",
   lab.compound.col="Lab.Compound.Name",
   dtxsid.col="DTXSID",
+  date=NULL,
   date.col="Date",
   compound.col="Compound.Name",
   area.col="Area",
@@ -265,8 +271,8 @@ format_fup_uc <- function(
   istd.name.col="ISTD.Name",
   istd.conc=NULL,
   istd.conc.col="ISTD.Conc",
-  uc.assay.conc=NULL,
-  uc.assay.conc.col="UC.Assay.Conc",
+  test.nominal.conc=NULL,
+  test.nominal.conc.col="Test.Target.Conc",
   biological.replicates = NULL,
   biological.replicates.col = "Biological.Replicates",
   technical.replicates = NULL,
@@ -319,12 +325,13 @@ format_fup_uc <- function(
 
 # These arguments allow the user to specify a single value for every observation
 # in the table:
+  if (!is.null(date)) data.in[,date.col] <- date
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
   if (!is.null(istd.conc)) data.in[,istd.conc.col] <- istd.conc
   if (!is.null(test.conc)) data.in[,test.conc.col] <- test.conc
-  if (!is.null(uc.assay.conc)) data.in[,uc.assay.conc.col] <- uc.assay.conc
+  if (!is.null(test.nominal.conc)) data.in[,test.nominal.conc.col] <- test.nominal.conc
   if (!is.null(analysis.method)) data.in[,analysis.method.col]<- analysis.method
   if (!is.null(analysis.instrument)) data.in[,analysis.instrument.col] <-
     analysis.instrument
@@ -338,7 +345,7 @@ format_fup_uc <- function(
   # We need all these columns in data.in
   fup.uc.cols <- c(L1.common.cols,
                    test.conc.col = "Test.Compound.Conc",
-                   uc.assay.conc.col = "UC.Assay.T1.Conc"
+                   test.nominal.conc.col = "Test.Nominal.Conc"
   )
   
   ## allow either one of the two, or both replicate columns in the data

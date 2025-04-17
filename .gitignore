@@ -51,6 +51,15 @@ invitroTKstats/.Ruserdata
 
 # Raw Example Data File 
 invitroTKstats/data-raw/Caco2
+# the Honda-Caco2 should be replacing the Caco2 sub-directory above, but keep both just in case
+invitroTKstats/data-raw/Honda-Caco2
 invitroTKstats/data-raw/Smeltz-Clint
 invitroTKstats/data-raw/Smeltz-UC
 invitroTKstats/data-raw/Smeltz-RED
+invitroTKstats/data-raw/Kreutz-Clint
+
+# Package binaries
+*.tar.gz
+
+
+

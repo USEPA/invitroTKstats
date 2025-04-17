@@ -1,8 +1,8 @@
 ---
-title: "invitroTKstats Plotting Functions Demonstration"
+title: "Plotting Functions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{plotting-invitroTKstats}
+  %\VignetteIndexEntry{Plotting Functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

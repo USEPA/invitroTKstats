@@ -6,7 +6,10 @@
 
 ## load necessary packages
 library(readxl)
-library(invitroTKstats)
+# library(invitroTKstats) ## use when installed package is up-to-date
+devtools::load_all(here::here()) ## use when installed package is not up-to-date, but branch is up-to-date with 'dev' branch
+library(here)
+library(dplyr)
 
 ## Chose three compounds that have all samples verified
 uc.list <- c("DTXSID00192353", "DTXSID0059829", "DTXSID3037707")
@@ -21,8 +24,8 @@ unique(smeltz2023.uc[smeltz2023.uc$DTXSID %in% uc.list, "Verified"])
 ## Read in the assay summary table from the Excel file. 
 ## This table records which date each compound was tested on and which mix was used.
 ## This table will be used later in the process to remove samples with the wrong mix.
-assayinfo <- read_excel(
-  "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC/20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
+assayinfo <- read_excel(here::here(
+  "data-raw/Smeltz-UC/20220201_PFAS-LC_FractionUnbound_MGS.xlsx"),
   sheet=1)
 assayinfo <- as.data.frame(assayinfo)
 ## Fill in the date column for all rows:
@@ -42,31 +45,49 @@ while (this.row <= dim(assayinfo)[1])
 assayinfo[,1] <- sapply(assayinfo[,1],function(x) gsub("  UTC","",x))
 
 ## Read in chem.ids
-cheminfo <- read_excel(
-  "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC/20220201_PFAS-LC_FractionUnbound_MGS.xlsx",
-  sheet=2)[, 1:2]
-cheminfo <- as.data.frame(cheminfo)
+chem.ids <- readxl::read_xlsx(
+  path = here::here("data-raw/Smeltz-UC/20220201_PFAS-LC_FractionUnbound_MGS.xlsx"),
+  sheet = "Summarized Wetmore Fu Values"
+)
+chem.ids <- as.data.frame(chem.ids)
+chem.ids <- subset(chem.ids, !duplicated(chem.ids[,"DTXSID"]))
 ## In this table, the chemical names and their lab IDs are in the same column 
 ## Extract them into two separate columns
-cheminfo$Compound <- unlist(lapply(strsplit(cheminfo[,2]," \\("),function(x) x[[1]])) 
-cheminfo$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(cheminfo[,2]," \\("),function(x) if (length(x) != 1) x[[2]] else NA)))
+chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
+chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) if (length(x) != 1) x[[2]] else NA)))
+
+## Save the fup uc chemical ID mapping information for the package - remove columns not needed
+fup_uc_cheminfo <- dplyr::select(chem.ids,-c("Mean fu","SD fu","CV fu","Category","...7"))
+
+# check that the number of rows in the chem information matches the number of unique DTXSID's
+length(unique(fup_uc_cheminfo$DTXSID))==nrow(fup_uc_cheminfo)
+
+# create chem ID mapping table for level-0 compilation - we can overwrite previous `chem.ids`
+chem.ids <- create_chem_table(input.table = fup_uc_cheminfo,
+                              dtxsid.col = "DTXSID",
+                              compound.col = "Compound",
+                              lab.compound.col = "Chem.Lab.ID")
 
 ## Prepare a data guide for merge_level0 
 this.file <- "20220201_PFAS-LC_FractionUnbound_MGS.xlsx"
+
 data.guide <- create_catalog(
-  file = rep(this.file, 3),
+  file = this.file,
   sheet = c("20200103","20210308","20201123"),
-  skip.rows = c(571,6,137),
+  skip.rows = c(572,7,138),
+  col.names.loc = c(572, 7, 138),
   date = c("010320","030821","112320"),
   compound = c("8:2 FTS", "PFOA-F", "K-PFBS"),
   istd = c("M2-8:2FTS", "M8PFOA", "M3PFBS"),
-  sample = rep("Name",3),
-  type = rep("Type", 3),
-  peak = rep("Area", 3),
-  istd.peak = rep("IS Area", 3),
+  num.rows = c(109, 106, 127),
+  
+  # column names 
+  sample = "Name",
+  type = "Type",
+  peak = "Area",
+  istd.peak = "IS Area",
   conc = c("uM", "nM", "nM"),
-  analysis.param = rep("RT",3),
-  num.rows = c(109,106,127),
+  analysis.param = "RT",
   ## Need this sample text column to create new columns later
   additional.info = list(SampleText.ColName = rep("Sample Text",3))
 )
@@ -80,10 +101,12 @@ fup_uc_L0 <- merge_level0(level0.catalog  = data.guide,
                            type.colname.col="Type.ColName",
                            additional.colnames = "Sample Text",
                            additional.colname.cols = "SampleText.ColName",
-                           chem.ids = cheminfo,
+                           chem.ids = chem.ids,
+                           chem.lab.id.col = "Lab.Compound.Name",
+                           chem.name.col = "Compound.Name",
                            output.res = FALSE,
                            catalog.out = FALSE,
-                           INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-UC")
+                           INPUT.DIR = here::here("data-raw/Smeltz-UC"))
 
 ## There are some additional columns needed for fup_uc_L0 to go to level-1.
 ## But these columns do not exist in the original data file and  
@@ -173,7 +196,7 @@ fup_uc_L1 <- format_fup_uc(data.in = fup_uc_L0,
                            area.col = "Peak.Area",
                            istd.conc = 1,
                            note.col = NULL,
-                           uc.assay.conc = 10,
+                           test.nominal.conc = 10,
                            analysis.method = "UPLC-MS/MS",
                            analysis.instrument = "Waters Xevo TQ-S micro (QEB0036)",
                            analysis.parameters.col = "Analysis.Params",
@@ -183,7 +206,10 @@ fup_uc_L1 <- format_fup_uc(data.in = fup_uc_L0,
                           )
 
 ## Verify all samples
-fup_uc_L2 <- sample_verification(data.in = fup_uc_L1, output.res = FALSE)
+fup_uc_L2 <- sample_verification(data.in = fup_uc_L1,
+                                 assay = "fup-UC",
+                                 # don't export the output TSV file
+                                 output.res = FALSE)
 
 ## Compare with smeltz2023.uc to make sure the subsets match the original datasets.
 uc.sub <- smeltz2023.uc[smeltz2023.uc$DTXSID %in% uc.list, ]
@@ -226,11 +252,17 @@ unique(og_level2$Date)
 ## The original dataset maps the 'Compound' column from Level-0 to this column (line 355 in MSdata-Mar2022.R),
 ## which is incorrect. I used the 'Lab.Compound.ID' column from Level-0. I will keep my input.
 
-## Discrepancies found in the Area and ISTD.Area columns:
-## Area and ISTD.Area were rounded to 5 significant digits in format_fup_uc (lines 406-407)
-## when the example dataset was complied. Rounding was not used when the original dataset was complied.
-## Compare the columns in 5 significant digits: 
-all.equal(signif(og_level2[,"Area"],5),ex_level2[,"Area"])
+## Discrepancies found in the Area: 
+## Some Areas were NA which causes all() to also return NA. Remove the NA entries and 
+## compare again. 
+all.equal(og_level2[!is.na(og_level2$Area), "Area"], ex_level2[!is.na(ex_level2$Area), "Area"])
+
+## Discrepancies found in the ISTD.Area column:
+## Some minor rounding discrepancies in the ISTD.Area column 
+mismatches <- which(og_level2[,"ISTD.Area"] != ex_level2[,"ISTD.Area"])
+diffs <- og_level2[mismatches,"ISTD.Area"]  - ex_level2[mismatches,"ISTD.Area"]
+summary(diffs)
+## The max difference in ISTD.Area is 0.0477439. 
 
 ## Discrepancies found in the Analysis.Parameters column:
 ## Analysis.Parameters is a numeric column in smeltz2023.uc while it is a character
@@ -249,11 +281,12 @@ all.equal(ex_level2$Analysis.Parameters, og_level2$Analysis.Parameters)
 diffs <- og_level2[,"Response"]- ex_level2[,"Response"]
 summary(diffs[!is.na(diffs)])
 
-## The maximum difference is 1.000e-03 and the minimum difference is -1.000e-02.
-## Difference in the second decimal place is not reasonable.
-## After further investigation, the sample with the largest difference has 
-## a peak area of 174260 and an ISTD area of 17279. With 5 significant digits the 
-## numbers are rounded to the nearest whole number and even the tens.
+## The maximum difference is 4.305e-03 and the minimum difference is -4.943e-03.
+## Difference in the third decimal place is not reasonable.
+## The sample with the largest difference has a peak area of 9925.596 and an 
+## ISTD.Area of 581.952. 
+ex_level2[which.max(diffs), "Area"]
+ex_level2[which.max(diffs),"ISTD.Area"]
 
 ## To preserve the precision, use the area and ISTD area from Level-0 to calculate the responses
 ## and compare with responses from the original data set. 
@@ -277,10 +310,13 @@ colnames(ex_level2)[which(!(colnames(ex_level2) %in% common.cols))]
 
 ## As mentioned above, the original data maps replicate to the Note column,
 ## and creates a Series column filled with 1 (line 261 in MSdata-Mar2022.R).
-## Should compare Technical.Replicates from the example data to Note in the original data 
-## and compare Biological.Replicates to Series in the original data.
+## Should compare Technical.Replicates from the example data to Note in the original data,  
+## compare Biological.Replicates to Series in the original data, and compare Test.Nominal.Conc
+## to UC.Assay.T1.Conc in the origindal data. 
 all.equal(ex_level2[, "Biological.Replicates"], og_level2[, "Series"])
 all.equal(ex_level2[, "Technical.Replicates"], og_level2[, "Note"])
+all.equal(ex_level2[, "Test.Nominal.Conc"], og_level2[, "UC.Assay.T1.Conc"])
+
 
 ## Check the concentration columns:
 all.equal(ex_level2[, "Test.Compound.Conc"], og_level2[, "Standard.Conc"])
@@ -293,21 +329,57 @@ all.equal(signif(ex_level2[, "Test.Compound.Conc"],4), og_level2[, "Standard.Con
 
 ##---------------------------------------------##
 ## Run level-3 calculations with the example dataset.
-ex_level3 <- calc_fup_uc_point(data.in = ex_level2, output.res = FALSE)
+fup_uc_L3 <- calc_fup_uc_point(data.in = fup_uc_L2, output.res = FALSE)
 
 ## The original dataset needs to update some column names.
 colnames(og_level2)[which(names(og_level2) == "Series")] <- "Biological.Replicates"
 colnames(og_level2)[which(names(og_level2) == "Standard.Conc")] <- "Test.Compound.Conc"
 ## Run level-3 calculations with the original dataset.
+## Rename UC.Assay.T1.Conc as Test.Nominal.Conc
+og_level2 <- rename(og_level2, "Test.Nominal.Conc" = "UC.Assay.T1.Conc")
 og_level3 <- calc_fup_uc_point(data.in = og_level2, output.res = FALSE)
 
-## Compare the results. They are matched.
+## Compare the results.
+## The last two compounds are switched in the og_level2 data frame so need to 
+## sort the Fup values. 
+## They are matched with slight rounding discrepancies. 
 ## Note that calc_fup_uc_point rounds Fup to the fourth significant figures.
-all.equal(ex_level3$Fup,og_level3$Fup)
+all.equal(sort(fup_uc_L3$Fup), sort(og_level3$Fup))
+## A mean relative difference of 1.8e-4. 
 ##---------------------------------------------##
 
-## Save level-0 to level-2 data to use for function demo/example documentation 
-save(fup_uc_L0, fup_uc_L1, fup_uc_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-UC-example.RData")
+## Run level-4 calculations with the example dataset
+path.to.jags <- runjags::findjags()
+## runjags::findjags() not working as argument to calc_fup_uc
+## manually remove trailing path
+path.to.jags <- gsub("/bin/jags-terminal.exe", "", path.to.jags)
+
+tictoc::tic()
+fup_uc_L4 <- calc_fup_uc(FILENAME = "Example",
+                         data.in = fup_uc_L2, 
+                         JAGS.PATH = path.to.jags,
+                         TEMP.DIR = here::here("data-raw/Smeltz-UC"),
+                         OUTPUT.DIR = here::here("data-raw/Smeltz-UC")
+                         )
+tictoc::toc()
+## Initial processing took 617.86 seconds 
+
+## Load Results dataframe
+## To recreate, will need to change FILENAME as date will be different 
+load(here::here("data-raw/Smeltz-UC/Example-fup-UC-Level4Analysis-2025-04-17.RData"))
+fup_uc_L4 <- Results 
+
+## Load L2 heldout dataframe 
+fup_uc_L2_heldout <- read.delim(here::here("data-raw/Smeltz-UC/Example-fup-UC-Level2-heldout.tsv"),
+                                 sep = "\t")
+
+## Load PREJAGS dataframe 
+load(here::here("data-raw/Smeltz-UC/Example-fup-UC-PREJAGS.RData"))
+fup_uc_PREJAGS <- mydata
+
+## Save all levels to use for function demo/example documentation 
+save(fup_uc_cheminfo,fup_uc_L0, fup_uc_L1, fup_uc_L2, fup_uc_L3,
+     fup_uc_L4, fup_uc_L2_heldout, fup_uc_PREJAGS, file = here::here("data/Fup-UC-example.RData"))
 
 ## Include session info
 utils::sessionInfo()

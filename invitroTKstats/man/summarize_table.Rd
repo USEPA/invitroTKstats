@@ -97,15 +97,30 @@ be annotated as follows:
 }
 }
 \examples{
-\dontrun{
-# need to re-visit the path to load data for this example 
-load("~/invitroTKstats/Data/Kreutz2023.RData")
-load("~/invitroTKstats/Data/Smeltz2023.RData")
-summarize_table(kreutz2023.uc, req.types = c("CC", "T1", "T5", "AF"))
-summarize_table(kreutz2023.clint)
-summarize_table(smeltz2023.red, req.types = c("NoPlasma.Blank","CC","T0","PBS","Plasma",
-"Stability","Plasma.Blank"))
-}
+
+library(invitroTKstats)
+# Smeltz et al. (2020) data:
+##  Clint ##
+summarize_table(
+  input.table = invitroTKstats::clint_L2,
+  req.types = c("Blank", "Cvst")
+  )
+## Fup RED ##
+summarize_table(
+  input.table = invitroTKstats::fup_red_L2,
+  req.types=  c("Plasma", "PBS", "Plasma.Blank", "NoPlasma.Blank")
+  )
+## Fup UC ##
+summarize_table(
+  input.table = invitroTKstats::fup_uc_L2,
+  req.types = c("CC", "T1", "T5", "AF")
+  )
+# Honda et al. () data:
+## Caco2 ##
+summarize_table(
+  input.table = invitroTKstats::caco2_L2,
+  req.types=c("Blank","D0","D2","R2")
+  )
 
 }
 \author{

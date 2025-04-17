@@ -46,6 +46,12 @@ data formatted with the \code{\link{format_fup_uc}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for plotting.
 }
+\examples{
+## Load example level-2 data 
+level2 <- invitroTKstats::fup_uc_L2
+plot_fup_uc(level2, dtxsid = "DTXSID0059829")
+
+}
 \author{
 John Wambaugh
 }

@@ -77,8 +77,10 @@
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR.
-#' level3 <- calc_fup_uc_point(FILENAME="KreutzPFAS", 
-#'                             INPUT.DIR = "invitroTKstats/vignettes")
+#' ## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
+#' level3 <- calc_fup_uc_point(# e.g. replace with "Examples" from "Examples-fup-UC-Level2.tsv" 
+#'                             FILENAME="<level-2 FILENAME prefix>", 
+#'                             INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #'
 #' @references
@@ -114,7 +116,7 @@ calc_fup_uc_point <- function(
   
   fup.uc.cols <- c(L1.common.cols,
                    test.conc.col = "Test.Compound.Conc",
-                   uc.assay.conc.col = "UC.Assay.T1.Conc"
+                   test.nominal.conc.col = "Test.Nominal.Conc"
   )
   list2env(as.list(fup.uc.cols), envir = environment())
   cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)

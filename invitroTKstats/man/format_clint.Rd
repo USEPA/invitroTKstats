@@ -29,8 +29,8 @@ format_clint(
   istd.conc.col = "ISTD.Conc",
   test.conc = NULL,
   test.conc.col = "Test.Compound.Conc",
-  clint.assay.conc = NULL,
-  clint.assay.conc.col = "Clint.Assay.Conc",
+  test.nominal.conc = NULL,
+  test.nominal.conc.col = "Test.Target.Conc",
   area.col = "Area",
   biological.replicates = NULL,
   biological.replicates.col = "Biological.Replicates",
@@ -156,14 +156,14 @@ information. (Defaults to "Test.Compound.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{test.conc}.)}
 
-\item{clint.assay.conc}{(Numeric) The initial test chemical concentration for 
-the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
-use only if the same initial concentration was used for all tested compounds.)}
+\item{test.nominal.conc}{(Numeric) The nominal concentration added to the well at time 0. 
+(Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if all tested compounds used the same concentration at time 0.)}
 
-\item{clint.assay.conc.col}{(Character) Column name containing \code{clint.assay.conc} 
-information. (Defaults to "Clint.Assay.Conc".) (Note: \code{data.in} does not
+\item{test.nominal.conc.col}{(Character) Column name containing \code{test.nominal.conc} 
+information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{clint.assay.conc}.)}
+specified in \code{test.nominal.conc}.)}
 
 \item{area.col}{(Character) Column name of \code{data.in} containing the target analyte (that
 is, the test compound) MS peak area. (Defaults to "Area".)}
@@ -306,7 +306,7 @@ level1 <- format_clint(data.in = level0,
                        istd.col= "ISTD.Peak.Area",
                        area.col = "Peak.Area",
                        density = 0.5,
-                       clint.assay.conc = 1,
+                       test.nominal.conc = 1,
                        biological.replicates = 1,
                        test.conc.col="Compound.Conc",
                        time.col = "Time",

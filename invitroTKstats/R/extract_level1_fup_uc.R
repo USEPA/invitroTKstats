@@ -75,10 +75,6 @@
 #'
 #' @author John Wambaugh
 #'
-#' @examples
-#' library(invitroTKstats)
-#' level0 <-
-#'
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #'

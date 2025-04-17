@@ -25,10 +25,10 @@ A level 1 data.frame with 229 rows and 24 variables: \describe{
 \item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
 \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
 \item{\code{Time}}{Time point the sample was measured - in hours (h)}
-\item{\code{Test.Compound.Conc}}{Expected concentration of analytic standard (for calibration curve) (uM)}
-\item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
+\item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
+\item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to well (uM)}
 \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
-\item{\code{Biological.Replicates}}{Identifier for parallel measurements of multiple samples of a compound}
+\item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 }
 }

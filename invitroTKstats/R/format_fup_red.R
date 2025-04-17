@@ -106,9 +106,9 @@
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{istd.conc}.)
 #' 
-#' @param test.nominal.conc (Numeric) The test chemical concentration 
-#' at time zero. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
-#' if all tested compounds used the same concentration at time zero.)
+#' @param test.nominal.conc (Numeric) The nominal concentration added to the RED assay 
+#' at time 0. (Defaults to \code{NULL}.) (Note: Single entry only, use only 
+#' if all tested compounds used the same concentration at time 0.)
 #'
 #' @param test.nominal.conc.col (Character) Column name containing \code{test.nominal.conc} 
 #' information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
@@ -125,7 +125,7 @@
 #' specified in \code{plasma.percent}.)
 #'
 #' @param test.conc (Numeric) The standard test chemical concentration for 
-#' the intrinsic clearance assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+#' the fup RED assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
 #' use only if the same standard concentration was used for all tested compounds.)
 #' 
 #' @param test.conc.col (Character) Column name containing \code{test.conc} 
@@ -244,10 +244,11 @@
 #'                          sample.col ="Sample",
 #'                          date.col="Date",
 #'                          compound.col="Compound",
-#'                          lab.compound.col="Compound",
+#'                          lab.compound.col="Lab.Compound.ID",
 #'                          type.col="Sample.Type",
 #'                          dilution.col="Dilution.Factor",
-#'                          biological.replicates.col ="Replicate",
+#'                          technical.replicates.col ="Replicate",
+#'                          biological.replicates = 1,
 #'                          cal=1,
 #'                          area.col = "Peak.Area",
 #'                          istd.conc = 10/1000,

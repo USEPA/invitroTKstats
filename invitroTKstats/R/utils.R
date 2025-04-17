@@ -71,7 +71,7 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
   # What concentrations were tested (1 and 10 uM typical):
   #
   # Establish a vector of unique nominal test concentrations:
-  Test.conc <- sort(unique(unique(this.cvt[,"Clint.Assay.Conc"])))
+  Test.conc <- sort(unique(unique(this.cvt[,"Test.Nominal.Conc"])))
   Num.conc <- length(Test.conc)
   #
   # How many separate mass-spec calibrations were made:
@@ -94,7 +94,7 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
   for (this.conc in Test.conc)
   {
     obs.conc[this.cvt[
-      !is.na(this.cvt[,"Time"]), "Clint.Assay.Conc"] == this.conc] <-
+      !is.na(this.cvt[,"Time"]), "Test.Nominal.Conc"] == this.conc] <-
       which(Test.conc == this.conc)
   }
   # Match observations to correct calibration curve:
@@ -144,7 +144,7 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
     for (this.conc in Test.conc)
     {
       abio.obs.conc[this.abio[
-        !is.na(this.abio[,"Time"]), "Clint.Assay.Conc"] == this.conc] <-
+        !is.na(this.abio[,"Time"]), "Test.Nominal.Conc"] == this.conc] <-
         which(Test.conc == this.conc)
     }
     abio.obs.cal <- rep(NA, Num.abio.obs)
@@ -522,7 +522,7 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
       all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
       Test.Nominal.Conc[i] <- mean(T1.data[
         T1.data[,"Calibration"]==all.cal[i],
-        "UC.Assay.T1.Conc"],na.rm=T)
+        "Test.Nominal.Conc"],na.rm=T)
     }
     # There is one initial concentration per series, even if there are
     # multiple observations of that series:
@@ -566,7 +566,7 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
 
 #' Set Initial Values for Fup UC Bayesian Model
 #' 
-#' @param mydata (List) Output of \code{build_mydata_clint}.
+#' @param mydata (List) Output of \code{build_mydata_fup_uc}.
 #' @param chain (Numeric) The number of Markov Chains to use.
 #' 
 #' @importFrom stats lm

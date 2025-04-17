@@ -67,10 +67,14 @@
 #'   dQdt_B2A \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
 #'   Papp_B2A \tab Apparent membrane permeability \tab 10^-6 cm/s\cr
 #'   Refflux \tab Efflux ratio \tab unitless\cr
-#'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
-#'   Frec_B2B.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
-#'   Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
-#'   Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
+#'   Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr
+#'   Frec_A2B.mean \tab Mean of the fraction recovered for the apical-basal direction \tab unitless \cr
+#'   Frec_B2A.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr 
+#'   Frec_B2A.mean \tab Mean of the fraction recovered for the basal-apical direction \tab unitless \cr
+#'   Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
+#'   Recovery_Class_A2B.mean \tab Recovery classification for the mean apical-to-basal permeability("Low Recovery" if Frec_A2B.mean < 0.4 or "High Recovery" if Frec_A2B.mean > 2.0) \tab qualitative category \cr
+#'   Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
+#'   Recovery_Class_B2A.mean \tab Recovery classification for the mean basal-to-apical permeability("Low Recovery" if Frec_B2A.mean < 0.4 or "High Recovery" if Frec_B2A.mean > 2.0) \tab qualitative category \cr
 #' }
 #'
 #' @author John Wambaugh
@@ -79,11 +83,10 @@
 #' ## Load example level-2 data
 #' level2 <- invitroTKstats::caco2_L2
 #' 
-#' \dontrun{
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table
 #' level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
-#' }
+#' 
 #' 
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
@@ -91,8 +94,10 @@
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR.
-#' level3 <- calc_caco2_point(FILENAME="Examples", 
-#'                            INPUT.DIR = "invitroTKstats/vignettes")
+#' ## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
+#' level3 <- calc_caco2_point(# e.g. replace with "Examples" from "Examples-Caco-2-Level2.tsv" 
+#'                            FILENAME="<level-2 FILENAME prefix>", 
+#'                            INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #'
 #' @references
@@ -135,8 +140,8 @@ calc_caco2_point <- function(
   caco2.cols <- c(L1.common.cols, 
                   time.col = "Time",
                   direction.col="Direction",
-                  compound.conc.col="Nominal.Conc",
-                  nominal.test.conc.col="Test.Target.Conc",
+                  test.conc.col="Test.Compound.Conc",
+                  test.nominal.conc.col="Test.Nominal.Conc",
                   membrane.area.col="Membrane.Area",
                   receiver.vol.col="Vol.Receiver",
                   donor.vol.col="Vol.Donor"
@@ -172,8 +177,11 @@ calc_caco2_point <- function(
     this.row <- cbind(this.subset[1,
                                   c(compound.col, dtxsid.col, time.col, membrane.area.col)],
                       data.frame(Calibration="All Data",
-                                 C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN, Frec_A2B=NaN,
-                                 C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Frec_B2A=NaN, Refflux=NaN))
+                                 C0_A2B = NaN, dQdt_A2B=NaN, Papp_A2B=NaN, Frec_A2B.vec=NaN, Frec_A2B.mean = NaN,
+                                 Recovery_Class_A2B.vec = NA, Recovery_Class_A2B.mean = NA,
+                                 C0_B2A = NaN, dQdt_B2A=NaN, Papp_B2A=NaN, Frec_B2A.vec=NaN, Frec_B2A.mean = NaN,
+                                 Recovery_Class_B2A.vec = NA, Recovery_Class_B2A.mean = NA,
+                                 Refflux=NaN))
     for (this.direction in c("AtoB","BtoA"))
     {
       this.blank <- subset(this.subset, Sample.Type=="Blank" &
@@ -237,14 +245,32 @@ calc_caco2_point <- function(
         if (length(unique(this.donor$Dilution.Factor))>1 |
             length(unique(this.dosing$Dilution.Factor))>1 |
             length(unique(this.receiver$Dilution.Factor))>1 |
-            length(unique(this.receiver$Vol.Receiver))>1) browser()
-        this.row[paste("Frec",dir.string,sep="_")] <- max(0,
-                                                          (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
-                                                                                                                                      length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
-                                                             (this.receiver$Response-rep(mean(this.blank$Response),
-                                                                                         length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
-                                                                                                                              (this.dosing$Response-rep(mean(this.blank$Response),
-                                                                                                                                                        length(this.dosing$Response)))))
+            length(unique(this.receiver$Vol.Receiver))>1){
+          
+          stop("calc_caco2_point - There is more than one `Dilution.Factor` for 'D0', 'D2', or 'R2' samples, or more than one `Vol.Receiver` for 'R2' samples for `",this.chem,"` in direction ",this.direction,".")
+          # browser()
+        }
+        this.Frec.vec <- base::pmax(0,
+                             (this.donor$Vol.Donor*(this.donor$Dilution.Factor)*(this.donor$Response-rep(mean(this.blank$Response),
+                                                                                                         length(this.donor$Response)))+this.receiver$Vol.Receiver*(this.receiver$Dilution.Factor)*
+                                (this.receiver$Response-rep(mean(this.blank$Response),
+                                                            length(this.receiver$Response))))/(this.dosing$Vol.Donor*(this.dosing$Dilution.Factor)*
+                                                                                                 (this.dosing$Response-rep(mean(this.blank$Response),
+                                                                                                                           length(this.dosing$Response)))))
+        this.mean.Frec.vec <- mean(this.Frec.vec)
+        this.row[paste0("Frec_",dir.string,".vec")] <- paste(this.Frec.vec, collapse = "|")
+        this.row[paste0("Frec_",dir.string,".mean")] <- as.numeric(this.mean.Frec.vec)
+        
+        #Calculate Recovery Class
+        this.Recovery.vec = rep(NA, length(this.Frec.vec))
+        for (i in 1:length(this.Frec.vec)){
+          if (this.Frec.vec[i] < 0.4) this.Recovery.vec[i] <- "Low Recovery"
+          else if (this.Frec.vec[i] > 2) this.Recovery.vec[i] <- "High Recovery"
+        }
+        if (any(!is.na(this.Recovery.vec))) this.row[paste0("Recovery_Class_",dir.string,".vec")] <- paste(this.Recovery.vec, collapse = "|")
+        
+        if (this.mean.Frec.vec < 0.4) this.row[paste0("Recovery_Class_",dir.string,".mean")] <- "Low Recovery"
+        else if (this.mean.Frec.vec > 2) this.row[paste0("Recovery_Class_",dir.string,".mean")] <- "High Recovery"
       }
     }
     
@@ -273,20 +299,16 @@ calc_caco2_point <- function(
   out.table[,"Papp_A2B"] <- as.numeric(out.table[,"Papp_A2B"])
   out.table[,"Papp_B2A"] <- as.numeric(out.table[,"Papp_B2A"])
   out.table[,"Refflux"] <- as.numeric(out.table[,"Refflux"])
+  out.table[,"Frec_A2B.mean"] <- as.numeric(out.table[,"Frec_A2B.mean"])
+  out.table[,"Frec_B2A.mean"] <- as.numeric(out.table[,"Frec_B2A.mean"])
+  
+  out.table[,"Frec_A2B.vec"] <- as.character(out.table[,"Frec_A2B.vec"])
+  out.table[,"Frec_B2A.vec"] <- as.character(out.table[,"Frec_B2A.vec"])
+  out.table[,"Recovery_Class_A2B.vec"] <- as.character(out.table[,"Recovery_Class_A2B.vec"])
+  out.table[,"Recovery_Class_B2A.vec"] <- as.character(out.table[,"Recovery_Class_B2A.vec"])
+  out.table[,"Recovery_Class_A2B.mean"] <- as.character(out.table[,"Recovery_Class_A2B.mean"])
+  out.table[,"Recovery_Class_B2A.mean"] <- as.character(out.table[,"Recovery_Class_B2A.mean"])
   out.table <- as.data.frame(out.table)
-  
-  # Create new columns to store recovery classification separately
-  out.table$Recovery_Class_A2B=NA
-  out.table$Recovery_Class_B2A=NA
-  
-  # Assign recovery classifications without changing Papp values
-  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec < 0.4] <- "Low Recovery"
-  out.table$Recovery_Class_A2B[out.table$Frec_A2B.vec > 2.0] <- "High Recovery"
-  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec < 0.4] <- "Low Recovery"
-  out.table$Recovery_Class_B2A[out.table$Frec_B2A.vec > 2.0] <- "High Recovery"
-  
-  # Calculate efflux ratio:
-  out.table[,"Refflux"] <- signif(as.numeric(out.table[,"Refflux"]),3)
   
   if (output.res) {
     # Determine the path for output
@@ -309,6 +331,19 @@ calc_caco2_point <- function(
       rounded.out.table[,"Papp_A2B"] <- signif(rounded.out.table[,"Papp_A2B"], sig.figs)
       rounded.out.table[,"Papp_B2A"] <- signif(rounded.out.table[,"Papp_B2A"], sig.figs)
       rounded.out.table[,"Refflux"] <- signif(rounded.out.table[,"Refflux"], sig.figs)
+      rounded.out.table[,"Frec_A2B.mean"] <- signif(rounded.out.table[,"Frec_A2B.mean"], sig.figs)
+      rounded.out.table[,"Frec_B2A.mean"] <- signif(rounded.out.table[,"Frec_B2A.mean"], sig.figs)
+      # split collapsed numeric vector and round according to sig.figs
+      split_round = function(val){
+        val = val %>% 
+          base::strsplit(split = "\\|") %>% 
+          unlist() %>% 
+          as.numeric() %>% 
+          signif(sig.figs) %>% 
+          paste(collapse = "|")
+      }
+      rounded.out.table[,"Frec_A2B.vec"] <- base::sapply(rounded.out.table[,"Frec_A2B.vec"], split_round, USE.NAMES = F)
+      rounded.out.table[,"Frec_B2A.vec"] <- base::sapply(rounded.out.table[,"Frec_B2A.vec"], split_round, USE.NAMES = F)
       cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
     }
     
