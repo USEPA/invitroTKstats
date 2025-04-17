@@ -69,19 +69,19 @@ library(flextable)
 
 # Raw Data File Exploration
 
-The first thing we need to do for the pipelining process is to construct a data guide itemizing which data files and sheets therein contain relevant MS data, as well as other relevant meta-data information. Before creating a data guide with `invitroTKstats` functions, let us first consider the raw data files and their structure in the relevant data directory, called "KreutzPFAS".
+The first thing we need to do for the pipelining process is to construct a data guide itemizing which data files and sheets therein contain relevant MS data, as well as other relevant meta-data information. Before creating a data guide with `invitroTKstats` functions, let us first consider the raw data files and their structure in the relevant data directory, called "Kreutz-Clint".
 
 *NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
-Since these datasets are not stored as part of the R package it is necessary to clone the repository containing the "KreutzPFAS" sub-directory. The "KreutzPFAS" sub-directory contains all of the raw data files, original data processing scripts, and resulting datasets after processing and parameter estimation. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "<path_to_directory>" with the file path to the local repository clone and the "KreutzPFAS" sub-directory.
+Since these datasets are not stored as part of the R package it is necessary to clone the repository containing the "Kreutz-Clint" sub-directory. The "Kreutz-Clint" sub-directory contains all of the raw data files, original data processing scripts, and resulting datasets after processing and parameter estimation. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "<path_to_directory>" with the file path to the local repository clone and the "Kreutz-Clint" sub-directory.
 
 ```{r raw_data_dir,echo=FALSE}
 # this code chunk is hidden since it may not be applicable for the R pckg user
-raw_data_dir <- "~/Git/invitrotkstats/working/KreutzPFAS/"
+raw_data_dir <- here::here("data-raw/Kreutz-Clint")
 ```
 ```{r raw_data_dir_show,eval=FALSE}
-# raw data directory - put together the path to where the sub-directory for KreutzPFAS is in your local
-raw_data_dir <- "<path_to_directory>/KreutzPFAS/"
+# raw data directory - put together the path to where the sub-directory for Kreutz-Clint is in your local
+raw_data_dir <- "<path_to_directory>/Kreutz-Clint/"
 ```
 
 More than one experiment (that is, data collection run) is typically necessary to obtain all the relevant data for an analysis. Thus, there is likely to be more than one Excel file containing raw data that needs to be processed.

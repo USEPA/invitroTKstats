@@ -1412,7 +1412,7 @@
 #' Common Columns in Level-1
 #' 
 #' Common column names across the various *in vitro* assays used for collecting
-#' HTTK relevant physiological parameters.
+#' in vitro toxicokinetic parameters.
 #' 
 #' @name L1.common.col
 #' @aliases L1.common.col
