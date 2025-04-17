@@ -32,6 +32,11 @@
 #'
 #' @author John Wambaugh
 #' 
+#' @examples
+#' ## Load example level-2 data 
+#' level2 <- invitroTKstats::fup_uc_L2
+#' plot_fup_uc(level2, dtxsid = "DTXSID0059829")
+#' 
 #' @import ggplot2
 #' 
 #' @export plot_fup_uc
@@ -50,12 +55,12 @@ plot_fup_uc <- function(level2,dtxsid, compare = "type",good.col="Verified", col
     type.col <- "Sample.Type"
     dilution.col <- "Dilution.Factor"
     cal.col <- "Calibration"
-    std.conc.col <- "Standard.Conc"
-    uc.assay.conc.col <- "UC.Assay.T1.Conc"
+    std.conc.col <- "Test.Compound.Conc"
+    uc.assay.conc.col <- "Test.Nominal.Conc"
     istd.name.col <- "ISTD.Name"
     istd.conc.col <- "ISTD.Conc"
     istd.col <- "ISTD.Area"
-    series.col <- "Series"
+    series.col <- "Biological.Replicates"
     area.col <- "Area"
     analysis.method.col <- "Analysis.Method"
     analysis.instrument.col <- "Analysis.Instrument"

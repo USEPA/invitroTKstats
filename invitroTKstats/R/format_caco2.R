@@ -259,9 +259,10 @@
 #'                        istd.conc = 1, 
 #'                        test.nominal.conc = 10, 
 #'                        biological.replicates = 1, 
+#'                        technical.replicates = 1,
 #'                        analysis.method.col = "Analysis.Params",
 #'                        analysis.instrument = "Agilent.GCMS",
-#'                        analysis.parameters = "TBD",
+#'                        analysis.parameters = "Unknown",
 #'                        note.col = NULL,
 #'                        output.res = FALSE
 #' )

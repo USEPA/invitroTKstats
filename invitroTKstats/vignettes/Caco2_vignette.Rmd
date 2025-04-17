@@ -43,9 +43,9 @@ First, we load in the example dataset from `invitroTKstats`.
 data("Caco2-example")
 ```
 
-Three datasets are loaded in: `caco2_L0`, `caco2_L1`, and `caco2_L2`. These datasets are Caco-2 data at Level 0, 1, and 2 respectively. For the purpose of this vignette, we'll start with `caco2_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
+Five datasets are loaded in: `caco2_cheminfo`, `caco2_L0`, `caco2_L1`, `caco2_L2`, and `caco2_L3`. The first, `caco2_cheminfo`, contains chemical information necessary for identification mapping; it is used to create Level 0 data. The latter datasets contain Caco-2 data at Level 0, 1, 2, and 3 respectively. For the purpose of this vignette, we'll start with `caco2_L0`, the Level 0 data, to demonstrate the complete pipelining process. 
 
-`caco2_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see "Creating dataguide from raw data vignette". 
+`caco2_L0` is the output from the `merge_level0` function which compiles raw lab data from specified Excel files into a singular data frame. The data frame contains exactly one row per sample with information obtained from the mass spectrometer. For more details on curating raw lab data to a singular Level 0 data frame, see the "Data Guide Creation and Level-0 Data Compilation" vignette. 
 
 The following table displays the first three rows of `caco2_L0`, our Level 0 data.
 
@@ -74,9 +74,11 @@ If the Level 0 data already contains the required column, then the existing colu
 
 If the Level 0 data does not already contain the required column, then the entire column can be populated with a single value. For example, `caco2_L0` does not contain a column specifying biological replicates. Therefore, we populate the required column with `biological.replicates = 1`. In general, to specify a single value for an entire column, the user must use the parameter without the `.col` suffix.
 
-Users should be mindful if they choose to specify a single value for all of their samples and verify that that is the action they wish to take. 
+Users should be mindful if they choose to specify a single value for all of their samples; they should verify this action is one they wish to take. 
 
-Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `compound.col`, `area.col`, `istd.col`, `type.col`, `direction.col`, `receiver.vol.col`, `donor.vol.col`, and `note.col`.
+Some columns must be present in the Level 0 data while others can be filled with a single value. At minimum, the following columns must be present in the Level 0 data and specification with a single entry is not permitted: `sample.col`, `lab.compound.col`, `dtxsid.col`, `compound.col`, `area.col`, `istd.col`, `type.col`, `direction.col`, `receiver.vol.col`, and `donor.vol.col`.
+
+If there is no additional `note.col` in the Level 0 data, users should use `note.col = NULL` to fill the column with "Note". 
 
 The rest of the following columns may either be specified from the Level 0 data or filled with a single value: `date.col` or `date`, `membrane.area.col` or `membrane.area`, `test.conc.col` or `test.conc`, `cal.col` or `cal`, `dilution.col` or `dilution`, `time.col` or `time`, `istd.name.col` or `istd.name`, `istd.conc.col` or `istd.conc`, `test.nominal.conc.col` or `test.nominal.conc`, `biological.replicates.col` or `biological.replicates`, `technical.replicates.col` or `technical.replicates`, `analysis.method.col` or `analysis.method`, `analysis.instrument.col` or `analysis.instrument`, `analysis.parameters.col` or `analysis.parameters`, `level0.file.col` or `level0.file`, and `level0.sheet.col` or `level0.sheet`.
 
@@ -113,15 +115,15 @@ req_cols[, "Default"] <- defaults
 req_cols <- req_cols %>% 
   mutate("Required in L0?" = case_when(
     Argument %in% c("sample.col", "lab.compound.col", "dtxsid.col", "compound.col", "area.col", "istd.col", 
-  "type.col", "direction.col", "receiver.vol.col", "donor.vol.col", "note.col") ~ "Y",
+  "type.col", "direction.col", "receiver.vol.col", "donor.vol.col") ~ "Y",
   Argument %in% c("FILENAME", "data.in", "output.res", "save.bad.types", "sig.figs", "INPUT.DIR", "OUTPUT.DIR") ~ "N/A",
   .default = "N"
   ))
 
 # Corresponding single-entry Argument 
 req_cols <- req_cols %>% 
-  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[[3]]]] == "N", 
-                                                    gsub(".col" ,"", Argument), NA))
+  mutate("Corresp. single-entry Argument" = ifelse(.data[[vars[[3]]]] == "N" & .data[[vars[[1]]]] != "note.col", 
+                                                    gsub(".col" ,"", Argument), NA)) 
 
 # Brief description 
 description <- c("Output and input filename",
@@ -155,7 +157,7 @@ description <- c("Output and input filename",
                  "Raw data sheet name",
                  "Export results (TSV)?",
                  "Export bad data (TSV)?",
-                 "Number of sig figs",
+                 "Number of significant figures",
                  "Input directory of Level 0 file",
                  "Export directory to save Level 1 files")
 req_cols[, "Descr."] <- description
@@ -212,7 +214,7 @@ all(caco2_L1_curated[caco2_L1_curated$ISTD.Area == 0, "Sample.Type"] == "Blank")
 
 Therefore, the NaNs are replaced with 0 so that the "Blank" sample types are kept in the dataset and our estimates are accurate. Users can verify that all "Blank" samples with `ISTD.Area` = 0 have their `Response` values reassigned to 0 with the following check.  
 
-```{r, eval = F}
+```{r}
 # Verify Blank samples with ISTD.Area = 0 also have Response = 0
 resp <- caco2_L1_curated %>% 
   dplyr::filter(Sample.Type == "Blank" & ISTD.Area == 0) %>% 
@@ -220,11 +222,6 @@ resp <- caco2_L1_curated %>%
   unlist()
 
 all(resp == 0)
-```
-
-```{r}
-caco2_L1_curated <- caco2_L1_curated %>% 
-  mutate(Response = ifelse(is.nan(Response) & Sample.Type == "Blank", 0, Response))
 ```
 
 Now, all of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types
@@ -261,7 +258,7 @@ head(n = 3) %>%
 
 `sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for P~app~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
 
-To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates. This level of processing allows the user to receive feedback from the wet-lab scientists, exclude erroneous or unreliable samples, and produce new P~app~ estimates. There is an open channel of communication between the user and the wet-lab scientists. 
+To determine whether a sample should be included, the user should consult the wet-lab scientists from where their data originates or a chemist who may be able to provide reliable rationale for samples that should not be verified. This level of processing allows the user to receive feedback, exclude erroneous or unreliable samples, and produce new P~app~ estimates. Thus, there is always an open channel of communication between the user and the wet-lab scientists or chemists. 
 
 We will use the already processed Level 2 data frame, `caco2_L2`, to regenerate our exclusion data. Note, all of our samples are verified but we are explaining how to create an exclusion list for learning purposes. In general, the user would not have access to the exclusion information *a priori*. 
 
@@ -330,7 +327,7 @@ Mathematically, P~app~ is the amount of compound transported per unit time and i
 
 First, we define the rate of permeation as the amount of compound passing through the monolayer per unit time. It is expressed as 
 $$\frac{dQ}{dt} = \frac{c_{\textrm{receiver}}V_{\textrm{receiver}}}{\Delta t}$$ where $c_{\textrm{receiver}}$ is the concentration of the test compound in the receiver compartment, $V_{\textrm{receiver}}$ is the volume of the receiver compartment, and $\Delta t$ is the total elapsed time. This rate is a type of flux and therefore has units of $\mu \textrm{mol}/s$. The dimensional analysis is described below. 
-$$\left[\frac{dQ}{dt}\right] = \frac{[c_{\textrm{receiver}}][V_{\textrm{receiver}}]}{[\Delta t]} = \frac{[\mu \textrm{mol/L}][L]}{[s]} = \frac{[\mu \textrm{mol}]}{[s]} $$
+$$\left[\frac{dQ}{dt}\right] = \frac{[c_{\textrm{receiver}}][V_{\textrm{receiver}}]}{[\Delta t]} = \frac{[\mu \textrm{mol/L}][\textrm{L]}}{[s]} = \frac{[\mu \textrm{mol}]}{[s]} $$
 
 Next, to estimate $c_\textrm{receiver}$, we first multiply each R2 response with the corresponding R2 dilution factor and estimate the mean. To account for background noise, we follow a similar procedure with the blank response and dilution factor. We then subtract the two such that $$c_\textrm{receiver} = \textrm{mean}(\textrm{dilution factor}_{R2} * \textrm{Response}_{R2}) - \textrm{mean}(\textrm{dilution factor}_{Blank} * \textrm{Response}_{Blank})$$ 
 
@@ -365,7 +362,7 @@ caco2_L3_curated %>%
 
 In addition to returning an estimate for `Papp` and its components (`C0`, `dQdt`) in both directions, our Level 3 data contains estimates for the efflux ratio (`Refflux`), the fraction recovered (`Frec`) in both directions, and the qualitative category of each fraction recovered value (`Recovery_Class`).  
 
-The efflux ratio is the ratio between the apparent membrane permeabilities and is expressed as $$R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$$. 
+The efflux ratio is the ratio between the apparent membrane permeabilities and is expressed as $$R_{\textrm{efflux}} = \frac{P_{app}^{B2A}}{P_{app}^{A2B}}$$
 
 The fraction recovered is the fraction of the initial donor amount recovered in the receiver compartment. It assesses the accuracy of the analytical chemistry method used to determine concentration values. It is expressed as $$ \frac{V_{D2}*\textrm{DF}_{D2}*(Responses_{D2} - \overline{Response}_{Blank}) + V_{R2}*\textrm{DF}_{R2}*(Responses_{R2} - \overline{Response}_{Blank})}{V_{D0}*\textrm{DF}_{D0}*(Responses_{D0} - \overline{Response}_{Blank})} $$ where $V$ is the corresponding volume, $\textrm{DF}$ is the corresponding dilution factor, $Responses$ are the corresponding responses, and $\overline{Response}_{Blank}$ is the mean blank response. 
 

@@ -60,17 +60,18 @@
 #' 
 #' ## scenario 1: 
 #' ## input level-2 data from the R session and do not export the result table
-#' \dontrun{
 #' level3 <- calc_clint_point(data.in = level2, output.res = FALSE)
-#' }
+#' 
 #' ## scenario 2: 
 #' ## import level-2 data from a 'tsv' file and export the result table
 #' \dontrun{
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
 #' ## the result table will be saved to the directory specified in INPUT.DIR.
-#' level3 <- calc_clint_point(FILENAME="KreutzPFAS", 
-#'                            INPUT.DIR = "invitroTKstats/vignettes")
+#' ## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
+#' level3 <- calc_clint_point(# e.g. replace with "Examples" from "Examples-Clint-Level2.tsv"
+#'                            FILENAME="<level-2 FILENAME prefix>",
+#'                            INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #'
 #' @references

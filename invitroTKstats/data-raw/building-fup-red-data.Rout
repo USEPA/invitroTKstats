@@ -1,7 +1,7 @@
 
-R version 4.2.2 (2022-10-31 ucrt) -- "Innocent and Trusting"
-Copyright (C) 2022 The R Foundation for Statistical Computing
-Platform: x86_64-w64-mingw32/x64 (64-bit)
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -27,9 +27,25 @@ Type 'q()' to quit R.
 > 
 > ## load necessary package
 > library(readxl)
+> # library(invitroTKstats) ## use when installed package is up-to-date
+> devtools::load_all(here::here()) ## use when installed package is not up-to-date, but branch is up-to-date with 'dev' branch
+ℹ Loading invitroTKstats
+> library(here)
+here() starts at C:/Users/lknupp/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Git/invitrotkstats/invitroTKstats
 Warning message:
-package 'readxl' was built under R version 4.2.3 
-> library(invitroTKstats)
+package 'here' was built under R version 4.4.3 
+> library(dplyr)
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
 > 
 > ## Picked three compounds from the data that we know all samples are verified (with "Y").
 > red.list <- c("DTXSID6062599","DTXSID5030030","DTXSID8031865")
@@ -49,7 +65,10 @@ package 'readxl' was built under R version 4.2.3
 > ## The Excel file is not tracked with the package. When re-creating the data,
 > ## retrieve the file from the 'invitrotkstats' repository under directory: "working/SmeltzPFAS"
 > ## and save it to the path: "data-raw/Smeltz-RED". Create the folder if need to. 
-> chem.ids <- read_excel("~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx", sheet=1, skip=1)[1:29,1:2]
+> chem.ids <- readxl::read_xlsx(
++   path = here::here("data-raw/Smeltz-RED/PFAS LC-MS RED Summary 20220709.xlsx"),
++   sheet = "Summary",skip = 1,n_max = 29,col_names = TRUE
++ )
 New names:
 • `Fu A` -> `Fu A...30`
 • `Fu B` -> `Fu B...31`
@@ -62,30 +81,50 @@ New names:
 • `Avg` -> `Avg...63`
 • `Std Dev` -> `Std Dev...64`
 > chem.ids <- as.data.frame(chem.ids)
-> chem.ids <- subset(chem.ids, !duplicated(chem.ids[,2]))
+> # Duplicated DTXSIDs have the same Lab Compound ID, therefore can remove duplicates
+> chem.ids <- subset(chem.ids, !duplicated(chem.ids[,"DTXSID"]))
+> 
 > ## In this table, the chemical names and their lab IDs are in the same column 
 > ## Extract them into two separate columns
 > chem.ids$Compound <- unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[1]])) 
 > chem.ids$Chem.Lab.ID <- gsub(")", "", unlist(lapply(strsplit(chem.ids[,2]," \\("),function(x) x[[2]])))
+> 
+> ## Save the fup red chemical ID mapping information for the package - remove columns not needed
+> fup_red_cheminfo <- dplyr::select(chem.ids,-c(3:64))
+> 
+> # check that the number of rows in the chem information matches the number of unique DTXSID's
+> length(unique(fup_red_cheminfo$DTXSID))==nrow(fup_red_cheminfo)
+[1] TRUE
+> 
+> 
+> # create chem ID mapping table for level-0 compilation - we can overwrite previous `chem.ids`
+> chem.ids <- create_chem_table(input.table = fup_red_cheminfo,
++                               dtxsid.col = "DTXSID",
++                               compound.col = "Compound",
++                               lab.compound.col = "Chem.Lab.ID")
+26 chemicals.
 > 
 > ## Read in level-0 file
 > ## Prepare a data guide for merge_level0 
 > this.file <- "PFAS LC-MS RED Summary 20220709.xlsx"
 > 
 > data.guide <- create_catalog(
-+   file = rep(this.file, 3),
-+   sheet = rep("RED1 Raw", 3),
-+   skip.rows = c(278,550,822),
-+   date = rep("022322",3),
++   file = this.file,
++   sheet = "RED1 Raw",
++   skip.rows = c(279,551,823),
++   date = "022322",
 +   compound = c("PFPeA", "PFBS", "PFOA"),
 +   istd = c("M5PFPeA", "M3PFBS", "M8PFOA"),
-+   sample = rep("Name",3),
-+   type = rep("Type", 3),
-+   peak = rep("Area", 3),
-+   istd.peak = rep("IS Area", 3),
-+   conc = rep("Std. Conc", 3),
-+   analysis.param = rep("RT",3),
-+   num.rows = rep(268, 3),
++   col.names.loc = c(279, 551, 823),
++   num.rows = 268,
++   
++   # column names 
++   sample = "Name",
++   type = "Type",
++   peak = "Area",
++   istd.peak = "IS Area",
++   conc = "Std. Conc",
++   analysis.param = "RT",
 +   ## Need this sample text column to create new columns later
 +   additional.info = list(SampleText.ColName = rep("Sample Text",3))
 + )
@@ -107,9 +146,11 @@ Your data catalog is ready for merge_level0.
 +              additional.colnames = "Sample Text",
 +              additional.colname.cols = "SampleText.ColName",
 +              chem.ids = chem.ids,
++              chem.lab.id.col = "Lab.Compound.Name",
++              chem.name.col = "Compound.Name",
 +              output.res = FALSE,
 +              catalog.out = FALSE,
-+              INPUT.DIR = "~/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED/")
++              INPUT.DIR = here::here("data-raw/Smeltz-RED/"))
 New names:
 • `` -> `...1`
 PFAS LC-MS RED Summary 20220709.xlsx, RED1 Raw, PFPeA
@@ -142,9 +183,9 @@ PFAS LC-MS RED Summary 20220709.xlsx, RED1 Raw, PFOA
 > fup_red_L0[regexpr("-S-",fup_red_L0[,"Sample Text"])!=-1,
 +            "Sample.Type"] <- "PBS"
 > fup_red_L0[regexpr("-EC1-",fup_red_L0[,"Sample Text"])!=-1,
-+            "Sample.Type"] <- "EC1"                   
++            "Sample.Type"] <- "EC_acceptor"                   
 > fup_red_L0[regexpr("-EC2-",fup_red_L0[,"Sample Text"])!=-1,
-+            "Sample.Type"] <- "EC2"
++            "Sample.Type"] <- "EC_donor"
 > fup_red_L0[regexpr("/T1",fup_red_L0[,"Sample Text"])!=-1,
 +            "Sample.Type"] <- "T0"
 > fup_red_L0[regexpr("/T5",fup_red_L0[,"Sample Text"])!=-1,
@@ -180,8 +221,8 @@ PFAS LC-MS RED Summary 20220709.xlsx, RED1 Raw, PFOA
 > ## Information found in lines 177 to 188 in MS-REDdata-Apr2023.Rmd
 > fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "CC" %in% x),"Dilution.Factor"] <- 1
 > fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "PBS" %in% x),"Dilution.Factor"] <- 2
-> fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "EC1" %in% x),"Dilution.Factor"] <- 10
-> fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "EC2" %in% x),"Dilution.Factor"] <- 10
+> fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "EC_acceptor" %in% x),"Dilution.Factor"] <- 10
+> fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "EC_donor" %in% x),"Dilution.Factor"] <- 10
 > fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "Plasma" %in% x),"Dilution.Factor"] <- 20
 > fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "T0" %in% x),"Dilution.Factor"] <- 10
 > fup_red_L0[sapply(fup_red_L0[,"Sample.Type"],function(x) "Stability" %in% x),"Dilution.Factor"] <- 10
@@ -200,6 +241,7 @@ PFAS LC-MS RED Summary 20220709.xlsx, RED1 Raw, PFOA
 +                              type.col="Sample.Type",
 +                              dilution.col="Dilution.Factor",
 +                              technical.replicates.col ="Replicate",
++                              biological.replicates = 1, 
 +                              cal=1,
 +                              area.col = "Peak.Area",
 +                              istd.conc = 10/1000,
@@ -214,30 +256,48 @@ PFAS LC-MS RED Summary 20220709.xlsx, RED1 Raw, PFOA
 +                              note.col=NULL,
 +                              output.res = FALSE
 + )
-492 observations of 3 chemicals based on 3 separate measurements (calibrations).
+636 observations of 3 chemicals based on 3 separate measurements (calibrations).
 Warning message:
 In format_fup_red(data.in = fup_red_L0, sample.col = "Sample", date.col = "Date",  :
   Data with inappropriate sample types were removed.
 > 
 > ## Prepare Level-2 data
 > ## All samples are verified 
-> fup_red_L2 <- fup_red_L1
-> fup_red_L2$Verified <- "Y"
+> fup_red_L2 <- sample_verification(data.in = fup_red_L1, 
++                                   assay = "fup-RED",
++                                   # don't export the output TSV file 
++                                   output.res = FALSE
++                                   )
+> 
+> # fup_red_L2 <- fup_red_L1
+> # fup_red_L2$Verified <- "Y"
 > 
 > ## Compare with smeltz2023.red to make sure the subsets match the original datasets.
 > red.sub <- smeltz2023.red[smeltz2023.red$DTXSID %in% red.list, ]
 > 
 > ## Compare the the dimensions
 > dim(fup_red_L2)
+[1] 636  26
+> dim(red.sub)
 [1] 492  25
+> 
+> ## red.sub erroneously removed EC1 and EC2 sample types because of a error in 
+> ## format_fup_red 
+> 
+> ## Remove EC_donor and EC_acceptor types from fup_red_L2 and compare again 
+> subfup_red_L2 <- fup_red_L2 %>% 
++   dplyr::filter(!Sample.Type %in% c("EC_donor", "EC_acceptor"))
+> 
+> dim(subfup_red_L2)
+[1] 492  26
 > dim(red.sub)
 [1] 492  25
 > 
 > ## Check all the columns with the same names have matching values
-> common_cols <- intersect(colnames(fup_red_L2),colnames(red.sub))
+> common_cols <- intersect(colnames(subfup_red_L2),colnames(red.sub))
 > ## Subset to only common columns
 > subred.sub <- red.sub[,common_cols]
-> subfup_red_L2 <- fup_red_L2[,common_cols]
+> subfup_red_L2 <- subfup_red_L2[,common_cols]
 > ## check to see if the common columns have the same information
 > for(i in common_cols){
 +   test <- all(subred.sub[,i] == subfup_red_L2[,i])
@@ -259,7 +319,8 @@ In format_fup_red(data.in = fup_red_L0, sample.col = "Sample", date.col = "Date"
 > ## The format of the dates are also different. In smeltz2023.red the dates are in 
 > ## "yyyy-mm-dd" format while in my subsets the dates are in the "mmddyy" format.
 > 
-> ## For the Note column, smeltz2023.red uses 'NA' to fill the column while I used "".
+> ## For the Note column, smeltz2023.red uses 'NA' (defaults to logical class type) 
+> ## to fill the column while I used "" (defaults to character class type) 
 > 
 > ## Time column contains missing values so the check with all() will return NA 
 > ## Use other method to check for this column
@@ -278,7 +339,7 @@ TRUE
 > ## Discrepancies found in the comparisons are likely rounding errors. 
 > 
 > ## ISTD.Area
-> diffs <- signif(fup_red_L2[,"ISTD.Area"],5) - signif(red.sub[,"ISTD.Area"],5)
+> diffs <- signif(subfup_red_L2[,"ISTD.Area"],5) - signif(red.sub[,"ISTD.Area"],5)
 > summary(diffs[!is.na(diffs)])
     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 -1.00000  0.00000  0.00000 -0.01016  0.00000  1.00000 
@@ -287,81 +348,88 @@ TRUE
 > ## at least 75% of the values are larger than 15,000, and samples 
 > ## with the largest differences have ISTD areas that are at least ten thousands.
 > ## These samples having differences of 1 is not a concern.
-> summary(fup_red_L2[,"ISTD.Area"])
+> summary(subfup_red_L2[,"ISTD.Area"])
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
       1   15332   22564   21690   27704   39005 
 > ## Samples with differences larger or equal to 1
-> fup_red_L2[,"ISTD.Area"][which(diffs >= 1)]
-[1] 19577 20507 21893 20957 21739 10263 17163 22155 31351
+> subfup_red_L2[,"ISTD.Area"][which(diffs >= 1)]
+[1] 19576.51 20506.50 21892.53 20956.52 21738.53 10262.54 17162.53 22154.52
+[9] 31350.52
 > 
 > ## Area
-> diffs <- signif(fup_red_L2[,"Area"],5) - signif(red.sub[,"Area"],5)
+> diffs <- signif(subfup_red_L2[,"Area"],5) - signif(red.sub[,"Area"],5)
 > summary(diffs[!is.na(diffs)])
     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 -1.00000  0.00000  0.00000  0.05529  0.00000 10.00000 
 > ## The largest difference in Area is 10.
 > ## Examine the differences more closely - samples with the largest differences have
 > ## areas more than a hundred thousand. These samples having differences of 10 is not a concern.
-> summary(fup_red_L2[,"Area"])
+> summary(subfup_red_L2[,"Area"])
      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-      0.0     440.1    1081.2   29712.0    4241.9 1037100.0 
-> fup_red_L2[,"ISTD.Area"][which(diffs >= 10)]
-[1] 24585 14746 23929
+      0.0     440.1    1081.2   29711.9    4241.8 1037074.9 
+> subfup_red_L2[,"ISTD.Area"][which(diffs >= 10)]
+[1] 24585.26 14745.51 23929.43
 > 
 > ## Response
-> diffs <- signif(fup_red_L2[,"Response"],4) - signif(red.sub[,"Response"],4)
+> diffs <- signif(subfup_red_L2[,"Response"],4) - signif(red.sub[,"Response"],4)
 > summary(diffs[!is.na(diffs)])
       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
--1.000e-08  0.000e+00  0.000e+00  2.236e-08  0.000e+00  1.000e-05 
-> ## The largest difference in Response is 1.000e-05.
+-1.000e-05  0.000e+00  0.000e+00  2.051e-07  0.000e+00  1.000e-04 
+> ## The largest difference in Response is 1.000e-04.
 > ## Examine the differences more closely 
 > ## Check the range of the Response values - zeros are from the blank samples with area = 0
-> summary(fup_red_L2[,"Response"])
+> summary(subfup_red_L2[,"Response"])
      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-0.0000000 0.0001865 0.0003974 0.0178948 0.0021340 0.5649000 
+0.0000000 0.0001865 0.0003974 0.0178943 0.0021339 0.5649309 
 > ## Check the smallest non-zero response 
-> min(fup_red_L2[,"Response"][fup_red_L2[,"Response"] > 0])
-[1] 7.372e-06
+> min(subfup_red_L2[,"Response"][subfup_red_L2[,"Response"] > 0])
+[1] 7.372564e-06
 > ## Given this range, it's reasonable to assume any difference smaller than
 > ## 1e-07 is not a concern. 
 > ## Samples with differences larger than 1e-07
 > diffs[which(diffs > 1e-07)]
-[1] 1e-05 1e-06
-> fup_red_L2[,"Response"][which(diffs > 1e-07)]
-[1] 0.097700 0.003429
-> ## There only two samples have differences larger than 1e-07, and the 
+ [1] 1e-07 1e-06 1e-07 1e-05 1e-06 1e-04 1e-07 1e-07 1e-07 1e-07 1e-06
+> subfup_red_L2[,"Response"][which(diffs > 1e-07)]
+ [1] 0.0001596517 0.0022715065 0.0008757554 0.0839951829 0.0051635935
+ [6] 0.3469567604 0.0003799532 0.0007804607 0.0003483509 0.0006353505
+[11] 0.0034285564
+> ## There only eleven samples that have differences larger than 1e-07, and the 
 > ## discrepancies, when compared to the actual values, happen at the last digit of the decimals.
 > 
 > ## Check with calc_fup_red_point to ensure these rounding errors do not cause 
 > ## significant differences in the later calculations included below following the comparisons.
 > 
-> ## Compare the columns with different column names  
-> colnames(fup_red_L2)[which(!(colnames(fup_red_L2) %in% common_cols))]
-[1] "Test.Compound.Conc"   "Technical.Replicates"
+> ## Compare the columns with different column names 
+> ## Remove EC_donor and EC_acceptor types from fup_red_L2 and compare again 
+> subfup_red_L2 <- fup_red_L2 %>% 
++   dplyr::filter(!Sample.Type %in% c("EC_donor", "EC_acceptor"))
+> 
+> colnames(subfup_red_L2)[which(!(colnames(subfup_red_L2) %in% common_cols))]
+[1] "Test.Compound.Conc"    "Biological.Replicates" "Technical.Replicates" 
 > colnames(red.sub)[which(!(colnames(red.sub) %in% common_cols))]
 [1] "Replicate" "Std.Conc" 
 > ## Replicate columns contain missing values too, check with all() returns NA
-> all(fup_red_L2[,"Technical.Replicates"] == red.sub[,"Replicate"])
+> all(subfup_red_L2[,"Technical.Replicates"] == red.sub[,"Replicate"])
 [1] NA
-> table(fup_red_L2[,"Technical.Replicates"] == red.sub[,"Replicate"])
+> table(subfup_red_L2[,"Technical.Replicates"] == red.sub[,"Replicate"])
 
 TRUE 
  288 
 > 
 > ## This check returns FALSE
-> all(fup_red_L2[,"Test.Compound.Conc"] == red.sub[,"Std.Conc"])
+> all(subfup_red_L2[,"Test.Compound.Conc"] == red.sub[,"Std.Conc"])
 [1] FALSE
 > ## Investigate the differences
-> diffs <- fup_red_L2[,"Test.Compound.Conc"] - red.sub[,"Std.Conc"]
+> diffs <- subfup_red_L2[,"Test.Compound.Conc"] - red.sub[,"Std.Conc"]
 > summary(diffs[!is.na(diffs)])
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  -5e-07   0e+00   0e+00   0e+00   0e+00   3e-07 
 > 
-> ## The maximum difference is -5e-07 and the minimum difference is 3e-7
+> ## The maximum difference is 3e-07 and the minimum difference is -5e-7
 > ## These differences could be due to different systems or are rounding errors
 > 
 > ## Set to the same precision and check again
-> diffs <- signif(fup_red_L2[,"Test.Compound.Conc"],6) - signif(red.sub[,"Std.Conc"],6)
+> diffs <- signif(subfup_red_L2[,"Test.Compound.Conc"],6) - signif(red.sub[,"Std.Conc"],6)
 > ## Replace missing values with 0
 > diffs[is.na(diffs)] <- 0
 > ## The differences, if any, should be smaller than a reasonable tolerance. Here uses four decimal places.
@@ -372,10 +440,10 @@ TRUE
 > 
 > ##---------------------------------------------##
 > ## Run level-3 calculations with the example dataset.
-> ex_level3 <- calc_fup_red_point(data.in = fup_red_L2, output.res = FALSE)
-[1] "Perfluoropentanoic acid f_up = 0.0577"
-[1] "Perfluorobutanesulfonic acid f_up = 0.014"
-[1] "Perfluorooctanoic acid f_up = 0.00882"
+> fup_red_L3 <- calc_fup_red_point(data.in = fup_red_L2, output.res = FALSE)
+[1] "Perfluoropentanoic acid f_up = 0.0512"
+[1] "Perfluorobutanesulfonic acid f_up = 0.0134"
+[1] "Perfluorooctanoic acid f_up = 0.00816"
 [1] "Fraction unbound values calculated for 3 chemicals."
 [1] "Fraction unbound values calculated for 3 measurements."
 > 
@@ -383,29 +451,285 @@ TRUE
 > colnames(red.sub)[which(names(red.sub) == "Replicate")] <- "Technical.Replicates"
 > colnames(red.sub)[which(names(red.sub) == "Std.Conc")] <- "Test.Compound.Conc"
 > ## Run level-3 calculations with the original dataset.
+> ## Need to add populate biological replicates column with 1
+> red.sub[,"Biological.Replicates"] <-  1
 > og_level3 <- calc_fup_red_point(data.in = red.sub, output.res = FALSE)
-[1] "Perfluoropentanoic acid f_up = 0.0577"
-[1] "Perfluorobutanesulfonic acid f_up = 0.014"
-[1] "Perfluorooctanoic acid f_up = 0.00882"
+[1] "Perfluoropentanoic acid f_up = 0.0512"
+[1] "Perfluorobutanesulfonic acid f_up = 0.0134"
+[1] "Perfluorooctanoic acid f_up = 0.00816"
 [1] "Fraction unbound values calculated for 3 chemicals."
 [1] "Fraction unbound values calculated for 3 measurements."
 > 
-> ## Compare the results. They are matched.
-> ## Note that calc_fup_red_point rounds Fup to the fourth significant figures.
-> all.equal(ex_level3$Fup,og_level3$Fup)
-[1] TRUE
+> ## Compare the results. Minor differences. The max difference is 3.269e-6.
+> summary(fup_red_L3$Fup - og_level3$Fup)
+      Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+-3.745e-07  1.048e-07  5.840e-07  1.160e-06  1.927e-06  3.269e-06 
+> all.equal(fup_red_L3$Fup,og_level3$Fup)
+[1] "Mean relative difference: 5.806724e-05"
 > ##---------------------------------------------##
 > 
+> ## Run level-4 calculations with the example dataset.
+> tictoc::tic()
+> fup_red_L4 <- calc_fup_red(FILENAME = "Example",
++                            data.in = fup_red_L2, 
++                            JAGS.PATH = runjags::findjags(),
++                            TEMP.DIR = here::here("data-raw/Smeltz-RED"),
++                            OUTPUT.DIR = here::here("data-raw/Smeltz-RED"))
+
+Heldout L2 data to export has been rounded to 3 significant figures.
+[1] "Perfluoropentanoic acid (1 of 3)"
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+
+Auto-run JAGS
+
+Running a pilot chain...
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:16:50 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 140
+   Unobserved stochastic nodes: 10
+   Total graph size: 812
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 10000
+-------------------------------------------------| 10000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. Updating 25000
+-------------------------------------------------| 25000
+************************************************** 100%
+. . . . . . . . . . Updating 25000
+-------------------------------------------------| 25000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+Finished running the simulation
+
+Calculating the Gelman-Rubin statistic for 11 variables....
+The Gelman-Rubin statistic is below 1.1 for all parameters
+
+Calculating the necessary sample length based on the Raftery and
+Lewis's diagnostic...
+Indicated sample length achieved
+INFO: Could not find files for the given pattern(s).
+Auto-run JAGS complete
+
+[1] "Final results for Perfluoropentanoic acid (1 of 3)"
+      const.analytic.sd hetero.analytic.slope C.thresh log.calibration
+2.5%           1.08e-06                 0.801 3.95e-05           -1.34
+50%            4.22e-06                 0.973 8.79e-04           -1.24
+97.5%          4.72e-05                 1.220 3.34e-03           -1.15
+      background Plasma.Interference C.missing[1] C.missing[2] C.missing[3]
+2.5%    0.000200            1.21e-06         5.75         5.92         5.74
+50%     0.000314            4.15e-05         7.29         7.38         7.31
+97.5%   0.000466            1.91e-03         8.20         8.23         8.19
+        Kd    Fup
+2.5%  30.5 0.0281
+50%   45.5 0.0414
+97.5% 67.4 0.0602
+            Compound.Name Lab.Compound.Name        DTXSID Fup.point Fup.Med
+1 Perfluoropentanoic acid             PFPeA DTXSID6062599    0.0512  0.0414
+  Fup.Low Fup.High
+1  0.0281   0.0602
+[1] "Perfluorobutanesulfonic acid (2 of 3)"
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+
+Auto-run JAGS
+
+Running a pilot chain...
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:19:56 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 140
+   Unobserved stochastic nodes: 10
+   Total graph size: 812
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 10000
+-------------------------------------------------| 10000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. Updating 25000
+-------------------------------------------------| 25000
+************************************************** 100%
+. . . . . . . . . . Updating 25000
+-------------------------------------------------| 25000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+Finished running the simulation
+
+Calculating the Gelman-Rubin statistic for 11 variables....
+The Gelman-Rubin statistic is below 1.1 for all parameters
+
+Calculating the necessary sample length based on the Raftery and
+Lewis's diagnostic...
+Indicated sample length achieved
+INFO: Could not find files for the given pattern(s).
+Auto-run JAGS complete
+
+[1] "Final results for Perfluorobutanesulfonic acid (2 of 3)"
+      const.analytic.sd hetero.analytic.slope C.thresh log.calibration
+2.5%           1.03e-06                 0.827 1.85e-05           -1.28
+50%            2.64e-06                 0.995 5.16e-04           -1.19
+97.5%          2.82e-05                 1.250 2.60e-03           -1.10
+      background Plasma.Interference C.missing[1] C.missing[2] C.missing[3]
+2.5%    7.72e-08            1.40e-06         5.05         5.13         5.38
+50%     4.38e-05            1.49e-03         6.95         6.86         7.04
+97.5%   1.90e-04            3.22e-03         7.93         7.88         8.02
+        Kd     Fup
+2.5%   8.1 0.00764
+50%   11.8 0.01110
+97.5% 17.4 0.01630
+                 Compound.Name Lab.Compound.Name        DTXSID Fup.point
+1 Perfluorobutanesulfonic acid              PFBS DTXSID5030030    0.0134
+  Fup.Med Fup.Low Fup.High
+1  0.0111 0.00764   0.0163
+[1] "Perfluorooctanoic acid (3 of 3)"
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+INFO: Could not find files for the given pattern(s).
+
+Auto-run JAGS
+
+Running a pilot chain...
+INFO: Could not find files for the given pattern(s).
+Calling 2 simulations using the parallel method...
+Following the progress of chain 1 (the program will wait for all chains
+to finish before continuing):
+Welcome to JAGS 4.3.1 on Thu Apr 17 10:22:54 2025
+JAGS is free software and comes with ABSOLUTELY NO WARRANTY
+Loading module: basemod: ok
+Loading module: bugs: ok
+. . Reading data file data.txt
+. Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 140
+   Unobserved stochastic nodes: 10
+   Total graph size: 812
+. Reading parameter file inits1.txt
+. Reading parameter file inits3.txt
+. Reading parameter file inits5.txt
+. Initializing model
+. Adapting 10000
+-------------------------------------------------| 10000
+++++++++++++++++++++++++++++++++++++++++++++++++++ 100%
+Adaptation successful
+. Updating 25000
+-------------------------------------------------| 25000
+************************************************** 100%
+. . . . . . . . . . Updating 25000
+-------------------------------------------------| 25000
+************************************************** 100%
+. . . . . . Updating 0
+. Deleting model
+. 
+All chains have finished
+Simulation complete.  Reading coda files...
+Coda files loaded successfully
+Finished running the simulation
+
+Calculating the Gelman-Rubin statistic for 11 variables....
+The Gelman-Rubin statistic is below 1.1 for all parameters
+
+Calculating the necessary sample length based on the Raftery and
+Lewis's diagnostic...
+Indicated sample length achieved
+INFO: Could not find files for the given pattern(s).
+Auto-run JAGS complete
+
+[1] "Final results for Perfluorooctanoic acid (3 of 3)"
+      const.analytic.sd hetero.analytic.slope C.thresh log.calibration
+2.5%           1.07e-06                 0.639 0.000104          -1.100
+50%            3.23e-06                 0.753 0.001790          -1.010
+97.5%          2.55e-05                 0.915 0.003500          -0.936
+      background Plasma.Interference C.missing[1] C.missing[2] C.missing[3]
+2.5%    0.000295            1.20e-06         5.33         5.32         4.97
+50%     0.000527            2.91e-05         7.33         7.34         7.11
+97.5%   0.000644            1.11e-03         8.23         8.26         8.08
+            Kd      Fup
+2.5%  2.18e-10 2.07e-13
+50%   9.60e-05 9.12e-08
+97.5% 1.39e+00 1.32e-03
+           Compound.Name Lab.Compound.Name        DTXSID Fup.point  Fup.Med
+1 Perfluorooctanoic acid              PFOA DTXSID8031865   0.00816 9.12e-08
+   Fup.Low Fup.High
+1 2.07e-13  0.00132
+A Level-4 file named Example-fup-RED-Level4Analysis-2025-04-17.RData has been exported to the following directory: C:/Users/lknupp/OneDrive - Environmental Protection Agency (EPA)/Profile/Documents/Git/invitrotkstats/invitroTKstats/data-raw/Smeltz-RED 
+> tictoc::toc()
+537.96 sec elapsed
+> ## Initial processing took 480.82 seconds.
+> 
+> ## Load Results dataframe
+> ## To recreate, will need to change FILENAME as date will be different 
+> load(here::here("data-raw/Smeltz-RED/Example-fup-RED-Level4Analysis-2025-04-17.RData"))
+> fup_red_L4 <- Results 
+> 
+> ## Load L2 heldout dataframe 
+> fup_red_L2_heldout <- read.delim(here::here("data-raw/Smeltz-RED/Example-fup-RED-Level2-heldout.tsv"),
++                                sep = "\t")
+> 
+> ## Load PREJAGS dataframe 
+> load(here::here("data-raw/Smeltz-RED/Example-fup-RED-PREJAGS.RData"))
+> fup_red_PREJAGS <- mydata
+> 
 > ## Save level-0 and level-1 data to use for function demo/example documentations 
-> save(fup_red_L0, fup_red_L1, fup_red_L2, file = "~/invitrotkstats/invitroTKstats/data/Fup-RED-example.RData")
+> save(fup_red_cheminfo,fup_red_L0, fup_red_L1, fup_red_L2, fup_red_L3, fup_red_L4,
++      fup_red_L2_heldout, fup_red_PREJAGS, file = here::here("data/Fup-RED-example.RData"))
 > 
 > ## Include session info
 > utils::sessionInfo()
-R version 4.2.2 (2022-10-31 ucrt)
-Platform: x86_64-w64-mingw32/x64 (64-bit)
-Running under: Windows 10 x64 (build 22621)
+R version 4.4.2 (2024-10-31 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 22631)
 
 Matrix products: default
+
 
 locale:
 [1] LC_COLLATE=English_United States.utf8 
@@ -414,22 +738,33 @@ locale:
 [4] LC_NUMERIC=C                          
 [5] LC_TIME=English_United States.utf8    
 
+time zone: America/New_York
+tzcode source: internal
+
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] invitroTKstats_0.0.9 readxl_1.4.3        
+[1] dplyr_1.1.4           here_1.0.1            invitroTKstats_0.0.13
+[4] readxl_1.4.3         
 
 loaded via a namespace (and not attached):
- [1] rstudioapi_0.15.0 magrittr_2.0.3    tidyselect_1.2.0  munsell_0.5.0    
- [5] colorspace_2.1-0  lattice_0.20-45   R6_2.5.1          rlang_1.1.1      
- [9] fansi_1.0.4       dplyr_1.1.2       tools_4.2.2       rbibutils_2.2.13 
-[13] parallel_4.2.2    grid_4.2.2        gtable_0.3.4      utf8_1.2.3       
-[17] cli_3.6.1         coda_0.19-4       tibble_3.2.1      lifecycle_1.0.3  
-[21] ggplot2_3.4.2     vctrs_0.6.3       Rdpack_2.5        glue_1.6.2       
-[25] compiler_4.2.2    pillar_1.9.0      cellranger_1.1.0  runjags_2.2.2-1.1
-[29] generics_0.1.3    scales_1.2.1      stats4_4.2.2      pkgconfig_2.0.3  
+ [1] generics_0.1.3    lattice_0.22-6    digest_0.6.37     magrittr_2.0.3   
+ [5] grid_4.4.2        pkgload_1.4.0     fastmap_1.2.0     rprojroot_2.0.4  
+ [9] cellranger_1.1.0  pkgbuild_1.4.5    sessioninfo_1.2.2 brio_1.1.5       
+[13] urlchecker_1.0.1  promises_1.3.0    purrr_1.0.2       scales_1.3.0     
+[17] Rdpack_2.6.3      cli_3.6.3         shiny_1.9.1       rlang_1.1.4      
+[21] rbibutils_2.3     ellipsis_0.3.2    munsell_0.5.1     withr_3.0.2      
+[25] remotes_2.5.0     cachem_1.1.0      devtools_2.4.5    tools_4.4.2      
+[29] parallel_4.4.2    memoise_2.0.1     coda_0.19-4.1     colorspace_2.1-1 
+[33] ggplot2_3.5.1     httpuv_1.6.15     vctrs_0.6.5       R6_2.6.1         
+[37] mime_0.12         stats4_4.4.2      lifecycle_1.0.4   tictoc_1.2.1     
+[41] fs_1.6.5          htmlwidgets_1.6.4 usethis_3.0.0     miniUI_0.1.1.1   
+[45] desc_1.4.3        pkgconfig_2.0.3   pillar_1.10.1     later_1.3.2      
+[49] gtable_0.3.6      glue_1.8.0        profvis_0.4.0     Rcpp_1.0.13-1    
+[53] tibble_3.2.1      tidyselect_1.2.1  rstudioapi_0.17.1 xtable_1.8-4     
+[57] htmltools_0.5.8.1 testthat_3.2.1.1  compiler_4.4.2    runjags_2.2.2-4  
 > 
 > proc.time()
    user  system elapsed 
-   1.82    2.65    6.68 
+   8.09    5.10  563.09 

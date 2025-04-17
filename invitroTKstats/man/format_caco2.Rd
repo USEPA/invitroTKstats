@@ -10,6 +10,7 @@ format_caco2(
   sample.col = "Lab.Sample.Name",
   lab.compound.col = "Lab.Compound.Name",
   dtxsid.col = "DTXSID",
+  date = NULL,
   date.col = "Date",
   compound.col = "Compound.Name",
   area.col = "Area",
@@ -20,8 +21,8 @@ format_caco2(
   membrane.area.col = "Membrane.Area",
   receiver.vol.col = "Vol.Receiver",
   donor.vol.col = "Vol.Donor",
-  compound.conc = NULL,
-  compound.conc.col = "Nominal.Conc",
+  test.conc = NULL,
+  test.conc.col = "Test.Compound.Conc",
   cal = NULL,
   cal.col = "Cal",
   dilution = NULL,
@@ -32,8 +33,8 @@ format_caco2(
   istd.name.col = "ISTD.Name",
   istd.conc = NULL,
   istd.conc.col = "ISTD.Conc",
-  nominal.test.conc = NULL,
-  nominal.test.conc.col = "Test.Target.Conc",
+  test.nominal.conc = NULL,
+  test.nominal.conc.col = "Test.Target.Conc",
   biological.replicates = NULL,
   biological.replicates.col = "Biological.Replicates",
   technical.replicates = NULL,
@@ -75,8 +76,12 @@ name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 \item{dtxsid.col}{(Character) Column name of \code{data.in} containing EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{date.col}{(Character) Column name of \code{data.in} containing the laboratory measurement
-date. (Defaults to "Date".)}
+\item{date}{(Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+(Note: Single entry only, use only if all data were collected on the same date.)}
+
+\item{date.col}{(Character) Column name containing \code{date} information. (Defaults to "Date".) (Note: \code{data.in} does not
+necessarily have this field. If this field is missing, it can be auto-filled with the value 
+specified in \code{date}.)}
 
 \item{compound.col}{(Character) Column name of \code{data.in} containing the test compound.
 (Defaults to "Compound.Name".)}
@@ -111,14 +116,14 @@ specified in \code{membrane.area}.)}
 (in cm^3) of the donor portion of the Caco-2 experimental well where the
 test chemical is added. (Defaults to "Vol.Donor".)}
 
-\item{compound.conc}{(Numeric) The concentration
-of the test chemical for calibration curves. (Defaults to \code{NULL}.) (Note: Single entry only, 
-use only if all test compounds have the same concentration for calibration curves.)}
+\item{test.conc}{(Numeric) The standard test chemical concentration for the
+caco2 assay. (Defaults to \code{NULL}.) (Note: Single entry only, 
+use only if the same standard concentration was used for all tested compounds.)}
 
-\item{compound.conc.col}{(Character) Column name containing \code{compound.conc} 
-information. (Defaults to "Nominal.Conc".) (Note: \code{data.in} does not
+\item{test.conc.col}{(Character) Column name containing \code{test.conc} 
+information. (Defaults to "Test.Compound.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{compound.conc}.)}
+specified in \code{test.conc}.)}
 
 \item{cal}{(Character) MS calibration the samples were based on. Typically, this uses 
 indices or dates to represent if the analyses were done on different machines on 
@@ -163,15 +168,14 @@ internal standard concentration.)}
 (Note: \code{data.in} does not necessarily have this field. If this field is missing, 
 it can be auto-filled with the value specified in \code{istd.conc}.)}
 
-\item{nominal.test.conc}{(Numeric) The test chemical concentration in the dosing solution
-that is added to the donor side at time zero. (Defaults to \code{NULL}.)
-(Note: Single entry only, use only if the same initial 
-concentration was used for all tested compounds.)}
+\item{test.nominal.conc}{(Numeric) The nominal concentration added to the donor
+compartment at time 0. (Defaults to \code{NULL}.) (Note: Single entry only,
+use only if all tested compounds used the same concentration at time 0.}
 
-\item{nominal.test.conc.col}{(Character) Column name containing \code{nominal.test.conc} 
+\item{test.nominal.conc.col}{(Character) Column name containing \code{test.nominal.conc} 
 information. (Defaults to "Test.Target.Conc".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
-specified in \code{nominal.test.conc}.)}
+specified in \code{test.nominal.conc}.)}
 
 \item{biological.replicates}{(Character) Replicates with the same analyte. Typically, this uses 
 numbers or letters to index. (Defaults to \code{NULL}.) (Note: Single entry only, 
@@ -307,15 +311,16 @@ level1 <- format_caco2(data.in = level0,
                        area.col = "Peak.Area",
                        istd.col = "ISTD.Peak.Area",
                        membrane.area = 0.11,
-                       compound.conc.col = "Compound.Conc",
+                       test.conc.col = "Compound.Conc",
                        cal = 1, 
                        time = 2, 
                        istd.conc = 1, 
-                       nominal.test.conc = 10, 
+                       test.nominal.conc = 10, 
                        biological.replicates = 1, 
+                       technical.replicates = 1,
                        analysis.method.col = "Analysis.Params",
                        analysis.instrument = "Agilent.GCMS",
-                       analysis.parameters = "TBD",
+                       analysis.parameters = "Unknown",
                        note.col = NULL,
                        output.res = FALSE
 )

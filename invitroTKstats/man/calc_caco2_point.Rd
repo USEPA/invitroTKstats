@@ -52,10 +52,14 @@ directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
   dQdt_B2A \tab Estimated rate of mass movement through membrane \tab RR*cm^3/s \cr
   Papp_B2A \tab Apparent membrane permeability \tab 10^-6 cm/s\cr
   Refflux \tab Efflux ratio \tab unitless\cr
-  Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment \tab unitless \cr
-  Frec_B2B.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction \tab unitless \cr 
-  Recovery_Class_A2B \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) \tab qualitative category \cr
-  Recovery_Class_B2A \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) \tab qualitative category \cr
+  Frec_A2B.vec \tab Fraction recovered for the apical-basal direction, calculated as the fraction of the initial donor amount recovered in the receiver compartment (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr
+  Frec_A2B.mean \tab Mean of the fraction recovered for the apical-basal direction \tab unitless \cr
+  Frec_B2A.vec \tab Fraction recovered for the basal-apical direction, calculated in the same way as Frec_A2B.vec but in the opposite transport direction (collapsed numeric vector, values for replicates separated by a "|") \tab unitless \cr 
+  Frec_B2A.mean \tab Mean of the fraction recovered for the basal-apical direction \tab unitless \cr
+  Recovery_Class_A2B.vec \tab Recovery classification for apical-to-basal permeability("Low Recovery" if Frec_A2B.vec < 0.4 or "High Recovery" if Frec_A2B.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
+  Recovery_Class_A2B.mean \tab Recovery classification for the mean apical-to-basal permeability("Low Recovery" if Frec_A2B.mean < 0.4 or "High Recovery" if Frec_A2B.mean > 2.0) \tab qualitative category \cr
+  Recovery_Class_B2A.vec \tab Recovery classification for basal-to-apical permeability("Low Recovery" if Frec_B2A.vec < 0.4 or "High Recovery" if Frec_B2A.vec > 2.0) (collapsed character vector, values for replicates separated by a "|") \tab qualitative category \cr
+  Recovery_Class_B2A.mean \tab Recovery classification for the mean basal-to-apical permeability("Low Recovery" if Frec_B2A.mean < 0.4 or "High Recovery" if Frec_B2A.mean > 2.0) \tab qualitative category \cr
 }
 }
 \description{
@@ -95,11 +99,10 @@ where \eqn{r_P} is PBS Response, \eqn{c_{DF}} is Dilution Factor, \eqn{r_B} is B
 ## Load example level-2 data
 level2 <- invitroTKstats::caco2_L2
 
-\dontrun{
 ## scenario 1: 
 ## input level-2 data from the R session and do not export the result table
 level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
-}
+
 
 ## scenario 2: 
 ## import level-2 data from a 'tsv' file and export the result table
@@ -107,8 +110,10 @@ level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
 ## Refer to sample_verification help file for how to export level-2 data to a directory.
 ## Unless a different path is specified in OUTPUT.DIR,
 ## the result table will be saved to the directory specified in INPUT.DIR.
-level3 <- calc_caco2_point(FILENAME="Examples", 
-                           INPUT.DIR = "invitroTKstats/vignettes")
+## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
+level3 <- calc_caco2_point(# e.g. replace with "Examples" from "Examples-Caco-2-Level2.tsv" 
+                           FILENAME="<level-2 FILENAME prefix>", 
+                           INPUT.DIR = "<level-2 FILE LOCATION>")
 }
 
 }

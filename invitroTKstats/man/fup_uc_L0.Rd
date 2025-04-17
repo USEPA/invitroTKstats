@@ -3,7 +3,7 @@
 \docType{data}
 \name{fup_uc_L0}
 \alias{fup_uc_L0}
-\title{Fup-UC Level 0 Example Data set}
+\title{Fup UC Level 0 Example Data set}
 \format{
 A level 0 data.frame with 240 rows and 17 variables: \describe{
 \item{\code{Compound}}{Name of the test analyte/compound}
@@ -22,7 +22,7 @@ A level 0 data.frame with 240 rows and 17 variables: \describe{
 \item{\code{Sample.Text}}{Additional notes on the sample}
 \item{\code{Sample.Type}}{Type of UC sample in the package's annotations}
 \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
-\item{\code{Replicate}}{Identifier for parallel measurements of multiple samples of a compound}
+\item{\code{Replicate}}{Identifier for repeated measurements of one sample of a compound}
 }
 }
 \usage{
@@ -31,7 +31,7 @@ fup_uc_L0
 \description{
 Mass Spectrometry measurements of plasma protein binding (PPB) via 
 ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
-(PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
+(PFAS) samples. Experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 
 \insertCite{smeltz2023plasma}{invitroTKstats}. 
 This data set is a subset of experimental data containing samples for 
 3 test analytes/compounds.

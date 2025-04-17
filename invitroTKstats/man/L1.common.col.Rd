@@ -14,6 +14,6 @@ L1.common.cols
 }
 \description{
 Common column names across the various *in vitro* assays used for collecting
-HTTK relevant physiological parameters.
+in vitro toxicokinetic parameters.
 }
 \keyword{datasets}

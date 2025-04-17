@@ -244,7 +244,7 @@
 #'                          sample.col ="Sample",
 #'                          date.col="Date",
 #'                          compound.col="Compound",
-#'                          lab.compound.col="Compound",
+#'                          lab.compound.col="Lab.Compound.ID",
 #'                          type.col="Sample.Type",
 #'                          dilution.col="Dilution.Factor",
 #'                          technical.replicates.col ="Replicate",

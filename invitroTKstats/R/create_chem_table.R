@@ -32,21 +32,21 @@
 #' # Smeltz et al. (2020) data:
 #' ##  Clint ##
 #' create_chem_table(
-#'   input.table = clint_cheminfo,
+#'   input.table = invitroTKstats::clint_cheminfo,
 #'   dtxsid.col = "DTXSID",
 #'   compound.col = "Compound",
 #'   lab.compound.col = "Chem.Lab.ID"
 #'   )
 #' ## Fup RED ##
 #' create_chem_table(
-#'   input.table = fup_red_cheminfo,
+#'   input.table = invitroTKstats::fup_red_cheminfo,
 #'   dtxsid.col = "DTXSID",
 #'   compound.col = "Compound",
 #'   lab.compound.col = "Chem.Lab.ID"
 #'   )
 #' ## Fup UC ##
 #' create_chem_table(
-#'   input.table = fup_uc_cheminfo,
+#'   input.table = invitroTKstats::fup_uc_cheminfo,
 #'   dtxsid.col = "DTXSID",
 #'   compound.col = "Compound",
 #'   lab.compound.col = "Chem.Lab.ID"
@@ -54,7 +54,7 @@
 #' # Honda et al. () data:
 #' ## Caco2 ##
 #' create_chem_table(
-#'   input.table = caco2_cheminfo,
+#'   input.table = invitroTKstats::caco2_cheminfo,
 #'   dtxsid.col = "DTXSID",
 #'   compound.col = "PREFERRED_NAME",
 #'   lab.compound.col = "test_article"

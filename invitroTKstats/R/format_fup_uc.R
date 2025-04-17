@@ -238,7 +238,8 @@
 #'                         analysis.method = "UPLC-MS/MS",
 #'                         analysis.instrument = "Waters Xevo TQ-S micro (QEB0036)",
 #'                         analysis.parameters.col = "Analysis.Params",
-#'                         biological.replicates.col = "Replicate",
+#'                         technical.replicates.col = "Replicate",
+#'                         biological.replicates = 1,
 #'                         output.res = FALSE
 #'                         )
 #'

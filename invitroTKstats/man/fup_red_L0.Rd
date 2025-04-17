@@ -21,7 +21,7 @@ A level 0 data.frame with 660 rows and 18 variables: \describe{
 \item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
 \item{\code{Sample Text}}{Additional notes on the sample}
 \item{\code{Sample.Type}}{Type of RED sample in the package's annotations}
-\item{\code{Replicate}}{Identifier for parallel measurements of multiple samples of a compound}
+\item{\code{Replicate}}{Identifier for repeated measurements of one sample of a compound}
 \item{\code{Time}}{Time point the sample was measured - in hours (h)}
 \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 }
@@ -32,7 +32,7 @@ fup_red_L0
 \description{
 Mass Spectrometry measurements of plasma protein binding (PPB) via rapid 
 equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
-(PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore 
+(PFAS) samples. Experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 
 \insertCite{smeltz2023plasma}{invitroTKstats}.
 This data set is a subset of experimental data containing samples for 
 3 test analytes/compounds.
