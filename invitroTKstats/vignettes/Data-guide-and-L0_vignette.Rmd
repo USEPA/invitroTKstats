@@ -69,11 +69,11 @@ library(flextable)
 
 # Raw Data File Exploration
 
-The first thing we need to do for the pipelining process is to construct a data guide itemizing which data files and sheets therein contain relevant MS data, as well as other relevant meta-data information. Before creating a data guide with `invitroTKstats` functions, let us first consider the raw data files and their structure in the relevant data directory, called "Kreutz-Clint".
+The first thing we need to do for the pipelining process is to construct a data guide itemizing which data files and sheets therein contain relevant MS data, as well as other relevant meta-data information. Before creating a data guide with `invitroTKstats` functions, let us first consider the raw data files and their structure in the relevant data directory, called "data-raw/Kreutz-Clint".
 
 *NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
-Since these datasets are not stored as part of the R package it is necessary to clone the repository containing the "Kreutz-Clint" sub-directory. The "Kreutz-Clint" sub-directory contains all of the raw data files, original data processing scripts, and resulting datasets after processing and parameter estimation. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "<path_to_directory>" with the file path to the local repository clone and the "Kreutz-Clint" sub-directory.
+These datasets are stored as part of the R package and can be retrieved from the "data-raw/Kreutz-Clint" sub-directory. The "data-raw/Kreutz-Clint" sub-directory contains all of the raw data files, original data processing scripts, and resulting datasets after processing and parameter estimation. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "<path_to_directory>" with the file path to the local repository clone and the "Kreutz-Clint" sub-directory.
 
 ```{r raw_data_dir,echo=FALSE}
 # this code chunk is hidden since it may not be applicable for the R pckg user
@@ -97,23 +97,17 @@ hep_clint_xlsx <- list.files(raw_data_dir,
 # show the data file names
 hep_clint_xlsx
 # add the raw data file directory path
-hep_clint_xlsx <- paste0(raw_data_dir,hep_clint_xlsx)
+hep_clint_xlsx <- paste(raw_data_dir,hep_clint_xlsx, sep = "/")
 ```
 
 In cases where one is unfamiliar with the raw data Excel files, it may be useful to do some programmatic evaluation of the file structure. For example, listing the sheets within the Excel file to determine where data exists and should be pulled from. It should be noted this will likely, or may not always, replace the need to visually inspect the file. To demonstrate this type of investigation consider the first hepatic clearance dataset identified above. 
 
 ```{r rdfile1_sheets}
-# for the first dataset see the sheets contained in the raw data file
+# for the first dataset, see the sheets contained in the raw data file
 readxl::excel_sheets(hep_clint_xlsx[1])
 ```
 
-Here, it is already known that the "Raw" data sheet is the only one containing 
-MS data for parameter estimation. However, other data sheets (for example, 
-"Cover Sheet") may also provide valuable information about the original 
-experiment, chemicals evaluated, meta data, etc. Clear communication between 
-the lab staff and data analyst about the structure of the data files and 
-general expectations is highly encouraged to enable accurate, efficient, and 
-transparent data pipelining.
+Here, it is already known that the "Raw" data sheet is the only one containing MS data for parameter estimation. However, other data sheets (for example, "Cover Sheet") may also provide valuable information about the original experiment, chemicals evaluated, meta data, etc. Clear communication between the lab staff and data analyst about the structure of the data files and general expectations is highly encouraged to enable accurate, efficient, and transparent data pipelining.
 
 *It should be noted, other exploratory steps may be necessary, but we leave this up to the reader to determine the necessary steps for raw data exploration given their data and use case.*
 
@@ -134,28 +128,28 @@ DC_kreutz.pfas <- create_catalog(
   # sheet name (or sheet number)
   sheet = c(rep("Data063021",3)), 
   # number of rows to skip in L0 Excel file - start for compound/analyte samples
-  skip.rows = c(43,73,91), 
+  skip.rows = c(44,92,74), 
   # number of rows to read in from L0 Excel file for compound/analyte samples
-  num.rows = c(30,17,109), 
+  num.rows = c(30,18,18), 
   # date the data was generated
   #   (MMDDYYY: 2-digit month, 2-digit day, 4-digit year)
   date = "06302021", 
   # chemical id
-  compound = c("745","949","959"),
+  compound = c("745","959","949"),
   # internal standard compound (corresponding to chemical id)
-  istd = c("MFBET","MFHET","MFOET"),
+  istd = c("MFBET","MFHET","MFOET"), 
   # column name for sample names
   sample = "Name", 
   # column name for sample types
   type = "Type",
   # column name(s) for analyte MS peak areas
-  peak = c("Area...13","Area...20","Area...27"),
+  peak = c("Area...13","Area...20","Area...27"), 
   # column name(s) for internal standard MS peak areas
-  istd.peak = c("Resp....16","Resp....23","Resp....30"),
+  istd.peak = c("Resp....16","Resp....23","Resp....30"), 
   # column name(s) for experimental concentration
-  conc = c("Final Conc....11","Final Conc....11","Final Conc....11"),
+  conc = c("Final Conc....11","Final Conc....18","Final Conc....25"),
   # column name(s) with analysis parameters
-  analysis.param = c("Exp. Conc....10","Exp. Conc....17","Exp. Conc....24"),
+  analysis.param = c("RT...12", "RT...19", "RT...26"),
   # column name - row locations
   col.names.loc = 2
   # note = "RT...12"
@@ -267,6 +261,7 @@ Any of the column names from the raw data not matching the anticipated column na
 kreutz.pfas_L0 <- merge_level0(
   level0.catalog = DC_kreutz.pfas, # data catalog
   INPUT.DIR = raw_data_dir, # the path to your raw data files
+  num.rows.col = "Number.Data.Rows", 
   istd.col = "ISTD.Name",
   type.colname.col = "Type.ColName",
   chem.ids = chem.ids, # chemical ID mapping data
