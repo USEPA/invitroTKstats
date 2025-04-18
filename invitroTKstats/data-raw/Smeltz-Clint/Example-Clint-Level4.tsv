@@ -1,0 +1,4 @@
+Compound.Name	DTXSID	Lab.Compound.Name	Clint.1.Med	Clint.1.Low	Clint.1.High	Clint.10.Med	Clint.10.Low	Clint.10.High	Clint.pValue	Sat.pValue	degrades.pValue
+Phenacetin	DTXSID1021116	phenacetin	11.491	7.39026416666667	14.4159066666667	NA	NA	NA	0.00188	0.7493	0.99976
+Propranolol	DTXSID6023525	propranolol	9.72351666666667	6.71492833333333	12.3093675	NA	NA	NA	0	0.74876	0.99998
+4,4-bis(Trifluoromethyl)-4-fluoropropanoic acid	DTXSID80380256	TFMFPA	0	0	0	NA	NA	NA	0.99656	0.74626	0.99988
