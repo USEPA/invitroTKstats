@@ -57,8 +57,7 @@ manuscript for demonstration purposes.
 
 ```{r setup,message=FALSE,warning=FALSE}
 # Primary Package #
-# library(invitroTKstats)
-devtools::load_all(here::here())
+library(invitroTKstats)
 # Data Formatting Packages #
 library(dplyr)
 library(magrittr)
