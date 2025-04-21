@@ -1,17 +1,17 @@
 #' Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)
 #'
 #' This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
-#' using mass spectrometry (MS) peak area data collected as part of in vitro measurement 
+#' using mass spectrometry (MS) peak area data collected as part of in vitro measurements 
 #' of chemical clearance, as characterized by the disappearance of parent compound over 
 #' time when incubated with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 #'
-#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' The input to this function should be "level-2" data. Level-2 data is level-1,
 #' data formatted with the \code{\link{format_clint}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for analysis. 
 #' 
 #' The data frame of observations should be annotated according to
-#' of these types:
+#' these types:
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
 #'   Hepatocyte incubation concentration vs. time \tab Cvst\cr
@@ -20,10 +20,10 @@
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
 #' MS response as a function of time.
 #'
-#' @param FILENAME A string used to identify the input Level-2 file.
+#' @param FILENAME A string used to identify the input level-2 file.
 #' "<FILENAME>-Clint-Level2.tsv".
 #' 
-#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' @param data.in (Data Frame) A level-2 data frame generated from the 
 #' \code{format_clint} function with a verification column added by 
 #' \code{sample_verification}. Complement with manual verification if needed. 
 #'
@@ -32,10 +32,10 @@
 #' (Defaults to "Verified".)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' table (level-3) will be exported to the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-3). 
 #' (Note: console print statements are also rounded to specified significant figures.)
 #' (Defaults to \code{3}.)
 #' 
@@ -47,7 +47,7 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
-#' @return A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
+#' @return A level-3 data frame with one row per chemical, contains a point estimate of intrinsic 
 #' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
 #' the p-value and the Akaike Information Criterion (AIC) of the linear 
 #' regression fit for all chemicals in the input data frame. 
@@ -119,11 +119,11 @@ calc_clint_point <- function(
   cols <- c(unlist(mget(names(clint.cols))), "Response", good.col)
   
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(clint.data)))
-    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_clint first (level 1) then curate to (level 2).")
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_clint first (level-1) then curate to (level-2).")
   
   if (!(all(cols %in% colnames(clint.data))))
   {
-    warning("Run format_clint first (level 1) then curate to (level 2).")
+    warning("Run format_clint first (level-1) then curate to (level-2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(clint.data))],collapse=", ")))
   }
@@ -362,7 +362,7 @@ calc_clint_point <- function(
       cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
     }
     
-    # Write out a "level 3" file:
+    # Write out a "level-3" file:
     write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-Clint-Level3.tsv"),
                 sep="\t",
@@ -370,7 +370,7 @@ calc_clint_point <- function(
                 quote=F)
     
     # Print notification message stating where the file was output to
-    cat(paste0("A Level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
+    cat(paste0("A level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
                 " has been exported to the following directory: ", file.path), "\n")
   }
 

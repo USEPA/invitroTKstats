@@ -16,5 +16,5 @@ A list of initial values.
 }
 \description{
 Sets the initial values of arguments required for JAGS such as assumed initial probability
-distributions. The list is used as an argument to JAGS during Level-4 processing.
+distributions. The list is used as an argument to JAGS during level-4 processing.
 }

@@ -3,9 +3,9 @@
 \docType{data}
 \name{fup_uc_L0}
 \alias{fup_uc_L0}
-\title{Fup UC Level 0 Example Data set}
+\title{Fup UC Level-0 Example Data set}
 \format{
-A level 0 data.frame with 240 rows and 17 variables: \describe{
+A level-0 data.frame with 240 rows and 17 variables: \describe{
 \item{\code{Compound}}{Name of the test analyte/compound}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 \item{\code{Lab.Compound.ID}}{Compound as described in the laboratory}
@@ -16,11 +16,11 @@ A level 0 data.frame with 240 rows and 17 variables: \describe{
 \item{\code{Peak.Area}}{Peak area of analyte (target compound)}
 \item{\code{ISTD.Peak.Area}}{Peak area of internal standard (ISTD) compound (pixels)}
 \item{\code{ISTD.Name}}{Name of the internal standard (ISTD) analyte/compound}
-\item{\code{Analysis.Params}}{The column contains the retention time}
-\item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
-\item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
+\item{\code{Analysis.Params}}{Column contains the retention time} 
+\item{\code{Level0.File}}{Name of the laboratory data file from which the level-0 sample data was extracted}
+\item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level-0 sample data was extracted}
 \item{\code{Sample.Text}}{Additional notes on the sample}
-\item{\code{Sample.Type}}{Type of UC sample in the package's annotations}
+\item{\code{Sample.Type}}{Type of UC sample in \code{invitroTKstats} package annotations}
 \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 \item{\code{Replicate}}{Identifier for repeated measurements of one sample of a compound}
 }

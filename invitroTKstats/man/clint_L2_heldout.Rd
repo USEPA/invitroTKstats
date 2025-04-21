@@ -3,9 +3,9 @@
 \docType{data}
 \name{clint_L2_heldout}
 \alias{clint_L2_heldout}
-\title{Clint Level 2 Heldout Example Data set}
+\title{Clint Level-2 Heldout Example Data set}
 \format{
-A level 2 data.frame with 10 rows and 25 variables: \describe{
+A level-2 data.frame with 10 rows and 25 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date the sample was added to the MS analyzer}
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
@@ -19,25 +19,25 @@ A level 2 data.frame with 10 rows and 25 variables: \describe{
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
 \item{\code{Area}}{Peak area of analyte (target compound)}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
-\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}
 \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
-\item{\code{Note}}{Any laboratory notes about sample)}
-\item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
-\item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
-\item{\code{Time}}{Time point the sample was measured - in hours (h)}
+\item{\code{Note}}{Any laboratory notes about sample}
+\item{\code{Level0.File}}{Name of the laboratory data file from which the level-0 sample data was extracted}
+\item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level-0 sample data was extracted}
+\item{\code{Time}}{Time when the sample was measured - in hours (h)}
 \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to well (uM)}
 \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
 \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
-\item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+\item{\code{Verified}}{If "Y", then sample is included in the analysis. (Any other value causes the data to be ignored.)}
 }
 }
 \usage{
 clint_L2_heldout
 }
 \description{
-The unverified level 2 samples from mass spectrometry measurements of intrinsic hepatic clearance (Clint) for cryopreserved 
+The unverified level-2 samples from mass spectrometry measurements of intrinsic hepatic clearance (Clint) for cryopreserved 
 pooled human hepatocytes. Chemicals were per- and poly-fluorinated alkyl substance
 (PFAS) samples. The experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 
 \insertCite{smeltz2023plasma}{invitroTKstats}. This data set is a subset of 

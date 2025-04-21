@@ -1,7 +1,7 @@
-#' Creates a Standardized Data Table with Hepatocyte Clearance Data (Level-1)
+#' Creates a Standardized Data Frame with Hepatocyte Clearance Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurement of chemical stability
+#' from samples collected as part of in vitro measurements of chemical stability
 #' when incubated with suspended hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 #' Disappearance of the chemical over time is assumed to be due to metabolism
 #' by the hepatocytes.
@@ -9,7 +9,7 @@
 #' to a tab-separated text file.
 #'
 #' The data frame of observations should be annotated according to
-#' of these types:
+#' these types:
 #' \tabular{rrrrr}{
 #'   Blank \tab Blank\cr
 #'   Hepatocyte incubation concentration \tab Cvst\cr
@@ -22,11 +22,11 @@
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
 #'
-#' @param FILENAME (Character) A string used to identify the output Level-1 file.
-#' "<FILENAME>-Clint-Level1.tsv", and/or used to identify the input Level-0 file,
+#' @param FILENAME (Character) A string used to identify the output level-1 file.
+#' "<FILENAME>-Clint-Level1.tsv", and/or used to identify the input level-0 file,
 #' "<FILENAME>-Clint-Level0.tsv" if importing from a .tsv file. (Defaults to "MYDATA").
 #'
-#' @param data.in (Data Frame) A Level-0 data frame or a matrix containing mass-spectrometry peak areas,
+#' @param data.in (Data Frame) A level-0 data frame or a matrix containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'
@@ -193,19 +193,19 @@
 #' @param note.col (Character) Column name of \code{data.in} containing additional notes on 
 #' test compounds. (Defaults to "Note").
 #' 
-#' @param level0.file (Character) The Level-0 file from which the \code{data.in} were obtained.
+#' @param level0.file (Character) The level-0 file from which the \code{data.in} were obtained.
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in data.in
-#' were obtained from the same Level-0 file.) 
+#' were obtained from the same level-0 file.) 
 #' 
 #' @param level0.file.col (Character) Column name containing \code{level0.file} information. 
 #' (Defaults to "Level0.File".) (Note: \code{data.in} does not
 #' necessarily have this field. If this field is missing, it can be auto-filled with the value 
 #' specified in \code{level0.file}.)
 #' 
-#' @param level0.sheet (Character) The specific sheet name of Level-0 file from which the 
-#' \code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+#' @param level0.sheet (Character) The specific sheet name of level-0 file from which the 
+#' \code{data.in} is obtained from, if the level-0 file is an Excel workbook. 
 #' (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
-#' were obtained from the same sheet in the same Level-0 file.) 
+#' were obtained from the same sheet in the same level-0 file.) 
 #' 
 #' @param level0.sheet.col (Character) Column name containing \code{level0.sheet} information.
 #' (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
@@ -213,14 +213,14 @@
 #' specified in \code{level0.sheet}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-1) will be exported the current directory as a .tsv file. 
+#' table (level-1) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
 #' @param save.bad.types (Logical) When set to \code{TRUE}, export data removed 
 #' due to inappropriate sample types. See the Detail section for the required sample types. 
 #' (Defaults to \code{FALSE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-1). 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-1). 
 #' (Defaults to \code{5}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the input level-0 file exists. 
@@ -231,7 +231,7 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
-#' @return A Level-1 data frame with a standardized format containing a  
+#' @return A level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with hepatic
 #' clearance data for a variety of chemicals. 
 #'
@@ -457,13 +457,13 @@ format_clint <- function(
       cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
     }
     
-    # Write out a "level 1" file (data organized into a standard format):
+    # Write out a "level-1" file (data organized into a standard format):
     write.table(rounded.data.out,
                 file=paste0(file.path, "/", FILENAME,"-Clint-Level1.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
-    cat(paste0("A Level-1 file named ",FILENAME,"-Clint-Level1.tsv",
+    cat(paste0("A level-1 file named ",FILENAME,"-Clint-Level1.tsv",
                 " has been exported to the following directory: ", file.path), "\n")
   }
 

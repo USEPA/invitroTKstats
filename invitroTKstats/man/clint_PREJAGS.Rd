@@ -3,7 +3,7 @@
 \docType{data}
 \name{clint_PREJAGS}
 \alias{clint_PREJAGS}
-\title{Clint Level 4 PREJAGS arguments}
+\title{Clint Level-4 PREJAGS arguments}
 \format{
 A named list with 26 elements: \describe{
 \item{\code{obs}}{\code{Response} of the "Cvst" sample types for the tested compound}
@@ -38,7 +38,7 @@ A named list with 26 elements: \describe{
 clint_PREJAGS
 }
 \description{
-The arguments given to JAGS for the tested compound during level 4 processing of mass spectrometry
+The arguments given to JAGS for the tested compound during level-4 processing of mass spectrometry
 measurements of intrinsic hepatic clearance (Clint) for cryopreserved 
 pooled human hepatocytes. Chemicals were per- and poly-fluorinated alkyl substance
 (PFAS) samples. The experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 

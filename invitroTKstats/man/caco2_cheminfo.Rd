@@ -3,7 +3,7 @@
 \docType{data}
 \name{caco2_cheminfo}
 \alias{caco2_cheminfo}
-\title{Caco2 Chemical Information Example Data set}
+\title{Caco-2 Chemical Information Example Data set}
 \format{
 A chemical info data.frame with 554 rows and 7 variables: \describe{
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
@@ -20,7 +20,7 @@ caco2_cheminfo
 }
 \description{
 The chemical ID mapping information from tandem mass spectrometry (MS/MS) measurements 
-of Caco2 assay-specific data. 
+of Caco-2 assay-specific data. 
 This data set contains 520 unique compounds/chemicals.
 }
 \keyword{datasets}

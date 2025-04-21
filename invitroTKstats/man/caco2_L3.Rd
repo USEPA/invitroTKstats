@@ -3,28 +3,28 @@
 \docType{data}
 \name{caco2_L3}
 \alias{caco2_L3}
-\title{Caco2 Level 3 Example Data set}
+\title{Caco-2 Level-3 Example Data set}
 \format{
-A level 3 data.frame with 3 rows and 20 variables: \describe{
+A level-3 data.frame with 3 rows and 20 variables: \describe{
 \item{\code{Compound.Name}}{Compound name}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
-\item{\code{Time}}{Time point sample measured (h)}
+\item{\code{Time}}{Time when sample was measured (h)}
 \item{\code{Membrane.Area}}{The area of the Caco-2 monolayer}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 \item{\code{C0_A2B}}{Initial concentration in the apical side}
-\item{\code{dQdt_A2B}}{Rate of permeation from the apical to the basal side}
-\item{\code{Papp_A2B}}{Apparent membrane permeability from the apical to the basal side}
-\item{\code{Frec_A2B.vec}}{Fraction of the initial compound in the apical side recovered in the basal side (collapsed numeric vector, values for replicates separated by a "|")}
-\item{\code{Frec_A2B.mean}}{Mean of fraction recovered values in the apical to basal direction}
-\item{\code{Recovery_Class_A2B.vec}}{Recovery classification of fraction recovered values in the apical to basal direction (collapsed character vector, values for replicates separated by a "|")}
-\item{\code{Recovery_Class_A2B.mean}}{Recovery classification of mean fraction recovered in the apical to basal direction}
-\item{\code{C0_B2A}}{Initial concentration in the basal side}
-\item{\code{dQdt_B2A}}{Rate of permeation from the basal to the apical side}
-\item{\code{Papp_B2A}}{Apparent membrane permeability from the basal to the apical side}
-\item{\code{Frec_B2A.vec}}{Fraction of the initial compound in the basal side recovered in the apical side (collapsed numeric vector, values for replicates separated by a "|")}
-\item{\code{Frec_B2A.mean}}{Mean of fraction recovered values in the basal to apical direction}
-\item{\code{Recovery_Class_B2A.vec}}{Recovery classification of fraction recovered values in the basal to apical direction (collapsed character vector, values for replicates separated by a "|")}
-\item{\code{Recovery_Class_B2A.mean}}{Recovery classification of mean fraction recovered in the basal to apical direction}
+\item{\code{dQdt_A2B}}{Rate of permeation from the apical to the basolateral side}
+\item{\code{Papp_A2B}}{Apparent membrane permeability from the apical to the basolateral side}
+\item{\code{Frec_A2B.vec}}{Fraction of the initial compound in the apical side recovered in the basolateral side (collapsed numeric vector, values for replicates separated by a "|")}
+\item{\code{Frec_A2B.mean}}{Mean of fraction recovered values in the apical to basolateral direction}
+\item{\code{Recovery_Class_A2B.vec}}{Recovery classification of fraction recovered values in the apical to basolateral direction (collapsed character vector, values for replicates separated by a "|")}
+\item{\code{Recovery_Class_A2B.mean}}{Recovery classification of mean fraction recovered in the apical to basolateral direction}
+\item{\code{C0_B2A}}{Initial concentration in the basolateral side}
+\item{\code{dQdt_B2A}}{Rate of permeation from the basolateral to the apical side}
+\item{\code{Papp_B2A}}{Apparent membrane permeability from the basolateral to the apical side}
+\item{\code{Frec_B2A.vec}}{Fraction of the initial compound in the basolateral side recovered in the apical side (collapsed numeric vector, values for replicates separated by a "|")}
+\item{\code{Frec_B2A.mean}}{Mean of fraction recovered values in the basolateral to apical direction}
+\item{\code{Recovery_Class_B2A.vec}}{Recovery classification of fraction recovered values in the basolateral to apical direction (collapsed character vector, values for replicates separated by a "|")}
+\item{\code{Recovery_Class_B2A.mean}}{Recovery classification of mean fraction recovered in the basolateral to apical direction}
 \item{\code{Refflux}}{Efflux ratio}
 }
 }
@@ -32,7 +32,7 @@ A level 3 data.frame with 3 rows and 20 variables: \describe{
 caco2_L3
 }
 \description{
-A subset of tandem mass spectrometry (MS/MS) measurements of Caco2 assay-specific
+A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
 data. This subset contains samples for 3 test analytes/compounds.
 }
 \keyword{datasets}

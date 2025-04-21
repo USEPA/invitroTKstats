@@ -15,10 +15,10 @@ sample_verification(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
+\item{FILENAME}{(Character) A string used to identify the output level-1 file.
 "<FILENAME>-<assay>-Level1.tsv".}
 
-\item{data.in}{(Data Frame) A Level-1 data frame from the format functions.}
+\item{data.in}{(Data Frame) A level-1 data frame from the format functions.}
 
 \item{exclusion.info}{(Data Frame) A data frame containing the variables and 
 values of the corresponding variables to exclude rows. 
@@ -30,7 +30,7 @@ This argument only needs to be specified when importing input data set with \cod
 or exporting a data file.}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-data frame (Level-2) will be exported as a .tsv file to the current directory. 
+data frame (level-2) will be exported as a .tsv file to the current directory. 
 (Defaults to \code{TRUE}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-1 file exists. 
@@ -42,11 +42,11 @@ If \code{NULL}, the output file will be saved to the current working
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-A Level-2 data frame with a verification column.
+A level-2 data frame with a verification column.
 }
 \description{
-This function takes in a Level-1 data frame and an exclusion list and 
-returns a Level-2 data frame with a verification column. The
+This function takes in a level-1 data frame and an exclusion list and 
+returns a level-2 data frame with a verification column. The
 verification column contains either "Y", indicating the row is good for analysis,
 or messages contained in the exclusion list for why the data rows are excluded. 
 If an exclusion list is not provided, all rows are assumed to be good for use 
@@ -55,7 +55,7 @@ in further analyses and are verified with "Y".
 \details{
 The `exclusion.info` should be a data frame with the following columns:
 \tabular{rr}{
-  Variables \tab Level-1 variable(s) used to filter rows for exclusion\cr
+  Variables \tab level-1 variable(s) used to filter rows for exclusion\cr
   Values \tab Value(s) to exclude\cr
   Message \tab Simple explanation for the exclusion\cr
 }

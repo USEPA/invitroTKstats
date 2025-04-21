@@ -56,11 +56,11 @@ format_fup_red(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
-"<FILENAME>-fup-RED-Level1.tsv", and/or used to identify the input Level-0 file,
+\item{FILENAME}{(Character) A string used to identify the output level-1 file.
+"<FILENAME>-fup-RED-Level1.tsv", and/or used to identify the input level-0 file,
 "<FILENAME>-fup-RED-Level0.tsv" if importing from a .tsv file. (Defaults to "MYDATA".)}
 
-\item{data.in}{(Data Frame) A Level-0 data frame containing mass-spectrometry peak areas,
+\item{data.in}{(Data Frame) A level-0 data frame containing mass-spectrometry peak areas,
 indication of chemical identity, and measurement type. The data frame should
 contain columns with names specified by the following arguments:}
 
@@ -216,19 +216,19 @@ specified in \code{analysis.parameters}.)}
 \item{note.col}{(Character) Column name of \code{data.in} containing additional notes on 
 test compounds. (Defaults to "Note".)}
 
-\item{level0.file}{(Character) The Level-0 file from which the \code{data.in} were obtained.
+\item{level0.file}{(Character) The level-0 file from which the \code{data.in} were obtained.
 (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
-were obtained from the same Level-0 file.)}
+were obtained from the same level-0 file.)}
 
 \item{level0.file.col}{(Character) Column name containing \code{level0.file} information. 
 (Defaults to "Level0.File".) (Note: \code{data.in} does not
 necessarily have this field. If this field is missing, it can be auto-filled with the value 
 specified in \code{level0.file}.)}
 
-\item{level0.sheet}{(Character) The specific sheet name of Level-0 file from which the 
-\code{data.in} is obtained from, if the Level-0 file is an Excel workbook. 
+\item{level0.sheet}{(Character) The specific sheet name of level-0 file from which the 
+\code{data.in} is obtained from, if the level-0 file is an Excel workbook. 
 (Defaults to \code{NULL}.) (Note: Single entry only, use only if all rows in \code{data.in}
-were obtained from the same sheet in the same Level-0 file.)}
+were obtained from the same sheet in the same level-0 file.)}
 
 \item{level0.sheet.col}{(Character) Column name containing \code{level0.sheet} information.
 (Defaults to "Level0.Sheet".) (Note: \code{data.in} does not
@@ -236,14 +236,14 @@ necessarily have this field. If this field is missing, it can be auto-filled wit
 specified in \code{level0.sheet}.)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-1) will be exported the current directory as a .tsv file. 
+table (level-1) will be exported the current directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
 
 \item{save.bad.types}{(Logical) When set to \code{TRUE}, export data removed 
 due to inappropriate sample types. See the Detail section for the required sample types. 
 (Defaults to \code{FALSE}.)}
 
-\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-1). 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (level-1). 
 (Defaults to \code{5}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-0 file exists. 
@@ -255,13 +255,13 @@ If \code{NULL}, the output file will be saved to the current working
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-A Level-1 data frame with a standardized format containing a  
+A level-1 data frame with a standardized format containing a  
 standardized set of columns and column names with plasma protein
 binding (PPB) data from an rapid equilibrium dialysis (RED) assay.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurement of chemical fraction
+from samples collected as part of in vitro measurements of chemical fraction
 unbound in plasma using rapid equilibrium dialysis
 \insertCite{waters2008validation}{invitroTKstats}.
 The input data frame is organized into a standard set of columns and written

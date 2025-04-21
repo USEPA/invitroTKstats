@@ -6,7 +6,7 @@
 \alias{Smeltz2023.uc}
 \title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} Ultracentrifugation Data Set}
 \format{
-A level 2 data.frame with 10133 rows and 23 variables: \describe{
+A level-2 data.frame with 10,133 rows and 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}
@@ -16,20 +16,20 @@ A level 2 data.frame with 10133 rows and 23 variables: \describe{
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
-\item{\code{TC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
+\item{\code{UC.Assay.T1.Conc}}{Intended concentration of chemical in T1 sample (uM)}
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
-\item{\code{Series}}{Identier for replicate series of UC measurements}
+\item{\code{Series}}{Identifier for replicate series of UC measurements}
 \item{\code{Area}}{Peak area of analyte (target compound)}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
-\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}
 \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
-\item{\code{Note}}{Any laboratory notes about sample)}
-\item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
-\item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+\item{\code{Note}}{Any laboratory notes about sample}
+\item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level-0 data.frame}
+\item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
-\item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+\item{\code{Verified}}{If "Y", then sample is included in the analysis. (Any other value causes the data to be ignored.)}
 }
 }
 \usage{

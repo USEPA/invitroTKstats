@@ -151,21 +151,24 @@ model {
 }
 "
 
-#' Calculate Fraction Unbound in Plasma (Fup) From Rapid Equilibrium Dialysis (RED) Data
+#' Calculate Fraction Unbound in Plasma (Fup) from Rapid Equilibrium Dialysis 
+#' (RED) Data with Bayesian Modeling (Level-4)
 #'
 #' This function estimates the fraction unbound in plasma (Fup) with Bayesian
 #' modeling on Rapid Equilibrium Dialysis (RED) data. Both Fup and
 #' the credible interval are estimated from posterior samples of the MCMC.
-#' A summary table along with the full set of MCMC results is returned from
+#' A summary table (level-4) along with the full set of MCMC results is returned from
 #' the function.
 #' 
-#' The input data should be "Level-2". Level-2 data is Level-1 data, formatted 
+#' The input to this function should be "level-2" data. Level-2 data is level-1 data, formatted 
 #' with the \code{\link{format_fup_red}} function, and curated with a
-#' verification column where "Y" indicates a data row is valid for analysis. 
+#' verification column. "Y" in the verification column indicates the data row is
+#' valid for analysis. 
 #' 
-#' Note: By default, this function writes files to the user's current working directory 
-#' unless another path is specified in the \code{TEMP.DIR} argument. Files saved include 
-#' the summary table (.RData), JAGS model (.RData), and any "unverified" data 
+#' Note: By default, this function writes files to the user's current working directory.
+#' Users must specify an alternative path with the `TEMP.DIR` argument if they want 
+#' the files exported to another path. Exported files include the summary table (.RData),
+#' JAGS model (.RData), and any "unverified" data 
 #' excluded from the analysis (.tsv).
 #' 
 #' The data frame of observations should be annotated according to
@@ -181,12 +184,12 @@ model {
 #' We currently require Plasma, PBS, and Plasma.Blank data. T0, CC, and NoPlasma.Blank
 #' data are optional.
 #'
-#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' @param FILENAME (Character) A string used to identify the input level-2 file,
 #' "<FILENAME>-fup-RED-Level2.tsv", and to name the exported model results. 
 #' This argument is required no matter which method of specifying input data is used. 
 #' (Defaults to \code{NULL}.)
 #' 
-#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' @param data.in (Data Frame) A level-2 data frame generated from the 
 #' \code{format_fup_red} function with a verification column added by 
 #' \code{sample_verification}. Complement with manual verification if needed.
 #'
@@ -214,8 +217,8 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2). 
-#' The exported result table (Level-4) is left unrounded for reproducibility. 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (level-2). 
+#' The exported result table (level-4) is left unrounded for reproducibility. 
 #' (Note: console print statements are also rounded to specified significant figures.) 
 #' (Defaults to \code{3}.)
 #' 
@@ -229,7 +232,7 @@ model {
 #'
 #' @return A list of two objects: 
 #' \enumerate{
-#'    \item{Results: A Level-4 data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
+#'    \item{Results: A level-4 data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
 #'    and credible interval for all compounds in the input file. Column includes:
 #'    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
 #'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
@@ -334,18 +337,18 @@ calc_fup_red <- function(
   reps = c("Biological.Replicates", "Technical.Replicates")
   if (!(all(reps %in% colnames(MS.data))))
   {
-    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    warning("Run format_fup_red first (level-1) then curate to (level-2).")
     stop(paste("Missing replication columns named:", 
                paste(reps[!(reps %in% colnames(MS.data))], collapse = ", ")))
   } else if (any(is.na(MS.data[,"Biological.Replicates"]))) 
   {
-    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    warning("Run format_fup_red first (level-1) then curate to (level-2).")
     stop("NA values provided for Biological.Replicates")
   } 
   
   if (!(all(cols %in% colnames(MS.data))))
   {
-    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    warning("Run format_fup_red first (level-1) then curate to (level-2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(MS.data))],collapse=", ")))
   }
@@ -527,7 +530,7 @@ calc_fup_red <- function(
   #View(Results)
   
 
-  # Write out a "level 4" result table:
+  # Write out a "level-4" result table:
   # Determine the path for output
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR
@@ -539,7 +542,7 @@ calc_fup_red <- function(
   
   save(Results,
     file=paste0(file.path, "/", FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData"))
-  cat(paste0("A Level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
+  cat(paste0("A level-4 file named ",FILENAME,"-fup-RED-Level4Analysis-",Sys.Date(),".RData", 
              " has been exported to the following directory: ", file.path), "\n")
    
   # Save ignored data if there is any

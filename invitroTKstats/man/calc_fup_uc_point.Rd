@@ -2,8 +2,8 @@
 % Please edit documentation in R/calc_fup_uc_point.R
 \name{calc_fup_uc_point}
 \alias{calc_fup_uc_point}
-\title{Calculate Point Estimates of Fraction Unbound in Plasma with
-Ultracentrifugation (UC) Data}
+\title{Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with
+Ultracentrifugation (UC) Data (Level-3)}
 \usage{
 calc_fup_uc_point(
   FILENAME,
@@ -16,10 +16,10 @@ calc_fup_uc_point(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+\item{FILENAME}{(Character) A string used to identify the input level-2 file.
 "<FILENAME>-fup-UC-Level2.tsv".}
 
-\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\item{data.in}{(Data Frame) A level-2 data frame generated from the 
 \code{format_fup_uc} function with a verification column added by 
 \code{sample_verification}. Complement with manual verification if needed.}
 
@@ -28,10 +28,10 @@ verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-3) will be exported the current directory as a .tsv file. 
+table (level-3) will be exported the current directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
 
-\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-3). 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (level-3). 
 (Note: console print statements are also rounded to specified significant figures.) 
 (Defaults to \code{3}.)}
 
@@ -44,7 +44,7 @@ If \code{NULL}, the output file will be saved to the current working
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-A Level-3 data frame with one row per chemical, contains chemical identifiers 
+A level-3 data frame with one row per chemical, contains chemical identifiers 
 such as preferred compound name, compound name used by the laboratory, 
 EPA's DSSTox Structure ID, calibration, and point estimates for
 the fraction unbound in plasma (Fup) for all chemicals in the input data frame.
@@ -57,7 +57,7 @@ as part of in vitro measurements of chemical Fup using ultracentrifugation
 for the equation(s) used in the point estimate.
 }
 \details{
-The input to this function should be "Level-2" data. Level-2 data is Level-1,
+The input to this function should be "level-2" data. Level-2 data is level-1,
 data formatted with the \code{\link{format_fup_uc}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for analysis. 
@@ -75,7 +75,7 @@ of these types:
 
 \eqn{f_{up} = \frac{\sum_{i = 1}^{n_A} (r_A * c_{DF}) / n_A}{\sum_{i = 1}^{n_{T5}} (r_{T5} * c_{DF}) / n_{T5}}}
 
-where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
+where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is the corresponding Dilution Factor,
 \eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
 and \eqn{n_{T5}} is the number of T5 Responses.
 }

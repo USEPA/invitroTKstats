@@ -8,7 +8,7 @@
 #' observations for every measurement type included in the vector for each chemical-calibration pair. 
 #' If it does, the chemical is said to have a complete data set. Otherwise, it has an incomplete data set. 
 #' The number of complete and incomplete datasets, for each chemical, are returned in the output list. 
-#' The input data frame can be Level-1 (or Level-2) Caco-2 data, ultracentrifugation (UC) data, rapid equilibrium dialysis (RED) data, 
+#' The input data frame can be level-1 (or level-2) Caco-2 data, ultracentrifugation (UC) data, rapid equilibrium dialysis (RED) data, 
 #' or hepatocyte clearance (Clint) data. See the Details section for measurement type and 
 #' annotation tables used in each assay.
 #'
@@ -52,7 +52,7 @@
 #'   Receiver compartment at end of experiment\tab R2\cr
 #' }
 #'
-#' @param input.table (Data Frame) A data frame (Level-1 or Level-2) containing mass-spectrometry peak areas,
+#' @param input.table (Data Frame) A data frame (level-1 or level-2) containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'

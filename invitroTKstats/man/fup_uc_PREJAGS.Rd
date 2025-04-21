@@ -3,7 +3,7 @@
 \docType{data}
 \name{fup_uc_PREJAGS}
 \alias{fup_uc_PREJAGS}
-\title{Fup UC Level 4 PREJAGS arguments}
+\title{Fup UC Level-4 PREJAGS arguments}
 \format{
 A named list with 10 elements: \describe{
 \item{\code{Num.cal}}{Unique number of \code{Calibration} values for the tested compound}
@@ -22,7 +22,7 @@ A named list with 10 elements: \describe{
 fup_uc_PREJAGS
 }
 \description{
-The arguments given to JAGS for the tested compound during level 4 processing of mass spectrometry measurements of plasma protein binding (PPB) via 
+The arguments given to JAGS for the tested compound during level-4 processing of mass spectrometry measurements of plasma protein binding (PPB) via 
 ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
 (PFAS) samples. Experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 
 \insertCite{smeltz2023plasma}{invitroTKstats}. This list is overwritten for each tested 

@@ -1,19 +1,19 @@
 #' Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with
-#' Rapid Equilibrium Dialysis (RED) Data 
+#' Rapid Equilibrium Dialysis (RED) Data (Level-3)
 #'
 #' This function calculates the point estimates for the fraction unbound in plasma
-#' (Fup) using mass spectrometry (MS) peak areas from samples collected as part
+#' (Fup) using mass spectrometry (MS) peak areas from samples collected as part of
 #' in vitro measurements of chemical Fup using rapid equilibrium dialysis
 #' \insertCite{waters2008validation}{invitroTKstats}. See the Details section
 #' for the equation(s) used in point estimation. 
 #' 
-#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' The input to this function should be "level-2" data. Level-2 data is level-1,
 #' data formatted with the \code{\link{format_fup_red}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for analysis. 
 #'
 #' The data frame of observations should be annotated according to
-#' of these types:
+#' these types:
 #' \tabular{rrrrr}{
 #'   No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
 #'   Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr
@@ -29,15 +29,15 @@
 #' {\frac{\sum_{i=1}^{n_{PL}} (r_{PL} * c_{DF})}{n_{PL}} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
 #'
 #' where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
-#' \eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
+#' \eqn{c_{DF}} is the corresponding Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
 #' \eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{PL}} is Plasma Response,
 #' \eqn{n_{PL}} is the number of Plasma Responses, \eqn{r_{B}} is Plasma Blank Response,
 #' and \eqn{n_B} is the number of Plasma Blank Responses.
 #'
-#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' @param FILENAME (Character) A string used to identify the input level-2 file.
 #' "<FILENAME>-fup-RED-Level2.tsv".
 #' 
-#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' @param data.in (Data Frame) A level-2 data frame generated from the 
 #' \code{format_fup_red} function with a verification column added by 
 #' \code{sample_verification}. Complement with manual verification if needed.
 #' 
@@ -46,10 +46,10 @@
 #' (Defaults to "Verified".)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' table (level-3) will be exported to the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-3). 
 #' (Note: console print statements are also rounded to specified significant figures.)
 #' (Defaults to \code{3}.)
 #' 
@@ -61,7 +61,7 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
-#' @return A Level-3 data frame with one row per chemical, contains chemical identifiers 
+#' @return A level-3 data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
 #' and point estimates for the fraction unbound in plasma (Fup)
 #' for all chemicals in the input data frame. 
@@ -135,12 +135,12 @@ calc_fup_red_point <- function(
   reps = c("Biological.Replicates", "Technical.Replicates")
   if (!(all(reps %in% colnames(MS.data))))
   {
-    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    warning("Run format_fup_red first (level-1) then curate to (level-2).")
     stop(paste("Missing replication columns named:", 
                paste(reps[!(reps %in% colnames(MS.data))], collapse = ", ")))
   } else if (any(is.na(MS.data[,"Biological.Replicates"]))) 
     {
-      warning("Run format_fup_red first (level 1) then curate to (level 2).")
+      warning("Run format_fup_red first (level-1) then curate to (level-2).")
       stop("NA values provided for Biological.Replicates")
     } 
       
@@ -148,7 +148,7 @@ calc_fup_red_point <- function(
   
   if (!(all(cols %in% colnames(MS.data))))
   {
-    warning("Run format_fup_red first (level 1) then curate to (level 2).")
+    warning("Run format_fup_red first (level-1) then curate to (level-2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(MS.data))],collapse=", ")))
   }
@@ -327,7 +327,7 @@ calc_fup_red_point <- function(
       cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
     }
     
-    # Write out a "level 3" file (data organized into a standard format):
+    # Write out a "level-3" file (data organized into a standard format):
     write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-fup-RED-Level3.tsv"),
                 sep="\t",
@@ -336,7 +336,7 @@ calc_fup_red_point <- function(
     
   
     # Print notification message stating where the file was output to
-    cat(paste0("A Level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", 
+    cat(paste0("A level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", 
                 " has been exported to the following directory: ", file.path), "\n")
   }
 

@@ -61,16 +61,17 @@ model {
 }
 "
 
-#' Calculate the Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data
+#' Calculate Fraction Unbound in Plasma (Fup) from Ultracentrifugation (UC) Data
+#' with Bayesian Modeling (Level-4)
 #'
 #' This function estimates the fraction unbound in plasma (Fup) and credible
 #' intervals with a Bayesian modeling approach, via MCMC simulations.
 #' Data used in modeling is collected from Ultracentrifugation (UC) Fup assays.
 #' Fup and the credible interval are calculated from the MCMC posterior samples
-#' and the function returns a summary table along with the full set of
+#' and the function returns a summary table (level-4) along with the full set of
 #' MCMC results.
 #' 
-#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' The input to this function should be "level-2" data. Level-2 data is level-1,
 #' data formatted with the \code{\link{format_fup_uc}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for analysis. 
@@ -89,35 +90,35 @@ model {
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }
-#' We don't currently use the T1 data, but CC, AF, and T5 data are required.
+#' We currently require CC, AF, and T5 data. T1 data are optional.
 #' 
 #' Note: runjags::findjags() may not work as \code{JAGS.PATH} argument. Instead, 
 #' may need to manually remove the trailing path such that \code{JAGS.PATH} only 
 #' contains path information through "/x64" (e.g. \code{JAGS.PATH} = "/Program Files/JAGS/JAGS-4.3.1/x64").
 #'
-#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' @param FILENAME (Character) A string used to identify the input level-2 file,
 #' "<FILENAME>-fup-UC-Level2.tsv", and to name the exported model results. 
 #' This argument is required no matter which method of specifying input data is used. 
 #' (Defaults to \code{NULL}.)
 #' 
-#' @param data.in A Level-2 data frame generated from the 
+#' @param data.in A level-2 data frame generated from the 
 #' \code{format_fup_uc} function with a verification column added by 
 #' \code{sample_verification}. Complement with manual verification if needed.
 #'
-#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. By
-#' default, i.e. unspecified, all files will be exported to the user's current
-#' working directory. (Defaults to \code{NULL}.)
+#' @param TEMP.DIR (Character) Temporary directory to save intermediate files. If 
+#' \code{NULL}, all files will be written to the current working directory.
+#' (Defaults to \code{NULL}.)
 #'
 #' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
 #'
-#' @param NUM.CORES (Numeric) The number of computer processors to use for
+#' @param NUM.CORES (Numeric) The number of processors to use for
 #' parallel computing. (Defaults to 2.)
 #'
 #' @param RANDOM.SEED (Numeric) The seed used by the random number generator.
 #' (Defaults to 1111.)
 #' 
 #' @param good.col (Character) Column name indicating which rows have been
-#' verified, data rows valid for analysis are indicated with a "Y".
+#' verified for analysis, valid data rows are indicated with "Y".
 #' (Defaults to "Verified".)
 #' 
 #' @param JAGS.PATH (Character) Computer specific file path to JAGS software.
@@ -126,8 +127,8 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2). 
-#' The exported result table (Level-4) is left unrounded for reproducibility.
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (level-2). 
+#' The exported result table (level-4) is left unrounded for reproducibility.
 #' (Note: console print statements are also rounded to specified significant figures.)
 #' (Defaults to \code{3}.)
 #' 
@@ -141,16 +142,19 @@ model {
 #' 
 #' @return A list of two objects: 
 #' \enumerate{
-#'    \item{Results: A Level-4 data frame with Bayesian estimated fraction unbound
+#'    \item{Results: A level-4 data frame with Bayesian estimated fraction unbound
 #'    in plasma (Fup) and credible intervals for all compounds in the input file.
 #'    Column includes:
 #'    Compound.Name - compound name,
 #'    Lab.Compound.Name - compound name used by the laboratory,
 #'    DTXSID - EPA's DSSTox Structure ID,
 #'    Fup.point - point estimate of Fup,
-#'    Fup.Med - Posterior median,
+#'    Fup.Med - posterior median,
 #'    Fup.Low - 2.5th quantile,
-#'    and Fup.High - 97.5th quantile.}
+#'    Fup.High - 97.5th quantile,
+#'    Fstable.Med - posterior median of stability fraction,
+#'    Fstable.Low - 2.5th quantile,
+#'    Fstable.High - 97.5th quantile.}
 #'    \item{coda: A runjags-class object containing results from JAGS model.}
 #' }
 #'
@@ -241,11 +245,11 @@ calc_fup_uc <- function(
   cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
   
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(PPB.data)))
-    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_uc first (level 1) then curate to (level 2).")
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_uc first (level-1) then curate to (level-2).")
   
   if (!(all(cols %in% colnames(PPB.data))))
   {
-    warning("Run format_fup_uc first (level 1) then curate to level 2.")
+    warning("Run format_fup_uc first (level-1) then curate to level-2.")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(PPB.data))],collapse=", ")))
   }
@@ -458,7 +462,7 @@ calc_fup_uc <- function(
 
   #View(Results)
   
-  # Write out a "level 4" result table:
+  # Write out a "level-4" result table:
   # Determine the path for output
   if (!is.null(OUTPUT.DIR)) {
     file.path <- OUTPUT.DIR
@@ -470,7 +474,7 @@ calc_fup_uc <- function(
 
   save(Results,
     file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData"))
-  cat(paste0("A Level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
+  cat(paste0("A level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
              " has been exported to the following directory: ", file.path), "\n")
     
   # Save ignored data if there is any
