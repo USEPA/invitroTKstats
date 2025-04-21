@@ -57,7 +57,8 @@ manuscript for demonstration purposes.
 
 ```{r setup,message=FALSE,warning=FALSE}
 # Primary Package #
-library(invitroTKstats)
+# library(invitroTKstats)
+devtools::load_all(here::here())
 # Data Formatting Packages #
 library(dplyr)
 library(magrittr)
@@ -73,7 +74,8 @@ The first thing we need to do for the pipelining process is to construct a data 
 
 *NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
-These datasets are stored as part of the R package and can be retrieved from the "data-raw/Kreutz-Clint" sub-directory. The "data-raw/Kreutz-Clint" sub-directory contains all of the raw data files, original data processing scripts, and resulting datasets after processing and parameter estimation. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "<path_to_directory>" with the file path to the local repository clone and the "Kreutz-Clint" sub-directory.
+These datasets are stored as part of the R package and can be retrieved from the "data-raw/Kreutz-Clint" sub-directory. 
+For access to additional files such as original data processing scripts and resulting datasets after processing and parameter estimation, it is necessary to clone the repository containing the "KreutzPFAS" sub-directory, which is not stored with the R package. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "\<path_to_directory\>" with the file path to the "Kreutz-Clint" sub-directory.
 
 ```{r raw_data_dir,echo=FALSE}
 # this code chunk is hidden since it may not be applicable for the R pckg user
