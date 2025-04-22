@@ -73,16 +73,13 @@ The first thing we need to do for the pipelining process is to construct a data 
 
 *NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
-These datasets are stored as part of the R package and can be retrieved from the "data-raw/Kreutz-Clint" sub-directory. 
-For access to additional files such as original data processing scripts and resulting datasets after processing and parameter estimation, it is necessary to clone the repository containing the "KreutzPFAS" sub-directory, which is not stored with the R package. *It should be noted the data pipelining code and resulting datasets were obtained with a prototype version of the `invitroTKstats` package.* In the following code chunk, it will be necessary to replace "\<path_to_directory\>" with the file path to the "Kreutz-Clint" sub-directory.
+It is necessary to clone the `invitroTKstats` package repository which contains the "data-raw/Kreutz-Clint" sub-directory. 
 
-```{r raw_data_dir,echo=FALSE}
-# this code chunk is hidden since it may not be applicable for the R pckg user
+The "Kreutz-Clint" sub-directory contains raw data files with gas chromatography-tandem mass spectrometry (GC-MS/MS) analyses of a subset of PFAS alcohols, amides, and acrylates \insertCite{kreutz2023category}{invitroTKstats}. 
+
+```{r raw_data_dir}
+# after the `invitroTKstats` package repository is cloned, the path to the applicable sub-directory
 raw_data_dir <- here::here("data-raw/Kreutz-Clint")
-```
-```{r raw_data_dir_show,eval=FALSE}
-# raw data directory - put together the path to where the sub-directory for Kreutz-Clint is in your local
-raw_data_dir <- "<path_to_directory>/Kreutz-Clint/"
 ```
 
 More than one experiment (that is, data collection run) is typically necessary to obtain all the relevant data for an analysis. Thus, there is likely to be more than one Excel file containing raw data that needs to be processed.
@@ -129,28 +126,28 @@ DC_kreutz.pfas <- create_catalog(
   # sheet name (or sheet number)
   sheet = c(rep("Data063021",3)), 
   # number of rows to skip in L0 Excel file - start for compound/analyte samples
-  skip.rows = c(44,92,74), 
+  skip.rows = c(44,74,92), 
   # number of rows to read in from L0 Excel file for compound/analyte samples
   num.rows = c(30,18,18), 
   # date the data was generated
   #   (MMDDYYY: 2-digit month, 2-digit day, 4-digit year)
   date = "06302021", 
   # chemical id
-  compound = c("745","959","949"),
+  compound = c("745","949","959"),
   # internal standard compound (corresponding to chemical id)
-  istd = c("MFBET","MFHET","MFOET"), 
+  istd = c("MFBET","MFOET","MFHET"), 
   # column name for sample names
   sample = "Name", 
   # column name for sample types
   type = "Type",
   # column name(s) for analyte MS peak areas
-  peak = c("Area...13","Area...20","Area...27"), 
+  peak = c("Area...13","Area...27","Area...20"), 
   # column name(s) for internal standard MS peak areas
-  istd.peak = c("Resp....16","Resp....23","Resp....30"), 
+  istd.peak = c("Resp....16","Resp....30","Resp....23"), 
   # column name(s) for experimental concentration
-  conc = c("Final Conc....11","Final Conc....18","Final Conc....25"),
+  conc = c("Final Conc....11","Final Conc....25","Final Conc....18"),
   # column name(s) with analysis parameters
-  analysis.param = c("RT...12", "RT...19", "RT...26"),
+  analysis.param = c("RT...12", "RT...26", "RT...19"),
   # column name - row locations
   col.names.loc = 2
   # note = "RT...12"
