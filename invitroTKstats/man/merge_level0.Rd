@@ -2,7 +2,7 @@
 % Please edit documentation in R/merge_level0.R
 \name{merge_level0}
 \alias{merge_level0}
-\title{Merge multiple level0 files into a single table for processing}
+\title{Merge Multiple Level-0 files into a Single Table for Processing}
 \usage{
 merge_level0(
   FILENAME = "MYDATA",
@@ -52,29 +52,29 @@ merge_level0(
 in which Excel files contain MS data for analysis. See details for full
 explanation.}
 
-\item{file.col}{(Character) Column name containing level 0 file names
+\item{file.col}{(Character) Column name containing level-0 file names
 to pull data from.}
 
 \item{sheet}{(Character) Excel file sheet name/identifier containing
-level 0 where data is to be pulled from. (Defaults to `NULL`.) (Note: Single
+level-0 where data is to be pulled from. (Defaults to `NULL`.) (Note: Single
 entry only, use only if all files have the same sheet identifier for
-level 0 data.)}
+level-0 data.)}
 
 \item{sheet.col}{(Character) Catalog column name containing `sheet`
 information. (Default to "Sheet")}
 
-\item{skip.rows}{(Numeric) Number of rows to skip when extracting level 0
+\item{skip.rows}{(Numeric) Number of rows to skip when extracting level-0
 data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
 entry only, use only if all files need to skip the same number of rows
-for extracting level 0 data.)}
+for extracting level-0 data.)}
 
 \item{skip.rows.col}{(Character) Catalog column name containing `skip.rows`
 information. (Default to "Skip.Rows")}
 
-\item{num.rows}{(Numeric) Number of rows to pull when extracting level 0
+\item{num.rows}{(Numeric) Number of rows to pull when extracting level-0
 data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
 entry only, use only if all files need to pull the same number of rows for
-extracting level 0 data.)}
+extracting level-0 data.)}
 
 \item{num.rows.col}{(Character) Catalog column name containing `num.rows`
 information. (Default to `NULL`)}
@@ -87,11 +87,11 @@ the same laboratory measurement date.)}
 \item{date.col}{(Character) Catalog column name containing `date`
 information. (Defaults to "Date")}
 
-\item{compound.col}{(Character) Column name of input.data (level0?) indicates the
-test compound. (Defaults to "Chemical.ID")}
+\item{compound.col}{(Character) Catalog column name containing `compound` 
+information. (Defaults to "Chemical.ID")}
 
-\item{istd.col}{(Character) Column name of input.data (level0?) indicating the
-MS peak area for the internal standard. (Defaults to "ISTD")}
+\item{istd.col}{(Character) Catalog column name containing `istd` information,
+or the MS peak area for the internal standard. (Defaults to "ISTD")}
 
 \item{col.names.loc}{(Numeric) Row location of data column names. (Defaults to 
 'NULL'.) (Note: Single entry only, use only if all files have column names 
@@ -100,58 +100,58 @@ in the same row location, typically the first row.)}
 \item{col.names.loc.col}{(Character) Catalog column name containing `col.names.loc`
 information. (Defaults to "Col.Names.Loc")}
 
-\item{sample.colname}{(Character) Column name of level 0 data containing
+\item{sample.colname}{(Character) Column name of level-0 data containing
 sample information. (Defaults to `NULL`.) (Note: Single entry only, use only
 if all files use the same column name for sample names when extracting
-level 0 data.)}
+level-0 data.)}
 
 \item{sample.colname.col}{(Character) Catalog column name containing 
 `sample.colname` information. (Defaults to "Sample.ColName")}
 
-\item{type.colname}{(Character) Column name of the level 0 data containing
+\item{type.colname}{(Character) Column name of the level-0 data containing
 the type of sample. (Defaults to `NULL`.) (Note: Single entry only, use
 only if all files use the same column name for sample type information
-when extracting level 0 data.)}
+when extracting level-0 data.)}
 
 \item{type.colname.col}{(Character) Catalog column name containing
 `type.colname` information. (Defaults to "Type".)}
 
-\item{peak.colname}{(Character) Column name of the level 0 data containing
+\item{peak.colname}{(Character) Column name of the level-0 data containing
 the analyte Mass Spectrometry peak area. (Defaults to `NULL`.)
 (Note: Single entry only, use only if all files use the same column name
-for analyte peak area information when extracting level 0 data.)}
+for analyte peak area information when extracting level-0 data.)}
 
 \item{peak.colname.col}{(Character) Catalog column name containing
 `peak.colname` information. (Defaults to "Peak.ColName")}
 
-\item{istd.peak.colname}{(Character) Column name of the level 0 data
+\item{istd.peak.colname}{(Character) Column name of the level-0 data
 containing the internal standard Mass Spectrometry peak area. (Note: Single
 entry only, use only if all files use the same column name for internal
-standard MS peak area information when extracting level 0 data.)}
+standard MS peak area information when extracting level-0 data.)}
 
 \item{istd.peak.colname.col}{(Character) Catalog column name containing
 `istd.peak.colname` information. (Defaults to "ISTD.Peak.ColName")}
 
-\item{conc.colname}{(Character) Column name of the level 0 data containing
+\item{conc.colname}{(Character) Column name of the level-0 data containing
 intended concentrations for calibration curves. (Defaults to `NULL`.)
 (Note: Single entry only, use only if all files use the same column name
-for intended concentration information when extracting level 0 data.)}
+for intended concentration information when extracting level-0 data.)}
 
 \item{conc.colname.col}{(Character) Catalog column name containing 
 `conc.colname` information. (Defaults to "Conc.ColName")}
 
-\item{analysis.param.colname}{(Character) Column name of the level 0 data
+\item{analysis.param.colname}{(Character) Column name of the level-0 data
 containing Mass Spectrometry instrument parameters for the analyte.
 (Defaults to `NULL`.) (Note: Single entry only, use only if all files use
 the same column name for analysis parameter information when extracting
-level 0 data.)}
+level-0 data.)}
 
 \item{analysis.param.colname.col}{(Character) Catalog column name containing
 `analysis.param.colname` information. (Defaults to "AnalysisParam.ColName")}
 
-\item{additional.colnames}{Additional columns from the level 0 data files to
-pull information from when extracting level 0 data and include in the
-compiled level 0 returned from `merge_level0`. (Defaults to `NULL`.)}
+\item{additional.colnames}{Additional columns from the level-0 data files to
+pull information from when extracting level-0 data and include in the
+compiled level-0 returned from `merge_level0`. (Defaults to `NULL`.)}
 
 \item{additional.colname.cols}{Catalog column name(s) containing 
 `additional.colnames` information, (Defaults to `NULL`.)}
@@ -160,11 +160,11 @@ compiled level 0 returned from `merge_level0`. (Defaults to `NULL`.)}
 identification information for tested chemicals.}
 
 \item{chem.lab.id.col}{(Character) Column in `chem.ids` containing
-the compound/chemical identifier used by the laboratory in level 0 measured
+the compound/chemical identifier used by the laboratory in level-0 measured
 data. (Defaults to "Chem.Lab.ID")}
 
 \item{chem.name.col}{(Character) `chem.ids` column name containing the
-"standard" chemical name to use for annotation of the compiled level 0
+"standard" chemical name to use for annotation of the compiled level-0
 returned from `merge_level0`. (Defaults to "Compound")}
 
 \item{chem.dtxsid.col}{(Character) `chem.ids` column name containing EPA's
@@ -176,11 +176,11 @@ specified in \code{level0.catalog} will be exported the current directory
 or \code{OUTPUT.DIR} as a .tsv file. (Defaults to \code{TRUE}.)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
+table (level-0) will be exported the current directory or \code{OUTPUT.DIR} 
 as a .tsv file. (Defaults to \code{TRUE}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the Excel files 
-with Level-0 data exist. If not specified, looking for the files
+with level-0 data exist. If not specified, looking for the files
 in the current working directory. (Defaults to \code{NULL}.)}
 
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
@@ -188,7 +188,7 @@ If \code{NULL}, the output file will be saved to the current working
 directory. (Defaults to \code{NULL}.)}
 }
 \value{
-\item{data.frame}{A data.frame in standardized Level-0 format}
+\item{data.frame}{A data.frame in standardized level-0 format}
 }
 \description{
 This function reads multiple Excel files containing mass-spectrometry (MS) data
@@ -197,8 +197,8 @@ sheets. The argument `level0.catalog` is a table that
 provides the necessary information to find the data for each chemical. The
 primary data of interest are the analyte peak area, the internal standard
 peak area, and the target concentration for calibration curve (CC) samples.
-The argument `data.label` is used to annotate this particular mapping of level0
-files into data ready to be organized into a level1 file.
+The argument `data.label` is used to annotate this particular mapping of level-0
+files into data ready to be organized into a level-1 file.
 }
 \details{
 Unless specified to be a single value for all the files, for example sheet="Data",
@@ -219,7 +219,7 @@ the argument `level0.catalog` should be a data frame with the following columns:
   AnalysisParam.ColName \tab The column name on the sheet that contains the MS instrument parameters for the analyte\cr
 }
 Columns with names ending in ".ColName" indicate the columns to be extracted
-from the specified Excel file and sheet containing level 0 data.
+from the specified Excel file and sheet containing level-0 data.
 }
 \author{
 John Wambaugh

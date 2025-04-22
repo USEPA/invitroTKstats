@@ -1,7 +1,7 @@
 #' Add Sample Verification Column (Level-2)
 #'
-#' This function takes in a Level-1 data frame and an exclusion list and 
-#' returns a Level-2 data frame with a verification column. The
+#' This function takes in a level-1 data frame and an exclusion list and 
+#' returns a level-2 data frame with a verification column. The
 #' verification column contains either "Y", indicating the row is good for analysis,
 #' or messages contained in the exclusion list for why the data rows are excluded. 
 #' If an exclusion list is not provided, all rows are assumed to be good for use 
@@ -9,7 +9,7 @@
 #' 
 #' The `exclusion.info` should be a data frame with the following columns:
 #' \tabular{rr}{
-#'   Variables \tab Level-1 variable(s) used to filter rows for exclusion\cr
+#'   Variables \tab level-1 variable(s) used to filter rows for exclusion\cr
 #'   Values \tab Value(s) to exclude\cr
 #'   Message \tab Simple explanation for the exclusion\cr
 #' }
@@ -17,10 +17,10 @@
 #' "Variables" and "Values" should be separated by a vertical bar "|" ,
 #' and the variable-value pairs should match. See demonstration in Examples, Scenario 1. 
 #'
-#' @param FILENAME (Character) A string used to identify the output Level-1 file.
+#' @param FILENAME (Character) A string used to identify the output level-1 file.
 #' "<FILENAME>-<assay>-Level1.tsv". 
 #' 
-#' @param data.in (Data Frame) A Level-1 data frame from the format functions.
+#' @param data.in (Data Frame) A level-1 data frame from the format functions.
 #'
 #' @param exclusion.info (Data Frame) A data frame containing the variables and 
 #' values of the corresponding variables to exclude rows. 
@@ -32,7 +32,7 @@
 #' or exporting a data file.
 #'
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' data frame (Level-2) will be exported as a .tsv file to the current directory. 
+#' data frame (level-2) will be exported as a .tsv file to the current directory. 
 #' (Defaults to \code{TRUE}.)
 #'
 #' @param INPUT.DIR (Character) Path to the directory where the input level-1 file exists. 
@@ -43,7 +43,7 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
-#' @return A Level-2 data frame with a verification column. 
+#' @return A level-2 data frame with a verification column. 
 #' 
 #' @importFrom utils read.csv write.table
 #' 
@@ -188,7 +188,7 @@ sample_verification <- function(
                 sep="\t",
                 row.names=F,
                 quote=F)
-    cat(paste0("A Level-2 file named ",FILENAME,"-",assay,"-Level2.tsv", 
+    cat(paste0("A level-2 file named ",FILENAME,"-",assay,"-Level2.tsv", 
                " has been exported to the following directory: ", file.path), "\n")
       
   

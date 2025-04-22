@@ -3,7 +3,7 @@
 \name{calc_fup_red_point}
 \alias{calc_fup_red_point}
 \title{Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with
-Rapid Equilibrium Dialysis (RED) Data}
+Rapid Equilibrium Dialysis (RED) Data (Level-3)}
 \usage{
 calc_fup_red_point(
   FILENAME,
@@ -16,10 +16,10 @@ calc_fup_red_point(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file.
+\item{FILENAME}{(Character) A string used to identify the input level-2 file.
 "<FILENAME>-fup-RED-Level2.tsv".}
 
-\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\item{data.in}{(Data Frame) A level-2 data frame generated from the 
 \code{format_fup_red} function with a verification column added by 
 \code{sample_verification}. Complement with manual verification if needed.}
 
@@ -28,10 +28,10 @@ verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-3) will be exported the current directory as a .tsv file. 
+table (level-3) will be exported to the current directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
 
-\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-3). 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (level-3). 
 (Note: console print statements are also rounded to specified significant figures.)
 (Defaults to \code{3}.)}
 
@@ -44,26 +44,26 @@ If \code{NULL}, the output file will be saved to the current working
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-A data frame with one row per chemical, contains chemical identifiers 
+A level-3 data frame with one row per chemical, contains chemical identifiers 
 such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
 and point estimates for the fraction unbound in plasma (Fup)
 for all chemicals in the input data frame.
 }
 \description{
 This function calculates the point estimates for the fraction unbound in plasma
-(Fup) using mass spectrometry (MS) peak areas from samples collected as part
-in vitro measurements of chemical Fup using rapid equilibrium dialysis
+(Fup) using mass spectrometry (MS) peak areas from samples collected as part of
+\emph{in vitro} measurements of chemical Fup using rapid equilibrium dialysis
 \insertCite{waters2008validation}{invitroTKstats}. See the Details section
 for the equation(s) used in point estimation.
 }
 \details{
-The input to this function should be "Level-2" data. Level-2 data is Level-1,
+The input to this function should be "level-2" data. Level-2 data is level-1,
 data formatted with the \code{\link{format_fup_red}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for analysis. 
 
 The data frame of observations should be annotated according to
-of these types:
+these types:
 \tabular{rrrrr}{
   No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
   Plasma Blank (no chemical, just plasma) \tab Plasma.Blank\cr
@@ -79,7 +79,7 @@ of these types:
 {\frac{\sum_{i=1}^{n_{PL}} (r_{PL} * c_{DF})}{n_{PL}} - \frac{\sum_{i=1}^{n_B} (r_B * c_{DF})}{n_B}}}
 
 where \eqn{r_P} is PBS Response, \eqn{n_P} is the number of PBS Responses,
-\eqn{c_{DF}} is Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
+\eqn{c_{DF}} is the corresponding Dilution Factor, \eqn{r_{NPB}} is No Plasma Blank Response,
 \eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{PL}} is Plasma Response,
 \eqn{n_{PL}} is the number of Plasma Responses, \eqn{r_{B}} is Plasma Blank Response,
 and \eqn{n_B} is the number of Plasma Blank Responses.

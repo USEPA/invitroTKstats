@@ -3,15 +3,15 @@
 \docType{data}
 \name{caco2_L1}
 \alias{caco2_L1}
-\title{Caco2 Level 1 Example Data set}
+\title{Caco-2 Level-1 Example Data set}
 \format{
-A level 1 data.frame with 48 rows and 28 variables: \describe{
+A level-1 data.frame with 48 rows and 28 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample name as described in the laboratory}
-\item{\code{Date}}{Date sample was acquired}
+\item{\code{Date}}{Date MS/MS assay data acquired from instrument}
 \item{\code{Compound.Name}}{Compound name}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
-\item{\code{Sample.Type}}{Type of Caco2 sample}
+\item{\code{Sample.Type}}{Type of Caco-2 sample}
 \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
@@ -19,20 +19,20 @@ A level 1 data.frame with 48 rows and 28 variables: \describe{
 \item{\code{Technical.Replicates}}{Identifier for repeated measurements of one sample of a compound}
 \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to donor side (uM)}
-\item{\code{Time}}{Time point sample measured (h)}
+\item{\code{Time}}{Time when sample was measured (h)}
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
 \item{\code{Area}}{Peak area of analyte (target compound)}
-\item{\code{Membrane.Area}}{The area of the Caco-2 monolayer}
-\item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
-\item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
+\item{\code{Membrane.Area}}{The area of the Caco-2 monolayer.}
+\item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
+\item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
-\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}
 \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
 \item{\code{Note}}{Additional information}
-\item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
-\item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+\item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level-0 data.frame)}
+\item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 }
 }
@@ -40,7 +40,7 @@ A level 1 data.frame with 48 rows and 28 variables: \describe{
 caco2_L1
 }
 \description{
-A subset of mass spectrometry (MS) measurements of membrane permeability from Caco2 cells. 
-This subset contains samples for 3 test analytes/compounds.
+A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
+data. This subset contains samples for 3 test analytes/compounds.
 }
 \keyword{datasets}

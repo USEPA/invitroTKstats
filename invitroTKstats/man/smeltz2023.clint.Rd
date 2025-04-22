@@ -6,31 +6,31 @@
 \alias{Smeltz2023.clint}
 \title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} Intinsic hepatic clearnace data set}
 \format{
-A level 2 data.frame with 625 rows and 24 variables: \describe{
+A level-2 data.frame with 625 rows and 24 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date sample was acquired}
 \item{\code{Compound.Name}}{Compound name}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
-\item{\code{Sample.Type}}{Type of UC sample}
+\item{\code{Sample.Type}}{Type of Clint sample}
 \item{\code{Dilution.Factor}}{Number of times sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
-\item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
+\item{\code{Std.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
-\item{\code{Time}}{Time point sample measured (h)}
+\item{\code{Time}}{Time when sample was measured (h)}
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
-\item{\code{Series}}{Identier for replicate series of UC measurements}
+\item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 \item{\code{Area}}{Peak area of analyte (target compound)}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
-\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}
 \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
-\item{\code{Note}}{Any laboratory notes about sample)}
+\item{\code{Note}}{Any laboratory notes about sample}
 \item{\code{Level0.File}}{Name of data file from laboratory that was used to compile level0 data table)}
-\item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read)}
+\item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
-\item{\code{Verified}}{If ="Y" then this sample is included in the analysis. Any other value leads to the data being ignored.)}
+\item{\code{Verified}}{If "Y", then sample is included in the analysis. (Any other value causes the data to be ignored.)}
 }
 }
 \usage{
@@ -39,8 +39,7 @@ smeltz2023.clint
 \description{
 Mass Spectrometry measurements of intrinsic hepatic clearance for
 cryopreserved pooled human hepatocytes. Chemicals were per- and
-'poly-fluorinated alkyl substance
-(PFAS) samples. The experiments were
+polyfluoroalkyl substance (PFAS) samples. The experiments were
 led by Dr.s Marci Smeltz and Barbara Wetmore.
 }
 \references{

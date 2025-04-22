@@ -21,5 +21,6 @@ build_mydata_fup_uc(MS.data, CC.data, T1.data, T5.data, AF.data)
 A named list to be passed into the Bayesian model.
 }
 \description{
-Build Data Object for Fup UC Bayesian Model
+Builds a list of arguments required for JAGS from subset of level-2 data frame. 
+The list is used as an argument to JAGS during level-4 processing.
 }

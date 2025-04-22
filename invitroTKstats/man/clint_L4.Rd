@@ -3,18 +3,18 @@
 \docType{data}
 \name{clint_L4}
 \alias{clint_L4}
-\title{Clint Level 4 Example Data set}
+\title{Clint Level-4 Example Data set}
 \format{
-A level 4 data.frame with 3 rows and 12 variables: \describe{
+A level-4 data.frame with 3 rows and 12 variables: \describe{
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 \item{\code{Clint.1.Med}}{Median intrinsic hepatic clearance at 1 uM}
-\item{\code{Clint.1.Low}}{0.025-quantile of intrinsic hepatic clearance at 1 uM}
-\item{\code{Clint.1.High}}{0.975-quantile of intrinsic hepatic clearance at 1 uM}
+\item{\code{Clint.1.Low}}{2.5th quantile of intrinsic hepatic clearance at 1 uM}
+\item{\code{Clint.1.High}}{97.5th quantile of intrinsic hepatic clearance at 1 uM}
 \item{\code{Clint.10.Med}}{Median of intrinsic hepatic clearance at 10 uM}
-\item{\code{Clint.10.Low}}{0.025-quantile of intrinsic hepatic clearance at 10 uM}
-\item{\code{Clint.10.High}}{0.975-quantile of intrinsic hepatic clearance at 1 uM}
+\item{\code{Clint.10.Low}}{2.5th quantile of intrinsic hepatic clearance at 10 uM}
+\item{\code{Clint.10.High}}{97.5th quantile of intrinsic hepatic clearance at 1 uM}
 \item{\code{Clint.pValue}}{Probability that a decrease is observed}
 \item{\code{Sat.pValue}}{Saturation probability that a lower \code{Clint} is observed at a higher concentration}
 \item{\code{degrades.pValue}}{Probability of abiotic degradation}

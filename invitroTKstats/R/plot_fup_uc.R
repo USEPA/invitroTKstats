@@ -7,12 +7,12 @@
 #' responses (y-axis) by sample types (x-axis). Responses from different
 #' measurements/calibrations are labeled with different shapes and colors. 
 #' 
-#' This function requires "Level-2" data for plotting. Level-2 data is Level-1,
+#' This function requires "level-2" data for plotting. Level-2 data is level-1,
 #' data formatted with the \code{\link{format_fup_uc}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for plotting.  
 #'
-#' @param level2 (Data Frame) A data.frame containing Level-2 data for fraction
+#' @param level2 (Data Frame) A data.frame containing level-2 data for fraction
 #' unbound in plasma (Fup) measured by ultracentrifugation (UC).
 #' 
 #' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
@@ -67,7 +67,7 @@ plot_fup_uc <- function(level2,dtxsid, compare = "type",good.col="Verified", col
     analysis.parameters.col <- "Analysis.Parameters"
     note.col <- "Note"
 
-# For a properly formatted level 2 file we should have all these columns:
+# For a properly formatted level-2 file we should have all these columns:
 # We need all these columns in PPB.data
   cols <-c(
     sample.col,
@@ -93,7 +93,7 @@ plot_fup_uc <- function(level2,dtxsid, compare = "type",good.col="Verified", col
     good.col)
   if (!(all(cols %in% colnames(level2))))
   {
-    warning("Is this UC fup data? Run format_fup_uc first (level 1) then curate to level 2.")
+    warning("Is this UC fup data? Run format_fup_uc first (level-1) then curate to level-2.")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(level2))],collapse=", ")))
   }

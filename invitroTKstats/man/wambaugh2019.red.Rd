@@ -6,18 +6,18 @@
 \alias{Wambaugh2019.red}
 \title{Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Protein Binding}
 \format{
-A data.frame 17,689 rows and 14 variables: \describe{
-\item{\code{Preferred.Name}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD).}
-\item{\code{CAS}}{CAS Registry Number of the test compound.}
-\item{\code{DTXSID}}{EPA's DSSTox Structure ID.}
-\item{\code{SampleName}}{Sample name used by the laboratory.}
-\item{\code{CompoundName}}{Compound name used by the laboratory.}
-\item{\code{Area}}{Mass spectrometry peak area for the test compound.}
-\item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
-\item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
-\item{\code{Dilution.Factor}}{The number of times a sample was diluted.}
-\item{\code{Protein}}{The percent of physiological protein concentration used for the assay.}
-\item{\code{RawDataSet}}{Name of the level 0 file containing the data.}
+A data.frame 17,689 rows and 11 variables: \describe{
+\item{\code{Preferred.Name}}{Preferred compound name from the CompTox Chemicals Dashboard (CCD)}
+\item{\code{CAS}}{CAS Registry Number of the test compound}
+\item{\code{DTXSID}}{EPA's DSSTox Structure ID}
+\item{\code{SampleName}}{Sample name used by the laboratory}
+\item{\code{CompoundName}}{Compound name used by the laboratory}
+\item{\code{Area}}{Mass spectrometry peak area for the test compound}
+\item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard}
+\item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard)}
+\item{\code{Dilution.Factor}}{The number of times a sample was diluted}
+\item{\code{Protein}}{The percent of physiological protein concentration used for the assay}
+\item{\code{RawDataSet}}{Name of the level-0 file containing the data}
 }
 }
 \source{

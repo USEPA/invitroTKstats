@@ -15,7 +15,7 @@ create_method_table(
 )
 }
 \arguments{
-\item{input.table}{(Data Frame) A Level-1 or Level-2 data frame containing mass-spectrometry peak areas,
+\item{input.table}{(Data Frame) A level-1 or level-2 data frame containing mass-spectrometry peak areas,
 indication of chemical identity, and analytical chemistry methods.
 It should contain columns with names specified by the following arguments:}
 
@@ -49,7 +49,7 @@ and compound identifiers used for each pair.
 \description{
 This function extracts the chemical analysis methods from a set of MS data and 
 returns a data frame with each row representing a unique chemical-method
-pair. (Unique chemical identified by DTXSID's.) Each row contains all compound names, analysis parameters, analysis instruments, 
+pair. (Unique chemical identified by DTXSID.) Each row contains all compound names, analysis parameters, analysis instruments, 
 and internal standards used for each chemical-method pair.
 }
 \examples{

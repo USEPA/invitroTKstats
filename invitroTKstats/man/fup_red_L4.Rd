@@ -3,16 +3,16 @@
 \docType{data}
 \name{fup_red_L4}
 \alias{fup_red_L4}
-\title{Fup RED Level 4 Example Data set}
+\title{Fup RED Level-4 Example Data set}
 \format{
-A level 4 data.frame with 3 rows and 7 variables: \describe{
+A level-4 data.frame with 3 rows and 7 variables: \describe{
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 \item{\code{Fup.point}}{Point estimate of fraction unbound in plasma}
 \item{\code{Fup.Med}}{Median fraction unbound in plasma}
-\item{\code{Fup.Low}}{0.025-quantile of fraction unbound in plasma}
-\item{\code{Fup.High}}{0.975-quantile of fraction unbound in plasma}
+\item{\code{Fup.Low}}{2.5th quantile of fraction unbound in plasma}
+\item{\code{Fup.High}}{97.5th quantile of fraction unbound in plasma}
 }
 }
 \usage{
