@@ -379,3 +379,73 @@ Kreutz, A., Clifton, M. S., Henderson, W. M., Smeltz, M. G., Phillips, M., Wamba
 Redgrave, T. G., Roberts, D. C. K., & West, C. E. (1975). Separation of plasma lipoproteins by density-gradient ultracentrifugation. Analytical biochemistry, 65(1-2), 42-49.
 
 Smeltz, M., Wambaugh, J. F., & Wetmore, B. A. (2023). Plasma protein binding evaluations of per-and polyfluoroalkyl substances for category-based toxicokinetic assessment. Chemical research in toxicology, 36(6), 870-881.
+
+
+## Appendix
+
+### L4 Bayesian Modeling Information
+
+#### Measurement Model
+
+$$ log(\sigma_a)_w \sim U(-6,1); \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
+
+$$ log(m_h)_w \sim U(-6,1); \space m_{h,w} = 10^{log(m_h)_w} $$
+
+$$ log(cal)_w \sim N(0, 0.01); \space cal_w = 10^{log(cal)_w} $$
+
+where $w$ indicates the calibration index and $w = (1,...,n_{cal})$ such that $n_{cal}$ is the total number of mass-spectrometry calibrations.
+
+#### Likelihood for Response Observations
+
+$$ \beta_i = 
+\begin{cases}
+1 & if \space C_{k^*_i}- C_{thresh,w^*_i} \ge 0\\
+0 & o.w.
+\end{cases}
+$$
+
+$$ y_i \sim N(x_i = m_i*((C_{k^*_i}- C_{thresh,w^*_i}) * \beta_i + \alpha_i), p_i = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*y_i)^2} ) $$
+
+where $y_i$ is the $i^{th}$ observation and $w^*_i$ is the calibration index for observation $i$, such that $w^*_i = (w^*_1,...,w^*_n)$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations). Finally, $k^*_i$ is the initial concentration index for observation $i$, such that $k^* = (k^*_1,...,k^*_n)$ and $k*_i \in k$ (i.e. $k^*_i$ indicates one of the expected initial concentrations and $k = (1,...,n_{C})$ is the set of all possible initial concentrations for the experiment, $n_C$ is the total number of nominal concentration values).
+
+#### Binding Model
+
+$$ log(f_{up}) \sim U(-15,0) ; \space f_{up} = 10^{log(f_{up})} $$
+$$ log(f_{loss}) \sim U(-6,0) $$
+$$ f_{stable} = 1 - 10^{log(f_{loss})} $$
+
+$$ C_i \sim N(conc_{target,w^*_i},100) $$
+
+$$ C_{T5,i} = f_{stable} * C_i $$
+
+$$ C_{AF,i} = f_{up}*C_{T5,i} $$
+
+where $C_i$ is the $i^{th}$ T1 concentration and $w^*_i$ is the calibration index for observation $i$, such that $w^*_i = (w^*_1,...,w^*_n)$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations). $C_{T5,i}$ and $C_{AF,i}$ are the estimated breakdown at T5 and the remaining stable concentration in the aqueous fraction (AF), respectively, given $C_i$.
+
+### JAGS to L4 Equation Notation Tables
+
+|       Data        |   Denotation    |
+|-------------------|-----------------|
+| Test.Nominal.Conc | $conc_{target}$ |
+|  Dilution.Factor  | $df$            |
+
+| JAGS Parameter Name | Parameter | Distribution |
+|---------------------|-----------|--------------|
+| log.const.analytic.sd | $log(\sigma_a)$ | Uniform |
+| log.hetero.analytic.slope | $log(m_h)$ | Uniform |
+| C.thresh | $C_{thresh}$ | Uniform |
+| log.calibration | $log(cal)$ | Normal |
+| background | $\gamma$ | Exponential |
+| const.analytic.sd | $\sigma_a$ | |
+| hetero.analytic.slope | $m_h$ | |
+| calibration | $cal$ | |
+| slope | $m$ | |
+| intercept | $\alpha$ | |
+| Response.pred | $x$ | |
+| Response.prec | $p$ | |
+| Response.obs | $y$ | Normal |
+| log.Fup | $log(f_{up})$ | Uniform |
+| Fup | $f_{up}$ | |
+| log.Floss | $log(f_{loss})$| Uniform |
+| Fstable | $f_{stable}$| |
+| Conc | $C$ | Normal |
