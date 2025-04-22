@@ -2,7 +2,7 @@
 
 Descriptions of files found within invitroTKstats/data-raw/Smeltz-UC. 
 
-The unprocessed data file \insertCite{smeltz2023plasma}{invitroTKstats} is used to generate the readily available example Fup UC dataset which can be accessed with `data("Fup-UC-example")`. 
+The unprocessed data file \insertCite{smeltz2023plasma}{invitroTKstats} is used to generate the readily available example Fup UC datasets which can be accessed with `data("Fup-UC-example")`. The example Fup UC datasets are also used in the function examples for various functions such as `format_fup_uc` and `calc_fup_uc_point`. 
 
 The processed data files are outputs from generating the data during level-4 processing. They are also used within the "Fup UC" vignette to demonstrate example level-4 files for users. 
 
@@ -19,4 +19,4 @@ The raw data file was pipelined through `invitroTKstats` to generate the "Fup-UC
   * Example-fup-UC-PREJAGS.RData - Arguments given to JAGS (intermediate file from `calc_fup_uc()`)
   * Example-fup-UC-Level2-heldout.tsv - Unverified Level 2 samples (intermediate file from `calc_fup_uc()`)
   
-CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README. 
+**CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README. **

@@ -2,7 +2,7 @@
 
 Descriptions of files found within invitroTKstats/data-raw/Kreutz-Clint. 
 
-The unprocessed data files \insertCite{kreutz2023category}{invitroTKstats} are used within the "Data Guide Creation and Level-0 Data Compilation" vignette to demonstrate the **entire** pipelining process; they are required to demonstrate how to extract relevant data from the **raw** data files to calculate point estimates of the intrinsic hepatic clearance (Cl~int~). 
+The unprocessed data files \insertCite{kreutz2023category}{invitroTKstats} are used within the "Data Guide Creation and Level-0 Data Compilation" vignette to demonstrate the initial steps of the pipelining process (raw data through L0 compilation); they are required to demonstrate how to extract relevant data from the **raw** data files to calculate point estimates of the intrinsic hepatic clearance (Cl~int~). 
 
 ### Unprocessed data 
 The raw data files contains mass spectrometry measurements of intrinsic hepatic clearance (Cl~int~) for cryopreserved pooled human hepatocytes. Chemicals were per- and polyfluoroalkyl substance (PFAS) samples. The experiments were led by Dr.s Anna Kreutz and Barbara Wetmore.

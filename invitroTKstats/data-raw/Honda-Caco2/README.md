@@ -2,7 +2,7 @@
 
 Descriptions of files found within invitroTKstats/data-raw/Honda-Caco2. 
 
-The unprocessed data files \insertCite{honda2025impact}{invitroTKstats} are used to generate the readily available example Caco-2 dataset which can be accessed with `data("Caco2-example")`. 
+The unprocessed data files \insertCite{honda2025impact}{invitroTKstats} are used to generate the readily available example Caco-2 datasets which can be accessed with `data("Caco2-example")`. The example Caco-2 datasets are also used in the function examples for various functions such as `format_caco2` and `calc_caco2_point`. 
 
 The processed data file is an artifact from generating the data and was used to verify output results. 
 
@@ -23,4 +23,4 @@ The following file is an optional output file from the Level 2 processing `sampl
   
   * Examples-Caco-2-Level2.tsv - Level 2 TSV (optional output file from `sample_verification`)
   
-CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README. 
+**CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README.**

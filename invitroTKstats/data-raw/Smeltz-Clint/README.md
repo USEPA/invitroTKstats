@@ -2,7 +2,7 @@
 
 Descriptions of files found within invitroTKstats/data-raw/Smeltz-Clint. 
 
-The unprocessed data file \insertCite{smeltz2023plasma}{invitroTKstats} is used to generate the readily available example Clint dataset which can be accessed with `data("Clint-example")`. 
+The unprocessed data file \insertCite{smeltz2023plasma}{invitroTKstats} is used to generate the readily available example Clint datasets which can be accessed with `data("Clint-example")`. The example Clint datasets are also used in the function examples for various functions such as `format_clint` and `calc_clint_point`.  
 
 The processed data files are outputs from generating the data during level-4 processing. They are also used within the "Clint" vignette to demonstrate example level-4 files for users. 
 
@@ -19,4 +19,4 @@ The raw data file was pipelined through `invitroTKstats` to generate the "Clint-
   * Example-Clint-PREJAGS.RData - Arguments given to JAGS (intermediate file from `calc_clint()`)
   * Example-Clint-Level2-heldout.tsv - Unverified Level 2 samples (intermediate file from `calc_clint()`)
   
-CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README. 
+**CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README.**
