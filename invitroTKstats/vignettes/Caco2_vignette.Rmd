@@ -335,7 +335,7 @@ The initial concentration in the donor compartment, $c_0$, is calculated similar
 
 The last remaining arguments are estimated with columns in our data: $V_\textrm{receiver}$ is defined by our `Vol.Receiver` column, $\Delta t$ is defined by our `Time` column, and $A$ is defined by our `Membrane.Area` column. 
 
-With this information, we calculate P~app~ in the donor to receiver direction. The estimate's direction is annotated according to Figure 1. For example, results annotated with the "A2B" suffix denote the apical side as the donor and the basal side as the receiver. Contrastingly, results annotated with the "B2A" suffix denote the basal side as the donor and the apical side as the receiver.
+With this information, we calculate P~app~ in the donor to receiver direction. The estimate's direction is annotated according to Figure 1. For example, results annotated with the "A2B" suffix denote the apical side as the donor and the basolateral side as the receiver. Contrastingly, results annotated with the "B2A" suffix denote the basolateral side as the donor and the apical side as the receiver.
 
 ```{r}
 caco2_L3_curated <- calc_caco2_point(FILENAME = "Caco2_vignette",

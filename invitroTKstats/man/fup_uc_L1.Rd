@@ -3,9 +3,9 @@
 \docType{data}
 \name{fup_uc_L1}
 \alias{fup_uc_L1}
-\title{Fup UC Level 1 Example Data set}
+\title{Fup UC Level-1 Example Data set}
 \format{
-A level 1 data.frame with 240 rows and 23 variables: \describe{
+A level-1 data.frame with 240 rows and 23 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
 \item{\code{Date}}{Date the sample was added to the MS analyzer}
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
@@ -19,11 +19,11 @@ A level 1 data.frame with 240 rows and 23 variables: \describe{
 \item{\code{ISTD.Area}}{Peak area of internal standard (ISTD) compound (pixels)}
 \item{\code{Area}}{Peak area of analyte (target compound)}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
-\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
+\item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}
 \item{\code{Analysis.Parameters}}{Parameters for identifing analyte peak (for example, retention time)}
-\item{\code{Note}}{Any laboratory notes about sample)}
-\item{\code{Level0.File}}{Name of the laboratory data file from which the level0 sample data was extracted}
-\item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level0 sample data was extracted}
+\item{\code{Note}}{Any laboratory notes about sample}
+\item{\code{Level0.File}}{Name of the laboratory data file from which the level-0 sample data was extracted}
+\item{\code{Level0.Sheet}}{Name of the Excel workbook 'sheet' from which the level-0 sample data was extracted}
 \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to T1 sample (uM)}
 \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}

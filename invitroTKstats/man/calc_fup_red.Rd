@@ -2,7 +2,8 @@
 % Please edit documentation in R/calc_fup_red.R
 \name{calc_fup_red}
 \alias{calc_fup_red}
-\title{Calculate Fraction Unbound in Plasma (Fup) From Rapid Equilibrium Dialysis (RED) Data}
+\title{Calculate Fraction Unbound in Plasma (Fup) from Rapid Equilibrium Dialysis 
+(RED) Data with Bayesian Modeling (Level-4)}
 \usage{
 calc_fup_red(
   FILENAME,
@@ -21,12 +22,12 @@ calc_fup_red(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file,
+\item{FILENAME}{(Character) A string used to identify the input level-2 file,
 "<FILENAME>-fup-RED-Level2.tsv", and to name the exported model results. 
 This argument is required no matter which method of specifying input data is used. 
 (Defaults to \code{NULL}.)}
 
-\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\item{data.in}{(Data Frame) A level-2 data frame generated from the 
 \code{format_fup_red} function with a verification column added by 
 \code{sample_verification}. Complement with manual verification if needed.}
 
@@ -54,8 +55,8 @@ assume all protein is albumin to estimate default in uM.)}
 \item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results
 as an .RData file. (Defaults to \code{FALSE}.)}
 
-\item{sig.figs}{(Numeric) The number of significant figures to round the exported unverified data (Level-2). 
-The exported result table (Level-4) is left unrounded for reproducibility. 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported unverified data (level-2). 
+The exported result table (level-4) is left unrounded for reproducibility. 
 (Note: console print statements are also rounded to specified significant figures.) 
 (Defaults to \code{3}.)}
 
@@ -70,7 +71,7 @@ directory. (Defaults to \code{NULL}.)}
 \value{
 A list of two objects: 
 \enumerate{
-   \item{Results: A data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
+   \item{Results: A level-4 data frame with the Bayesian estimated fraction unbound in plasma (Fup) 
    and credible interval for all compounds in the input file. Column includes:
    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
    the laboratory, DTXSID - EPA's DSSTox Structure ID, Fup.point - point estimate of Fup,
@@ -82,17 +83,19 @@ A list of two objects:
 This function estimates the fraction unbound in plasma (Fup) with Bayesian
 modeling on Rapid Equilibrium Dialysis (RED) data. Both Fup and
 the credible interval are estimated from posterior samples of the MCMC.
-A summary table along with the full set of MCMC results is returned from
+A summary table (level-4) along with the full set of MCMC results is returned from
 the function.
 }
 \details{
-The input data should be "Level-2". Level-2 data is Level-1 data, formatted 
+The input to this function should be "level-2" data. Level-2 data is level-1 data, formatted 
 with the \code{\link{format_fup_red}} function, and curated with a
-verification column where "Y" indicates a data row is valid for analysis. 
+verification column. "Y" in the verification column indicates the data row is
+valid for analysis. 
 
-Note: By default, this function writes files to the user's current working directory 
-unless another path is specified in the \code{TEMP.DIR} argument. Files saved include 
-the summary table (.RData), JAGS model (.RData), and any "unverified" data 
+Note: By default, this function writes files to the user's current working directory.
+Users must specify an alternative path with the `TEMP.DIR` argument if they want 
+the files exported to another path. Exported files include the summary table (.RData),
+JAGS model (.RData), and any "unverified" data 
 excluded from the analysis (.tsv).
 
 The data frame of observations should be annotated according to
@@ -103,7 +106,10 @@ of these types:
   Time zero chemical and plasma \tab T0\cr
   Equilibrium chemical in phosphate-buffered well (no plasma) \tab PBS\cr
   Equilibrium chemical in plasma well \tab Plasma\cr
+  Calibration Curve \tab CC\cr
 }
+We currently require Plasma, PBS, and Plasma.Blank data. T0, CC, and NoPlasma.Blank
+data are optional.
 }
 \examples{
 ## Example 1: loading level-2 using data.in

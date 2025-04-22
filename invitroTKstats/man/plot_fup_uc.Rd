@@ -14,7 +14,7 @@ plot_fup_uc(
 )
 }
 \arguments{
-\item{level2}{(Data Frame) A data.frame containing Level-2 data for fraction
+\item{level2}{(Data Frame) A data.frame containing level-2 data for fraction
 unbound in plasma (Fup) measured by ultracentrifugation (UC).}
 
 \item{dtxsid}{(Character) EPA's DSSTox Structure ID for the chemical to be plotted.}
@@ -41,7 +41,7 @@ responses (y-axis) by sample types (x-axis). Responses from different
 measurements/calibrations are labeled with different shapes and colors.
 }
 \details{
-This function requires "Level-2" data for plotting. Level-2 data is Level-1,
+This function requires "level-2" data for plotting. Level-2 data is level-1,
 data formatted with the \code{\link{format_fup_uc}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for plotting.

@@ -28,14 +28,14 @@ name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 }
 \value{
 A data frame containing the chemical identifiers for all unique
-chemicals in the input data frame.  Each row per maps a unique chemical,
+chemicals in the input data frame. Each row maps a unique chemical,
 indicated by the DTXSID, to all the preferred compound names
 and all chemical names used by the laboratory referenced in the input data frame.
 }
 \description{
 This function creates a data frame summarizing chemical identifiers used for 
 each tested chemical in MS data. Each row in the resulting data frame provides 
-EPA's DSSTox Structure ID (dtxsid), preferred compound name, and the name used 
+EPA's DSSTox Structure ID (DTXSID), preferred compound name, and the name used 
 by the laboratory.
 }
 \examples{
