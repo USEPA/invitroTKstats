@@ -16,4 +16,4 @@ The raw data files contains mass spectrometry measurements of intrinsic hepatic 
   * Hep_945_274_464_477_479_final.xlsx - Raw data file containing experimental data 
   * Hep4_971_941_041122.xlsx - Raw data file containing experimental data 
 
-CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README. 
+**CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README.**
