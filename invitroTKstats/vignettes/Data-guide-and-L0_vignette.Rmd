@@ -73,12 +73,12 @@ The first thing we need to do for the pipelining process is to construct a data 
 
 *NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
-It is necessary to clone the `invitroTKstats` package repository which contains the "data-raw/Kreutz-Clint" sub-directory. 
+For users to replicate this vignette, it is necessary to clone the `invitroTKstats` package repository which contains the "data-raw/Kreutz-Clint" sub-directory. 
 
 The "Kreutz-Clint" sub-directory contains raw data files with gas chromatography-tandem mass spectrometry (GC-MS/MS) analyses of a subset of PFAS alcohols, amides, and acrylates \insertCite{kreutz2023category}{invitroTKstats}. 
 
 ```{r raw_data_dir}
-# after the `invitroTKstats` package repository is cloned, the path to the applicable sub-directory
+# the path to the applicable sub-directory after the `invitroTKstats` package repository is cloned and the R project is opened
 raw_data_dir <- here::here("data-raw/Kreutz-Clint")
 ```
 
