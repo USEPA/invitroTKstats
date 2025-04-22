@@ -52,7 +52,7 @@ the fraction unbound in plasma (Fup) for all chemicals in the input data frame.
 \description{
 This function calculates the point estimates for the fraction unbound in
 plasma (Fup) using mass spectrometry (MS) peak areas from samples collected
-as part of in vitro measurements of chemical Fup using ultracentrifugation
+as part of \emph{in vitro} measurements of chemical Fup using ultracentrifugation
 \insertCite{waters2008validation}{invitroTKstats}. See the Details section
 for the equation(s) used in the point estimate.
 }

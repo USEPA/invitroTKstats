@@ -27,7 +27,7 @@ A level-2 data.frame with 10 rows and 25 variables: \describe{
 \item{\code{Time}}{Time when the sample was measured - in hours (h)}
 \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to well (uM)}
-\item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+\item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 \item{\code{Verified}}{If "Y", then sample is included in the analysis. (Any other value causes the data to be ignored.)}

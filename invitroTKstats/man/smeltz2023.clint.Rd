@@ -21,7 +21,7 @@ A level-2 data.frame with 625 rows and 24 variables: \describe{
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
-\item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+\item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 \item{\code{Area}}{Peak area of analyte (target compound)}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
 \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}

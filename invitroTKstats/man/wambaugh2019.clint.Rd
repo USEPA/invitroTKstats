@@ -27,7 +27,7 @@ wambaugh2019.clint
 }
 \description{
 \insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes measurements for intrinsic hepatic clearance
-(Clint) measured using in vitro suspensions of pooled primary human hepatocytes
+(Clint) measured using \emph{in vitro} suspensions of pooled primary human hepatocytes
 \insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \references{

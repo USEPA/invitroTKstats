@@ -1,7 +1,7 @@
 #' Calculate a Point Estimate of Intrinsic Hepatic Clearance (Clint) (Level-3)
 #'
 #' This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
-#' using mass spectrometry (MS) peak area data collected as part of in vitro measurements 
+#' using mass spectrometry (MS) peak area data collected as part of \emph{in vitro} measurements 
 #' of chemical clearance, as characterized by the disappearance of parent compound over 
 #' time when incubated with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 #'

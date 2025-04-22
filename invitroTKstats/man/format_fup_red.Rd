@@ -261,7 +261,7 @@ binding (PPB) data from an rapid equilibrium dialysis (RED) assay.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurements of chemical fraction
+from samples collected as part of \emph{in vitro} measurements of chemical fraction
 unbound in plasma using rapid equilibrium dialysis
 \insertCite{waters2008validation}{invitroTKstats}.
 The input data frame is organized into a standard set of columns and written

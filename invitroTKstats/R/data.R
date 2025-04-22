@@ -4,7 +4,7 @@
 #' Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Hepatocyte Incubations
 #'
 #' \insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes measurements for intrinsic hepatic clearance
-#' (Clint) measured using in vitro suspensions of pooled primary human hepatocytes
+#' (Clint) measured using \emph{in vitro} suspensions of pooled primary human hepatocytes
 #' \insertCite{shibata2002prediction}{invitroTKstats}.
 #'
 #' @name wambaugh2019.clint
@@ -34,14 +34,14 @@
 
 #' Mass Spectrometry Methods for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Chemicals
 #'
-#' As reported in \insertCite{wambaugh2019assessing;textual}{invitroTKstats}, contractor Cyprotex performed in vitro
+#' As reported in \insertCite{wambaugh2019assessing;textual}{invitroTKstats}, contractor Cyprotex performed \emph{in vitro}
 #' toxicokinetic experiments requiring the development of analytical chemistry
 #' methods to quantitative concentration. 
 #' Liquid chromatography/mass spectrometry (LC/MS) was faster and 
 #' attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
 #' when LC/MS failed. For some chemicals the attempts to develop an
 #' analysis method failed for both LC/MS and GC/MS and no
-#' in vitro experiments were conducted.
+#' \emph{in vitro} experiments were conducted.
 #'
 #' @name wambaugh2019.methods
 #' @aliases Wambaugh2019.methods
@@ -210,7 +210,7 @@
 #' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 #' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 #' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
-#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 #' \item{\code{Area}}{Peak area of analyte (target compound)}
 #' \item{\code{Analysis.Method}}{General description of chemical analysis method}
 #' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis}
@@ -274,7 +274,7 @@
 #'
 #' Mass Spectrometry measurements of intrinsic hepatic clearance for
 #' cryopreserved pooled human hepatocyte suspensions. Chemicals were per- and
-#' 'polyfluoroalkyl substance (PFAS) samples. The experiments were
+#' polyfluoroalkyl substance (PFAS) samples. The experiments were
 #' led by Dr.s Anna Kreutz and Barbara Wetmore.
 #'
 #' @name kreutz2023.clint
@@ -295,7 +295,7 @@
 #' \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 #' \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 #' \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
-#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 #' \item{\code{Area}}{Peak area of analyte (target compound)}
 #' \item{\code{Analysis.Method}}{General description of chemical analysis method}
 #' \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
@@ -1188,7 +1188,7 @@
 #' \item{\code{Time}}{Time when the sample was measured - in hours (h)}
 #' \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to well (uM)}
-#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 #' \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' }
@@ -1233,7 +1233,7 @@
 #' \item{\code{Time}}{Time when the sample was measured - in hours (h)}
 #' \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to well (uM)}
-#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 #' \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' \item{\code{Verified}}{If "Y", then sample is included in the analysis. (Any other value causes the data to be ignored.)}
@@ -1394,7 +1394,7 @@
 #' \item{\code{Time}}{Time when the sample was measured - in hours (h)}
 #' \item{\code{Test.Compound.Conc}}{Measured concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{Test.Nominal.Conc}}{Expected initial concentration of chemical added to well (uM)}
-#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+#' \item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 #' \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' \item{\code{Verified}}{If "Y", then sample is included in the analysis. (Any other value causes the data to be ignored.)}
@@ -1409,8 +1409,8 @@
 
 #' Common Columns in Level-1
 #' 
-#' Common column names across the various *in vitro* assays used for collecting
-#' in vitro toxicokinetic parameters.
+#' Common column names across the various \emph{in vitro} assays used for collecting
+#' \emph{in vitro} toxicokinetic parameters.
 #' 
 #' @name L1.common.col
 #' @aliases L1.common.col

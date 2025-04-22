@@ -89,7 +89,7 @@ name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 under Details). (Defaults to "Sample.Type".)}
 
 \item{density}{(Numeric) The density (units of
-millions of hepatocytes per mL) hepatocytes in the in vitro incubation. 
+millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation. 
 (Defaults to \code{NULL}.) (Note: Single entry only, 
 use only if all tested compounds have the same density.)}
 
@@ -262,7 +262,7 @@ clearance data for a variety of chemicals.
 }
 \description{
 This function formats data describing mass spectrometry (MS) peak areas
-from samples collected as part of in vitro measurements of chemical stability
+from samples collected as part of \emph{in vitro} measurements of chemical stability
 when incubated with suspended hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 Disappearance of the chemical over time is assumed to be due to metabolism
 by the hepatocytes.

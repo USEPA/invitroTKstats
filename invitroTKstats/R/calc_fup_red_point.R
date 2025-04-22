@@ -3,7 +3,7 @@
 #'
 #' This function calculates the point estimates for the fraction unbound in plasma
 #' (Fup) using mass spectrometry (MS) peak areas from samples collected as part of
-#' in vitro measurements of chemical Fup using rapid equilibrium dialysis
+#' \emph{in vitro} measurements of chemical Fup using rapid equilibrium dialysis
 #' \insertCite{waters2008validation}{invitroTKstats}. See the Details section
 #' for the equation(s) used in point estimation. 
 #' 

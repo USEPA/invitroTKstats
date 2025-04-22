@@ -21,7 +21,7 @@ A level-2 data.frame with 5,800 rows and 25 variables: \describe{
 \item{\code{ISTD.Name}}{Name of compound used as internal standard (ISTD)}
 \item{\code{ISTD.Conc}}{Concentration of ISTD (uM)}
 \item{\code{ISTD.Area}}{Peak area of internal standard (pixels)}
-\item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the in vitro incubation}
+\item{\code{Hep.Density}}{The density (units of millions of hepatocytes per mL) hepatocytes in the \emph{in vitro} incubation}
 \item{\code{Area}}{Peak area of analyte (target compound)}
 \item{\code{Analysis.Method}}{General description of chemical analysis method}
 \item{\code{Analysis.Instrument}}{Instrument(s) used for chemical analysis)}
@@ -39,7 +39,7 @@ kreutz2023.clint
 \description{
 Mass Spectrometry measurements of intrinsic hepatic clearance for
 cryopreserved pooled human hepatocyte suspensions. Chemicals were per- and
-'polyfluoroalkyl substance (PFAS) samples. The experiments were
+polyfluoroalkyl substance (PFAS) samples. The experiments were
 led by Dr.s Anna Kreutz and Barbara Wetmore.
 }
 \references{

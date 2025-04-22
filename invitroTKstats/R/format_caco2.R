@@ -1,13 +1,13 @@
 #' Creates a Standardized Data Frame with Caco-2 Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurements of membrane
+#' from samples collected as part of \emph{in vitro} measurements of membrane
 #' permeability using Caco-2 cells \insertCite{hubatsch2007determination}{invitroTKstats}.
 #' The input data frame is organized into a standard set of columns and is
 #' written to a tab-separated text file.
 #'
 #' In this experiment an
-#' in vitro well is separated into two by a membrane composed of a monolayer of
+#' \emph{in vitro} well is separated into two by a membrane composed of a monolayer of
 #' Caco-2 cells. A test chemical is added to either the apical or basolateral side of
 #' of the monolayer at time 0, and after a set time samples are taken from both
 #' the "donor" (side where the test chemical was added) and the "receiver" side.

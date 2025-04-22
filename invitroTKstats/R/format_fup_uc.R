@@ -2,7 +2,7 @@
 #' Plasma Protein Binding (PPB) Data (Level-1)
 #'
 #' This function formats data describing mass spectrometry (MS) peak areas
-#' from samples collected as part of in vitro measurements of chemical fraction
+#' from samples collected as part of \emph{in vitro} measurements of chemical fraction
 #' unbound in plasma using ultracentrifugation
 #' \insertCite{redgrave1975separation}{invitroTKstats}.
 #' The input data frame is organized into a standard set of columns and written

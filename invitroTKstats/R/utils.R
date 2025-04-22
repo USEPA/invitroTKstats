@@ -56,7 +56,7 @@ runjagsdata.to.list <- function(runjagsdata.in)
 
 #' Build Data Object for Intrinsic Hepatic Clearance (Clint) Bayesian Model
 #'
-#' Builds list of arguments required for JAGS from subset of level-2 data frame. 
+#' Builds a list of arguments required for JAGS from subset of level-2 data frame. 
 #' The list is used as an argument to JAGS during level-4 processing. 
 #' 
 #'
@@ -267,7 +267,7 @@ initfunction_clint <- function(mydata, chain)
 
 #' Build Data Object for Fup RED Bayesian Model
 #' 
-#' Builds list of arguments required for JAGS from subset of level-2 data frame. 
+#' Builds a list of arguments required for JAGS from subset of level-2 data frame. 
 #' The list is used as an argument to JAGS during level-4 processing. 
 #' 
 #' @param this.data (Data Frame) Subset of data containing all observations of one test compound.
@@ -478,7 +478,7 @@ initfunction_fup_red <- function(mydata, chain)
 
 #' Build Data Object for Fup UC Bayesian Model
 #' 
-#' Builds list of arguments required for JAGS from subset of level-2 data frame. 
+#' Builds a list of arguments required for JAGS from subset of level-2 data frame. 
 #' The list is used as an argument to JAGS during level-4 processing.
 #'
 #' @param MS.data (Data Frame) Subset of data containing all observations of one test compound.

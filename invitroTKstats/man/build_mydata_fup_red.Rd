@@ -16,6 +16,6 @@ for plasma protein binding calculations.}
 A named list to be passed into the Bayesian model.
 }
 \description{
-Builds list of arguments required for JAGS from subset of level-2 data frame. 
+Builds a list of arguments required for JAGS from subset of level-2 data frame. 
 The list is used as an argument to JAGS during level-4 processing.
 }
