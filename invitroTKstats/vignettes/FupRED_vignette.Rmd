@@ -442,3 +442,98 @@ Generally, data processing pipelines should include minimal to no manual coding.
 ## References 
 
 Waters, N. J., Jones, R., Williams, G., & Sohal, B. (2008). Validation of a rapid equilibrium dialysis approach for the measurement of plasma protein binding. Journal of pharmaceutical sciences, 97(10), 4586-4595.
+
+
+## Appendix
+
+### L4 Bayesian Modeling Information
+
+#### Measurement Model
+
+$$ log(\sigma_a)_w \sim U(-6,1) ; \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
+
+$$ log(m_h)_w \sim U(-6,1) ; \space m_{h,w} = 10^{log(m_h)_w} $$
+
+$$ C_{thresh,w} \sim U(0,\frac{conc_{target,w}}{10}) $$
+$$ log(cal)_w \sim N(0,0.01) ; \space cal_w = 10^{log(cal)_w} $$
+
+$$ \gamma_w \sim Exp(100) $$
+
+#### Likelihood for Blanks with No Plasma
+
+$$ y_{NPB,i} \sim N(x_{NPB,i} = \frac{\gamma_{w^*_i}}{df_{NPB}},p_{NPB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_{NPB,i})^2})$$
+
+where $y_{NPB,i}$ is the $i^{th}$ blank observations with no plasma and $w^*_i$ is the calibration index for that observation, such that $w^* = (w^_1, ... , w^*_{n_{NPB}})$ and $w^*_i \in w$ (i.e. $w^_i$ indicates one of the calibrations).
+
+#### Likelihood for Blanks with Plasma
+
+$$ log(\eta_{plasma}) \sim U(-6,\frac{log(10/conc_{target})}{10}); \space \eta_{plasma} = 10^{log(\eta_{plasma})} $$
+
+$$ \beta_{PB,i} = 
+\begin{cases}
+1 & if \space (\frac{\eta_{plasma}*p_{protein,r^{PB}_i}}{100} - C_{thresh,w^*_i}) \ge 0 \\
+0 & o.w
+\end{cases}
+$$ 
+
+$$ y_{PB,i} \sim N(x_{PB,i} = \frac{cal_{w^*_i} * (\frac{\eta_{plasma}*p_{protein,r^{PB}_i}}{100} - C_{thresh,w^*_i}) * \beta_{PB,i}+\gamma_{w^*_i}}{df_{PB}},p_{PB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_i)^2}) $$
+
+#### Likelihood for T0
+
+$$ \beta_{T0,i} = 
+\begin{cases}
+1 & if \space (conc_{target}-\eta_{plasma}-C_{thresh,w^*_i}) \ge 0 \\
+0 & o.w. 
+\end{cases}
+$$ 
+
+$$ y_{T0,i} = N(x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thresh,w^*_i})*\beta_{T0,i}+\gamma_{T0,w^*_i}}{df_{T0}},p_{T0,i} = \frac{1}{(\sigma_{a,w^*_i}*m_{h,w^*_i}*x_{T0,i})^2}) $$
+
+### JAGS to L4 Equation Notation Tables
+
+|       Data        |   Denotation    |
+|-------------------|-----------------|
+| Test.Nominal.Conc | $conc_{target}$ |
+| Physiological.Protein.Conc | $\rho_{protein}$ |
+| Assay.Protein.Percent | $p_{protein}$ | 
+
+| JAGS Parameter Name | Parameter | Distribution |
+|---------------------|-----------|--------------|
+| log.const.analytic.sd | $log(\sigma_a)$ | |
+| log.hetero.analytic.slope | $log(m_h)$ | |
+| C.thresh | $C_{thresh}$ | |
+| log.calibration | $log(cal)$ | |
+| background | $\gamma$ | |
+| const.analytic.sd | $\sigma_a$ | |
+| hetero.analytic.slope | $m_h$ | |
+| calibration | $cal$ | |
+| NoPlasma.Blank.pred | $x_{NPB}$ | |
+| NoPlasma.Blank.prec | $p_{NPB}$ | |
+| NoPlasma.Blank.obs | $y_{NPB}$ | |
+| log.Plasma.Interference | $log(\eta_{plasma})$ | |
+| Plasma.Interference | $\eta_{plasma}$ | |
+| Plasma.Blank.pred | $x_{PB}$ | |
+| Plasma.Blank.prec | $p_{PB}$ | |
+| Plasma.Blank.obs | $y_{PB}$ | |
+| T0.pred | $x_{T0}$ | |
+| T0.prec | $p_{T0}$ | |
+| T0.obs | $y_{T0}$ | |
+| CC.pred | $x_{CC}$ | |
+| CC.prec | $p_{CC}$ | |
+| CC.obs | $y_{CC}$ | |
+| log.Kd | $log(K_d)$ | |
+| Kd | $K_d$ | |
+| Fup | $f_{up}$ | |
+| C.protein | $C_{protein}$ | |
+| C.missing | $C_{missing}$ | |
+| C.u | $C_u$ | |
+| C.b | $C_b$ | |
+| C.total | $C_{total}$ | |
+| PBS.conc | $C_{PBS}$ | |
+| PBS.pred | $x_{PBS}$ | |
+| PBS.prec | $p_{PBS}$ | |
+| PBS.obs | $y_{PBS}$ | |
+| Plasma.conc | $C_{PBS}$ | |
+| Plasma.pred | $x_{PBS}$ | |
+| Plasma.prec | $p_{PBS}$ | |
+| Plasma.obs | $y_{PBS}$ | |
