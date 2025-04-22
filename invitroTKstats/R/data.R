@@ -86,7 +86,7 @@
 #' \item{\code{Area}}{Mass spectrometry peak area for the test compound.}
 #' \item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard.}
 #' \item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard).}
-#' \item{\code{Dilution.Factor}}{The number of times a sample was diluted.}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted.}
 #' \item{\code{Protein}}{The percent of physiological protein concentration used for the assay.}
 #' \item{\code{RawDataSet}}{Name of the level 0 file containing the data.}
 #' }
@@ -115,7 +115,7 @@
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 #' \item{\code{Sample.Type}}{Type of UC sample}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{TC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
@@ -157,7 +157,7 @@
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 #' \item{\code{Sample.Type}}{Type of RED sample}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{Nominal.Test.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
@@ -203,7 +203,7 @@
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 #' \item{\code{Sample.Type}}{Type of UC sample}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
@@ -246,7 +246,7 @@
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 #' \item{\code{Sample.Type}}{Type of UC sample}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{TC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
@@ -289,7 +289,7 @@
 #' \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 #' \item{\code{Sample.Type}}{Type of UC sample}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 #' \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
@@ -361,7 +361,7 @@
 #' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 #' \item{\code{Vol.Donor}}{The volume (in cm^3) of the donor portion of the Caco-2 experimental well}
 #' \item{\code{Vol.Receiver}}{The volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' }
 #'
 "caco2_L0"
@@ -382,7 +382,7 @@
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 #' \item{\code{Sample.Type}}{Type of Caco2 sample}
 #' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 #' \item{\code{Technical.Replicates}}{Identifier for repeated measurements of one sample of a compound}
@@ -423,7 +423,7 @@
 #' \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 #' \item{\code{Sample.Type}}{Type of Caco2 sample}
 #' \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
-#' \item{\code{Dilution.Factor}}{Number of times sample was diluted}
+#' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 #' \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 #' \item{\code{Technical.Replicates}}{Identifier for repeated measurements of one sample of a compound}
@@ -716,8 +716,8 @@
 #' \item{\code{Conc}}{\code{Test.Compound.Conc} of the "CC" sample types + three placeholder concentrations ("T1", "T5", "AF") per \code{Biological.Replicates} series}
 #' \item{\code{Num.cc.obs}}{Number of "CC" sample types for the tested compound}
 #' \item{\code{Num.series}}{Unique number of \code{Biological.Replicates} series}
-#' \item{\code{Dilution.Factor}}{\code{Dilution.Factor} of all samples for the tested compound}
-#' \item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values of all samples for the tested compound}
+#' \item{\code{Dilution.Factor}}{\code{Dilution.Factor} of all samples for the tested compound (number of times the sample was diluted)}
+#' \item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values (expected initial concentration) of all samples for the tested compound}
 #' }
 #' 
 #' @references
@@ -1000,7 +1000,7 @@
 #' @aliases fup_red_PREJAGS
 #' @docType data
 #' @format A named list with 33 elements: \describe{
-#' \item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values for the tested compound}
+#' \item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values (expected initial concentration) for the tested compound}
 #' \item{\code{Num.cal}}{Unique number of \code{Calibration} values for the tested compound}
 #' \item{\code{Physiological.Protein.Conc}}{The assumed physiological protein concentration 
 #' for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
@@ -1329,28 +1329,28 @@
 #' @docType data
 #' @format A named list with 26 elements: \describe{
 #' \item{\code{obs}}{\code{Response} of the "Cvst" sample types for the tested compound}
-#' \item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values of "Cvst" sample types}
+#' \item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values (expected initial concentration) of "Cvst" sample types}
 #' \item{\code{Num.cal}}{Unique number of \code{Calibration} values}
 #' \item{\code{Num.obs}}{Number of \code{Response} of the "Cvst" sample types for the tested compound}
 #' \item{\code{obs.conc}}{Indices of the \code{Test.Nominal.Conc} values that corresponds to the "Cvst" sample types' \code{Test.Nominal.Conc}}
 #' \item{\code{obs.time}}{\code{Time} of the "Cvst" sample types for the tested compound}
 #' \item{\code{obs.cal}}{Indices of the unique "Cvst" \code{Calibration} values that corresponds to the "Cvst" sample types' \code{Calibration}}
-#' \item{\code{obs.Dilution.Factor}}{\code{Dilution Factor} of the "Cvst" sample types for the tested compound}
+#' \item{\code{obs.Dilution.Factor}}{\code{Dilution Factor} of the "Cvst" sample types for the tested compound (number of times the sample was diluted)}
 #' \item{\code{Num.blank.obs}}{Number of "Blank" sample types for the tested compound}
 #' \item{\code{Blank.obs}}{\code{Response} of the "Blank" sample types for the tested compound}
 #' \item{\code{Blank.cal}}{Indices of the unique "Blank" \code{Calibration} values that corresponds to the "Blank" sample types' \code{Calibration}}
-#' \item{\code{Blank.Dilution.Factor}}{\code{Dilution Factor} of the "Blank" sample types for the tested compound}
+#' \item{\code{Blank.Dilution.Factor}}{\code{Dilution Factor} of the "Blank" sample types for the tested compound (number of times the sample was diluted)}
 #' \item{\code{Num.cc}}{Number of "CC" sample types with non-NA \code{Test.Compound.Conc} values for the tested compound}
 #' \item{\code{cc.obs.conc}}{\code{Test.Compound.Conc} (non-NA) of the "CC" sample types for the tested compound}
 #' \item{\code{cc.obs}}{\code{Response} of the "CC" sample types with non-NA \code{Test.Compound.Conc} for the tested compound}
 #' \item{\code{cc.obs.cal}}{Indices of the unique "CC" \code{Calibration} values that corresponds to the "CC" sample types' \code{Calibration}}
-#' \item{\code{cc.obs.Dilution.Factor}}{\code{Dilution Factor} of the "CC" sample types with non-NA \code{Test.Compound.Conc} for the tested compound}
+#' \item{\code{cc.obs.Dilution.Factor}}{\code{Dilution Factor} of the "CC" sample types (number of times the sample was diluted) with non-NA \code{Test.Compound.Conc} for the tested compound}
 #' \item{\code{Num.abio.obs}}{Number of "Inactive" samples types for the tested compound}
 #' \item{\code{abio.obs}}{\code{Response} of the "Inactive" sample types for the tested compound}
 #' \item{\code{abio.obs.conc}}{Indices of the \code{Test.Nominal.Conc} values that corresponds to the "Inactive" sample types' \code{Test.Nominal.Conc}}
 #' \item{\code{abio.obs.time}}{\code{Time} of the "Inactive" sample types for the tested compound}
 #' \item{\code{abio.obs.cal}}{Indices of the unique "Inactive" \code{Calibration} values that corresponds to the "Inactive" sample types' \code{Calibration}}
-#' \item{\code{abio.obs.Dilution.Factor}}{\code{Dilution Factor} of the "Inactive" sample types for the tested compound}
+#' \item{\code{abio.obs.Dilution.Factor}}{\code{Dilution Factor} of the "Inactive" sample types for the tested compound (number of times the sample was diluted)}
 #' \item{\code{DECREASE.PROB}}{Prior probability that a chemical will decrease in the assay. (Defaults to 0.5.)}
 #' \item{\code{SATURATE.PROB}}{Prior probability that a chemicals rate of metabolism will decrease between 1 and 10 uM. (Defaults to 0.25.)}
 #' \item{\code{DEGRADE.PROB}}{Prior probability that a chemical will be unstable (degrade abiotically) in the assay. (Defaults to 0.05.)}

@@ -2,8 +2,12 @@
 
 Descriptions of files found within invitroTKstats/data-raw/Honda-Caco2. 
 
+The unprocessed data files \insertCite{honda2025impact}{invitroTKstats} are used to generate the readily available example Caco-2 dataset which can be accessed with `data("Caco2-example")`. 
+
+The processed data file is an artifact from generating the data and was used to verify output results. 
+
 ### Unprocessed data 
-The raw data files contains mass spectrometry measurements of membrane permeability (P~app~) from Caco2 cells. The experiments were led by Cyprotex.
+The raw data files contains mass spectrometry measurements of membrane permeability (P~app~) from Caco2 cells. The experiments were led by Cyprotex. 
 
   * Caco2.xlsx - Raw data file containing chemical ID mappings 
   * SupTable1-AnalyticalMethods.xlsx - Raw data file containing chemical ID mappings 
@@ -15,6 +19,8 @@ The raw data files contains mass spectrometry measurements of membrane permeabil
     * Added a 'Type' column
 
 ### Processed data 
-The raw data file was pipelined through `invitroTKstats` to generate the "Caco2-example" dataset. The following file is an optional output file from the Level 2 processing `sample_verification()`.
+The following file is an optional output file from the Level 2 processing `sample_verification()`.
   
   * Examples-Caco-2-Level2.tsv - Level 2 TSV (optional output file from `sample_verification`)
+  
+CAUTION: We do not anticipate any changes in the unprocessed data files. If there are any new updates to these files, you must include a note log containing the date and explanation of changes at the end of this README. 
