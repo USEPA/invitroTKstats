@@ -1,6 +1,12 @@
 ---
 title: "Fup UC"
-output: rmarkdown::html_vignette
+author: "US EPA's Center for Computational Toxicology and Exposure ccte@epa.gov"
+output:
+  rmdformats::readthedown:
+    fig_retina: false
+    toc_depth: 3
+  params:
+    my_css: css/rmdformats.css
 vignette: >
   %\VignetteIndexEntry{Fup UC}
   %\VignetteEngine{knitr::rmarkdown}
@@ -9,7 +15,9 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = 'center'
 )
 ```
 
@@ -21,7 +29,7 @@ This vignette guides users on how to estimate fraction unbound in plasma (f~up~)
 The mass spectrometry data should be collected from an assay that uses ultracentrifugation as seen in Figure 1 (Smeltz et al. 2023, Kreutz et al. 2023). 
 
 ```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: f~up~ UC experimental set up", fig.topcaption = TRUE, fig.align = "center"}
-knitr::include_graphics("fupUC_diagram.png")
+knitr::include_graphics("img/fupUC_diagram.png")
 ```
 
 ### Suggested packages for use with this vignette 

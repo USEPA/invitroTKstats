@@ -1,6 +1,12 @@
 ---
 title: "Caco2"
-output: rmarkdown::html_vignette
+author: "US EPA's Center for Computational Toxicology and Exposure ccte@epa.gov"
+output:
+  rmdformats::readthedown:
+    fig_retina: false
+    toc_depth: 3
+  params:
+    my_css: css/rmdformats.css
 vignette: >
   %\VignetteIndexEntry{Caco2}
   %\VignetteEngine{knitr::rmarkdown}
@@ -9,7 +15,9 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = 'center'
 )
 ```
 
@@ -20,7 +28,7 @@ This vignette guides users on how to estimate apparent membrane permeability (P~
 The mass spectrometry data should be collected from a Caco-2 assay in which the test compound was added to either the apical or basolateral side of a confluent and differentiated Caco-2 cell monolayer as seen in Figure 1 (Honda et al. 2024). 
 
 ```{r, echo = FALSE, out.width = "60%", fig.cap = "Fig 1: Caco-2 experimental set up", fig.topcaption = TRUE, fig.align = "center"}
-knitr::include_graphics("Caco2_diagram.png")
+knitr::include_graphics("img/Caco2_diagram.png")
 ```
 
 ### Suggested packages for use with this vignette 
