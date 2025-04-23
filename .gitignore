@@ -39,6 +39,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+# Compiled R package documentation from devtools::build_manual()
+invitroTKstats_*.pdf
+
 ## R package Sub-directory Files to Ignore ##
 # history files
 invitroTKstats/.Rhistory
