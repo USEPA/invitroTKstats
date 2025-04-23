@@ -1,6 +1,9 @@
 ---
 title: "Fup RED"
-output: rmarkdown::html_vignette
+output:
+  rmdformats::readthedown:
+    fig_retina: false
+    toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{Fup RED}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction 
+## Introduction {#intro}
 
 This vignette guides users on how to estimate fraction unbound in plasma (f~up~) from mass spectrometry data using rapid equilibrium dialysis (RED). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma that is usually responsible for pharmacological effects (Waters et al. 2008).
 
@@ -23,7 +26,7 @@ The mass spectrometry data should be collected from an assay that uses rapid equ
 knitr::include_graphics("fupRED_diagram.png")
 ```
 
-### Suggested packages for use with this vignette
+### Suggested packages for use with this vignette {#rpckgs}
 
 ```{r setup, message = FALSE, warning = FALSE}
 # Primary package
@@ -34,7 +37,7 @@ library(dplyr)
 library(flextable)
 ```
 
-## Load Data 
+## Load Data {#data}
 
 First, we load in the example dataset from `invitroTKstats`. 
 
@@ -67,7 +70,7 @@ head(fup_red_L0, n = 3) %>%
   theme_vanilla()
 ```
 
-## Level 1 processing 
+## Level 1 processing {#level1} 
 
 `format_fup_red` is the Level 1 function used to create a standardized data frame. This level of processing is necessary because naming conventions or formatting can differ across data sets. 
 
@@ -298,7 +301,7 @@ fup_red_L1_curated %>%
   theme_vanilla()
 ```
 
-## Level 2 processing 
+## Level 2 processing {#level2}
 
 `sample_verification` is the Level 2 function used to add a verification column. The verification column indicates whether a sample should be included in the point estimation (Level 3) and credible interval (Level 4) processing. This column allows users to keep all samples in their data but only utilize the reliable samples for f~up~ estimation. All of the data in Level 2 is identical to the data in Level 1 with the exception of the additional `Verified` column. 
 
@@ -366,7 +369,7 @@ fup_red_L2_curated %>%
   theme_vanilla()
 ```
 
-## Level 3 processing 
+## Level 3 processing {#level3}
 
 `calc_fup_red` is the Level 3 function used to calculate the f~up~ point estimate from rapid equilibrium dialysis for each test compound using a Frequentist framework. 
 
@@ -393,7 +396,7 @@ fup_red_L3_curated %>%
 
 Our Level 3 data contains a `Fup` estimate and a `Calibration` column that details which data was used to calculate the point estimate. 
 
-## Level 4 processing 
+## Level 4 processing {#level4}
 
 `calc_fup_red` is the Level 4 function used to calculate f~up~ point estimates and credible intervals from rapid equilibrium dialysis using a Bayesian framework. Markov chain Monte Carlo (MCMC) simulations are used to randomly sample from the posterior distribution with a uniform prior. 
 
@@ -435,61 +438,270 @@ fup_red_L4_curated %>%
   theme_vanilla()
 ```
 
-## Best Practices: Food for thought 
+## Best Practices: Food for thought {#bestpractice}
 
 Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
 
-## References 
+## References {#refs}
 
 Waters, N. J., Jones, R., Williams, G., & Sohal, B. (2008). Validation of a rapid equilibrium dialysis approach for the measurement of plasma protein binding. Journal of pharmaceutical sciences, 97(10), 4586-4595.
 
 
-## Appendix
+## Appendix {#appendix}
 
-### L4 Bayesian Modeling Information
+### L4 Bayesian Modeling Information {#level4_eqns}
 
-#### Measurement Model
+In this section, we provide the equations for the Bayesian model (i.e., priors and likelihoods) used to estimate the fraction unbound in plasma ($f_{up}$), from the rapid equilibrium dialysis (RED) assay, and the uncertainty about that estimate.  The following sub-sections are organized such that:
 
-$$ log(\sigma_a)_w \sim U(-6,1) ; \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
+* Each section contains the relevant hyper-parameters and their priors followed by the variable likelihoods
+* Sections are ordered from the most fundamental variables/parameters (i.e. those used in later equations) to the likelihood for the observations used to estimate the fraction unbound in plasma ($f_{up}$)
 
-$$ log(m_h)_w \sim U(-6,1) ; \space m_{h,w} = 10^{log(m_h)_w} $$
+Some of the indexes are reused between sections (e.g. $i$, $w^*_i$, etc.).  However, it should be noted that these are not meant to be understood across sub-sections; rather, only understood within the context of the section they are in.
 
-$$ C_{thresh,w} \sim U(0,\frac{conc_{target,w}}{10}) $$
-$$ log(cal)_w \sim N(0,0.01) ; \space cal_w = 10^{log(cal)_w} $$
+*NOTE: Readers unfamiliar with JAGS should be aware that JAGS software uses precision ($\tau$) rather than variance $\sigma^2$ (i.e., $\tau = \frac{1}{\sigma^2}$).*
 
-$$ \gamma_w \sim Exp(100) $$
+#### Measurement Model {#hyperpriors}
 
-#### Likelihood for Blanks with No Plasma
+Each chemical may have more than one day of experimentation, and thus multiple calibrations.  Suppose for the chemical of interest there are a total of $n_{cal}$ calibrations.  For a particular calibration $w \in (1,...,n_{cal})$ we assume the following hyper-priors for our Bayesian model:
 
-$$ y_{NPB,i} \sim N(x_{NPB,i} = \frac{\gamma_{w^*_i}}{df_{NPB}},p_{NPB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_{NPB,i})^2})$$
+**Prior for log-scale constant analytic standard deviation (`log.const.analytic.sd`):**
 
-where $y_{NPB,i}$ is the $i^{th}$ blank observations with no plasma and $w^*_i$ is the calibration index for that observation, such that $w^* = (w^_1, ... , w^*_{n_{NPB}})$ and $w^*_i \in w$ (i.e. $w^_i$ indicates one of the calibrations).
+$$ log(\sigma_a)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
 
-#### Likelihood for Blanks with Plasma
+where $a$ and $b$ are the minimum and maximum, respectively.
 
-$$ log(\eta_{plasma}) \sim U(-6,\frac{log(10/conc_{target})}{10}); \space \eta_{plasma} = 10^{log(\eta_{plasma})} $$
+**Prior for the log-scale hetero-scedastic analytic slope (`log.hetero.analytic.slope`):**
 
-$$ \beta_{PB,i} = 
+$$ log(m_h)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space m_{h,w} = 10^{log(m_h)_w} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively.
+
+**Prior for the threshold concentration (`C.thresh`):**
+
+$$ C_{thresh,w} \sim \textrm{Unif} \left( a = 0,b = \frac{conc_{target,w}}{10} \right) $$
+
+where $a$ and $b$ are the minimum and maximum, respectively.
+
+**Prior for the log-scale calibration (`log.calibration`):**
+
+$$ log(cal)_w \sim \textrm{N} \left( \mu = 0,\tau = 0.01 \right) ; \space cal_w = 10^{log(cal)_w} $$
+
+where $\mu$ and $\tau$ are the mean and precision, respectively.
+
+**Prior for the background (`background`):**
+
+$$ \gamma_w \sim \textrm{Exp} \left( \lambda = 100 \right) $$
+
+where $\lambda$ is the rate parameter.
+
+#### Estimation of Blanks with No Plasma {#llnpb}
+
+Estimation for the predicted values for blanks with no plasma (`NoPlasma.Blank.pred`):
+
+$$ x_{NPB,i} = \frac{\gamma_{w^*_i}}{df_{NPB}} $$
+
+Estimation for the precision of blanks with no plasma (`NoPlasma.Blank.prec`):
+
+$$ \tau_{NPB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_{NPB,i})^2} $$
+
+**Likelihood for no plasma blank observations (`NoPlasma.Blank.obs`):**
+
+$$ y_{NPB,i} \sim \textrm{N} \left( \mu = x_{NPB,i},\tau = \tau_{NPB,i} \right) $$
+
+where $y_{NPB,i}$ is the $i^{th}$ blank observations with no plasma and $w^*_i$ is the calibration index for that observation, such that $w^* = (w^*_1, ... , w^*_{n_{NPB}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
+
+#### Estimation of Blanks with Plasma {#llblanks}
+
+**Prior for estimating the extent of plasma interference (`log.Plasma.Interference`):**
+
+$$ log(\eta_{plasma}) \sim \textrm{Unif} \left( a = -6,b = \frac{log(\frac{10}{conc_{target}})}{10} \right); \space \eta_{plasma} = 10^{log(\eta_{plasma})} $$
+
+Estimation of the predictions for blanks with plasma (`Plasma.Blank.pred`):
+
+$$ x_{PB,i} = \frac{cal_{w^*_i} * (\frac{\eta_{plasma}*p_{protein,r^*_i}}{100} - C_{thresh,w^*_i}) * \beta_{PB,i}+\gamma_{w^*_i}}{df_{PB}} $$
+
+Estimation of the precision for blanks with plasma (`Plasma.Blank.prec`):
+
+$$ \tau_{PB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_i)^2} $$
+
+**Likelihood for the plasma blank observations (`Plasma.Blank.obs`):**
+
+$$ y_{PB,i} \sim \textrm{N} \left( \mu = x_{PB,i},\tau = \tau_{PB,i} \right) $$
+
+where:
+
+* $y_{PB,i}$ is the $i^{th}$ blank observation with plasma
+* $r^*_i$ is the replicate index for the $i^{th}$ blank observation with plasma
+* $\beta_{PB,i}$ is the JAGS step function for the $i^{th}$ blank observation with plasma, such that
+
+$$\beta_{PB,i} = 
 \begin{cases}
-1 & if \space (\frac{\eta_{plasma}*p_{protein,r^{PB}_i}}{100} - C_{thresh,w^*_i}) \ge 0 \\
-0 & o.w
+1 & \textrm{if} \space (\frac{\eta_{plasma}*p_{protein,r^*_i}}{100} - C_{thresh,w^*_i}) \ge 0 \\
+0 & \textrm{otherwise}
 \end{cases}
-$$ 
+$$
 
-$$ y_{PB,i} \sim N(x_{PB,i} = \frac{cal_{w^*_i} * (\frac{\eta_{plasma}*p_{protein,r^{PB}_i}}{100} - C_{thresh,w^*_i}) * \beta_{PB,i}+\gamma_{w^*_i}}{df_{PB}},p_{PB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_i)^2}) $$
+* $w^*_i$ is the calibration index for the $i^{th}$ blank observation, such that $w^* = (w^*_1, ... , w^*_{n_{PB}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
 
-#### Likelihood for T0
+#### Estimation for T0 {#llt0}
+
+Estimation of the predictions for the T0 observations (`T0.pred`):
+
+$$ x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thresh,w^*_i})*\beta_{T0,i}+\gamma_{T0,w^*_i}}{df_{T0}} $$
+
+*Assumes the MS responses are a function of the diluted expected initial concentration.*
+
+Estimation of heteroscedastic precision for the T0 observations (`T0.prec`):
+
+$$ \tau_{T0,i} = \frac{1}{(\sigma_{a,w^*_i}*m_{h,w^*_i}*x_{T0,i})^2} $$
+
+**Likelihood for the T0 observations (`T0.obs`):**
+
+$$ y_{T0,i} = N(\mu = x_{T0,i},\tau = \tau_{T0,i}) $$
+
+where
+
+* $y_{T0,i}$ is the $i^{th}$ T0 observation
+* $\beta_{T0,i}$ is the JAGS step function for the $i^{th}$ T0 observation, such that 
 
 $$ \beta_{T0,i} = 
 \begin{cases}
-1 & if \space (conc_{target}-\eta_{plasma}-C_{thresh,w^*_i}) \ge 0 \\
-0 & o.w. 
+1 & \textrm{if} \space (conc_{target}-\eta_{plasma}-C_{thresh,w^*_i}) \ge 0 \\
+0 & \textrm{otherwise} 
 \end{cases}
 $$ 
 
-$$ y_{T0,i} = N(x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thresh,w^*_i})*\beta_{T0,i}+\gamma_{T0,w^*_i}}{df_{T0}},p_{T0,i} = \frac{1}{(\sigma_{a,w^*_i}*m_{h,w^*_i}*x_{T0,i})^2}) $$
+* $w^*_i$ is the calibration index for that observation, such that $w^* = (w^*_1, ... , w^*_{n_{T0}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
 
-### JAGS to L4 Equation Notation Tables
+#### Estimation of the Calibration Curve {#llcc}
+
+Estimation of the predictions for calibration curve observations (`CC.pred`):
+
+$$
+x_{CC,i} = \frac{cal_{w^*_i}*(C_{CC,i} - \eta_{plasma} - C_{tresh,w^*_i})*\beta_{CC,i}+cal{w^*_i}*\eta_{plasma}*\gamma_{w^*_i}}{df_{CC}}
+$$
+
+*Assumes the MS responses are a function of the diluted expected initial concentration.*
+
+Estimation of heteroscedastic precision for calibration curve observations (`CC.prec`):
+
+$$
+\tau_{CC,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} * x_{CC,i})^2}
+$$
+
+**Likelihood of the calibration curve observations (`CC.obs`):**
+
+$$ y_{CC,i} \sim \textrm{N} \left( \mu = x_{CC,i},\tau = \tau_{CC,i} \right) $$
+where
+
+* $y_{CC,i}$ is the $i^{th}$ calibration curve observation
+* $\beta_{CC,i}$ is the JAGS step function for the $i^{th}$ calibration curve observation, such that
+
+$$ \beta_{CC,i} =
+\begin{cases}
+1 & \textrm{if} \space (C_{CC,i} - \eta_{plasma} - C_{tresh,w^*_i}) \ge 0 \\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+
+* $w^*_i$ is the calibration index for that observation, such that $w^*=(w^*_1, ... , w^*_{n_{CC}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
+
+#### Estimation for the RED Plasma Protein Binding Assay {#llredppb}
+
+$$ log(K_d) \sim \textrm{Unif} \left( -10,5 \right) ; \space K_d = 10^{log(K_d)} $$
+
+$$ f_{up} = \frac{K_d}{K_d + \rho_{plasma}} $$
+
+##### Concentrations for Replicates
+
+Estimation for the protein concentration for an observation (`C.protein`):
+
+$$ C_{protein,i} = \frac{\rho_{plasma}*p_{protein,i}}{100}  $$
+
+Estimation for the missing chemical in the assay system via binding to walls of the test system or cellular membranes (`C.missing`):
+
+$$ C_{missing,i} \sim \textrm{Unif} \left( 0,conc_{target} \right) $$ 
+
+Estimation of the concentration of the chemical unbound in both wells (`C.u`):
+
+$$ C_{u,i} = (conc_{target}-C_{missing,i}) * \frac{K_d}{2*K_d+C_{protein,i}} $$
+
+Estimation of the concentration of the chemical bound in the plasma well (`C.b`):
+
+$$ C_{b,i} = \frac{(conc_{target}-C_{missing,i})*C_{protein,i}}{2*K_d+C_{protein,i}} $$
+
+Estimation of the total chemical concentration in the plasma well (`C.total`):
+
+$$ C_{total,i} = C_{b,i} + C_{u,i} $$
+
+#### Estimation of PBS {#llpbs}
+
+Estimation of the chemical concentration for the $i^{th}$ PBS observation ($C_{PBS,i}$), assuming the unbound chemical concentration for the corresponding replicate index ($C_{u,r^*_i}$):
+
+$$ C_{PBS,i} = C_{u,r^*_i} $$
+
+Estimation of the predictions for the PBS observations (`PBS.pred`):
+
+$$
+x_{PBS,i} = \frac{cal_{w^*_i}*(C_{PBS,i} - C_{thresh,w^*_i})*\beta_{C_{PBS},i}+\gamma_{w^*_i}}{df_{PBS}}
+$$
+
+*Assumes the MS responses are a function of the diluted expected initial concentration.*
+
+Estimation of heteroscedastic precision for the PBS observation (`PBS.prec`):
+
+$$
+\tau_{PBS,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} * x_{PBS,i})^2}
+$$
+
+**Likelihood of the PBS observations (`PBS.obs`):**
+
+$$ y_{PBS,i} \sim \textrm{N} \left( \mu = x_{PBS,i},\tau = \tau_{PBS,i} \right) $$
+
+where
+
+* $y_{PBS,i}$ is the $i^{th}$ PBS observation with no plasma
+* $r^*_i$ is the replicate index for the $i^{th}$ PBS observation
+* $\beta_{C_{PBS},i}$ is the JAGS step function for the $i^{th}$ PBS observation, such that
+
+$$ \beta_{C_{PBS},i} =
+\begin{cases}
+1 & \textrm{if} \space (C_{PBS,i} - C_{thresh,w^*_i}) \ge 0\space \\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+
+* $w^*_i$ is the calibration index for that observation, such that $w^* = (w^*_1, ... , w^*_{n_{PBS}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
+
+#### Estimation for Plasma {#llplasma}
+
+Estimation of the plasma concentration ($C_{plasma}$), assuming the total concentration for the corresponding calibration index ($C_{total,w^*_i}$):
+
+$$ C_{plasma} = C_{total,w^*_i} $$
+
+Estimation for the plasma predictions (`Plasma.pred`):
+
+$$
+x_{plasma,i} = \frac{cal_{w^*_i}*(C_{plasma,i} - \frac{\eta_{plasma}*\tau_{plasma,r^*_i}}{100} - C_{thresh,w^*_i})*\beta_{plasma,i} + cal_{w^*_i} * \frac{\eta_{plasma}*\tau_{plasma,r^*_i}}{100} + \gamma_{w^*_i}}{df_{plasma}}
+$$
+
+*Assumes the MS responses are a function of the diluted expected initial concentration.*
+
+Estimation for heteroscedastic precision of the plasma predictions (`Plasma.prec`):
+
+$$ \tau_{plasma,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} * x_{plasma,i})^2} $$
+
+**Likelihood for the plasma observations (`Plasma.obs`):**
+
+$$ y_{plasma,i} \sim \textrm{N} \left(\mu = x_{plasma,i},\tau = \tau_{plasma,i} \right) $$
+
+where
+
+* $y_{plasma,i}$ is the $i^{th}$ plasma observation
+* $r^*_i$ is the plasma replicate for the $i^{th}$ observation
+* $w^*_i$ is the calibration index for the $i^{th}$ observation.
+
+### JAGS to L4 Equation Notation Tables {#notationtbls}
 
 |       Data        |   Denotation    |
 |-------------------|-----------------|
@@ -499,29 +711,29 @@ $$ y_{T0,i} = N(x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thr
 
 | JAGS Parameter Name | Parameter | Distribution |
 |---------------------|-----------|--------------|
-| log.const.analytic.sd | $log(\sigma_a)$ | |
-| log.hetero.analytic.slope | $log(m_h)$ | |
-| C.thresh | $C_{thresh}$ | |
-| log.calibration | $log(cal)$ | |
-| background | $\gamma$ | |
+| log.const.analytic.sd | $log(\sigma_a)$ | Uniform |
+| log.hetero.analytic.slope | $log(m_h)$ | Uniform |
+| C.thresh | $C_{thresh}$ | Uniform |
+| log.calibration | $log(cal)$ | Normal |
+| background | $\gamma$ | Exponential |
 | const.analytic.sd | $\sigma_a$ | |
 | hetero.analytic.slope | $m_h$ | |
 | calibration | $cal$ | |
 | NoPlasma.Blank.pred | $x_{NPB}$ | |
-| NoPlasma.Blank.prec | $p_{NPB}$ | |
-| NoPlasma.Blank.obs | $y_{NPB}$ | |
-| log.Plasma.Interference | $log(\eta_{plasma})$ | |
+| NoPlasma.Blank.prec | $\tau_{NPB}$ | |
+| NoPlasma.Blank.obs | $y_{NPB}$ | Normal |
+| log.Plasma.Interference | $log(\eta_{plasma})$ | Uniform |
 | Plasma.Interference | $\eta_{plasma}$ | |
 | Plasma.Blank.pred | $x_{PB}$ | |
-| Plasma.Blank.prec | $p_{PB}$ | |
-| Plasma.Blank.obs | $y_{PB}$ | |
+| Plasma.Blank.prec | $\tau_{PB}$ | |
+| Plasma.Blank.obs | $y_{PB}$ | Normal |
 | T0.pred | $x_{T0}$ | |
-| T0.prec | $p_{T0}$ | |
-| T0.obs | $y_{T0}$ | |
+| T0.prec | $\tau_{T0}$ | |
+| T0.obs | $y_{T0}$ | Normal |
 | CC.pred | $x_{CC}$ | |
-| CC.prec | $p_{CC}$ | |
-| CC.obs | $y_{CC}$ | |
-| log.Kd | $log(K_d)$ | |
+| CC.prec | $\tau_{CC}$ | |
+| CC.obs | $y_{CC}$ | Normal |
+| log.Kd | $log(K_d)$ | Uniform |
 | Kd | $K_d$ | |
 | Fup | $f_{up}$ | |
 | C.protein | $C_{protein}$ | |
@@ -531,9 +743,9 @@ $$ y_{T0,i} = N(x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thr
 | C.total | $C_{total}$ | |
 | PBS.conc | $C_{PBS}$ | |
 | PBS.pred | $x_{PBS}$ | |
-| PBS.prec | $p_{PBS}$ | |
-| PBS.obs | $y_{PBS}$ | |
-| Plasma.conc | $C_{PBS}$ | |
-| Plasma.pred | $x_{PBS}$ | |
-| Plasma.prec | $p_{PBS}$ | |
-| Plasma.obs | $y_{PBS}$ | |
+| PBS.prec | $\tau_{PBS}$ | |
+| PBS.obs | $y_{PBS}$ | Normal |
+| Plasma.conc | $C_{plasma}$ | |
+| Plasma.pred | $x_{plasma}$ | |
+| Plasma.prec | $\tau_{plasma}$ | |
+| Plasma.obs | $y_{plasma}$ | Normal |
