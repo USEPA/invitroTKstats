@@ -1,4 +1,4 @@
-#' Round Numeric Data (Any Level)
+#' Round Numeric Data (Any Level and Assay)
 #' 
 #' This function rounds the numeric columns from any level of processing. Numeric
 #' columns may include estimates of chemical-specific toxicokinetic (TK) parameters 
@@ -12,36 +12,41 @@
 #' apparent membrane permeability from a Caco-2 assay can all be rounded to the 
 #' desired number of significant figures. 
 #' 
-#' The input to this function can be any level of data (level-0 through level-4). 
-#' A data.frame or the appropriate FULL_FILENAME associated with an exported TSV 
-#' or RData file may be provided.  
+#' Note: Currently, for level-3 Caco-2 data, the "Frec_A2B.vec" and "Frec_B2A.vec" columns are 
+#' not rounded. However, these columns can be rounded if the level-3 result table 
+#' from \code{\link{calc_caco2_point}} is exported and the number of significant 
+#' figures is specified. 
+#' 
+#' The input to this function can be any level of data (level-0 through level-4)
+#' corresponding to any assay (Clint, Caco-2, Fup RED, Fup UC). The desired data object 
+#' to be rounded can be a data.frame, specified with \code{data.in}, or a .tsv or 
+#' .RData, specified with \code{FULL_FILENAME}. 
 #' 
 #' @param FULL_FILENAME (Character) A string used to identify the full filename of
-#' a TSV or RData file. "MYDATA-Clint-Level4.tsv" or "MYDATA-Clint-Level4Analysis-2025-04-23.RData"
-#' (Note: \code{FULL_FILENAME} not required if \code{data.in} is provided.)
+#' input .tsv or .RData file (i.e. "MYDATA-Clint-Level4.tsv" or "MYDATA-Clint-Level4Analysis-2025-04-23.RData").
+#' The string is also used to name the exported data file (if chosen to be exported). 
+#' (Note: \code{FULL_FILENAME} not required if \code{data.in} is provided.) 
 #' (Defaults to \code{NULL}.)  
 #' 
 #' @param data.in (Data Frame) Any level data frame generated from \code{invitroTKstats}
 #' package. 
 #' (Note: \code{data.in} not required if \code{FULL_FILENAME} is provided.)
 #' 
-#' @param FILENAME (Character) A string used to name the start of the output file if a data.frame 
-#' is read in. 
+#' @param FILENAME (Character) A string used to name the start of the exported 
+#' date file. Only required if input data is a data.frame and output file is being 
+#' exported.
 #' (Defaults to "MYDATA".)
 #' 
-#' @param assay (Character) A string indicating which type of assay was used to produce 
-#' \code{data.in} data.frame. It is used
-#' to name a portion of the output file if a data.frame is read in. 
+#' @param assay (Character) A string used to name the assay used to generate the
+#' input data. The string is appended to the name of the exported data file. Only
+#' required if input data is a data.frame and output file is being exported. 
 #' Must be one of the following assays: "Clint", "Caco-2", "fup-RED", or "fup-UC". 
-#' (Note: \code{assay} only required if a data.frame is read in but not required
-#' if data is not being exported.)
 #' (Defaults to \code{NULL}.)
 #' 
-#' @param level (Character) A string indicating which level of data \code{data.in} is. 
-#' It is used to name a portion of the output file if a data.frame is read in. 
+#' @param level (Character) A string used the name the level of the input data. 
+#' The string is appended to the name of the exported data file. Only required if 
+#' input data is a data.frame and output file is being exported.  
 #' Must be one of the following levels: "0", "1", "2", "3", "4". 
-#' (Note: \code{level} only required if a data.frame is read in but not required 
-#' if data is not being exported.) 
 #' (Defaults to \code{NULL}.)
 #' 
 #' @param exclusion.cols (Character) Vector of column names to exclude from rounding. 
@@ -52,7 +57,7 @@
 #' (Defaults to \code{3}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the rounded data file will 
-#' be exported to the current directory as a .tsv (if \code{data.in} is read in 
+#' be exported to the current directory as a .tsv (if \code{data.in} is specified
 #' or if \code{FULL_FILENAME} is a .tsv) or as an .RData (if \code{FULL_FILENAME}
 #' is an .RData). 
 #' (Defaults to \code{TRUE}.)
@@ -78,28 +83,28 @@
 #'              output.res = F)
 #' 
 #' ## Round Clint-L4 data and export results. 
-#' Note: Will export as a TSV file.
+#' Note: Will export as a .tsv file.
 #' round_output(data.in = level4, assay = "Clint", level = "4")
 #' 
-#' ## Round Clint-L4 TSV data and export to INPUT.DIR
+#' ## Round Clint-L4 .tsv data and export to INPUT.DIR
 #' Will need to replace FULL_FILENAME and INPUT.DIR with full filename and location
-#' of TSV. 
+#' of .tsv. 
 #' \dontrun{
-#' round_output(FULL_FILENAME = "Examples-Clint-Level4.tsv", 
+#' round_output(FULL_FILENAME = "Example-Clint-Level4.tsv", 
 #'              INPUT.DIR = "<FULL_FILENAME FILE LOCATION>")
 #' }
 #' 
-#' ## Round Clint-L4 RDATA and export to OUTPUT.DIR 
+#' ## Round Clint-L4 .RData and export to OUTPUT.DIR 
 #' Will need to replace FULL_FILENAME and INPUT.DIR with full filename and location
-#' of RDATA. Will also need to replace OUTPUT.DIR with desired location of rounded 
+#' of .RData. Will also need to replace OUTPUT.DIR with desired location of rounded 
 #' data file. 
 #' \dontrun{
-#' round_output(FULL_FILENAME = "Examples-Clint-Level4Analysis.RData",
+#' round_output(FULL_FILENAME = "Example-Clint-Level4Analysis-2025-04-17.RData",
 #'              INPUT.DIR = "<FULL_FILENAME FILE LOCATION>",
 #'              OUTPUT.DIR = "<DESIRED ROUNDED FILE LOCATION>")
 #' }
 #' 
-#' 
+#' @export round_output
 round_output <- function(FULL_FILENAME = NULL,
                          data.in, 
                          FILENAME = "MYDATA", 
@@ -112,7 +117,7 @@ round_output <- function(FULL_FILENAME = NULL,
                          OUTPUT.DIR = NULL){
   
   # Extract file type from FULL_FILENAME. If FULL_FILENAME not provided (i.e. 
-  # reading in a data.frame), assign TSV in order to write to TSV file 
+  # reading in a data.frame), assign .tsv in order to write to .tsv file 
   # (if output.res = TRUE)
   if (!is.null(FULL_FILENAME)) {
     split_FULL_FILENAME <- unlist(strsplit(FULL_FILENAME, split = "\\."))
@@ -163,16 +168,16 @@ round_output <- function(FULL_FILENAME = NULL,
       }
     else {
       approved_assays <- c("Clint", "Caco-2", "fup-RED", "fup-UC")
-      if (is.null(assay) | !is.character(assay)) stop(paste0("Must provide one of the approved assays: ", paste(approved_assays, collapse = ", "), " corresponding to input data.frame."))
+      if (is.null(assay) | !is.character(assay)) stop(paste0("If exporting data, must provide one of the approved assays: ", paste(approved_assays, collapse = ", "), " corresponding to input data.frame."))
       if (!is.null(assay)){
-        if (!assay %in% approved_assays) stop(paste0("Must provide one of the approved assays: ", paste(approved_assays, collapse = ", "), " corresponding to input data.frame."))
+        if (!assay %in% approved_assays) stop(paste0("If exporting data, must provide one of the approved assays: ", paste(approved_assays, collapse = ", "), " corresponding to input data.frame."))
       }
       approved_levels <- c("0", "1", "2", "3", "4")
-      if (is.null(level) | !is.character(level)) stop(paste0("Must provide one of the approved levels: ", paste(approved_levels, collapse = ", "), " corresponding to input data.frame."))
+      if (is.null(level) | !is.character(level)) stop(paste0("If exporting data, must provide one of the approved levels: ", paste(approved_levels, collapse = ", "), " corresponding to input data.frame."))
       if (!is.null(level)){
-        if (!level %in% approved_levels) stop(paste0("Must provide one of the approved levels: ", paste(approved_levels, collapse = ", "), " corresponding to input data.frame."))
+        if (!level %in% approved_levels) stop(paste0("If exporting data, must provide one of the approved levels: ", paste(approved_levels, collapse = ", "), " corresponding to input data.frame."))
       }
-      full_filename <- paste(FILENAME, assay, "Level", level, sep = "-") 
+      full_filename <- paste0(FILENAME, "-", assay, "-Level", level) 
     } 
 
     # Create the exported filepath 
