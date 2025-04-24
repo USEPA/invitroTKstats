@@ -1,6 +1,7 @@
 ---
 title: "Fup RED"
 output: rmarkdown::html_vignette
+bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
   %\VignetteIndexEntry{Fup RED}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,9 +16,9 @@ knitr::opts_chunk$set(
 
 ## Introduction 
 
-This vignette guides users on how to estimate fraction unbound in plasma (f~up~) from mass spectrometry data using rapid equilibrium dialysis (RED). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma that is usually responsible for pharmacological effects (Waters et al. 2008).
+This vignette guides users on how to estimate fraction unbound in plasma (f~up~) from mass spectrometry data using rapid equilibrium dialysis (RED). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma that is usually responsible for pharmacological effects (@waters2008validation).
 
-The mass spectrometry data should be collected from an assay that uses rapid equilibrium dialysis as seen in Figure 1 (Waters et al. 2008). 
+The mass spectrometry data should be collected from an assay that uses rapid equilibrium dialysis as seen in Figure 1 (@waters2008validation). 
 
 ```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: f~up~ RED experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("fupRED_diagram.png")
@@ -441,4 +442,4 @@ Generally, data processing pipelines should include minimal to no manual coding.
 
 ## References 
 
-Waters, N. J., Jones, R., Williams, G., & Sohal, B. (2008). Validation of a rapid equilibrium dialysis approach for the measurement of plasma protein binding. Journal of pharmaceutical sciences, 97(10), 4586-4595.
+\insertRef{waters2008validation}

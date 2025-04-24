@@ -87,7 +87,8 @@ A list of two objects:
 \description{
 This function estimates the fraction unbound in plasma (Fup) and credible
 intervals with a Bayesian modeling approach, via MCMC simulations.
-Data used in modeling is collected from Ultracentrifugation (UC) Fup assays.
+Data used in modeling is collected from Ultracentrifugation (UC) Fup assays 
+\insertCite{redgrave1975separation}{invitroTKstats}.
 Fup and the credible interval are calculated from the MCMC posterior samples
 and the function returns a summary table (level-4) along with the full set of
 MCMC results.
@@ -148,6 +149,9 @@ level4 <- calc_fup_uc(# e.g. replace with "Examples" from "Examples-fup-UC-Level
                       INPUT.DIR = "<level-2 FILE LOCATION>")
 }
 
+}
+\references{
+\insertRef{redgrave1975separation}{invitroTKstats}
 }
 \author{
 John Wambaugh and Chantel Nicolas

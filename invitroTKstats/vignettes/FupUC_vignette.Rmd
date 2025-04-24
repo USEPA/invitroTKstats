@@ -1,6 +1,7 @@
 ---
 title: "Fup UC"
 output: rmarkdown::html_vignette
+bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
   %\VignetteIndexEntry{Fup UC}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,9 +17,9 @@ knitr::opts_chunk$set(
 
 ## Introduction 
 
-This vignette guides users on how to estimate fraction unbound in plasma (f~up~) from mass spectrometry data using ultracentrifugation (UC). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma that is usually responsible for pharmacological effects (Redgrave et al. 1975). 
+This vignette guides users on how to estimate fraction unbound in plasma (f~up~) from mass spectrometry data using ultracentrifugation (UC). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma that is usually responsible for pharmacological effects (@redgrave1975separation). 
 
-The mass spectrometry data should be collected from an assay that uses ultracentrifugation as seen in Figure 1 (Smeltz et al. 2023, Kreutz et al. 2023). 
+The mass spectrometry data should be collected from an assay that uses ultracentrifugation as seen in Figure 1 (@smeltz2023plasma, @kreutz2023category). 
 
 ```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: f~up~ UC experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("fupUC_diagram.png")
@@ -374,8 +375,8 @@ Generally, data processing pipelines should include minimal to no manual coding.
 
 ## References 
 
-Kreutz, A., Clifton, M. S., Henderson, W. M., Smeltz, M. G., Phillips, M., Wambaugh, J. F., & Wetmore, B. A. (2023). Category-based toxicokinetic evaluations of data-poor per-and polyfluoroalkyl substances (PFAS) using gas chromatography coupled with mass spectrometry. Toxics, 11(5), 463.
-
-Redgrave, T. G., Roberts, D. C. K., & West, C. E. (1975). Separation of plasma lipoproteins by density-gradient ultracentrifugation. Analytical biochemistry, 65(1-2), 42-49.
-
-Smeltz, M., Wambaugh, J. F., & Wetmore, B. A. (2023). Plasma protein binding evaluations of per-and polyfluoroalkyl substances for category-based toxicokinetic assessment. Chemical research in toxicology, 36(6), 870-881.
+\references{
+\insertRef{kreutz2023category}
+\insertRef{redgrave1975separation}
+\insertRef{smeltz2023plasma}
+}

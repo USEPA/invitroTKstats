@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract_level1_fup_uc.R
 \name{extract_level1_fup_uc}
 \alias{extract_level1_fup_uc}
-\title{Extract level 1 ultracentrifugation data from wide level 0 file}
+\title{Extract level 1 ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats} data from wide level 0 file}
 \usage{
 extract_level1_fup_uc(
   data.set,

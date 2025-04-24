@@ -36,10 +36,10 @@
 #'
 #' As reported in \insertCite{wambaugh2019assessing;textual}{invitroTKstats}, contractor Cyprotex performed \emph{in vitro}
 #' toxicokinetic experiments requiring the development of analytical chemistry
-#' methods to quantitative concentration. 
+#' methods to quantify concentration. 
 #' Liquid chromatography/mass spectrometry (LC/MS) was faster and 
 #' attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
-#' when LC/MS failed. For some chemicals the attempts to develop an
+#' when LC/MS failed. For some chemicals, the attempts to develop an
 #' analysis method failed for both LC/MS and GC/MS and no
 #' \emph{in vitro} experiments were conducted.
 #'
@@ -71,7 +71,7 @@
 #' Mass Spectrometry for \insertCite{wambaugh2019assessing;textual}{invitroTKstats} Protein Binding
 #'
 #' \insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes chemical-specific measurements of plasma
-#' protein binding using the method of rapid equilibriuim dialysis
+#' protein binding using the method of rapid equilibriuim dialysis (RED)
 #' \insertCite{waters2008validation}{invitroTKstats}.
 #'
 #' @name wambaugh2019.red
@@ -102,7 +102,7 @@
 #' \insertCite{smeltz2023plasma;textual}{invitroTKstats} Ultracentrifugation Data Set
 #'
 #' Mass Spectrometry measurements of plasma protein binding measured by
-#' ultracentrifugation for per- and poly-fluorinated alkyl substance
+#' ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Marci Smeltz and Barbara Wetmore.
 #'
 #' @name smeltz2023.uc
@@ -141,7 +141,7 @@
 #' @keywords data
 "smeltz2023.uc"
 
-#' \insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equlibriation dialysis data set
+#' \insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equilibrium dialysis data set
 #'
 #' Mass Spectrometry measurements of plasma protein binding measured by
 #' rapid equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
@@ -185,9 +185,9 @@
 #' @keywords data
 "smeltz2023.red"
 
-#' \insertCite{smeltz2023plasma;textual}{invitroTKstats} Intinsic hepatic clearnace data set
+#' \insertCite{smeltz2023plasma;textual}{invitroTKstats} Intrinsic hepatic clearance data set
 #'
-#' Mass Spectrometry measurements of intrinsic hepatic clearance for
+#' Mass Spectrometry measurements of intrinsic hepatic clearance (Clint) for
 #' cryopreserved pooled human hepatocytes. Chemicals were per- and
 #' polyfluoroalkyl substance (PFAS) samples. The experiments were
 #' led by Dr.s Marci Smeltz and Barbara Wetmore.
@@ -232,7 +232,7 @@
 #' \insertCite{kreutz2023category;textual}{invitroTKstats} Ultracentrifugation Data Set
 #'
 #' Mass Spectrometry measurements of plasma protein binding measured by
-#' ultracentrifugation for per- and poly-fluorinated alkyl substance
+#' ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
 #' (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
 #'
 #' @name kreutz2023.uc
@@ -272,7 +272,7 @@
 
 #' \insertCite{kreutz2023category;textual}{invitroTKstats} intrinsic hepatic clearance data set
 #'
-#' Mass Spectrometry measurements of intrinsic hepatic clearance for
+#' Mass Spectrometry measurements of intrinsic hepatic clearance (Clint) for
 #' cryopreserved pooled human hepatocyte suspensions. Chemicals were per- and
 #' polyfluoroalkyl substance (PFAS) samples. The experiments were
 #' led by Dr.s Anna Kreutz and Barbara Wetmore.
@@ -316,7 +316,7 @@
 #' Caco-2 Chemical Information Example Data set
 #'
 #' The chemical ID mapping information from tandem mass spectrometry (MS/MS) measurements 
-#' of Caco-2 assay-specific data. 
+#' of Caco-2 assay-specific data \insertCite{honda2025impact}{invitroTKstats} . 
 #' This data set contains 520 unique compounds/chemicals.
 #' 
 #' @name caco2_cheminfo
@@ -331,13 +331,16 @@
 #' \item{\code{QSAR_READY_SMILES}}{SMILES (Simplified molecular-input line-entry system) chemical structure description.}
 #' \item{\code{test_article}}{Compound ID used in the laboratory}
 #' }
+#' 
+#' @references
+#' \insertRef{honda2025impact}{invitroTKstats}
 #'
 "caco2_cheminfo"
 
 #' Caco-2 Level-0 Example Data set
 #' 
 #' A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
-#' data. This subset contains samples for 3 test analytes/compounds. 
+#' data \insertCite{honda2025impact}{invitroTKstats}. This subset contains samples for 3 test analytes/compounds. 
 #' 
 #' @name caco2_L0
 #' @aliases caco2_L0
@@ -361,13 +364,16 @@
 #' \item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
 #' \item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 #' }
+#' 
+#' @references
+#' \insertRef{honda2025impact}{invitroTKstats}
 #'
 "caco2_L0"
 
 #' Caco-2 Level-1 Example Data set
 #'
 #' A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
-#' data. This subset contains samples for 3 test analytes/compounds.
+#' data \insertCite{honda2025impact}{invitroTKstats}. This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L1
 #' @aliases caco2_L1
@@ -402,13 +408,16 @@
 #' \item{\code{Level0.Sheet}}{Name of "sheet" (for Excel workbooks) from which the laboratory data were read}
 #' \item{\code{Response}}{Response factor (calculated from analyte and ISTD peaks)}
 #' }
+#' 
+#' @references
+#' \insertRef{honda2025impact}{invitroTKstats}
 #'
 "caco2_L1"
 
 #' Caco-2 Level-2 Example Data set
 #'
 #' A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
-#' data. This subset contains samples for 3 test analytes/compounds.
+#' data \insertCite{honda2025impact}{invitroTKstats}. This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L2
 #' @aliases caco2_L2
@@ -445,12 +454,14 @@
 #' \item{\code{Verified}}{If "Y", then sample is included in the analysis. (Any other causes the data to be ignored.)}
 #' }
 #'
+#'@references
+#'\insertRef{honda2025impact}{invitroTKstats}
 "caco2_L2"
 
 #' Caco-2 Level-3 Example Data set
 #'
 #' A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
-#' data. This subset contains samples for 3 test analytes/compounds.
+#' data \insertCite{honda2025impact}{invitroTKstats}. This subset contains samples for 3 test analytes/compounds.
 #' 
 #' @name caco2_L3
 #' @aliases caco2_L3
@@ -478,6 +489,8 @@
 #' \item{\code{Refflux}}{Efflux ratio}
 #' }
 #'
+#'@references
+#'\insertRef{honda2025impact}{invitroTKstats}
 "caco2_L3"
 
 #' Fup UC Chemical Information Example Data set
@@ -719,8 +732,8 @@
 #' }
 #' 
 #' @references
-#' \insertRef{shibata2002prediction}{invitroTKstats}
-#'
+#' \insertRef{howard2010plasma}{invitroTKstats}
+#' 
 #' \insertRef{smeltz2023plasma}{invitroTKstats}
 #'
 "fup_uc_PREJAGS"
@@ -877,7 +890,7 @@
 #' }
 #'
 #' @references
-#' \insertRef{howard2010plasma}{invitroTKstats}
+#' \insertRef{waters2008validation}{invitroTKstats}
 #'
 #' \insertRef{smeltz2023plasma}{invitroTKstats}
 #' @keywords data
@@ -1037,7 +1050,7 @@
 #' }
 #' 
 #' @references
-#' \insertRef{shibata2002prediction}{invitroTKstats}
+#' \insertRef{waters2008validation}{invitroTKstats}
 #'
 #' \insertRef{smeltz2023plasma}{invitroTKstats}
 #'

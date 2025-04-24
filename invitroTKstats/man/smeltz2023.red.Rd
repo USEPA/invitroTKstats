@@ -4,7 +4,7 @@
 \name{smeltz2023.red}
 \alias{smeltz2023.red}
 \alias{Smeltz2023.red}
-\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equlibriation dialysis data set}
+\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equilibrium dialysis data set}
 \format{
 A level-2 data.frame with 3,955 rows and 25 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -13,7 +13,7 @@ A level-2 data.frame with 3,955 rows and 25 variables: \describe{
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 \item{\code{Sample.Type}}{Type of RED sample}
-\item{\code{Dilution.Factor}}{Number of times sample was diluted}
+\item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 \item{\code{Std.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{Test.Nominal.Conc}}{Intended concentration of chemical introduced into RED plate (uM)}
