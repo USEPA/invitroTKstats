@@ -5,13 +5,16 @@ output:
   rmdformats::readthedown:
     fig_retina: false
     toc_depth: 3
-  params:
-    my_css: css/rmdformats.css
+params:
+  my_css: css/rmdformats.css
 vignette: >
   %\VignetteIndexEntry{Clint}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{css, code = readLines(params$my_css), hide=TRUE, echo = FALSE}
+```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
