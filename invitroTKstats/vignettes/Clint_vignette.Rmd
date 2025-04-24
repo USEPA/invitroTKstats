@@ -524,21 +524,25 @@ where $\lambda$ is the rate parameter.
 
 ##### Estimation of Blanks
 
-Suppose $n_{blank}$ is the total number of blank observations (`Num.blank.obs`), and $y_{blank,i}$ indicates the $i^{th}$ blank observation, sample type = "Blank" (`Blank.obs`). For each observation we obtain a posterior MCMC estimate for the blank observations with the following:
+Let us assume the total number of prediction and precision for the blank observations is based on the total number of calibrations in the set (i.e. $n_{cal}$, `Num.cal`).  Thus, for each calibration $j \in w$ we obtain the following:
 
-Estimation for the predicted values for blank observations (`Blank.pred`): 
+Estimation for the predicted values for blank observations (`Blank.pred`):
 
-$$ x_{blank,w^*_i} = \frac{\gamma_{w^*_i}}{df_{blank,w^*_i}} $$
+$$ x_{blank,j} = \frac{\gamma_{j}}{df_{blank,j}} $$
 
-where $w^*_i$ is the calibration index (`Blank.cal`) for the $i^{th}$ observation, such that $w^* = (w^*_1,\ldots,w^*_{n_{blank}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations).
+
 
 Estimation for the precision of blank observations (`Blank.prec`):
 
-$$ \tau_{blank,w^*_i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} *x_{blank,w^*_i})^2} $$
+$$ \tau_{blank,j} = \frac{1}{(\sigma_{a,j} + m_{h,j} *x_{blank,j})^2} $$
 
 **Likelihood for blank observations (`Blank.obs`):**
 
+Suppose $n_{blank}$ is the total number of blank observations (`Num.blank.obs`), and $y_{blank,i}$ indicates the $i^{th}$ blank observation, sample type = "Blank" (`Blank.obs`). For each observation we obtain a posterior MCMC estimate for the blank observations with the following:
+
 $$ y_{blank,i} \sim \textrm{N} \left( \mu = x_{blank,w^*_i}, \tau = \tau_{blank,w^*_i} \right) $$
+
+where $w^*_i$ is the calibration index (`Blank.cal`) for the $i^{th}$ observation, such that $w^* = (w^*_1,\ldots,w^*_{n_{blank}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations).
 
 ##### Estimation of Calibration Curve
 
