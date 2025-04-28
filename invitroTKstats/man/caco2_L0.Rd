@@ -22,7 +22,7 @@ A level-0 data.frame with 48 rows and 17 variables: \describe{
 \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 \item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
 \item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
-\item{\code{Dilution.Factor}}{Number of times sample was diluted}
+\item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 }
 }
 \usage{

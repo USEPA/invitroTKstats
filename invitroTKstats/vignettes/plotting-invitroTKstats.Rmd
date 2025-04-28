@@ -32,6 +32,12 @@ library(gridtext)
 # Load data in 
 level2.clint <- invitroTKstats::kreutz2023.clint
 
+# kreutz2023.clint was processed with an older version of invitroTKstats package, rename the following columns 
+# Std.Conc --> Test.Compound.Conc
+# Clint.Assay.Conc --> Test.Nominal.Conc
+
+level2.clint <- dplyr::rename(level2.clint, Test.Compound.Conc = Std.Conc, Test.Nominal.Conc = Clint.Assay.Conc)
+
 # keep only the verified data
 verified_data_clint <- level2.clint[level2.clint$Verified == "Y", ]
 
@@ -62,6 +68,16 @@ do.call(grid.arrange,p)
 # load in data
 level2.uc <- invitroTKstats::kreutz2023.uc
 
+# kreutz2023.uc was processed with an older version of invitroTKstats package, rename the following columns 
+# Standard.Conc --> Test.Compound.Conc
+# UC.Assay.T1.Conc --> Test.Nominal.Conc
+# Series --> Biological.Replicates
+
+level2.uc <- dplyr::rename(level2.uc, 
+                           Test.Compound.Conc = Standard.Conc,
+                           Test.Nominal.Conc = UC.Assay.T1.Conc,
+                           Biological.Replicates = Series)
+
 # keep only the verified data
 verified_data_uc <- level2.uc[level2.uc$Verified == "Y", ]
 
@@ -85,7 +101,7 @@ for (id in unique(verified_data_uc$DTXSID)[1:4]) {
 # remove the y-axis labels from all plots
 p2 = p2 %>% map(~.x + labs(y=NULL))
 # create an universal label
-yleft = richtext_grob("Mass Spec. Intensity / Fraction Unbound", rot=90)
+yleft = gridtext::richtext_grob("Mass Spec. Intensity / Fraction Unbound", rot=90)
 grid.arrange(grobs=p2, ncol = 2, nrow = 2, left = yleft)
 ```
 

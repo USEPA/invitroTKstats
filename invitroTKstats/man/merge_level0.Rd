@@ -221,6 +221,45 @@ the argument `level0.catalog` should be a data frame with the following columns:
 Columns with names ending in ".ColName" indicate the columns to be extracted
 from the specified Excel file and sheet containing level-0 data.
 }
+\examples{
+
+\dontrun{
+# Create level0.catalog data.frame
+# Will need to retrieve "Hep_745_949_959_082421_final.xlsx" file from 
+data-raw/Kreutz-Clint and save it to desired directory.
+# Note XLSX file does not need to be saved to current working directory. 
+catalog <- create_catalog(file = "Hep_745_949_959_082421_final.xlsx",
+                          sheet = "Data063021",
+                          skip.rows = 44,
+                          num.rows = 30,
+                          date = "06302021",
+                          compound = "745",
+                          istd = "MFBET",
+                          sample = "Name",
+                          type = "Type",
+                          peak = "Area...13",
+                          istd.peak = "Resp....16",
+                          conc = "Final Conc....11",
+                          analysis.param = "Exp. Conc....10",
+                          col.names.loc = 2)
+# Create chem.ids data.frame
+chem.ids <- data.frame("Chem.Lab.ID" = "745",
+                       "Compound" = "(Heptafluorobutanoyl)pivaloylmethane",
+                       "DTXSID" = "DTXSID3066215")
+# Create level0 data.frame       
+# Will need to replace <PATH TO FILE> with chosen desired directory containing
+# XLSX file from above.                  
+level0 <- merge_level0(level0.catalog = catalog,
+             INPUT.DIR = "<PATH TO FILE>",
+             istd.col = "ISTD.Name",
+             type.colname.col = "Type.ColName",
+             num.rows.col = "Number.Data.Rows",
+             chem.ids = chem.ids,
+             catalog.out = FALSE,
+             output.res = FALSE)
+}
+
+}
 \author{
 John Wambaugh
 }

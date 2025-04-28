@@ -9,13 +9,13 @@ A named list with 10 elements: \describe{
 \item{\code{Num.cal}}{Unique number of \code{Calibration} values for the tested compound}
 \item{\code{Num.obs}}{Total number of observations for the tested compound}
 \item{\code{Response.obs}}{\code{Response} of all samples for the tested compound}
-\item{\code{obs.conc}}{REPLACE}
-\item{\code{obs.cal}}{REPLACE}
+\item{\code{obs.conc}}{Indices of the \code{Test.Compound.Conc} values that corresponds to all samples' \code{Test.Compound.Conc} for the tested compound.}
+\item{\code{obs.cal}}{Indices of the unique \code{Calibration} values that corresponds to all samples' \code{Calibration} for the tested compound.}
 \item{\code{Conc}}{\code{Test.Compound.Conc} of the "CC" sample types + three placeholder concentrations ("T1", "T5", "AF") per \code{Biological.Replicates} series}
 \item{\code{Num.cc.obs}}{Number of "CC" sample types for the tested compound}
 \item{\code{Num.series}}{Unique number of \code{Biological.Replicates} series}
-\item{\code{Dilution.Factor}}{REPLACE}
-\item{\code{Test.Nominal.Conc}}{REPLACE}
+\item{\code{Dilution.Factor}}{\code{Dilution.Factor} of all samples for the tested compound (number of times the sample was diluted)}
+\item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values (expected initial concentration) of all samples for the tested compound}
 }
 }
 \usage{

@@ -13,7 +13,7 @@ A level-1 data.frame with 48 rows and 28 variables: \describe{
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 \item{\code{Sample.Type}}{Type of Caco-2 sample}
 \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
-\item{\code{Dilution.Factor}}{Number of times sample was diluted}
+\item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 \item{\code{Biological.Replicates}}{Identifier for measurements of multiple samples with the same analyte}
 \item{\code{Technical.Replicates}}{Identifier for repeated measurements of one sample of a compound}

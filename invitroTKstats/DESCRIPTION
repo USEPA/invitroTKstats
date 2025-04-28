@@ -34,7 +34,10 @@ Suggests:
     gridExtra,
     gridtext,
     flextable,
-    rmarkdown
+    rmarkdown,
+    here,
+    magrittr,
+    stringr
 License: GPL-3
 LazyData: true
 Encoding: UTF-8
