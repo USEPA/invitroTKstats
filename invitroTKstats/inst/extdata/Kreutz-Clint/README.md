@@ -1,6 +1,6 @@
 # Kreutz-Clint file descriptions 
 
-Descriptions of files found within invitroTKstats/data-raw/Kreutz-Clint. 
+Descriptions of files found within invitroTKstats/inst/extdata/Kreutz-Clint. 
 
 The unprocessed data files \insertCite{kreutz2023category}{invitroTKstats} are used within the "Data Guide Creation and Level-0 Data Compilation" vignette to demonstrate the initial steps of the pipelining process (raw data through L0 compilation); they are required to demonstrate how to extract relevant data from the **raw** data files to calculate point estimates of the intrinsic hepatic clearance (Cl~int~). 
 

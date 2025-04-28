@@ -79,7 +79,7 @@ The "Kreutz-Clint" sub-directory contains raw data files with gas chromatography
 
 ```{r raw_data_dir}
 # the path to the applicable sub-directory after the `invitroTKstats` package repository is cloned and the R project is opened
-raw_data_dir <- here::here("data-raw/Kreutz-Clint")
+raw_data_dir <- system.file("extdata/Kreutz-Clint", package = "invitroTKstats")
 ```
 
 More than one experiment (that is, data collection run) is typically necessary to obtain all the relevant data for an analysis. Thus, there is likely to be more than one Excel file containing raw data that needs to be processed.
