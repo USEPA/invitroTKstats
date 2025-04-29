@@ -163,7 +163,8 @@ model {
 #' \code{sample_verification}. Complement with manual verification if needed.
 #'
 #' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
-#' If \code{NULL}, all files will be written to the current working directory. 
+#' If \code{NULL}, all files will be written to the user's per-session
+#' temporary directory. 
 #' (Defaults to \code{NULL}.)
 #' 
 #' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
@@ -201,8 +202,9 @@ model {
 #' directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
-#' If \code{NULL}, the output file will be saved to the current working
-#' directory. (Defaults to \code{NULL}.)
+#' If \code{NULL}, the output file will be saved to the user's per-session 
+#' temporary directory or \code{INPUT.DIR} if specified. 
+#' (Defaults to \code{NULL}.)
 #'
 #' @return A list of two objects: 
 #' \enumerate{
@@ -294,10 +296,14 @@ calc_clint <- function(
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
   
+  current.dir <- getwd()
   if (!is.null(TEMP.DIR)) 
   {
-    current.dir <- getwd()
+    # current.dir <- getwd()
     setwd(TEMP.DIR)
+  } else
+  {
+    setwd(tempdir())
   }
 
   clint.cols <- c(L1.common.cols,
@@ -544,6 +550,8 @@ calc_clint <- function(
   {
     setwd(current.dir)
   }
+  
+  setwd(current.dir)
 
   stopCluster(CPU.cluster)
 

@@ -43,7 +43,8 @@
 #' (Defaults to "Verified".)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (level-3) will be exported to the current directory as a .tsv file. 
+#' table (level-3) will be exported to the user's per-session temporary 
+#' directory or the specified \code{OUTPUT.DIR} as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-3). 
@@ -55,7 +56,7 @@
 #' directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
-#' If \code{NULL}, the output file will be saved to the current working
+#' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
 #' @return \item{data.frame}{A level-3 data.frame in standardized format}
@@ -88,7 +89,8 @@
 #' level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
 #' 
 #' ## scenario 2: 
-#' ## import level-2 data from a 'tsv' file and export the result table
+#' ## import level-2 data from a 'tsv' file and export the result table to 
+#' ## same location as INPUT.DIR 
 #' \dontrun{
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
@@ -98,7 +100,19 @@
 #'                            FILENAME="<level-2 FILENAME prefix>", 
 #'                            INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
-#'
+#' 
+#' ## scenario 3: 
+#' ## input level-2 data from the R session and export the result table to the 
+#' ## user's temporary directory
+#' ## Will need to replace FILENAME with desired level-2 filename prefix. 
+#' \dontrun{
+#' level3 <- calc_caco2_point(# e.g. replace with "Examples"
+#'                            FILENAME = "<desired level-2 FILENAME prefix>",
+#'                            data.in = level2)
+#' # To delete, use 
+#' file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-Caco-2-Level3.tsv"))`  
+#' }
+#' 
 #' @references
 #' \insertRef{hubatsch2007determination}{invitroTKstats}
 #'
@@ -316,7 +330,8 @@ calc_caco2_point <- function(
     } else if (!is.null(INPUT.DIR)) {
       file.path <- INPUT.DIR
     } else {
-      file.path <- getwd()
+      # file.path <- getwd()
+      file.path <- tempdir() 
     }
     
     rounded.out.table <- out.table 
@@ -356,6 +371,8 @@ calc_caco2_point <- function(
     # Print notification message stating where the file was output to
     cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
                " has been exported to the following directory: ", file.path), "\n")
+    
+    
   }
   
   print(paste("Apical to basolateral permeability calculated for",num.a2b,"chemicals."))

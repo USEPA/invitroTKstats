@@ -32,7 +32,8 @@
 #' (Defaults to "Verified".)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (level-3) will be exported to the current directory as a .tsv file. 
+#' table (level-3) will be exported to the user's per-session temporary directory
+#' as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-3). 
@@ -44,8 +45,8 @@
 #' directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
-#' If \code{NULL}, the output file will be saved to the current working
-#' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
+#' If \code{NULL}, the output file will be saved to the user's per-session 
+#' temporary directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A level-3 data frame with one row per chemical, contains a point estimate of intrinsic 
 #' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
@@ -63,7 +64,8 @@
 #' level3 <- calc_clint_point(data.in = level2, output.res = FALSE)
 #' 
 #' ## scenario 2: 
-#' ## import level-2 data from a 'tsv' file and export the result table
+#' ## import level-2 data from a 'tsv' file and export the result table to 
+#' ## same location as INPUT.DIR 
 #' \dontrun{
 #' ## Refer to sample_verification help file for how to export level-2 data to a directory.
 #' ## Unless a different path is specified in OUTPUT.DIR,
@@ -72,6 +74,18 @@
 #' level3 <- calc_clint_point(# e.g. replace with "Examples" from "Examples-Clint-Level2.tsv"
 #'                            FILENAME="<level-2 FILENAME prefix>",
 #'                            INPUT.DIR = "<level-2 FILE LOCATION>")
+#' }
+#' 
+#' ## scenario 3: 
+#' ## input level-2 data from the R session and export the result table to the 
+#' ## user's temporary directory
+#' ## Will need to replace FILENAME with desired level-2 filename prefix. 
+#' \dontrun{
+#' level3 <- calc_clint_point(# e.g. replace with "Examples"
+#'                            FILENAME = "<desired level-2 FILENAME prefix>",
+#'                            data.in = level2)
+#' # To delete, use 
+#' file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-Clint-Level3.tsv"))`  
 #' }
 #'
 #' @references
@@ -342,7 +356,8 @@ calc_clint_point <- function(
     } else if (!is.null(INPUT.DIR)) {
       file.path <- INPUT.DIR
     } else {
-      file.path <- getwd()
+      # file.path <- getwd()
+      file.path <- tempdir()
     }
     
     rounded.out.table <- out.table

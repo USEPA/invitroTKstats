@@ -27,7 +27,8 @@ verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (level-3) will be exported to the current directory as a .tsv file. 
+table (level-3) will be exported to the user's per-session temporary 
+directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
 
 \item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (level-3). 
@@ -39,7 +40,7 @@ If \code{NULL}, looking for the input level-2 file in the current working
 directory. (Defaults to \code{NULL}.)}
 
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
-If \code{NULL}, the output file will be saved to the current working
+If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
@@ -104,7 +105,8 @@ level2 <- invitroTKstats::caco2_L2
 level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
 
 ## scenario 2: 
-## import level-2 data from a 'tsv' file and export the result table
+## import level-2 data from a 'tsv' file and export the result table to 
+## same location as INPUT.DIR 
 \dontrun{
 ## Refer to sample_verification help file for how to export level-2 data to a directory.
 ## Unless a different path is specified in OUTPUT.DIR,
@@ -113,6 +115,18 @@ level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
 level3 <- calc_caco2_point(# e.g. replace with "Examples" from "Examples-Caco-2-Level2.tsv" 
                            FILENAME="<level-2 FILENAME prefix>", 
                            INPUT.DIR = "<level-2 FILE LOCATION>")
+}
+
+## scenario 3: 
+## input level-2 data from the R session and export the result table to the 
+## user's temporary directory
+## Will need to replace FILENAME with desired level-2 filename prefix. 
+\dontrun{
+level3 <- calc_caco2_point(# e.g. replace with "Examples"
+                           FILENAME = "<desired level-2 FILENAME prefix>",
+                           data.in = level2)
+# To delete, use 
+file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-Caco-2-Level3.tsv"))`  
 }
 
 }
