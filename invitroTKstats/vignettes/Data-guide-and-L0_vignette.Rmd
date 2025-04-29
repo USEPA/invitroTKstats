@@ -75,7 +75,7 @@ The first thing we need to do for the pipelining process is to construct a data 
 
 For users to replicate this vignette, it is necessary to clone the `invitroTKstats` package repository which contains the "data-raw/Kreutz-Clint" sub-directory. 
 
-The "Kreutz-Clint" sub-directory contains raw data files with gas chromatography-tandem mass spectrometry (GC-MS/MS) analyses of a subset of PFAS alcohols, amides, and acrylates (@kreutz2023category). 
+The "Kreutz-Clint" sub-directory contains a subset of raw data files with gas chromatography-tandem mass spectrometry (GC-MS/MS) analyses of a subset of PFAS alcohols, amides, and acrylates (@kreutz2023category). The entire set of raw data files can be found within the "working/KreutzPFAS" sub-directory that is not tracked with the `invitroTKstats` package.  
 
 ```{r raw_data_dir}
 # the path to the applicable sub-directory after the `invitroTKstats` package repository is cloned and the R project is opened
@@ -105,7 +105,7 @@ In cases where one is unfamiliar with the raw data Excel files, it may be useful
 readxl::excel_sheets(hep_clint_xlsx[1])
 ```
 
-Here, it is already known that the "Raw" data sheet is the only one containing MS data for parameter estimation. However, other data sheets (for example, "Cover Sheet") may also provide valuable information about the original experiment, chemicals evaluated, meta data, etc. Clear communication between the lab staff and data analyst about the structure of the data files and general expectations is highly encouraged to enable accurate, efficient, and transparent data pipelining.
+Here, it is already known that the "Data063021" data sheet contains MS data for parameter estimation. However, other data sheets (for example, "Cover Sheet") may also provide valuable information about the original experiment, chemicals evaluated, meta data, etc. Clear communication between the lab staff and data analyst about the structure of the data files and general expectations is highly encouraged to enable accurate, efficient, and transparent data pipelining.
 
 *It should be noted, other exploratory steps may be necessary, but we leave this up to the reader to determine the necessary steps for raw data exploration given their data and use case.*
 
@@ -117,7 +117,7 @@ Though the data guide (which is ultimately a `data.frame` format) may be created
 
 Typically, one will want to include all the datasets "delivered" to the data analyst. As mentioned before, the data catalog logs where the raw MS data is for the respective files and allows us to efficiently pull level-0 data (raw data) from those disparate files and compile them into a comprehensive level-0 dataset. In this sub-section, however, we are going to demonstrate how to put together the data catalog for a single Excel file.
 
-Here, we are going to use the third Excel file (and only the "Data063021" sheet) to demonstrate putting together the data catalog programmatically using the `create_catalog` function within `invitroTKstats`. It should be noted, the information provided in `create_catalog` is obtained by visual inspection of the file of interest and identifying the corresponding input values for each of the arguments.
+Here, we are going to use the first Excel file (and only the "Data063021" sheet) to demonstrate putting together the data catalog programmatically using the `create_catalog` function within `invitroTKstats`. It should be noted, the information provided in `create_catalog` is obtained by visual inspection of the file of interest and identifying the corresponding input values for each of the arguments.
 
 ```{r data_catalog}
 DC_kreutz.pfas <- create_catalog(
