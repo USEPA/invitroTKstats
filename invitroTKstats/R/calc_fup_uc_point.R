@@ -1,13 +1,13 @@
-#' Calculate Point Estimates of Fraction Unbound in Plasma with
-#' Ultracentrifugation (UC) Data 
+#' Calculate Point Estimates of Fraction Unbound in Plasma (Fup) with
+#' Ultracentrifugation (UC) Data (Level-3)
 #'
 #' This function calculates the point estimates for the fraction unbound in
 #' plasma (Fup) using mass spectrometry (MS) peak areas from samples collected
-#' as part of in vitro measurements of chemical Fup using ultracentrifugation
-#' \insertCite{waters2008validation}{invitroTKstats}. See the Details section
+#' as part of \emph{in vitro} measurements of chemical Fup using ultracentrifugation
+#' \insertCite{redgrave1975separation}{invitroTKstats}. See the Details section
 #' for the equation(s) used in the point estimate.
 #' 
-#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' The input to this function should be "level-2" data. Level-2 data is level-1,
 #' data formatted with the \code{\link{format_fup_uc}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for analysis. 
@@ -15,24 +15,24 @@
 #' The should be annotated according to
 #' of these types:
 #' \tabular{rrrrr}{
-#'   Blank (ignored) \tab Blank\cr
-#'   Plasma well concentration \tab Plasma\cr
-#'   Phosphate-buffered well concentration\tab PBS\cr
-#'   Time zero plasma concentration \tab T0\cr
+#'   Calibration Curve \tab CC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab AF\cr
+#'   Whole Plasma T1h Sample  \tab T1\cr
+#'   Whole Plasma T5h Sample \tab T5\cr
 #' }
 #'
 #' \eqn{f_{up}} is calculated from MS responses as:
 #'
 #' \eqn{f_{up} = \frac{\sum_{i = 1}^{n_A} (r_A * c_{DF}) / n_A}{\sum_{i = 1}^{n_{T5}} (r_{T5} * c_{DF}) / n_{T5}}}
 #'
-#' where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is Dilution Factor,
+#' where \eqn{r_A} is Aqueous Fraction Response, \eqn{c_{DF}} is the corresponding Dilution Factor,
 #' \eqn{r_{T5}} is T5 Response, \eqn{n_A} is the number of Aqueous Fraction Responses,
 #' and \eqn{n_{T5}} is the number of T5 Responses.
 #'
-#' @param FILENAME (Character) A string used to identify the input Level-2 file.
+#' @param FILENAME (Character) A string used to identify the input level-2 file.
 #' "<FILENAME>-fup-UC-Level2.tsv".
 #' 
-#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' @param data.in (Data Frame) A level-2 data frame generated from the 
 #' \code{format_fup_uc} function with a verification column added by 
 #' \code{sample_verification}. Complement with manual verification if needed. 
 #'
@@ -41,10 +41,10 @@
 #' (Defaults to "Verified".)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-3) will be exported the current directory as a .tsv file. 
+#' table (level-3) will be exported the current directory as a .tsv file. 
 #' (Defaults to \code{TRUE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (Level-3). 
+#' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-3). 
 #' (Note: console print statements are also rounded to specified significant figures.) 
 #' (Defaults to \code{3}.)
 #' 
@@ -56,10 +56,10 @@
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
-#' @return A data frame with one row per chemical, contains chemical identifiers 
+#' @return A level-3 data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, compound name used by the laboratory, 
 #' EPA's DSSTox Structure ID, calibration, and point estimates for
-#' the fraction unbound in plasma (Fup) for all chemicals in the input data frame. 
+#' the fraction unbound in plasma (Fup) for all chemicals in the input data frame.
 #'
 #' @author John Wambaugh
 #'
@@ -122,11 +122,11 @@ calc_fup_uc_point <- function(
   cols <- c(unlist(mget(names(fup.uc.cols))), "Response", good.col)
   
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(PPB.data)))
-    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_uc first (level 1) then curate to (level 2).")
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_fup_uc first (level-1) then curate to (level-2).")
   
   if (!(all(cols %in% colnames(PPB.data))))
   {
-    warning("Run format_fup_uc first (level 1) then curate to level 2.")
+    warning("Run format_fup_uc first (level-1) then curate to level-2.")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(PPB.data))],collapse=", ")))
   }
@@ -217,7 +217,7 @@ calc_fup_uc_point <- function(
       cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
     }
     
-    # Write out a "level 3" file (data organized into a standard format):
+    # Write out a "level-3" file (data organized into a standard format):
     write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-fup-UC-Level3.tsv"),
                 sep="\t",
@@ -225,7 +225,7 @@ calc_fup_uc_point <- function(
                 quote=F)
     
     # Print notification message stating where the file was output to
-    cat(paste0("A Level-3 file named ",FILENAME,"-fup-UC-Level3.tsv", 
+    cat(paste0("A level-3 file named ",FILENAME,"-fup-UC-Level3.tsv", 
                 " has been exported to the following directory: ", file.path), "\n")
   }
   

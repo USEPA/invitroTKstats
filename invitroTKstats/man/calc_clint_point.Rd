@@ -15,10 +15,10 @@ calc_clint_point(
 )
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input Level-2 file.
+\item{FILENAME}{A string used to identify the input level-2 file.
 "<FILENAME>-Clint-Level2.tsv".}
 
-\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\item{data.in}{(Data Frame) A level-2 data frame generated from the 
 \code{format_clint} function with a verification column added by 
 \code{sample_verification}. Complement with manual verification if needed.}
 
@@ -27,10 +27,10 @@ verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (Level-3) will be exported the current directory as a .tsv file. 
+table (level-3) will be exported to the current directory as a .tsv file. 
 (Defaults to \code{TRUE}.)}
 
-\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (Level-3). 
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (level-3). 
 (Note: console print statements are also rounded to specified significant figures.)
 (Defaults to \code{3}.)}
 
@@ -43,25 +43,25 @@ If \code{NULL}, the output file will be saved to the current working
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-A Level-3 data frame with one row per chemical, containing a point estimate of intrinsic 
+A level-3 data frame with one row per chemical, contains a point estimate of intrinsic 
 clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
 the p-value and the Akaike Information Criterion (AIC) of the linear 
 regression fit for all chemicals in the input data frame.
 }
 \description{
 This function calculates a point estimate of intrinsic hepatic clearance (Clint) 
-using mass spectrometry (MS) peak area data collected as part of in vitro measurement 
+using mass spectrometry (MS) peak area data collected as part of \emph{in vitro} measurements 
 of chemical clearance, as characterized by the disappearance of parent compound over 
 time when incubated with primary hepatocytes \insertCite{shibata2002prediction}{invitroTKstats}.
 }
 \details{
-The input to this function should be "Level-2" data. Level-2 data is Level-1,
+The input to this function should be "level-2" data. Level-2 data is level-1,
 data formatted with the \code{\link{format_clint}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for analysis. 
 
 The data frame of observations should be annotated according to
-of these types:
+these types:
 \tabular{rrrrr}{
   Blank \tab Blank\cr
   Hepatocyte incubation concentration vs. time \tab Cvst\cr

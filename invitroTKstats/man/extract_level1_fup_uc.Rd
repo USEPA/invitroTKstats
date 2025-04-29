@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract_level1_fup_uc.R
 \name{extract_level1_fup_uc}
 \alias{extract_level1_fup_uc}
-\title{Extract level 1 ultracentrifugation data from wide level 0 file}
+\title{Extract level 1 ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats} data from wide level 0 file}
 \usage{
 extract_level1_fup_uc(
   data.set,
@@ -97,7 +97,7 @@ The data frame of observations should be annotated according to
 of these types:
 \tabular{rrrrr}{
   Calibration Curve \tab CC\cr
-  Ultracentrifugation Aqueous Fraction \tab UC\cr
+  Ultracentrifugation Aqueous Fraction \tab AF\cr
   Whole Plasma T1h Sample  \tab T1\cr
   Whole Plasma T5h Sample \tab T5\cr
 }

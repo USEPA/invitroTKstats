@@ -3,9 +3,9 @@
 \docType{data}
 \name{fup_uc_L3}
 \alias{fup_uc_L3}
-\title{Fup UC Level 3 Example Data set}
+\title{Fup UC Level-3 Example Data set}
 \format{
-A level 3 data.frame with 3 rows and 5 variables: \describe{
+A level-3 data.frame with 3 rows and 5 variables: \describe{
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}

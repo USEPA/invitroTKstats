@@ -23,12 +23,12 @@ calc_clint(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input Level-2 file,
+\item{FILENAME}{(Character) A string used to identify the input level-2 file,
 "<FILENAME>-Clint-Level2.tsv", and to name the exported model results. 
 This argument is required no matter which method of specifying input data is used. 
 (Defaults to \code{NULL}.)}
 
-\item{data.in}{(Data Frame) A Level-2 data frame generated from the 
+\item{data.in}{(Data Frame) A level-2 data frame generated from the 
 \code{format_clint} function with a verification column added by 
 \code{sample_verification}. Complement with manual verification if needed.}
 
@@ -61,8 +61,8 @@ will decrease between 1 and 10 uM. (Defaults to 0.25.)}
 \item{save.MCMC}{(Logical) When set to \code{TRUE}, will export the MCMC results 
 as an .RData file. (Defaults to \code{FALSE}.)}
 
-\item{sig.figs}{(Numeric) The number of significant figures to round the exported unverified data (Level-2).
-The exported result table (Level-4) is left unrounded for reproducibility.
+\item{sig.figs}{(Numeric) The number of significant figures to round the exported unverified data (level-2).
+The exported result table (level-4) is left unrounded for reproducibility.
 (Note: console print statements are also rounded to specified significant figures.)
 (Defaults to \code{3}.)}
 
@@ -77,7 +77,7 @@ directory. (Defaults to \code{NULL}.)}
 \value{
 A list of two objects: 
 \enumerate{
-   \item{Results: A Level-4 data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
+   \item{Results: A level-4 data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
    for 1 and 10 uM and credible intervals for all compounds in the input file. Column includes:
    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
    the laboratory, DTXSID - EPA's DSSTox Structure ID, Clint.1.Med/Clint.10.Med - posterior median, 
@@ -89,13 +89,14 @@ A list of two objects:
 }
 \description{
 This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
-modeling on Hepatocyte Incubation data. Clint and the credible intervals,
+modeling on Hepatocyte Incubation data \insertCite{shibata2002prediction}{invitroTKstats}.
+Clint and the credible intervals,
 at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
-A summary table along with the full set of MCMC results is returned from
+A summary table (level-4) along with the full set of MCMC results is returned from
 the function.
 }
 \details{
-The input to this function should be "Level-2" data. Level-2 data is Level-1,
+The input to this function should be "level-2" data. Level-2 data is level-1,
 data formatted with the \code{\link{format_clint}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for analysis. 
@@ -107,13 +108,14 @@ include the summary table (.RData), JAGS model (.RData), and any "unverified"
 data excluded from the analysis (.tsv).
 
 The data frame of observations should be annotated according to
-of these types:
+these types:
 \tabular{rl}{
   Blank \tab Cell free blank with media\cr
-  CC \tab Cell and media free calibration curve \cr
+  CC \tab Cell free calibration curve \cr
   Cvst \tab Hepatocyte incubation concentration vs. time \cr
   Inactive \tab Concentration vs. time data with inactivated hepatocytes \cr
 }
+We currently require Cvst data. Blank, CC, and Inactive data are optional.
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of
 MS response as a function of time.
@@ -148,8 +150,9 @@ level4 <- calc_clint(# e.g. replace with "Examples" from "Examples-Clint-Level2.
                      INPUT.DIR = "<level-2 FILE LOCATION>")
 }
 
-
-
+}
+\references{
+\insertRef{shibata2002prediction}{invitroTKstats}
 }
 \author{
 John Wambaugh

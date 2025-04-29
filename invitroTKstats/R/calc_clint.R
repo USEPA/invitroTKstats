@@ -123,12 +123,13 @@ model {
 #' Calculate Intrinsic Hepatic Clearance (Clint) with Bayesian Modeling (Level-4)
 #'
 #' This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
-#' modeling on Hepatocyte Incubation data. Clint and the credible intervals,
+#' modeling on Hepatocyte Incubation data \insertCite{shibata2002prediction}{invitroTKstats}.
+#' Clint and the credible intervals,
 #' at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
-#' A summary table along with the full set of MCMC results is returned from
+#' A summary table (level-4) along with the full set of MCMC results is returned from
 #' the function.
 #' 
-#' The input to this function should be "Level-2" data. Level-2 data is Level-1,
+#' The input to this function should be "level-2" data. Level-2 data is level-1,
 #' data formatted with the \code{\link{format_clint}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for analysis. 
@@ -140,23 +141,24 @@ model {
 #' data excluded from the analysis (.tsv).
 #'
 #' The data frame of observations should be annotated according to
-#' of these types:
+#' these types:
 #' \tabular{rl}{
 #'   Blank \tab Cell free blank with media\cr
-#'   CC \tab Cell and media free calibration curve \cr
+#'   CC \tab Cell free calibration curve \cr
 #'   Cvst \tab Hepatocyte incubation concentration vs. time \cr
 #'   Inactive \tab Concentration vs. time data with inactivated hepatocytes \cr
 #' }
+#' We currently require Cvst data. Blank, CC, and Inactive data are optional.
 #'
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
 #' MS response as a function of time.
 #'
-#' @param FILENAME (Character) A string used to identify the input Level-2 file,
+#' @param FILENAME (Character) A string used to identify the input level-2 file,
 #' "<FILENAME>-Clint-Level2.tsv", and to name the exported model results. 
 #' This argument is required no matter which method of specifying input data is used. 
 #' (Defaults to \code{NULL}.)
 #'
-#' @param data.in (Data Frame) A Level-2 data frame generated from the 
+#' @param data.in (Data Frame) A level-2 data frame generated from the 
 #' \code{format_clint} function with a verification column added by 
 #' \code{sample_verification}. Complement with manual verification if needed.
 #'
@@ -189,8 +191,8 @@ model {
 #' @param save.MCMC (Logical) When set to \code{TRUE}, will export the MCMC results 
 #' as an .RData file. (Defaults to \code{FALSE}.)
 #' 
-#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (Level-2).
-#' The exported result table (Level-4) is left unrounded for reproducibility.
+#' @param sig.figs (Numeric) The number of significant figures to round the exported unverified data (level-2).
+#' The exported result table (level-4) is left unrounded for reproducibility.
 #' (Note: console print statements are also rounded to specified significant figures.)
 #' (Defaults to \code{3}.)
 #' 
@@ -204,7 +206,7 @@ model {
 #'
 #' @return A list of two objects: 
 #' \enumerate{
-#'    \item{Results: A Level-4 data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
+#'    \item{Results: A level-4 data frame with the Bayesian estimated intrinsic hepatic clearance (Clint)
 #'    for 1 and 10 uM and credible intervals for all compounds in the input file. Column includes:
 #'    Compound.Name - compound name, Lab.Compound.Name - compound name used by 
 #'    the laboratory, DTXSID - EPA's DSSTox Structure ID, Clint.1.Med/Clint.10.Med - posterior median, 
@@ -246,7 +248,8 @@ model {
 #'                      INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #' 
-#' 
+#' @references
+#' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @import Rdpack
 #' @importFrom utils read.csv write.table read.table
@@ -308,11 +311,11 @@ calc_clint <- function(
   
   # Check for missing columns
   if (!any(c("Biological.Replicates", "Technical.Replicates") %in% colnames(MS.data)))
-    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_clint first (level 1) then curate to (level 2).")
+    stop("Need at least one column representing replication, i.e. Biological.Replicates or Technical.Replicates. Run format_clint first (level-1) then curate to (level-2).")
   
   if (!(all(cols %in% colnames(MS.data))))
   {
-    warning("Run format_clint first (level 1) then curate to (level 2).")
+    warning("Run format_clint first (level-1) then curate to (level-2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(MS.data))],collapse=", ")))
   }
@@ -556,7 +559,7 @@ calc_clint <- function(
   
   save(Results,
        file=paste0(file.path, "/", FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData"))
-  cat(paste0("A Level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
+  cat(paste0("A level-4 file named ",FILENAME,"-Clint-Level4Analysis-",Sys.Date(),".RData", 
              " has been exported to the following directory: ", file.path), "\n")
   
   if (save.MCMC){

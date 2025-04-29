@@ -7,7 +7,7 @@
 \format{
 A chemical info data.frame with 75 rows and 4 variables: \describe{
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
-\item{\code{Chemical Name (Common Abbreviation)}}{Name of the test analyte/compound and common abbreviation}
+\item{\code{Chemical Name (Common Abbreviation)}}{Name of the test analyte/compound and abbreviation used by the lab as the compound ID}
 \item{\code{Compound}}{Name of the test analyte/compound}
 \item{\code{Chem.Lab.ID}}{Common abbreviation of the test analyte/compound as described in the laboratory}
 }
