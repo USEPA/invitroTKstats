@@ -4,7 +4,7 @@
 \name{smeltz2023.red}
 \alias{smeltz2023.red}
 \alias{Smeltz2023.red}
-\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equlibriation dialysis data set}
+\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} rapid equilibrium dialysis data set}
 \format{
 A level-2 data.frame with 3,955 rows and 25 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}

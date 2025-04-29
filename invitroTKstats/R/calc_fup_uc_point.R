@@ -4,7 +4,7 @@
 #' This function calculates the point estimates for the fraction unbound in
 #' plasma (Fup) using mass spectrometry (MS) peak areas from samples collected
 #' as part of \emph{in vitro} measurements of chemical Fup using ultracentrifugation
-#' \insertCite{waters2008validation}{invitroTKstats}. See the Details section
+#' \insertCite{redgrave1975separation}{invitroTKstats}. See the Details section
 #' for the equation(s) used in the point estimate.
 #' 
 #' The input to this function should be "level-2" data. Level-2 data is level-1,

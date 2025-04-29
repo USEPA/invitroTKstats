@@ -81,8 +81,8 @@ A list of two objects:
 }
 \description{
 This function estimates the fraction unbound in plasma (Fup) with Bayesian
-modeling on Rapid Equilibrium Dialysis (RED) data. Both Fup and
-the credible interval are estimated from posterior samples of the MCMC.
+modeling on Rapid Equilibrium Dialysis (RED) data \insertCite{waters2008validation}{invitroTKstats}.
+Both Fup and the credible interval are estimated from posterior samples of the MCMC.
 A summary table (level-4) along with the full set of MCMC results is returned from
 the function.
 }
@@ -146,6 +146,8 @@ level4 <- calc_fup_red(# e.g. replace with "Examples" from "Examples-fup-RED-Lev
 \insertRef{waters2008validation}{invitroTKstats}
 
 \insertRef{wambaugh2019assessing}{invitroTKstats}
+
+\insertRef{berg2011pathology}{invitroTKstats}
 }
 \author{
 John Wambaugh and Chantel Nicolas

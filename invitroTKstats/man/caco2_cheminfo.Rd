@@ -20,7 +20,10 @@ caco2_cheminfo
 }
 \description{
 The chemical ID mapping information from tandem mass spectrometry (MS/MS) measurements 
-of Caco-2 assay-specific data. 
+of Caco-2 assay-specific data \insertCite{honda2025impact}{invitroTKstats} . 
 This data set contains 520 unique compounds/chemicals.
+}
+\references{
+\insertRef{honda2025impact}{invitroTKstats}
 }
 \keyword{datasets}

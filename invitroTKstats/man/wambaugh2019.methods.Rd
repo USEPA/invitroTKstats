@@ -32,10 +32,10 @@ wambaugh2019.methods
 \description{
 As reported in \insertCite{wambaugh2019assessing;textual}{invitroTKstats}, contractor Cyprotex performed \emph{in vitro}
 toxicokinetic experiments requiring the development of analytical chemistry
-methods to quantitative concentration. 
+methods to quantify concentration. 
 Liquid chromatography/mass spectrometry (LC/MS) was faster and 
 attempted first. Gas chromatography/mass spectrometry (GC/MS) was attempted
-when LC/MS failed. For some chemicals the attempts to develop an
+when LC/MS failed. For some chemicals, the attempts to develop an
 analysis method failed for both LC/MS and GC/MS and no
 \emph{in vitro} experiments were conducted.
 }

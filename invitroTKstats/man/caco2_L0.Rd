@@ -30,6 +30,9 @@ caco2_L0
 }
 \description{
 A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
-data. This subset contains samples for 3 test analytes/compounds.
+data \insertCite{honda2025impact}{invitroTKstats}. This subset contains samples for 3 test analytes/compounds.
+}
+\references{
+\insertRef{honda2025impact}{invitroTKstats}
 }
 \keyword{datasets}

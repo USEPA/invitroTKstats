@@ -1,6 +1,7 @@
 ---
 title: "Caco2"
 output: rmarkdown::html_vignette
+bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
   %\VignetteIndexEntry{Caco2}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,9 +16,9 @@ knitr::opts_chunk$set(
 
 ## Introduction 
 
-This vignette guides users on how to estimate apparent membrane permeability (P~app~) from mass spectrometry data. Apparent membrane permeability is a chemical specific parameter that describes the general transport of the chemical through a membrane (Honda et al. 2024). 
+This vignette guides users on how to estimate apparent membrane permeability (P~app~) from mass spectrometry data. Apparent membrane permeability is a chemical specific parameter that describes the general transport of the chemical through a membrane (@honda2025impact, @hubatsch2007determination). 
 
-The mass spectrometry data should be collected from a Caco-2 assay in which the test compound was added to either the apical or basolateral side of a confluent and differentiated Caco-2 cell monolayer as seen in Figure 1 (Honda et al. 2024). 
+The mass spectrometry data should be collected from a Caco-2 assay in which the test compound was added to either the apical or basolateral side of a confluent and differentiated Caco-2 cell monolayer as seen in Figure 1 (@honda2025impact, @hubatsch2007determination). 
 
 ```{r, echo = FALSE, out.width = "60%", fig.cap = "Fig 1: Caco-2 experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("Caco2_diagram.png")
@@ -224,12 +225,12 @@ resp <- caco2_L1_curated %>%
 all(resp == 0)
 ```
 
-Now, all of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types
+Now, all of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types indicated in **bold**. 
 
-1. Blank with no chemical added (Blank)
-2. Dosing vehicle (C0) at target concentration (D0)
-3. Donor compartment at the end of the experiment (D2)
-4. Receiver compartment at the end of the experiment (R2)
+1. Blank with no chemical added **(Blank)**
+2. Target concentration added to donor compartment at time 0 (can be referred to as C0) **(D0)**
+3. Donor compartment at the end of the experiment **(D2)**
+4. Receiver compartment at the end of the experiment **(R2)**
 
 If any samples had a different sample type, they would have been removed and reported to the user. If the user wants to export the removed samples as a TSV, the user should set the parameter `save.bad.types = TRUE`.  
 
@@ -387,6 +388,7 @@ Generally, data processing pipelines should include minimal to no manual coding.
 
 ## References 
 
-Honda, Gregory S., et al. "Impact of gut permeability on estimation of oral bioavailability for chemicals in commerce and the environment." ALTEX-Alternatives to animal experimentation (2024).
-
-Hubatsch I, Ragnarsson EG, Artursson P (2007). “Determination of drug permeability and prediction of drug absorption in Caco-2 monolayers.” Nature protocols, 2(9), 2111–2119.
+\references{
+\insertRef{honda2025impact}{invitroTKstats}
+\insertRef{hubatsch2007determination}{invitroTKstats}
+}

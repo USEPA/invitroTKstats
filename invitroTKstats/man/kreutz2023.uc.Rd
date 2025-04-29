@@ -37,7 +37,7 @@ kreutz2023.uc
 }
 \description{
 Mass Spectrometry measurements of plasma protein binding measured by
-ultracentrifugation for per- and poly-fluorinated alkyl substance
+ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
 }
 \references{

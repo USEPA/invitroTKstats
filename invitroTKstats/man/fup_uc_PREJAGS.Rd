@@ -29,7 +29,7 @@ ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
 compound. Therefore, only contains arguments given to JAGS for the last tested compound.
 }
 \references{
-\insertRef{shibata2002prediction}{invitroTKstats}
+\insertRef{howard2010plasma}{invitroTKstats}
 
 \insertRef{smeltz2023plasma}{invitroTKstats}
 }

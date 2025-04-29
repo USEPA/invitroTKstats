@@ -4,7 +4,7 @@
 \name{smeltz2023.clint}
 \alias{smeltz2023.clint}
 \alias{Smeltz2023.clint}
-\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} Intinsic hepatic clearnace data set}
+\title{\insertCite{smeltz2023plasma;textual}{invitroTKstats} Intrinsic hepatic clearance data set}
 \format{
 A level-2 data.frame with 625 rows and 24 variables: \describe{
 \item{\code{Lab.Sample.Name}}{Sample description used in the laboratory}
@@ -37,7 +37,7 @@ A level-2 data.frame with 625 rows and 24 variables: \describe{
 smeltz2023.clint
 }
 \description{
-Mass Spectrometry measurements of intrinsic hepatic clearance for
+Mass Spectrometry measurements of intrinsic hepatic clearance (Clint) for
 cryopreserved pooled human hepatocytes. Chemicals were per- and
 polyfluoroalkyl substance (PFAS) samples. The experiments were
 led by Dr.s Marci Smeltz and Barbara Wetmore.

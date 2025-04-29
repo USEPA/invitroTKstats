@@ -28,7 +28,7 @@ wambaugh2019.red
 }
 \description{
 \insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes chemical-specific measurements of plasma
-protein binding using the method of rapid equilibriuim dialysis
+protein binding using the method of rapid equilibriuim dialysis (RED)
 \insertCite{waters2008validation}{invitroTKstats}.
 }
 \references{

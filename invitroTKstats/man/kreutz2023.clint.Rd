@@ -37,7 +37,7 @@ A level-2 data.frame with 5,800 rows and 25 variables: \describe{
 kreutz2023.clint
 }
 \description{
-Mass Spectrometry measurements of intrinsic hepatic clearance for
+Mass Spectrometry measurements of intrinsic hepatic clearance (Clint) for
 cryopreserved pooled human hepatocyte suspensions. Chemicals were per- and
 polyfluoroalkyl substance (PFAS) samples. The experiments were
 led by Dr.s Anna Kreutz and Barbara Wetmore.
