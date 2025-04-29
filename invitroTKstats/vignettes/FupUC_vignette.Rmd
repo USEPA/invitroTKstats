@@ -377,17 +377,61 @@ Generally, data processing pipelines should include minimal to no manual coding.
 
 ### L4 Bayesian Modeling Information
 
+In this section, we provide the equations for the Bayesian model (i.e., priors and likelihoods) used to estimate the fraction unbound in plasma ($f_{up}$), from the ultracentrifugation assay, and the uncertainty about that estimate. The following sub-sections are organized such that:
+
+* Each section contains the relevant hyper-parameters and their priors followed by the variable likelihoods
+* Sections are ordered from the most fundamental variables/parameters (i.e., those used in later equations) to the likelihood for the observations used to estimate the fraction unbound in plasma ($f_{up}$)
+
+Some of the indices are reused between sections (e.g. $i$, $w^*_i$, etc.). However, it should be noted that these are not meant to be understood across sub-sections; rather, only understood within the context of the section they are in.
+
+*NOTE: Readers unfamiliar with JAGS should be aware that JAGS software uses precision ($\tau$) rather than variance ($\sigma^2$) (i.e., $\tau = \sigma^2$).*
+
 #### Measurement Model
 
-$$ log(\sigma_a)_w \sim U(-6,1); \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
+Each chemical may have more than one day of experimentation, and thus multiple calibrations. Suppose for the chemical of interest there are a total of $n_{cal}$ calibrations (`Num.cal`). For a particular calibration $w \in (1,\ldots,n_{cal})$ we assume the following priors for our Bayesian model:
 
-$$ log(m_h)_w \sim U(-6,1); \space m_{h,w} = 10^{log(m_h)_w} $$
+**Prior for log-scale constant analytic standard deviation (`log.const.analytic.sd`):**
 
-$$ log(cal)_w \sim N(0, 0.01); \space cal_w = 10^{log(cal)_w} $$
+$$ log(\sigma_a)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right); \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
 
-where $w$ indicates the calibration index and $w = (1,...,n_{cal})$ such that $n_{cal}$ is the total number of mass-spectrometry calibrations.
+where $a$ and $b$ are the minimum and maximum, respectively, and $\sigma_{a,w}$ is the converted parameter used in later equations (`const.analytic.sd`).
 
-#### Likelihood for Response Observations
+**Prior for the log-scale heteroscedastic analytic slope (`log.hetero.analytic.slope`):**
+
+$$ log(m_h)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space m_{h,w} = 10^{log(m_h)_w} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $m_{h,w}$ is the converted parameter used in later equations (`hetero.analytic.slope`).
+
+**Prior for the threshold concentration (`C.thresh`):**
+
+$$ C_{thresh,w} \sim \textrm{Unif} \left( a = 0, b = \frac{conc_{target,w}}{10} \right)$$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $conc_{target}$ is the expected initial concentration (`Test.Nominal.Conc`) for calibration index $w$.
+
+**Prior for the log-scale calibration (`log.calibration`):**
+
+$$ log(cal)_w \sim \textrm{N} \left( \mu = 0, \tau = 0.01 \right); \space cal_w = 10^{log(cal)_w} $$
+
+where $\mu$ and $\tau$ are the mean and precision, respectively, and $cal_w$ is the converted parameter used in later equations (`calibration`).
+
+**Prior for the background (`background`):**
+
+$$ \gamma_w \sim \textrm{Exp} \left( \lambda = 100 \right) $$
+
+where $\lambda$ is the rate parameter.
+
+#### Estimation of Response Observations
+
+Suppose $n$ is the total number of response observations (`Num.obs`), and $y_i$ indicates the $i^{th}$ observation, sample type = "<>" (`<>`). For each observation we obtain a posterior MCMC estimate for the calibration curve observation with the following:
+
+Estimation for the predicted values for response observations (`Response.pred`):
+
+$$ x_i = m_i*((C_{k^*_i}- C_{thresh,w^*_i}) * \beta_i + \alpha_i) $$
+
+where
+
+* $m_i$
+* $\beta_i$ is the JAGS step function for the $i^{th}$ observation, such that
 
 $$ \beta_i = 
 \begin{cases}
@@ -396,7 +440,12 @@ $$ \beta_i =
 \end{cases}
 $$
 
-$$ y_i \sim N(x_i = m_i*((C_{k^*_i}- C_{thresh,w^*_i}) * \beta_i + \alpha_i), p_i = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*y_i)^2} ) $$
+* $w^*_i$ represents the calibration index (`obs.cal`) for the $i^{th}$ observation $w^* = (w^*_1, \ldots, w^*_n)$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations).
+
+
+$$  \tau_i = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*y_i)^2} $$
+
+$$ y_i \sim N(\mu = x_i,\tau = \tau_i) $$
 
 where $y_i$ is the $i^{th}$ observation and $w^*_i$ is the calibration index for observation $i$, such that $w^*_i = (w^*_1,...,w^*_n)$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations). Finally, $k^*_i$ is the initial concentration index for observation $i$, such that $k^* = (k^*_1,...,k^*_n)$ and $k*_i \in k$ (i.e. $k^*_i$ indicates one of the expected initial concentrations and $k = (1,...,n_{C})$ is the set of all possible initial concentrations for the experiment, $n_C$ is the total number of nominal concentration values).
 
