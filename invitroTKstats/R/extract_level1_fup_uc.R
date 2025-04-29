@@ -1,4 +1,4 @@
-#' Extract level 1 ultracentrifugation data from wide level 0 file
+#' Extract level 1 ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats} data from wide level 0 file
 #'
 #' This function extracts data from a Microsoft Excel file containing many
 #' columns corresponding to different types of data.

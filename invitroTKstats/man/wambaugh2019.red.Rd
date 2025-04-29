@@ -15,7 +15,7 @@ A data.frame 17,689 rows and 11 variables: \describe{
 \item{\code{Area}}{Mass spectrometry peak area for the test compound}
 \item{\code{ISTD.Area}}{Mass spectrometry peak area for the internal standard}
 \item{\code{ISTDResponseRatio}}{The ratio between the \code{Area} (area for the tested compound) and the \code{ISTD.Area} (area for the internal standard)}
-\item{\code{Dilution.Factor}}{The number of times a sample was diluted}
+\item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 \item{\code{Protein}}{The percent of physiological protein concentration used for the assay}
 \item{\code{RawDataSet}}{Name of the level-0 file containing the data}
 }
@@ -28,7 +28,7 @@ wambaugh2019.red
 }
 \description{
 \insertCite{wambaugh2019assessing;textual}{invitroTKstats} includes chemical-specific measurements of plasma
-protein binding using the method of rapid equilibriuim dialysis
+protein binding using the method of rapid equilibriuim dialysis (RED)
 \insertCite{waters2008validation}{invitroTKstats}.
 }
 \references{

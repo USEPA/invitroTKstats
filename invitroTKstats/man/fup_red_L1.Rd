@@ -45,7 +45,7 @@ This data set is a subset of experimental data containing samples for
 3 test analytes/compounds.
 }
 \references{
-\insertRef{howard2010plasma}{invitroTKstats}
+\insertRef{waters2008validation}{invitroTKstats}
 
 \insertRef{smeltz2023plasma}{invitroTKstats}
 }

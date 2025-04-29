@@ -89,7 +89,8 @@ A list of two objects:
 }
 \description{
 This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
-modeling on Hepatocyte Incubation data. Clint and the credible intervals,
+modeling on Hepatocyte Incubation data \insertCite{shibata2002prediction}{invitroTKstats}.
+Clint and the credible intervals,
 at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
 A summary table (level-4) along with the full set of MCMC results is returned from
 the function.
@@ -149,8 +150,9 @@ level4 <- calc_clint(# e.g. replace with "Examples" from "Examples-Clint-Level2.
                      INPUT.DIR = "<level-2 FILE LOCATION>")
 }
 
-
-
+}
+\references{
+\insertRef{shibata2002prediction}{invitroTKstats}
 }
 \author{
 John Wambaugh

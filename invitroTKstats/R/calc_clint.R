@@ -123,7 +123,8 @@ model {
 #' Calculate Intrinsic Hepatic Clearance (Clint) with Bayesian Modeling (Level-4)
 #'
 #' This function estimates the intrinsic hepatic clearance (Clint) with Bayesian
-#' modeling on Hepatocyte Incubation data. Clint and the credible intervals,
+#' modeling on Hepatocyte Incubation data \insertCite{shibata2002prediction}{invitroTKstats}.
+#' Clint and the credible intervals,
 #' at both 1 and 10 uM (if tested), are estimated from posterior samples of the MCMC.
 #' A summary table (level-4) along with the full set of MCMC results is returned from
 #' the function.
@@ -247,7 +248,8 @@ model {
 #'                      INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #' 
-#' 
+#' @references
+#' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @import Rdpack
 #' @importFrom utils read.csv write.table read.table

@@ -13,7 +13,7 @@ A level-2 data.frame with 5,800 rows and 25 variables: \describe{
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 \item{\code{Sample.Type}}{Type of Clint sample}
-\item{\code{Dilution.Factor}}{Number of times sample was diluted}
+\item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 \item{\code{Std.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{Clint.Assay.Conc}}{Intended initial concentration of chemical (uM)}
@@ -37,7 +37,7 @@ A level-2 data.frame with 5,800 rows and 25 variables: \describe{
 kreutz2023.clint
 }
 \description{
-Mass Spectrometry measurements of intrinsic hepatic clearance for
+Mass Spectrometry measurements of intrinsic hepatic clearance (Clint) for
 cryopreserved pooled human hepatocyte suspensions. Chemicals were per- and
 polyfluoroalkyl substance (PFAS) samples. The experiments were
 led by Dr.s Anna Kreutz and Barbara Wetmore.

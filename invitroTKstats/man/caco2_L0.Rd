@@ -22,7 +22,7 @@ A level-0 data.frame with 48 rows and 17 variables: \describe{
 \item{\code{Direction}}{Direction of the Caco-2 permeability experiment}
 \item{\code{Vol.Donor}}{The media volume (in cm^3) of the donor portion of the Caco-2 experimental well}
 \item{\code{Vol.Receiver}}{The media volume (in cm^3) of the receiver portion of the Caco-2 experimental well}
-\item{\code{Dilution.Factor}}{Number of times sample was diluted}
+\item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 }
 }
 \usage{
@@ -30,6 +30,9 @@ caco2_L0
 }
 \description{
 A subset of tandem mass spectrometry (MS/MS) measurements of Caco-2 assay-specific
-data. This subset contains samples for 3 test analytes/compounds.
+data \insertCite{honda2025impact}{invitroTKstats}. This subset contains samples for 3 test analytes/compounds.
+}
+\references{
+\insertRef{honda2025impact}{invitroTKstats}
 }
 \keyword{datasets}

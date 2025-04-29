@@ -13,7 +13,7 @@ A data.frame with 2,955 rows and 23 variables: \describe{
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}
 \item{\code{Sample.Type}}{Type of UC sample}
-\item{\code{Dilution.Factor}}{Number of times sample was diluted}
+\item{\code{Dilution.Factor}}{Number of times the sample was diluted}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
 \item{\code{Standard.Conc}}{Concentration of analytic standard (for calibration curve) (uM)}
 \item{\code{UC.Assay.T1.Conc}}{Intended concentration of chemical intended in T1 sample (uM)}
@@ -37,7 +37,7 @@ kreutz2023.uc
 }
 \description{
 Mass Spectrometry measurements of plasma protein binding measured by
-ultracentrifugation for per- and poly-fluorinated alkyl substance
+ultracentrifugation (UC) for per- and poly-fluorinated alkyl substance
 (PFAS) samples from experiments led by Dr.s Anna Kreutz and Barbara Wetmore.
 }
 \references{
