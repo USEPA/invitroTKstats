@@ -225,12 +225,12 @@ resp <- caco2_L1_curated %>%
 all(resp == 0)
 ```
 
-Now, all of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types
+Now, all of our samples are successfully formatted and returned in `caco2_L1_curated`, our Level 1 data produced from `format_caco2`. Each sample has one of the following sample types indicated in **bold**. 
 
-1. Blank with no chemical added (Blank)
-2. Target concentration added to donor compartment at time 0 (C0) (D0)
-3. Donor compartment at the end of the experiment (D2)
-4. Receiver compartment at the end of the experiment (R2)
+1. Blank with no chemical added **(Blank)**
+2. Target concentration added to donor compartment at time 0 (can be referred to as C0) **(D0)**
+3. Donor compartment at the end of the experiment **(D2)**
+4. Receiver compartment at the end of the experiment **(R2)**
 
 If any samples had a different sample type, they would have been removed and reported to the user. If the user wants to export the removed samples as a TSV, the user should set the parameter `save.bad.types = TRUE`.  
 
