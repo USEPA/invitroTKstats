@@ -8,6 +8,10 @@
 #' data formatted with the \code{\link{format_caco2}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for analysis. 
+#' 
+#' If \code{output.res = TRUE}, then the level-3 data file will be exported to 
+#' the user's R session temporary directory, located with \code{tempdir()}. For 
+#' more details, see https://www.collinberke.com/til/posts/2023-10-24-temp-directories/
 #'
 #' The data frame of observations should be annotated according to direction
 #' (either apical to basolateral -- "AtoB" -- or basolateral to apical -- "BtoA") and type
@@ -44,8 +48,8 @@
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
 #' table (level-3) will be exported to the user's per-session temporary 
-#' directory or the specified \code{OUTPUT.DIR} as a .tsv file. 
-#' (Defaults to \code{TRUE}.)
+#' directory or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
+#' (Defaults to \code{FALSE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-3). 
 #' (Note: console print statements are also rounded to specified significant figures.) 
@@ -124,7 +128,7 @@ calc_caco2_point <- function(
     FILENAME, 
     data.in,
     good.col="Verified", 
-    output.res=TRUE, 
+    output.res=FALSE, 
     sig.figs = 3,
     INPUT.DIR=NULL,
     OUTPUT.DIR = NULL)
