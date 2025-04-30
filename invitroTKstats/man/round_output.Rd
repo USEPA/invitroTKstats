@@ -110,24 +110,25 @@ be found and will not be exported to a temporary directory.
 level4 <- invitroTKstats::clint_L4
 round_output(data.in = level4,
              exclusion.cols = c("Clint.pValue", "Sat.pValue", "degrades.pValue"),
-             output.res = F)
+             output.res = FALSE)
 
 ## Round Clint-L4 data and export results. 
-Note: Will export as a .tsv file.
+## Note: Will export as a .tsv file. 
+\dontrun{
 round_output(data.in = level4, assay = "Clint", level = "4")
+}
 
-## Round Clint-L4 .tsv data and export to INPUT.DIR
-Will need to replace FULL_FILENAME and INPUT.DIR with full filename and location
-of .tsv. 
+## Round Clint-L4 .tsv data and export to INPUT.DIR. 
+## Will need to replace FULL_FILENAME and INPUT.DIR with full filename and location of .tsv. 
 \dontrun{
 round_output(FULL_FILENAME = "Example-Clint-Level4.tsv", 
              INPUT.DIR = "<FULL_FILENAME FILE LOCATION>")
 }
 
 ## Round Clint-L4 .RData and export to OUTPUT.DIR 
-Will need to replace FULL_FILENAME and INPUT.DIR with full filename and location
-of .RData. Will also need to replace OUTPUT.DIR with desired location of rounded 
-data file. 
+## Will need to replace FULL_FILENAME and INPUT.DIR with full filename and location
+## of .RData. Will also need to replace OUTPUT.DIR with desired location of rounded 
+## data file. 
 \dontrun{
 round_output(FULL_FILENAME = "Example-Clint-Level4Analysis-2025-04-17.RData",
              INPUT.DIR = "<FULL_FILENAME FILE LOCATION>",
