@@ -8,15 +8,16 @@ calc_caco2_point(
   FILENAME,
   data.in,
   good.col = "Verified",
-  output.res = TRUE,
+  output.res = FALSE,
   sig.figs = 3,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the input level-2 file.
-"<FILENAME>-Caco-2-Level2.tsv".}
+\item{FILENAME}{(Character) A string used to identify the input level-2 file,
+"<FILENAME>-Caco-2-Level2.tsv" (if importing from a .tsv file), and/or used 
+to identify the output level-3 file, "<FILENAME>-Caco-2-Level3.tsv" (if exporting).}
 
 \item{data.in}{(Data Frame) A level-2 data frame generated from the 
 \code{format_caco2} function with a verification column added by 
@@ -28,8 +29,8 @@ verified, data rows valid for analysis are indicated with a "Y".
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
 table (level-3) will be exported to the user's per-session temporary 
-directory as a .tsv file. 
-(Defaults to \code{TRUE}.)}
+directory or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
+(Defaults to \code{FALSE}.)}
 
 \item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (level-3). 
 (Note: console print statements are also rounded to specified significant figures.) 
@@ -95,6 +96,17 @@ The rate of permeation, \eqn{\frac{dQ}{dt}}\eqn{\left(\frac{\text{peak area}}{\t
 
 where \eqn{r_{R2}} is Receiver Response, \eqn{c_{DF}} is the corresponding Dilution Factor, \eqn{r_{BL}} is Blank Response,
 \eqn{n_{R2}} is the number of Receiver Responses, and \eqn{n_{BL}} is the number of Blank Responses.
+
+If the output level-3 result table is chosen to be exported and an output 
+directory is not specified, it will be exported to the user's R session
+temporary directory. This temporary directory is a per-session directory 
+whose path can be found with the following code: \code{tempdir()}. For more 
+details, see \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+
+As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or \code{OUTPUT.DIR} should be 
+specified to simplify the process of importing and exporting files. This 
+practice ensures that the exported files can easily be found and will not be 
+exported to a temporary directory.
 }
 \examples{
 ## Load example level-2 data
@@ -114,7 +126,8 @@ level3 <- calc_caco2_point(data.in = level2, output.res = FALSE)
 ## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
 level3 <- calc_caco2_point(# e.g. replace with "Examples" from "Examples-Caco-2-Level2.tsv" 
                            FILENAME="<level-2 FILENAME prefix>", 
-                           INPUT.DIR = "<level-2 FILE LOCATION>")
+                           INPUT.DIR = "<level-2 FILE LOCATION>",
+                           output.res = TRUE)
 }
 
 ## scenario 3: 
@@ -122,11 +135,13 @@ level3 <- calc_caco2_point(# e.g. replace with "Examples" from "Examples-Caco-2-
 ## user's temporary directory
 ## Will need to replace FILENAME with desired level-2 filename prefix. 
 \dontrun{
-level3 <- calc_caco2_point(# e.g. replace with "Examples"
+level3 <- calc_caco2_point(# e.g. replace with "MYDATA"
                            FILENAME = "<desired level-2 FILENAME prefix>",
-                           data.in = level2)
-# To delete, use 
-file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-Caco-2-Level3.tsv"))`  
+                           data.in = level2,
+                           output.res = TRUE)
+# To delete, use the following code. For more details, see the link in the 
+# "Details" section. 
+file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-Caco-2-Level3.tsv"))
 }
 
 }

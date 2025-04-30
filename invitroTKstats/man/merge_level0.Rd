@@ -38,8 +38,8 @@ merge_level0(
   chem.lab.id.col = "Chem.Lab.ID",
   chem.name.col = "Compound",
   chem.dtxsid.col = "DTXSID",
-  catalog.out = TRUE,
-  output.res = TRUE,
+  catalog.out = FALSE,
+  output.res = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -172,19 +172,20 @@ DSSTox Structure ID (\url{http://comptox.epa.gov/dashboard})
 (Defaults to "DTXSID")}
 
 \item{catalog.out}{(Logical) When set to \code{TRUE}, the data frame 
-specified in \code{level0.catalog} will be exported the current directory 
-or \code{OUTPUT.DIR} as a .tsv file. (Defaults to \code{TRUE}.)}
+specified in \code{level0.catalog} will be exported to the user's per-session 
+temporary directory or \code{OUTPUT.DIR} (if specified) as a .tsv file.
+(Defaults to \code{FALSE}.)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (level-0) will be exported the current directory or \code{OUTPUT.DIR} 
-as a .tsv file. (Defaults to \code{TRUE}.)}
+table (level-0) will be exported to the user's per-session temporary directory
+or \code{OUTPUT.DIR} (if specified) as a .tsv file. (Defaults to \code{FALSE}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the Excel files 
 with level-0 data exist. If not specified, looking for the files
 in the current working directory. (Defaults to \code{NULL}.)}
 
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
-If \code{NULL}, the output file will be saved to the current working
+If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory. (Defaults to \code{NULL}.)}
 }
 \value{
@@ -220,13 +221,24 @@ the argument `level0.catalog` should be a data frame with the following columns:
 }
 Columns with names ending in ".ColName" indicate the columns to be extracted
 from the specified Excel file and sheet containing level-0 data.
+
+If the output level-0 file is chosen to be exported and an output directory 
+is not specified, it will be exported to the user's R session temporary directory. 
+This temporary directory is a per-session directory whose path can be found with
+the following code: \code{tempdir()}. For more details, see 
+\url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+
+As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or 
+\code{OUTPUT.DIR} shoud be specified to simplify the process of importing and
+exporting files. This practice ensures that the exported files can easily be 
+found and will not be exported to a temporary directory.
 }
 \examples{
 
 \dontrun{
 # Create level0.catalog data.frame
 # Will need to retrieve "Hep_745_949_959_082421_final.xlsx" file from 
-data-raw/Kreutz-Clint and save it to desired directory.
+inst/extdata/Kreutz-Clint and save it to desired directory.
 # Note XLSX file does not need to be saved to current working directory. 
 catalog <- create_catalog(file = "Hep_745_949_959_082421_final.xlsx",
                           sheet = "Data063021",

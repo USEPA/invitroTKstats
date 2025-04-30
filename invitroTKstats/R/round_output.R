@@ -22,6 +22,17 @@
 #' to be rounded can be a data.frame, specified with \code{data.in}, or a .tsv or 
 #' .RData, specified with \code{FULL_FILENAME}. 
 #' 
+#' If the rounded output file is chosen to be exported and an output directory is
+#' not specified, it will be exported to the user's R session temporary directory.
+#' This temporary directory is a per-session directory whose path can be found 
+#' with the following code: \code{tempdir()}. For more details, see 
+#' \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}. 
+#' 
+#' As a best practice, \code{INPUT.DIR} (when importing a .tsv or .RData file) 
+#' and/or \code{OUTPUT.DIR} should be specified to simplify the process of importing
+#' and exporting files. This practice ensures that the exported files can easily 
+#' be found and will not be exported to a temporary directory. 
+#' 
 #' @param FULL_FILENAME (Character) A string used to identify the full filename of
 #' input .tsv or .RData file (i.e. "MYDATA-Clint-Level4.tsv" or "MYDATA-Clint-Level4Analysis-2025-04-23.RData").
 #' The string is also used to name the exported data file (if chosen to be exported). 
@@ -57,10 +68,10 @@
 #' (Defaults to \code{3}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the rounded data file will 
-#' be exported to the current directory as a .tsv (if \code{data.in} is specified
+#' be exported to the user's per-session temporary directory as a .tsv (if \code{data.in} is specified
 #' or if \code{FULL_FILENAME} is a .tsv) or as an .RData (if \code{FULL_FILENAME}
 #' is an .RData). 
-#' (Defaults to \code{TRUE}.)
+#' (Defaults to \code{FALSE}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the \code{FULL_FILENAME} exists. 
 #' If \code{NULL}, looking for the input \code{FULL_FILENAME} in the current working
@@ -68,7 +79,7 @@
 #' (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the rounded data file. 
-#' If \code{NULL}, the output file will be saved to the current working
+#' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
 #' @return A rounded data frame 
@@ -112,7 +123,7 @@ round_output <- function(FULL_FILENAME = NULL,
                          level = NULL,
                          exclusion.cols = NULL,
                          sig.figs = 3,
-                         output.res = TRUE,
+                         output.res = FALSE,
                          INPUT.DIR = NULL, 
                          OUTPUT.DIR = NULL){
   
@@ -183,7 +194,7 @@ round_output <- function(FULL_FILENAME = NULL,
     # Create the exported filepath 
     if (!is.null(OUTPUT.DIR)) file_path <- paste0(OUTPUT.DIR, "/", full_filename, "-rounded")  
     else if (!is.null(INPUT.DIR)) file_path <- paste0(INPUT.DIR, "/", full_filename, "-rounded")  
-    else file_path <- paste0(getwd(), "/", full_filename, "-rounded")
+    else file_path <- paste0(tempdir(), "\\", full_filename, "-rounded")
     
     # Create the correct file extension
     if (file_type == "tsv") {

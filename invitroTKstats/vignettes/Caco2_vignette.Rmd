@@ -109,7 +109,7 @@ defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name",
               "Biological.Replicates", "Technical.Replicates",
               "Analysis.Method", "Analysis.Instrument", 
               "Analysis.Parameters", "Note", "Level0.File",
-              "Level0.Sheet", "TRUE", "FALSE", "5", "NULL", "NULL")
+              "Level0.Sheet", "FALSE", "FALSE", "5", "NULL", "NULL")
 req_cols[, "Default"] <- defaults 
 
 # Argument required in L0?
@@ -179,7 +179,10 @@ req_cols %>%
   theme_vanilla()
 ```
 
-By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward.
+A TSV file containing the level-1 data can be exported to the user's per-session temporary directory. This temporary directory is a per-session directory whose path can be found with the following code: `tempdir()`. For more details, see 
+[https://www.collinberke.com/til/posts/2023-10-24-temp-directories/].
+
+To avoid exporting to this temporary directory, an `OUTPUT.DIR` must be specified. We have omitted this export entirely with `output.res = FALSE` (the default). The option to omit exporting a TSV file is also available at levels 2 and 3 and will be used from this point forward. 
 
 ```{r L1 processing}
 caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
@@ -207,6 +210,7 @@ caco2_L1_curated <- format_caco2(FILENAME = "Caco2_vignette",
                                  output.res = FALSE
                                  )
 ```
+
 We receive a message that "Responses of samples with a "Blank" sample type and a NA response have been reassigned to 0." Currently, when the `ISTD.Area` measurement for a sample is 0, the calculated `Response` is NaN, or not a number, because of the division by 0. In this particular case, all of our samples that have a NaN `Response` are "Blank" sample types. But, these "Blank" sample types are needed for point estimation. (Note: NA responses of other sample types are appropriately removed.) Users can verify this with the following check. 
 
 ```{r, eval = TRUE}

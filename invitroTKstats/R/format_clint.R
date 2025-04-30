@@ -21,6 +21,17 @@
 #' returned as a column in the output data frame:
 #'
 #' Response <- AREA / ISTD.AREA * ISTD.CONC
+#' 
+#' If the output level-1 result table is chosen to be exported and an output 
+#' directory is not specified, it will be exported to the user's R session
+#' temporary directory. This temporary directory is a per-session directory 
+#' whose path can be found with the following code: \code{tempdir()}. For more 
+#' details, see \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+#' 
+#' As a best practice, \code{INPUT.DIR} and/or \code{OUTPUT.DIR} should be 
+#' specified to simplify the process of importing and exporting files. This 
+#' practice ensures that the exported files can easily be found and will not be 
+#' exported to a temporary directory.
 #'
 #' @param FILENAME (Character) A string used to identify the output level-1 file.
 #' "<FILENAME>-Clint-Level1.tsv", and/or used to identify the input level-0 file,
@@ -213,8 +224,9 @@
 #' specified in \code{level0.sheet}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (level-1) will be exported the current directory as a .tsv file. 
-#' (Defaults to \code{TRUE}.)
+#' table (level-1) will be exported to the user's per-session temporary directory
+#' or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
+#' (Defaults to \code{FALSE}.)
 #' 
 #' @param save.bad.types (Logical) When set to \code{TRUE}, export data removed 
 #' due to inappropriate sample types. See the Detail section for the required sample types. 
@@ -228,7 +240,7 @@
 #' directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
-#' If \code{NULL}, the output file will be saved to the current working
+#' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A level-1 data frame with a standardized format containing a  
@@ -321,7 +333,7 @@ format_clint <- function(
   level0.file.col="Level0.File",
   level0.sheet=NULL,
   level0.sheet.col="Level0.Sheet",
-  output.res = TRUE,
+  output.res = FALSE,
   save.bad.types = FALSE,
   sig.figs = 5,
   INPUT.DIR = NULL,
@@ -361,7 +373,7 @@ format_clint <- function(
   } else if (!is.null(INPUT.DIR)) {
     file.path <- INPUT.DIR
   } else {
-    file.path <- getwd()
+    file.path <- tempdir()
   }
 
 # These arguments allow the user to specify a single value for every observation

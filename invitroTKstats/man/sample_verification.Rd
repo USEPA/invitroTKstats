@@ -9,7 +9,7 @@ sample_verification(
   data.in,
   exclusion.info,
   assay,
-  output.res = TRUE,
+  output.res = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -30,15 +30,16 @@ This argument only needs to be specified when importing input data set with \cod
 or exporting a data file.}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-data frame (level-2) will be exported as a .tsv file to the current directory. 
-(Defaults to \code{TRUE}.)}
+data frame (level-2) will be exported to the user's per-session temporary directory
+or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
+(Defaults to \code{FALSE}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-1 file exists. 
 If \code{NULL}, looking for the input level-1 file in the current working
 directory. (Defaults to \code{NULL}.)}
 
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
-If \code{NULL}, the output file will be saved to the current working
+If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
@@ -61,7 +62,18 @@ The `exclusion.info` should be a data frame with the following columns:
 }
 When filtering on multiple variable-value pairs, the character input for 
 "Variables" and "Values" should be separated by a vertical bar "|" ,
-and the variable-value pairs should match. See demonstration in Examples, Scenario 1.
+and the variable-value pairs should match. See demonstration in Examples, Scenario 1. 
+
+If the output level-2 data frame is chosen to be exported and an output directory 
+is not specified, it will be exported to the user's R session temporary directory. 
+This temporary directory is a per-session directory whose path can be found
+with the following code: \code{tempdir()}. For more details, see 
+\url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+
+As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or 
+\code{OUTPUT.DIR} should be specified to simplify the process of importing 
+and exporting files. This practice ensures that the exported files can easily 
+be found and will not be exported to a temporary directory.
 }
 \examples{
 level2 <- invitroTKstats::kreutz2023.clint

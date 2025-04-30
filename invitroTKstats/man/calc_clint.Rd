@@ -33,7 +33,8 @@ This argument is required no matter which method of specifying input data is use
 \code{sample_verification}. Complement with manual verification if needed.}
 
 \item{TEMP.DIR}{(Character) Temporary directory to save intermediate files. 
-If \code{NULL}, all files will be written to the current working directory. 
+If \code{NULL}, all files will be written to the user's per-session
+temporary directory. 
 (Defaults to \code{NULL}.)}
 
 \item{NUM.CHAINS}{(Numeric) The number of Markov Chains to use. (Defaults to 5.)}
@@ -71,8 +72,9 @@ If \code{NULL}, looking for the input level-2 file in the current working
 directory. (Defaults to \code{NULL}.)}
 
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
-If \code{NULL}, the output file will be saved to the current working
-directory. (Defaults to \code{NULL}.)}
+If \code{NULL}, the output file will be saved to the user's per-session 
+temporary directory or \code{INPUT.DIR} if specified. 
+(Defaults to \code{NULL}.)}
 }
 \value{
 A list of two objects: 
@@ -101,11 +103,22 @@ data formatted with the \code{\link{format_clint}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for analysis. 
 
-Note: By default, this function writes files to the user's current working
-directory. Users must specify an alternative path with the `TEMP.DIR`
-argument if they want the files exported to another path. Exported files 
-include the summary table (.RData), JAGS model (.RData), and any "unverified" 
-data excluded from the analysis (.tsv).
+Note: By default, this function writes files to the user's per-session temporary 
+directory. This temporary directory is a per-session directory whose path can 
+be found with the following code: \code{tempdir()}. For more details, see
+\url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+
+Users must specify an alternative path with the \code{TEMP.DIR}
+argument if they want the intermediate files exported to another path. Exported 
+intermediate files include the summary results table (.tsv), JAGS model (.RData), and any "unverified" 
+data excluded from the analysis (.tsv). Users must specify an alternative path with the \code{OUTPUT.DIR} argument if they 
+want the final output file exported to another path. The exported final output
+file is the summary results table (.RData). 
+
+As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or \code{OUTPUT.DIR} 
+should be specified to simplify the process of importing and exporting files. 
+This practice ensures that the exported files can easily be found and will 
+not be exported to a temporary directory.
 
 The data frame of observations should be annotated according to
 these types:
@@ -121,7 +134,8 @@ Clint is calculated using \code{\link{lm}} to perform a linear regression of
 MS response as a function of time.
 }
 \examples{
-## Example 1: loading level-2 using data.in
+## Example 1: loading level-2 using data.in and export all files to the user's
+## temporary directory
 \dontrun{
 level2 <- invitroTKstats::clint_L2
 
@@ -135,7 +149,8 @@ level4 <- calc_clint(FILENAME = "Example1",
                      JAGS.PATH=path.to.JAGS)
 }
 
-## Example 2: importing level-2 from a .tsv file
+## Example 2: importing level-2 from a .tsv file and export all files to same 
+## location as INPUT.DIR 
 \dontrun{
 # Refer to sample_verification help file for how to export level-2 data to a directory.
 # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
