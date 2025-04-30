@@ -1,5 +1,5 @@
 ---
-title: "Fup RED"
+title: "Fraction Unbound in Plasma - Rapid Equilibrium Dialysis (f~up~ RED)"
 author: "US EPA's Center for Computational Toxicology and Exposure ccte@epa.gov"
 output:
   rmdformats::readthedown:
@@ -460,37 +460,37 @@ In this section, we provide the equations for the Bayesian model (i.e., priors a
 * Each section contains the relevant hyper-parameters and their priors followed by the variable likelihoods
 * Sections are ordered from the most fundamental variables/parameters (i.e. those used in later equations) to the likelihood for the observations used to estimate the fraction unbound in plasma ($f_{up}$)
 
-Some of the indexes are reused between sections (e.g. $i$, $w^*_i$, etc.).  However, it should be noted that these are not meant to be understood across sub-sections; rather, only understood within the context of the section they are in.
+Some of the indices are reused between sections (e.g. $i$, $w^*_i$, etc.).  However, it should be noted that these are not meant to be understood across sub-sections; rather, only understood within the context of the section they are in.
 
 *NOTE: Readers unfamiliar with JAGS should be aware that JAGS software uses precision ($\tau$) rather than variance $\sigma^2$ (i.e., $\tau = \frac{1}{\sigma^2}$).*
 
 #### Measurement Model {#hyperpriors}
 
-Each chemical may have more than one day of experimentation, and thus multiple calibrations.  Suppose for the chemical of interest there are a total of $n_{cal}$ calibrations.  For a particular calibration $w \in (1,...,n_{cal})$ we assume the following hyper-priors for our Bayesian model:
+Each chemical may have more than one day of experimentation, and thus multiple calibrations.  Suppose for the chemical of interest there are a total of $n_{cal}$ calibrations (`Num.cal`).  For a particular calibration $w \in (1,...,n_{cal})$ we assume the following hyper-priors for our Bayesian model:
 
 **Prior for log-scale constant analytic standard deviation (`log.const.analytic.sd`):**
 
 $$ log(\sigma_a)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
 
-where $a$ and $b$ are the minimum and maximum, respectively.
+where $a$ and $b$ are the minimum and maximum, respectively, and $\sigma_{a,w}$ is the converted parameter used in later equations (`const.analytic.sd`).
 
 **Prior for the log-scale hetero-scedastic analytic slope (`log.hetero.analytic.slope`):**
 
 $$ log(m_h)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space m_{h,w} = 10^{log(m_h)_w} $$
 
-where $a$ and $b$ are the minimum and maximum, respectively.
+where $a$ and $b$ are the minimum and maximum, respectively, and $m_{h,w}$ is the converted parameter used in later equations (`hetero.analytic.slope`).
 
 **Prior for the threshold concentration (`C.thresh`):**
 
 $$ C_{thresh,w} \sim \textrm{Unif} \left( a = 0,b = \frac{conc_{target,w}}{10} \right) $$
 
-where $a$ and $b$ are the minimum and maximum, respectively.
+where $a$ and $b$ are the minimum and maximum, respectively, and $conc_{target,w}$ is the expected initial concentration (`Test.Nominal.Conc`) for calibration index $w$.
 
 **Prior for the log-scale calibration (`log.calibration`):**
 
 $$ log(cal)_w \sim \textrm{N} \left( \mu = 0,\tau = 0.01 \right) ; \space cal_w = 10^{log(cal)_w} $$
 
-where $\mu$ and $\tau$ are the mean and precision, respectively.
+where $\mu$ and $\tau$ are the mean and precision, respectively, and $cal_w$ is the converted parameter used in later equations (`calibration`).
 
 **Prior for the background (`background`):**
 
@@ -500,9 +500,16 @@ where $\lambda$ is the rate parameter.
 
 #### Estimation of Blanks with No Plasma {#llnpb}
 
+Suppose $n_{NPB}$ is the total number of blank observations without plasma (`Num.NoPlasma.Blank.obs`), and $y_{NPB,i}$ is the $i^{th}$ no plasma blank observation, sample = "" (`NoPlasma.Blank.obs`). For each observation we obtain a posterior MCMC estimate for the observations with:
+
 Estimation for the predicted values for blanks with no plasma (`NoPlasma.Blank.pred`):
 
 $$ x_{NPB,i} = \frac{\gamma_{w^*_i}}{df_{NPB}} $$
+
+where
+
+* $df_{NPB}$ is the dilution factor (`NoPlasma.Blank.df`) for the no plasma blank observations
+* $w^*_i$ represents the calibration index (`NoPlasma.Blank.cal`) for the $i^{th}$ observation $w^* = (w^*_1,\ldots,w^*_{n_{NPB}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one fo the $n_{cal}$ calibrations)
 
 Estimation for the precision of blanks with no plasma (`NoPlasma.Blank.prec`):
 
@@ -512,30 +519,25 @@ $$ \tau_{NPB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_{NPB,i})^2} $$
 
 $$ y_{NPB,i} \sim \textrm{N} \left( \mu = x_{NPB,i},\tau = \tau_{NPB,i} \right) $$
 
-where $y_{NPB,i}$ is the $i^{th}$ blank observations with no plasma and $w^*_i$ is the calibration index for that observation, such that $w^* = (w^*_1, ... , w^*_{n_{NPB}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
-
 #### Estimation of Blanks with Plasma {#llblanks}
 
 **Prior for estimating the extent of plasma interference (`log.Plasma.Interference`):**
 
-$$ log(\eta_{plasma}) \sim \textrm{Unif} \left( a = -6,b = \frac{log(\frac{10}{conc_{target}})}{10} \right); \space \eta_{plasma} = 10^{log(\eta_{plasma})} $$
+$$ log(\eta_{plasma}) \sim \textrm{Unif} \left( a = -6,b = \frac{log(\frac{10}{conc_{target}})}{log(10)} \right); \space \eta_{plasma} = 10^{log(\eta_{plasma})} $$
 
-Estimation of the predictions for blanks with plasma (`Plasma.Blank.pred`):
+where $a$ and $b$ are the minimum and maximum, respectively, $conc_{target}$ is the expected initial concentration (`Test.Nominal.Conc`), and $\eta_{plasma}$ is the converted parameter used in later equations (`log.Plasma.Interference`).
+
+Suppose $n_{PB}$ is the total number of blank observations with plasma (`Num.Plasma.Blank.obs`), and $y_{PB,i}$ indicates the $i^{th}$ plasma blank observation, sample type = "Plasma.Blank" (`Plasma.Blank.obs`). For each observation we obtain a posterior MCMC estimate for the plasma blank observations with the following:
+
+Estimation for the predictions for blanks with plasma (`Plasma.Blank.pred`):
 
 $$ x_{PB,i} = \frac{cal_{w^*_i} * (\frac{\eta_{plasma}*p_{protein,r^*_i}}{100} - C_{thresh,w^*_i}) * \beta_{PB,i}+\gamma_{w^*_i}}{df_{PB}} $$
 
-Estimation of the precision for blanks with plasma (`Plasma.Blank.prec`):
+where
 
-$$ \tau_{PB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_i)^2} $$
-
-**Likelihood for the plasma blank observations (`Plasma.Blank.obs`):**
-
-$$ y_{PB,i} \sim \textrm{N} \left( \mu = x_{PB,i},\tau = \tau_{PB,i} \right) $$
-
-where:
-
-* $y_{PB,i}$ is the $i^{th}$ blank observation with plasma
-* $r^*_i$ is the replicate index for the $i^{th}$ blank observation with plasma
+* $df_{PB}$ is the dilution factor (`Plasma.Blank.df`) for blank observations with plasma
+* $p_{protein,r^*_i}$ is the physiological protein percent for the $i^{th}$ plasma blank observation, given the replicate index
+* $r^*_i$ is the replicate index for the $i^{th}$ blank observation with plasma (`Plasma.Blank.rep`), such that $r^*_i = (r^*_1,\ldots,r^*_{n_{PB}})$
 * $\beta_{PB,i}$ is the JAGS step function for the $i^{th}$ blank observation with plasma, such that
 
 $$\beta_{PB,i} = 
@@ -545,27 +547,27 @@ $$\beta_{PB,i} =
 \end{cases}
 $$
 
-* $w^*_i$ is the calibration index for the $i^{th}$ blank observation, such that $w^* = (w^*_1, ... , w^*_{n_{PB}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
+* $w^*_i$ is the calibration index for the $i^{th}$ blank observation with plasma (`Plasma.Blank.cal`), such that $w^* = (w^*_1, ... , w^*_{n_{PB}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
+
+Estimation for the precision for blanks with plasma (`Plasma.Blank.prec`):
+
+$$ \tau_{PB,i} = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_i)^2} $$
+
+**Likelihood for the plasma blank observations (`Plasma.Blank.obs`):**
+
+$$ y_{PB,i} \sim \textrm{N} \left( \mu = x_{PB,i},\tau = \tau_{PB,i} \right) $$
 
 #### Estimation for T0 {#llt0}
 
-Estimation of the predictions for the T0 observations (`T0.pred`):
+Suppose $n_{T0}$ is the total number of T0 observations (`Num.T0.obs`), and $y_{T0,i}$ indicates the $i^{th}$ T0 observation, sample type = "T0" (`T0.obs`). For each observation we obtain a posterior MCMC estimate for the initial time observations with the following:
+
+Estimation for the predictions for the T0 observations (`T0.pred`):
 
 $$ x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thresh,w^*_i})*\beta_{T0,i}+\gamma_{T0,w^*_i}}{df_{T0}} $$
 
-*Assumes the MS responses are a function of the diluted expected initial concentration.*
-
-Estimation of heteroscedastic precision for the T0 observations (`T0.prec`):
-
-$$ \tau_{T0,i} = \frac{1}{(\sigma_{a,w^*_i}*m_{h,w^*_i}*x_{T0,i})^2} $$
-
-**Likelihood for the T0 observations (`T0.obs`):**
-
-$$ y_{T0,i} = N(\mu = x_{T0,i},\tau = \tau_{T0,i}) $$
-
 where
 
-* $y_{T0,i}$ is the $i^{th}$ T0 observation
+* $df_{T0}$ is the dilution factor for T0 observations (`T0.df`)
 * $\beta_{T0,i}$ is the JAGS step function for the $i^{th}$ T0 observation, such that 
 
 $$ \beta_{T0,i} = 
@@ -577,13 +579,39 @@ $$
 
 * $w^*_i$ is the calibration index for that observation, such that $w^* = (w^*_1, ... , w^*_{n_{T0}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
 
+*Assumes the MS responses are a function of the diluted expected initial concentration.*
+
+Estimation of heteroscedastic precision for the T0 observations (`T0.prec`):
+
+$$ \tau_{T0,i} = \frac{1}{(\sigma_{a,w^*_i}*m_{h,w^*_i}*x_{T0,i})^2} $$
+
+**Likelihood for the T0 observations (`T0.obs`):**
+
+$$ y_{T0,i} = N(\mu = x_{T0,i},\tau = \tau_{T0,i}) $$
+
 #### Estimation of the Calibration Curve {#llcc}
+
+Suppose $n_{CC}$ is the total number of calibration curve observations (`Num.CC.obs`), and $y_{CC,i}$ is the $i^{th}$ calibration curve observation, sample type = "CC" (`CC.obs`). For each observation we obtain a posterior MCMC estimate for the calibration curve observations with the following:
 
 Estimation of the predictions for calibration curve observations (`CC.pred`):
 
 $$
 x_{CC,i} = \frac{cal_{w^*_i}*(C_{CC,i} - \eta_{plasma} - C_{tresh,w^*_i})*\beta_{CC,i}+cal{w^*_i}*\eta_{plasma}*\gamma_{w^*_i}}{df_{CC}}
 $$
+
+where
+
+* $df_{CC}$ is the dilution factor for calibration curve observations (`CC.df`)
+* $\beta_{CC,i}$ is the JAGS step function for the $i^{th}$ calibration curve observation, such that
+
+$$ \beta_{CC,i} =
+\begin{cases}
+1 & \textrm{if} \space (C_{CC,i} - \eta_{plasma} - C_{tresh,w^*_i}) \ge 0 \\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+
+* $w^*_i$ is the calibration index for that observation, such that $w^*=(w^*_1, ... , w^*_{n_{CC}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
 
 *Assumes the MS responses are a function of the diluted expected initial concentration.*
 
@@ -596,19 +624,6 @@ $$
 **Likelihood of the calibration curve observations (`CC.obs`):**
 
 $$ y_{CC,i} \sim \textrm{N} \left( \mu = x_{CC,i},\tau = \tau_{CC,i} \right) $$
-where
-
-* $y_{CC,i}$ is the $i^{th}$ calibration curve observation
-* $\beta_{CC,i}$ is the JAGS step function for the $i^{th}$ calibration curve observation, such that
-
-$$ \beta_{CC,i} =
-\begin{cases}
-1 & \textrm{if} \space (C_{CC,i} - \eta_{plasma} - C_{tresh,w^*_i}) \ge 0 \\
-0 & \textrm{otherwise}
-\end{cases}
-$$
-
-* $w^*_i$ is the calibration index for that observation, such that $w^*=(w^*_1, ... , w^*_{n_{CC}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the calibrations).
 
 #### Estimation for the RED Plasma Protein Binding Assay {#llredppb}
 
@@ -707,11 +722,41 @@ where
 
 ### JAGS to L4 Equation Notation Tables {#notationtbls}
 
-|       Data        |   Denotation    |
-|-------------------|-----------------|
-| Test.Nominal.Conc | $conc_{target}$ |
-| Physiological.Protein.Conc | $\rho_{protein}$ |
-| Assay.Protein.Percent | $p_{protein}$ | 
+|   Data    |   Notation    |   Description   |
+|-----------|---------------|-----------------|
+| Test.Nominal.Conc | $conc_{target}$ | |
+| Num.cal | | |
+| Physiological.Protein.Conc | $\rho_{protein}$ | |
+| Assay.Protein.Percent | $p_{protein}$ | |
+| Num.Plasma.Blank.obs | $n_{PB}$ | |
+| Plasma.Blank.obs | $y_{PB}$ | |
+| Plasma.Blank.cal | | |
+| Plasma.Blank.df | $df_{PB}$ | |
+| Plasma.Blank.rep | | |
+| Num.NoPlasma.Blank.obs | | |
+| NoPlasma.Blank.obs | | |
+| NoPlasma.Blank.cal | | |
+| NoPlasma.Blank.df | | |
+| Num.CC.obs | $n_{CC}$ | |
+| CC.conc | | |
+| CC.obs | | |
+| CC.cal | | |
+| CC.df` | | |
+| Num.T0.obs | | |
+| T0.obs | | |
+| T0.cal | | |
+| T0.df | | |
+| Num.rep | | |
+| Num.PBS.obs | $n_{PBS}$ | |
+| PBS.obs | | |
+| PBS.cal | | |
+| PBS.df | | |
+| PBS.rep | | |
+| Num.Plasma.obs | | |
+| Plasma.obs | | |
+| Plasma.cal | | |
+| Plasma.df | | |
+| Plasma.rep | | |
 
 | JAGS Parameter Name | Parameter | Distribution |
 |---------------------|-----------|--------------|
@@ -757,4 +802,3 @@ where
 ## References {#refs}
 
 \insertRef{waters2008validation}
-
