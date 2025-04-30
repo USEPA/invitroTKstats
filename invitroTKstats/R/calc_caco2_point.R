@@ -125,7 +125,8 @@
 #'                            output.res = TRUE)
 #' # To delete, use the following code. For more details, see the link in the 
 #' # "Details" section. 
-#' file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-Caco-2-Level3.tsv"))
+#' file.remove(list.files(tempdir(), full.names = TRUE, 
+#' pattern = "<desired level-2 FILENAME prefix>-Caco-2-Level3.tsv"))
 #' }
 #' 
 #' @references

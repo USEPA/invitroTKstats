@@ -116,7 +116,8 @@ level3 <- calc_clint_point(# e.g. replace with "MYDATA"
                            output.res = TRUE)
 # To delete, use the following code. For more details, see the link in the 
 # "Details" section. 
-file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-Clint-Level3.tsv"))
+file.remove(list.files(tempdir(), full.names = TRUE, 
+pattern = "<desired level-2 FILENAME prefix>-Clint-Level3.tsv"))
 }
 
 }

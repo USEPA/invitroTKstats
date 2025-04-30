@@ -332,7 +332,7 @@ format_caco2 <- function(
   level0.file.col="Level0.File",
   level0.sheet=NULL,
   level0.sheet.col="Level0.Sheet",
-  output.res = TRUE,
+  output.res = FALSE,
   save.bad.types = FALSE,
   sig.figs = 5,
   INPUT.DIR = NULL,

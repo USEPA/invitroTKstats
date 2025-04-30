@@ -123,7 +123,8 @@ level3 <- calc_fup_uc_point(# e.g. replace with "MYDATA",
                              data.in = level2,
                              output.res = TRUE)
 # To delete, use the following code. For more details, see the link in the 
-file.remove(list.files(tempdir(), full.names = TRUE, pattern = "<desired level-2 FILENAME prefix>-fup-UC-Level3.tsv"))  
+file.remove(list.files(tempdir(), full.names = TRUE, 
+pattern = "<desired level-2 FILENAME prefix>-fup-UC-Level3.tsv"))  
 }
 
 }
