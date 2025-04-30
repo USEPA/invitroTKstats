@@ -7,6 +7,7 @@ output:
     toc_depth: 3
   params:
     my_css: css/rmdformats.css
+bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
   %\VignetteIndexEntry{Fup RED}
   %\VignetteEngine{knitr::rmarkdown}
@@ -23,9 +24,9 @@ knitr::opts_chunk$set(
 
 ## Introduction {#intro}
 
-This vignette guides users on how to estimate fraction unbound in plasma (f~up~) from mass spectrometry data using rapid equilibrium dialysis (RED). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma that is usually responsible for pharmacological effects (Waters et al. 2008).
+This vignette guides users on how to estimate fraction unbound in plasma (f~up~) from mass spectrometry data using rapid equilibrium dialysis (RED). Fraction unbound in plasma is a chemical specific parameter that describes the amount of free chemical in the plasma that is usually responsible for pharmacological effects (@waters2008validation).
 
-The mass spectrometry data should be collected from an assay that uses rapid equilibrium dialysis as seen in Figure 1 (Waters et al. 2008). 
+The mass spectrometry data should be collected from an assay that uses rapid equilibrium dialysis as seen in Figure 1 (@waters2008validation). 
 
 ```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: f~up~ RED experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("img/fupRED_diagram.png")
@@ -447,11 +448,6 @@ fup_red_L4_curated %>%
 
 Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
 
-## References {#refs}
-
-Waters, N. J., Jones, R., Williams, G., & Sohal, B. (2008). Validation of a rapid equilibrium dialysis approach for the measurement of plasma protein binding. Journal of pharmaceutical sciences, 97(10), 4586-4595.
-
-
 ## Appendix {#appendix}
 
 ### L4 Bayesian Modeling Information {#level4_eqns}
@@ -754,3 +750,8 @@ where
 | Plasma.pred | $x_{plasma}$ | |
 | Plasma.prec | $\tau_{plasma}$ | |
 | Plasma.obs | $y_{plasma}$ | Normal |
+
+## References {#refs}
+
+\insertRef{waters2008validation}
+

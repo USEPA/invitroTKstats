@@ -7,6 +7,7 @@ output:
     toc_depth: 3
   params:
     my_css: css/rmdformats.css
+bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
   %\VignetteIndexEntry{Clint}
   %\VignetteEngine{knitr::rmarkdown}
@@ -23,9 +24,9 @@ knitr::opts_chunk$set(
 
 ## Introduction 
 
-This vignette guides users on how to estimate intrinsic hepatic clearance (Cl~int~) from mass spectrometry data. Intrinsic hepatic clearance is a chemical specific parameter that describes a liver's ability to metabolize an unbound compound. It is characterized by the disappearance of compound when incubated with primary hepatocytes (Breen et al. 2021). 
+This vignette guides users on how to estimate intrinsic hepatic clearance (Cl~int~) from mass spectrometry data. Intrinsic hepatic clearance is a chemical specific parameter that describes a liver's ability to metabolize an unbound compound. It is characterized by the disappearance of compound when incubated with primary hepatocytes (@breen2021high). 
 
-The mass spectrometry data should be collected from an assay that uses cryopreserved hepatocyte suspension (Shibata et al. 2002) as seen in Figure 1. 
+The mass spectrometry data should be collected from an assay that uses cryopreserved hepatocyte suspension (@shibata2002prediction) as seen in Figure 1. 
 
 ```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: Cl~int~ experimental set up", fig.topcaption = TRUE, fig.align = "center"}
 knitr::include_graphics("img/clint_diagram.png")
@@ -478,6 +479,7 @@ Generally, data processing pipelines should include minimal to no manual coding.
 
 ## References 
 
-Breen, M., Ring, C. L., Kreutz, A., Goldsmith, M. R., & Wambaugh, J. F. (2021). High-throughput PBTK models for in vitro to in vivo extrapolation. Expert opinion on drug metabolism & toxicology, 17(8), 903-921.
-
-Shibata, Y., Takahashi, H., Chiba, M., & Ishii, Y. (2002). Prediction of hepatic clearance and availability by cryopreserved human hepatocytes: an application of serum incubation method. Drug Metabolism and disposition, 30(8), 892-896.
+\references{
+\insertRef{breen2021high}
+\insertRef{shibata2002prediction}
+}

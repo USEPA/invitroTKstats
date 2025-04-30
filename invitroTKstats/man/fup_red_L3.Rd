@@ -3,9 +3,9 @@
 \docType{data}
 \name{fup_red_L3}
 \alias{fup_red_L3}
-\title{Fup RED Level 3 Example Data set}
+\title{Fup RED Level-3 Example Data set}
 \format{
-A level 3 data.frame with 3 rows and 4 variables: \describe{
+A level-3 data.frame with 3 rows and 4 variables: \describe{
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 \item{\code{Calibration}}{Identifier for mass spectrometry calibration -- usually the date}
