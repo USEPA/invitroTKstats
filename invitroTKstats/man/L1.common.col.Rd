@@ -13,7 +13,7 @@ across HTTK assays, where the element names are the corresponding L1 arguments.
 L1.common.cols
 }
 \description{
-Common column names across the various *in vitro* assays used for collecting
-in vitro toxicokinetic parameters.
+Common column names across the various \emph{in vitro} assays used for collecting
+\emph{in vitro} toxicokinetic parameters.
 }
 \keyword{datasets}

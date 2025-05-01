@@ -1,4 +1,4 @@
-#' Merge multiple level0 files into a single table for processing
+#' Merge Multiple Level-0 files into a Single Table for Processing
 #'
 #' This function reads multiple Excel files containing mass-spectrometry (MS) data
 #' and extracts the chemical sample data from the specified
@@ -6,8 +6,8 @@
 #' provides the necessary information to find the data for each chemical. The
 #' primary data of interest are the analyte peak area, the internal standard
 #' peak area, and the target concentration for calibration curve (CC) samples.
-#' The argument `data.label` is used to annotate this particular mapping of level0
-#' files into data ready to be organized into a level1 file.
+#' The argument `data.label` is used to annotate this particular mapping of level-0
+#' files into data ready to be organized into a level-1 file.
 #'
 #' Unless specified to be a single value for all the files, for example sheet="Data",
 #' the argument `level0.catalog` should be a data frame with the following columns:
@@ -27,7 +27,7 @@
 #'   AnalysisParam.ColName \tab The column name on the sheet that contains the MS instrument parameters for the analyte\cr
 #' }
 #' Columns with names ending in ".ColName" indicate the columns to be extracted
-#' from the specified Excel file and sheet containing level 0 data.
+#' from the specified Excel file and sheet containing level-0 data.
 #'
 #' @param FILENAME (Character) A string used to identify outputs of the function call.
 #' (Default to "MYDATA")
@@ -36,29 +36,29 @@
 #' in which Excel files contain MS data for analysis. See details for full
 #' explanation.
 #' 
-#' @param file.col (Character) Column name containing level 0 file names
+#' @param file.col (Character) Column name containing level-0 file names
 #' to pull data from.
 #' 
 #' @param sheet (Character) Excel file sheet name/identifier containing
-#' level 0 where data is to be pulled from. (Defaults to `NULL`.) (Note: Single
+#' level-0 where data is to be pulled from. (Defaults to `NULL`.) (Note: Single
 #' entry only, use only if all files have the same sheet identifier for
-#' level 0 data.) 
+#' level-0 data.) 
 #' 
 #' @param sheet.col (Character) Catalog column name containing `sheet`
 #' information. (Default to "Sheet")
 #' 
-#' @param skip.rows (Numeric) Number of rows to skip when extracting level 0
+#' @param skip.rows (Numeric) Number of rows to skip when extracting level-0
 #' data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
 #' entry only, use only if all files need to skip the same number of rows
-#' for extracting level 0 data.)
+#' for extracting level-0 data.)
 #' 
 #' @param skip.rows.col (Character) Catalog column name containing `skip.rows`
 #' information. (Default to "Skip.Rows")
 #' 
-#' @param num.rows (Numeric) Number of rows to pull when extracting level 0
+#' @param num.rows (Numeric) Number of rows to pull when extracting level-0
 #' data from the specified Excel file(s). (Defaults to `NULL`.) (Note: Single
 #' entry only, use only if all files need to pull the same number of rows for
-#' extracting level 0 data.)
+#' extracting level-0 data.)
 #' 
 #' @param num.rows.col (Character) Catalog column name containing `num.rows`
 #' information. (Default to `NULL`)
@@ -71,11 +71,11 @@
 #' @param date.col (Character) Catalog column name containing `date`
 #' information. (Defaults to "Date")
 #' 
-#' @param compound.col (Character) Column name of input.data (level0?) indicates the
-#' test compound. (Defaults to "Chemical.ID")
+#' @param compound.col (Character) Catalog column name containing `compound` 
+#' information. (Defaults to "Chemical.ID")
 #' 
-#' @param istd.col (Character) Column name of input.data (level0?) indicating the
-#' MS peak area for the internal standard. (Defaults to "ISTD")
+#' @param istd.col (Character) Catalog column name containing `istd` information,
+#' or the MS peak area for the internal standard. (Defaults to "ISTD") 
 #' 
 #' @param col.names.loc (Numeric) Row location of data column names. (Defaults to 
 #' 'NULL'.) (Note: Single entry only, use only if all files have column names 
@@ -84,58 +84,58 @@
 #' @param col.names.loc.col (Character) Catalog column name containing `col.names.loc`
 #' information. (Defaults to "Col.Names.Loc")
 #' 
-#' @param sample.colname (Character) Column name of level 0 data containing
+#' @param sample.colname (Character) Column name of level-0 data containing
 #' sample information. (Defaults to `NULL`.) (Note: Single entry only, use only
 #' if all files use the same column name for sample names when extracting
-#' level 0 data.)
+#' level-0 data.)
 #' 
 #' @param sample.colname.col (Character) Catalog column name containing 
 #' `sample.colname` information. (Defaults to "Sample.ColName") 
 #' 
-#' @param type.colname (Character) Column name of the level 0 data containing
+#' @param type.colname (Character) Column name of the level-0 data containing
 #'  the type of sample. (Defaults to `NULL`.) (Note: Single entry only, use
 #'  only if all files use the same column name for sample type information
-#'  when extracting level 0 data.)
+#'  when extracting level-0 data.)
 #' 
 #' @param type.colname.col (Character) Catalog column name containing
 #' `type.colname` information. (Defaults to "Type".)
 #' 
-#' @param peak.colname (Character) Column name of the level 0 data containing
+#' @param peak.colname (Character) Column name of the level-0 data containing
 #'  the analyte Mass Spectrometry peak area. (Defaults to `NULL`.)
 #'  (Note: Single entry only, use only if all files use the same column name
-#'  for analyte peak area information when extracting level 0 data.)
+#'  for analyte peak area information when extracting level-0 data.)
 #' 
 #' @param peak.colname.col (Character) Catalog column name containing
 #' `peak.colname` information. (Defaults to "Peak.ColName")
 #' 
-#' @param istd.peak.colname (Character) Column name of the level 0 data
+#' @param istd.peak.colname (Character) Column name of the level-0 data
 #'  containing the internal standard Mass Spectrometry peak area. (Note: Single
 #'  entry only, use only if all files use the same column name for internal
-#'  standard MS peak area information when extracting level 0 data.)
+#'  standard MS peak area information when extracting level-0 data.)
 #' 
 #' @param istd.peak.colname.col (Character) Catalog column name containing
 #' `istd.peak.colname` information. (Defaults to "ISTD.Peak.ColName")
 #' 
-#' @param conc.colname (Character) Column name of the level 0 data containing
+#' @param conc.colname (Character) Column name of the level-0 data containing
 #'  intended concentrations for calibration curves. (Defaults to `NULL`.)
 #'  (Note: Single entry only, use only if all files use the same column name
-#'  for intended concentration information when extracting level 0 data.)
+#'  for intended concentration information when extracting level-0 data.)
 #'  
 #' @param conc.colname.col (Character) Catalog column name containing 
 #' `conc.colname` information. (Defaults to "Conc.ColName")
 #' 
-#' @param analysis.param.colname (Character) Column name of the level 0 data
+#' @param analysis.param.colname (Character) Column name of the level-0 data
 #'  containing Mass Spectrometry instrument parameters for the analyte.
 #'  (Defaults to `NULL`.) (Note: Single entry only, use only if all files use
 #'  the same column name for analysis parameter information when extracting
-#'  level 0 data.)
+#'  level-0 data.)
 #' 
 #' @param analysis.param.colname.col (Character) Catalog column name containing
 #' `analysis.param.colname` information. (Defaults to "AnalysisParam.ColName")
 #' 
-#' @param additional.colnames Additional columns from the level 0 data files to
-#'  pull information from when extracting level 0 data and include in the
-#'  compiled level 0 returned from `merge_level0`. (Defaults to `NULL`.)
+#' @param additional.colnames Additional columns from the level-0 data files to
+#'  pull information from when extracting level-0 data and include in the
+#'  compiled level-0 returned from `merge_level0`. (Defaults to `NULL`.)
 #' 
 #' @param additional.colname.cols Catalog column name(s) containing 
 #'  `additional.colnames` information, (Defaults to `NULL`.)
@@ -144,11 +144,11 @@
 #'  identification information for tested chemicals.
 #' 
 #' @param chem.lab.id.col (Character) Column in `chem.ids` containing
-#'  the compound/chemical identifier used by the laboratory in level 0 measured
+#'  the compound/chemical identifier used by the laboratory in level-0 measured
 #'  data. (Defaults to "Chem.Lab.ID")
 #' 
 #' @param chem.name.col (Character) `chem.ids` column name containing the
-#'  "standard" chemical name to use for annotation of the compiled level 0
+#'  "standard" chemical name to use for annotation of the compiled level-0
 #'  returned from `merge_level0`. (Defaults to "Compound")
 #' 
 #' @param chem.dtxsid.col (Character) `chem.ids` column name containing EPA's
@@ -160,20 +160,58 @@
 #' or \code{OUTPUT.DIR} as a .tsv file. (Defaults to \code{TRUE}.)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (Level-0) will be exported the current directory or \code{OUTPUT.DIR} 
+#' table (level-0) will be exported the current directory or \code{OUTPUT.DIR} 
 #' as a .tsv file. (Defaults to \code{TRUE}.)
 #' 
 #' @param INPUT.DIR (Character) Path to the directory where the Excel files 
-#' with Level-0 data exist. If not specified, looking for the files
+#' with level-0 data exist. If not specified, looking for the files
 #' in the current working directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
 #' If \code{NULL}, the output file will be saved to the current working
 #' directory. (Defaults to \code{NULL}.)
 #' 
-#' @return \item{data.frame}{A data.frame in standardized Level-0 format} 
+#' @return \item{data.frame}{A data.frame in standardized level-0 format} 
 #'
 #' @author John Wambaugh
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' # Create level0.catalog data.frame
+#' # Will need to retrieve "Hep_745_949_959_082421_final.xlsx" file from 
+#' data-raw/Kreutz-Clint and save it to desired directory.
+#' # Note XLSX file does not need to be saved to current working directory. 
+#' catalog <- create_catalog(file = "Hep_745_949_959_082421_final.xlsx",
+#'                           sheet = "Data063021",
+#'                           skip.rows = 44,
+#'                           num.rows = 30,
+#'                           date = "06302021",
+#'                           compound = "745",
+#'                           istd = "MFBET",
+#'                           sample = "Name",
+#'                           type = "Type",
+#'                           peak = "Area...13",
+#'                           istd.peak = "Resp....16",
+#'                           conc = "Final Conc....11",
+#'                           analysis.param = "Exp. Conc....10",
+#'                           col.names.loc = 2)
+#' # Create chem.ids data.frame
+#' chem.ids <- data.frame("Chem.Lab.ID" = "745",
+#'                        "Compound" = "(Heptafluorobutanoyl)pivaloylmethane",
+#'                        "DTXSID" = "DTXSID3066215")
+#' # Create level0 data.frame       
+#' # Will need to replace <PATH TO FILE> with chosen desired directory containing
+#' # XLSX file from above.                  
+#' level0 <- merge_level0(level0.catalog = catalog,
+#'              INPUT.DIR = "<PATH TO FILE>",
+#'              istd.col = "ISTD.Name",
+#'              type.colname.col = "Type.ColName",
+#'              num.rows.col = "Number.Data.Rows",
+#'              chem.ids = chem.ids,
+#'              catalog.out = FALSE,
+#'              output.res = FALSE)
+#' }
 #' 
 #' @import readxl
 #' @importFrom methods is 
@@ -448,24 +486,24 @@ merge_level0 <- function(FILENAME="MYDATA",
 
   ## Keep outputting level-0 catalog for now but this functionality may be deprecated later
   if (catalog.out) {
-    # Write out a "Catalog" file that explains how level 0 data were mapped to level 1
+    # Write out a "Catalog" file that explains how level-0 data were mapped to level-1
     write.table(level0.catalog, 
                 file=paste0(file.path, "/", FILENAME,"-level0-Catalog.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
-    cat(paste0("A Level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
+    cat(paste0("A level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
                 " has been exported to the following directory: ", file.path),"\n")
   }
 
   if (output.res) {
-    # Write out the merged Level-0 file
+    # Write out the merged level-0 file
     write.table(out.data, 
                 file=paste0(file.path, "/", FILENAME,"-level0.tsv"),
                 sep="\t",
                 row.names=F,
                 quote=F)
-    cat(paste0("A Level-0 file named ",FILENAME,"-level0.tsv", 
+    cat(paste0("A level-0 file named ",FILENAME,"-level0.tsv", 
                 " has been exported to the following directory: ", file.path), "\n")
   }
  

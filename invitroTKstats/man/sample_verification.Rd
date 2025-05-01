@@ -15,10 +15,10 @@ sample_verification(
 )
 }
 \arguments{
-\item{FILENAME}{(Character) A string used to identify the output Level-1 file.
+\item{FILENAME}{(Character) A string used to identify the output level-1 file.
 "<FILENAME>-<assay>-Level1.tsv".}
 
-\item{data.in}{(Data Frame) A Level-1 data frame from the format functions.}
+\item{data.in}{(Data Frame) A level-1 data frame from the format functions.}
 
 \item{exclusion.info}{(Data Frame) A data frame containing the variables and 
 values of the corresponding variables to exclude rows. 
@@ -30,7 +30,7 @@ This argument only needs to be specified when importing input data set with \cod
 or exporting a data file.}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-data frame (Level-2) will be exported as a .tsv file to the current directory. 
+data frame (level-2) will be exported as a .tsv file to the current directory. 
 (Defaults to \code{TRUE}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the input level-1 file exists. 
@@ -42,11 +42,11 @@ If \code{NULL}, the output file will be saved to the current working
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
-A Level-2 data frame with a verification column.
+A level-2 data frame with a verification column.
 }
 \description{
-This function takes in a Level-1 data frame and an exclusion list and 
-returns a Level-2 data frame with a verification column. The
+This function takes in a level-1 data frame and an exclusion list and 
+returns a level-2 data frame with a verification column. The
 verification column contains either "Y", indicating the row is good for analysis,
 or messages contained in the exclusion list for why the data rows are excluded. 
 If an exclusion list is not provided, all rows are assumed to be good for use 
@@ -55,7 +55,7 @@ in further analyses and are verified with "Y".
 \details{
 The `exclusion.info` should be a data frame with the following columns:
 \tabular{rr}{
-  Variables \tab Level-1 variable(s) used to filter rows for exclusion\cr
+  Variables \tab level-1 variable(s) used to filter rows for exclusion\cr
   Values \tab Value(s) to exclude\cr
   Message \tab Simple explanation for the exclusion\cr
 }
@@ -64,33 +64,24 @@ When filtering on multiple variable-value pairs, the character input for
 and the variable-value pairs should match. See demonstration in Examples, Scenario 1.
 }
 \examples{
-level2 <- invitroTKstats::kreutz2023.clint
-
-# Data sets in the package are level-2 data. For demonstration purposes,
-# remove the verification columns from the data and use it as level-1.
-level1 <- subset(level2, select = -c(Verifed,Verified) )
+level1 <- invitroTKstats::clint_L1
 
 # Scenario 1: Pass in data.in and exclusion.info data frame from R session 
 
 # Create a exclusion criteria data frame
+# Use the excluded samples found in \code{invitroTKstats::clint_L2_heldout}
 # If more than one variable is used to define a set of samples to be excluded,
-# enter them as one string, separate the variables with a vertical bar, "|", and do the same for 
-# values. 
-exclusion_criteria <- data.frame(
-  Variables = c(
-    "DTXSID","Date","Compound.Name|Lab.Sample.Name"
-  ),
-  Values = c(
-    "DTXSID00380798","21021",
-    "Nonafluoropentanamide|Amide Hep120220 T0C2_020921"
-  ),
-  Message = c(
-    "Exclude all samples of this compound.",
-    "Exclude all samples from this date.",
-    "These samples for this compound were contaminated."
-    )
-)
+# enter them as one string, separate the Variables with a vertical bar, "|",
+# and do the same for Values. 
 
+excluded_level2 <- invitroTKstats::clint_L2_heldout
+
+exclusion_criteria <- data.frame(
+  Variables = paste("Compound.Name", "Lab.Sample.Name", sep = "|"), 
+  Values = paste(excluded_level2[,"Compound.Name"], excluded_level2[,"Lab.Sample.Name"], sep = "|"),
+  Message = excluded_level2[,"Verified"]
+  )
+  
 # Run the verification function.
 my.level2 <- sample_verification(data.in=level1,
                                  exclusion.info = exclusion_criteria,
@@ -100,19 +91,22 @@ my.level2 <- sample_verification(data.in=level1,
 
 \dontrun{
 # Write the level-1 file to some folder
-# Will need to replace <desired level-1 FOLDER> with desired output folder location  
+# Will need to replace <desired level-1 FOLDER> with desired export folder location.
+# The <desired level-1 FOLDER> needs to already exist.   
+
 write.table(level1,
-file=here::here("<desired level-1 FOLDER>/kreutz-Clint-Level1.tsv"),
+file=here::here("<desired level-1 FOLDER>/Smeltz-Clint-Level1.tsv"),
 sep="\t",
 row.names=F,
 quote=F)
 
 # Run the verification function.
 # Specify the path to import level-1 data with INPUT.DIR.
-# Will need to replace <desired level-1 FOLDER> with chosen output folder location from above 
+# Will need to replace INPUT.DIR = <desired level-1 FOLDER> with chosen output
+# folder location from above 
 # If no exclusion.info data frame is used, will label all samples as verified.
-# A level-2 file is also saved to INPUT.DIR. 
-my.level2 <- sample_verification(FILENAME="kreutz", 
+# A level-2 file is also exported to INPUT.DIR when OUTPUT.DIR is not specified.
+my.level2 <- sample_verification(FILENAME="Smeltz", 
 assay="Clint", INPUT.DIR = here::here("<desired level-1 FOLDER>"))
 }
 

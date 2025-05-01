@@ -3,9 +3,9 @@
 \docType{data}
 \name{clint_L3}
 \alias{clint_L3}
-\title{Clint Level 3 Example Data set}
+\title{Clint Level-3 Example Data set}
 \format{
-A level 3 data.frame with 3 rows and 13 variables: \describe{
+A level-3 data.frame with 3 rows and 13 variables: \describe{
 \item{\code{Compound.Name}}{Name of the test analyte/compound}
 \item{\code{DTXSID}}{DSSTox Substance Identifier (CompTox Chemicals Dashboard - CCD)}
 \item{\code{Lab.Compound.Name}}{Compound as described in the laboratory}

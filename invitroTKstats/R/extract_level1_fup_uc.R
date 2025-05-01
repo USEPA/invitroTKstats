@@ -1,4 +1,4 @@
-#' Extract level 1 ultracentrifugation data from wide level 0 file
+#' Extract level 1 ultracentrifugation \insertCite{redgrave1975separation}{invitroTKstats} data from wide level 0 file
 #'
 #' This function extracts data from a Microsoft Excel file containing many
 #' columns corresponding to different types of data.
@@ -7,7 +7,7 @@
 #' of these types:
 #' \tabular{rrrrr}{
 #'   Calibration Curve \tab CC\cr
-#'   Ultracentrifugation Aqueous Fraction \tab UC\cr
+#'   Ultracentrifugation Aqueous Fraction \tab AF\cr
 #'   Whole Plasma T1h Sample  \tab T1\cr
 #'   Whole Plasma T5h Sample \tab T5\cr
 #' }

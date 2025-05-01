@@ -8,7 +8,7 @@ Hepatic Clearance}
 plot_clint(level2, dtxsid, color.palette = "viridis")
 }
 \arguments{
-\item{level2}{(Data Frame) A data frame containing Level-2 data with a measure
+\item{level2}{(Data Frame) A data frame containing level-2 data with a measure
 of chemical clearance over time when incubated with suspended hepatocytes.}
 
 \item{dtxsid}{(Character) EPA's DSSTox Structure ID for the chemical to be plotted.}
@@ -27,7 +27,7 @@ Responses from different measurements/calibrations are labeled with different co
 and responses from various sample types are labeled with different shapes.
 }
 \details{
-The function requires "Level-2" data for plotting. Level-2 data is Level-1,
+The function requires "level-2" data for plotting. Level-2 data is level-1,
 data formatted with the \code{\link{format_clint}} function, and curated
 with a verification column. "Y" in the verification column indicates the
 data row is valid for plotting.

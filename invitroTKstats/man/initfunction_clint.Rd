@@ -15,5 +15,6 @@ initfunction_clint(mydata, chain)
 A list of initial values.
 }
 \description{
-Set Initial Values for Intrinsic Hepatic Clearance (Clint) Bayesian Model
+Sets the initial values of arguments required for JAGS such as assumed initial probability
+distributions. The list is used as an argument to JAGS during level-4 processing.
 }

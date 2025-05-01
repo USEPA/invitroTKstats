@@ -8,7 +8,7 @@
 #' observations for every measurement type included in the vector for each chemical-calibration pair. 
 #' If it does, the chemical is said to have a complete data set. Otherwise, it has an incomplete data set. 
 #' The number of complete and incomplete datasets, for each chemical, are returned in the output list. 
-#' The input data frame can be Level-1 (or Level-2) Caco-2 data, ultracentrifugation (UC) data, rapid equilibrium dialysis (RED) data, 
+#' The input data frame can be level-1 (or level-2) Caco-2 data, ultracentrifugation (UC) data, rapid equilibrium dialysis (RED) data, 
 #' or hepatocyte clearance (Clint) data. See the Details section for measurement type and 
 #' annotation tables used in each assay.
 #'
@@ -24,14 +24,14 @@
 #' Samples types used in rapid equilibrium dialysis (RED) data collected for calculation of 
 #' chemical fraction unbound in plasma (Fup) should be annotated as follows:
 #' \tabular{rrrrr}{
-#'   Blank without plasma (no chemical, no plasma) \tab NoPlasma.Blank\cr
-#'   Blank with plasma (no chemical, just plasma) \tab Plasma.Blank\cr
+#'   No Plasma Blank (no chemical, no plasma) \tab NoPlasma.Blank\cr
+#'   Plamsa Blank (no chemical, just plasma) \tab Plasma.Blank\cr
 #'   Plasma well concentration \tab Plasma\cr
 #'   Phosphate-buffered well concentration\tab PBS\cr
 #'   Time zero plasma concentration \tab T0\cr
 #'   Plasma stability sample \tab Stability\cr
-#'   Acceptor Equilibrium Control Well \tab EC_acceptor\cr
-#'   Donor Equilibrium Control Well (chemical spiked side) \tab EC_donor\cr
+#'   Acceptor compartment of the equilibrium evaluation \tab EC_acceptor\cr
+#'   Donor compartment of the equilibrium evaluation (chemical spiked side) \tab EC_donor\cr
 #'   Calibration Curve \tab CC\cr
 #' }
 #'
@@ -47,12 +47,12 @@
 #' be annotated as follows:
 #' \tabular{rr}{
 #'   Blank with no chemical added \tab Blank \cr
-#'   Dosing vehicle (C0) at target concentration \tab D0\cr
+#'   Target concentration added to donor compartment at time 0 (C0) \tab D0\cr
 #'   Donor compartment at end of experiment \tab D2\cr
 #'   Receiver compartment at end of experiment\tab R2\cr
 #' }
 #'
-#' @param input.table (Data Frame) A data frame (Level-1 or Level-2) containing mass-spectrometry peak areas,
+#' @param input.table (Data Frame) A data frame (level-1 or level-2) containing mass-spectrometry peak areas,
 #' indication of chemical identity, and measurement type. The data frame should
 #' contain columns with names specified by the following arguments:
 #'

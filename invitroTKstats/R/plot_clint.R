@@ -6,12 +6,12 @@
 #' Responses from different measurements/calibrations are labeled with different colors, 
 #' and responses from various sample types are labeled with different shapes.  
 #'
-#' The function requires "Level-2" data for plotting. Level-2 data is Level-1,
+#' The function requires "level-2" data for plotting. Level-2 data is level-1,
 #' data formatted with the \code{\link{format_clint}} function, and curated
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for plotting.  
 #' 
-#' @param level2 (Data Frame) A data frame containing Level-2 data with a measure
+#' @param level2 (Data Frame) A data frame containing level-2 data with a measure
 #' of chemical clearance over time when incubated with suspended hepatocytes.
 #' 
 #' @param dtxsid (Character) EPA's DSSTox Structure ID for the chemical to be plotted.
@@ -77,7 +77,7 @@ plot_clint <- function(level2,dtxsid,color.palette = "viridis")
 
   if (!(all(cols %in% colnames(level2))))
   {
-    warning("Is this Clint data? Run format_clint first (level 1) then curate to (level 2).")
+    warning("Is this Clint data? Run format_clint first (level-1) then curate to (level-2).")
     stop(paste("Missing columns named:",
       paste(cols[!(cols%in%colnames(level2))],collapse=", ")))
   }

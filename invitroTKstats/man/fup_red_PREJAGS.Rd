@@ -3,10 +3,10 @@
 \docType{data}
 \name{fup_red_PREJAGS}
 \alias{fup_red_PREJAGS}
-\title{Fup RED Level 4 PREJAGS arguments}
+\title{Fup RED Level-4 PREJAGS arguments}
 \format{
 A named list with 33 elements: \describe{
-\item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values for the tested compound}
+\item{\code{Test.Nominal.Conc}}{Unique \code{Test.Nominal.Conc} values (expected initial concentration) for the tested compound}
 \item{\code{Num.cal}}{Unique number of \code{Calibration} values for the tested compound}
 \item{\code{Physiological.Protein.Conc}}{The assumed physiological protein concentration 
 for plasma protein binding calculations. (Defaults to 70/(66.5*1000)*1000000.
@@ -48,14 +48,14 @@ assume all protein is albumin to estimate default in uM.)}
 fup_red_PREJAGS
 }
 \description{
-The arguments given to JAGS for the tested compound during level 4 processing of mass spectrometry measurements of plasma protein binding (PPB) via rapid 
+The arguments given to JAGS for the tested compound during level-4 processing of mass spectrometry measurements of plasma protein binding (PPB) via rapid 
 equilibrium dialysis (RED) for per- and poly-fluorinated alkyl substance
 (PFAS) samples. Experiments were led by Dr.s Marci Smeltz and Barbara Wetmore 
 \insertCite{smeltz2023plasma}{invitroTKstats}. This list is overwritten for each tested
 compound. Therefore, only contains arguments given to JAGS for the last tested compound.
 }
 \references{
-\insertRef{shibata2002prediction}{invitroTKstats}
+\insertRef{waters2008validation}{invitroTKstats}
 
 \insertRef{smeltz2023plasma}{invitroTKstats}
 }
