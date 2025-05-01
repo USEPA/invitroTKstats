@@ -538,7 +538,7 @@ $$ x_{PB,i} = \frac{cal_{w^*_i} * (\frac{\eta_{plasma}*p_{protein,r^*_i}}{100} -
 where
 
 * $df_{PB}$ is the dilution factor for blank observations with plasma (`Plasma.Blank.df`) 
-* $p_{protein,r^*_i}$ is the physiological protein percent for the $i^{th}$ plasma blank observation, given the replicate index
+* $p_{protein,r^*_i}$ is the percent of the physiological plasma concentration for the $i^{th}$ plasma blank observation, given the replicate index
 * $r^*_i$ is the replicate index for the $i^{th}$ blank observation with plasma (`Plasma.Blank.rep`), such that $r^* = (r^*_1,\ldots,r^*_{n_{PB}})$
 * $\beta_{PB,i}$ is the JAGS step function for the $i^{th}$ blank observation with plasma, such that
 
@@ -565,7 +565,7 @@ Suppose $n_{T0}$ is the total number of initial time observations (`Num.T0.obs`)
 
 Estimation of predictions for the T0 observations (`T0.pred`):
 
-$$ x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thresh,w^*_i})*\beta_{T0,i}+\gamma_{w^*_i}}{df_{T0}} $$
+$$ x_{T0,i} = \frac{cal_{w^*_i}*(conc_{target}-\eta_{plasma}-C_{thresh,w^*_i})*\beta_{T0,i}+cal_{w^*_i}*\eta_{plasma}+\gamma_{w^*_i}}{df_{T0}} $$
 
 where
 
@@ -585,7 +585,7 @@ $$
 
 Estimation of heteroscedastic precision for the T0 observations (`T0.prec`):
 
-$$ \tau_{T0,i} = \frac{1}{(\sigma_{a,w^*_i}*m_{h,w^*_i}*x_{T0,i})^2} $$
+$$ \tau_{T0,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i}*x_{T0,i})^2} $$
 
 **Likelihood for the T0 observations (`T0.obs`):**
 
@@ -598,7 +598,7 @@ Suppose $n_{CC}$ is the total number of calibration curve observations (`Num.CC.
 Estimation of the predictions for calibration curve observations (`CC.pred`):
 
 $$
-x_{CC,i} = \frac{cal_{w^*_i}*(C_{CC,i} - \eta_{plasma} - C_{tresh,w^*_i})*\beta_{CC,i}+cal_{w^*_i}*\eta_{plasma} + \gamma_{w^*_i}}{df_{CC}}
+x_{CC,i} = \frac{cal_{w^*_i}*(C_{CC,i} - \eta_{plasma} - C_{thresh,w^*_i})*\beta_{CC,i}+cal_{w^*_i}*\eta_{plasma} + \gamma_{w^*_i}}{df_{CC}}
 $$
 
 where
@@ -609,7 +609,7 @@ where
 
 $$ \beta_{CC,i} =
 \begin{cases}
-1 & \textrm{if} \space (C_{CC,i} - \eta_{plasma} - C_{tresh,w^*_i}) \ge 0 \\
+1 & \textrm{if} \space (C_{CC,i} - \eta_{plasma} - C_{thresh,w^*_i}) \ge 0 \\
 0 & \textrm{otherwise}
 \end{cases}
 $$
@@ -640,7 +640,7 @@ Estimation of the fraction unbound in plasma (`Fup`):
 
 $$ f_{up} = \frac{K_d}{K_d + \rho_{protein}} $$
 
-where $\rho_{protein}$ is the assumed physiological protein concentration available for binding (`Physiological.Protein.Conc`).
+where $\rho_{protein}$ is the assumed physiological protein concentration available for plasma protein binding (`Physiological.Protein.Conc`).
 
 ##### Concentrations for Replicates
 
@@ -650,7 +650,7 @@ Estimation for the protein concentration for an observation (`C.protein`):
 
 $$ C_{protein,i} = \frac{\rho_{protein}*p_{protein,i}}{100}  $$
 
-where $\rho_{protein}$ is the assumed physiological protein concentration available for binding and $p_{protein,i}$ is the physiological protein percent for the $i^{th}$ replicate group.
+where $\rho_{protein}$ is the assumed physiological protein concentration available for plasma protein binding and $p_{protein,i}$ is the percent of the physiological plasma concentration for the $i^{th}$ replicate group.
 
 Estimation for the missing chemical in the assay system via binding to walls of the test system or cellular membranes (`C.missing`):
 
@@ -731,7 +731,7 @@ $$
 where
 
 * $df_{plasma}$ is the dilution factor for plasma observations (`Plasma.df`)
-* $p_{protein,r^*_i}$ is the physiological protein percent for the $i^{th}$ plasma observation, givne the replicate index
+* $p_{protein,r^*_i}$ is the percent of the physiological plasma concentration for the $i^{th}$ plasma observation, given the replicate index
 * $\beta_{plasma,i}$ is the JAGS step function for the $i^{th}$ plasma observation, such that
 
 $$
@@ -754,7 +754,7 @@ $$ \tau_{plasma,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} * x_{plasma,i})^2}
 
 $$ y_{plasma,i} \sim \textrm{N} \left(\mu = x_{plasma,i},\tau = \tau_{plasma,i} \right) $$
 
-### Post-MCCM Estimates {#postmcmc}
+### Post-MCMC Estimates {#postmcmc}
 
 #### Fraction of Chemical Unbound in Plasma (Bayesian Estimates)
 
@@ -805,10 +805,10 @@ Data passed to JAGS as part of the `PREJAGS` object:
 |-----------|---------------|-----------------|
 | Test.Nominal.Conc | $conc_{target}$ | expected initial concentration |
 | Num.cal | $n_{cal}$| the total number of calibrations |
-| Assay.Protein.Percent | $p_{protein}$ | the physiological protein percent for each `Plasma` sample type replicate group |
+| Assay.Protein.Percent | $p_{protein}$ | the percent of the physiological plasma concentration for each `Plasma` sample type replicate group |
 | Num.Plasma.Blank.obs | $n_{PB}$ | total number of `Plasma.Blank` samples |
 | Plasma.Blank.obs | $y_{PB}$ | the `Plasma.Blank` sample responses |
-| Plasma.Blank.cal | $w^*_i$ | calibration index for `Plasma.Blank` samples (reused index) |
+| Plasma.Blank.cal | $w^*$ | calibration index for `Plasma.Blank` samples (reused index) |
 | Plasma.Blank.df | $df_{PB}$ | dilution factor for `Plasma.Blank` samples |
 | Plasma.Blank.rep | $r^*$ | replicate index for `Plasma.Blank` samples |
 | Num.NoPlasma.Blank.obs | $n_{NPB}$ | total number of `NoPlasma.Blank` samples |
@@ -841,7 +841,7 @@ User-specified constant parameter via level-4 function arguments and passed to J
 
 | Constant Parameter | Notation | level-4 Argument (Default)| Description |
 |-----------------|----------|---------------------------|-------------|
-| Physiological.Protein.Conc | $\rho_{protein}$ | `Physiological.Protein.Conc` (1052.632 = 70/(66.5 * 1000) * 1e+06) | the assumed physiological protein concentration available for binding |
+| Physiological.Protein.Conc | $\rho_{protein}$ | `Physiological.Protein.Conc` (1052.632 = 70/(66.5 * 1000) * 1e+06) | the assumed physiological protein concentration available for plasma protein binding |
 
 MCMC Parameters in JAGS:
 
