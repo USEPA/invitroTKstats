@@ -20,11 +20,13 @@ model {
   }
 
 # Likelihood for the blank observations:
+  # obtain the blank predictions and precisions for each calibration
   for (i in 1:Num.cal)
   {
     Blank.pred[i] <- background[i]/Blank.Dilution.Factor[i]
     Blank.prec[i] <- (const.analytic.sd[i]+hetero.analytic.slope[i]*(Blank.pred[i]))^(-2)
   }
+  # obtain the estimated observations for each blank sample available
   for (i in 1:Num.blank.obs) {
     Blank.obs[i] ~ dnorm(Blank.pred[Blank.cal[i]],Blank.prec[Blank.cal[i]])
   }

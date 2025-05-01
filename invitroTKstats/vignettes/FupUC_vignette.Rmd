@@ -1,5 +1,5 @@
 ---
-title: "Fup UC"
+title: "Fraction Unbound in Plasma - Ultracentrifugation (f~up~ UC)"
 output: rmarkdown::html_vignette
 bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
@@ -375,6 +375,210 @@ fup_uc_L4_curated %>%
 ## Best Practices: Food for thought 
 
 Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
+
+## Appendix
+
+### L4 Bayesian Modeling Information
+
+In this section, we provide the equations for the Bayesian model (i.e., priors and likelihoods) used to estimate the fraction unbound in plasma ($f_{up}$), from the ultracentrifugation assay, and the uncertainty about that estimate. The following sub-sections are organized such that:
+
+* Each section contains the relevant hyper-parameters and their priors followed by the variable likelihoods
+* Sections are ordered from the most fundamental variables/parameters (i.e., those used in later equations) to the likelihood for the observations used to estimate the fraction unbound in plasma ($f_{up}$)
+
+Some of the indices are reused between sections (e.g. $i$, $w^*_i$, etc.). However, it should be noted that these are not meant to be understood across sub-sections; rather, only understood within the context of the section they are in.
+
+*NOTE: Readers unfamiliar with JAGS should be aware that JAGS software uses precision ($\tau$) rather than variance ($\sigma^2$) (i.e., $\tau = \sigma^2$).*
+
+#### Measurement Model
+
+Each chemical may have more than one day of experimentation, and thus multiple calibrations. Suppose for the chemical of interest there are a total of $n_{cal}$ calibrations (`Num.cal`). For a particular calibration $w \in (1,\ldots,n_{cal})$ we assume the following priors for our Bayesian model:
+
+**Prior for log-scale constant analytic standard deviation (`log.const.analytic.sd`):**
+
+$$ log(\sigma_a)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right); \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $\sigma_{a,w}$ is the converted parameter used in later equations (`const.analytic.sd`).
+
+**Prior for the log-scale heteroscedastic analytic slope (`log.hetero.analytic.slope`):**
+
+$$ log(m_h)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space m_{h,w} = 10^{log(m_h)_w} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $m_{h,w}$ is the converted parameter used in later equations (`hetero.analytic.slope`).
+
+**Prior for the threshold concentration (`C.thresh`):**
+
+$$ C_{thresh,w} \sim \textrm{Unif} \left( a = 0, b = \frac{conc_{target,w}}{10} \right)$$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $conc_{target,w}$ is the expected initial concentration (`Test.Nominal.Conc`) for calibration index $w$.
+
+**Prior for the log-scale calibration (`log.calibration`):**
+
+$$ log(cal)_w \sim \textrm{N} \left( \mu = 0, \tau = 0.01 \right); \space cal_w = 10^{log(cal)_w} $$
+
+where $\mu$ and $\tau$ are the mean and precision, respectively, and $cal_w$ is the converted parameter used in later equations (`calibration`).
+
+**Prior for the background (`background`):**
+
+$$ \gamma_w \sim \textrm{Exp} \left( \lambda = 100 \right) $$
+
+where $\lambda$ is the rate parameter.
+
+#### Estimation of Response Observations
+
+Suppose $n$ is the total number of response observations (`Num.obs`), and $y_i$ indicates the $i^{th}$ observation, for all sample types. For each observation we obtain a posterior MCMC estimate for the observations with the following:
+
+Calibration curve slope for the $i^{th}$ observation (`slope`) is assumed to be the calibration estimate corresponding to the calibration index ($w^*_i$):
+
+$$ m_i = cal_{w^*_i}$$
+
+where $w^*_i$ is the calibration index (`obs.cal`) for the $i^{th}$ observation, such that $w^* = (w^*_1,...,w^*_n)$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations).
+
+Calibration curve intercept for the $i^{th}$ observation (`intercept`) is assumed to be the background estimate corresponding to the calibration index ($w^*_i$):
+
+$$ \alpha_{CC,i} = \gamma_{w^*_i} $$
+
+Estimation for the predicted values for response observations (`Response.pred`):
+
+$$ x_i = \frac{m_i*((C_{c^*_i}- C_{thresh,w^*_i}) * \beta_i + \alpha_i)}{df_i} $$
+
+where
+
+* $c^*_i$ is the index for the standard test chemical concentration (`obs.conc`) for the $i^{th}$ observation
+* $df_i$ is the dilution factor (`Dilution.Factor`) for the $i^{th}$ observation
+* $\beta_i$ is the JAGS step function for the $i^{th}$ observation, such that
+
+$$ \beta_i = 
+\begin{cases}
+1 & if \space (C_{c^*_i}- C_{thresh,w^*_i}) \ge 0\\
+0 & o.w.
+\end{cases}
+$$
+
+Estimation of the precision for observations (`Response.prec`):
+
+$$  \tau^*_i = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_i)^2} $$
+
+**Likelihood for the observations (`Response.obs`):**
+
+$$ y_i \sim N(\mu = x_i,\tau = \tau^*_i) $$
+
+#### Binding Model
+
+**Prior for the log-scale fraction unbound in plasma (`log.Fup`):**
+
+$$ log(f_{up}) \sim \textrm{Unif} \left( a = -15, b = 0 \right) ; \space f_{up} = 10^{log(f_{up})} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $f_{up}$ is the converted parameter used in later equations (`Fup`).
+
+**Prior for the log-scale chemical loss fraction (`log.Floss`):** 
+
+$$ log(f_{loss}) \sim \textrm{Unif} \left( a = -6,b = 0 \right); \space f_{stable} = 1 - 10^{log(f_{loss})} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $f_{stable}$ is the converted parameter used in later equations (`Fstable`) estimating the fraction of stable chemical in the assay and available for plasma binding.
+
+Suppose $n_s$ is the total number of series run (i.e. biological replicates) (`Num.series`) and $C_i$ indicates the $i^{th}$ series. Each series has a total of 3 observations, including the 1 and 5 hour whole plasma and aqueous fraction observations (i.e. sample types = `T1` or `T5` or `AF`, respectively), such that there are a total of $n*$ observations (i.e., $n^* = 3*n_s$).  For each series obtain the following:
+
+**Prior for the whole plasma 1 hour sample (`T1`) concentration (`Conc`):** 
+
+$$ C_i \sim \textrm{N} \left( \mu = conc_{target,w^*_i}, \tau = 100 \right) $$
+
+where
+
+* $\mu$ and $\tau$ are the mean and precision, respectively
+* $i$ indicates the $i^{th}$ series run (biological replicate)
+* $w^*_i$ represents the calibration index (`obs.cal`) for the $i^{th}$ series $w^* = (w^*_1, \ldots,w^*_n)$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations)
+* $conc_{target,w^*_i}$ is the expected initial concentration (`Test.Nominal.Conc`) corresponding to the $i^{th}$ series, given the calibration index $w^*_i$
+
+Posterior estimate for the whole plasma 5 hour sample (`T5`) concentrations (after potential breakdown):  
+
+$$ C_{T5,i} = f_{stable} * C_i $$
+
+Posterior estimate for the aqueous fraction sample (`AF`) concentrations for the stable chemical at `T5`: 
+
+$$ C_{AF,i} = f_{up}*C_{T5,i} $$
+
+### Post-MCMC Estimates
+
+#### Fraction of Chemical Stability
+
+Posterior estimates for the fraction of stable chemical in the assay, including the median (`Fstable.Med`) and $95\%$ credible interval (`Fstable.Low` and `Fstable.High`):
+
+$$ \textrm{Fstable.Med} = f_{stable,0.5} $$
+
+$$ \textrm{Fstable.CI} = (\textrm{Fstable.Low},\textrm{Fstable.High}) = (f_{stable,0.025},f_{stable,0.975}) $$
+
+where $f_{stable,p}$ indicates the percentile ($p$) for the posterior distribution of the chemical stability fraction, ($p = 0.5$ indicates the $50\%$ percentile, i.e. median, for the posterior distribution).
+
+#### Fraction of Chemical Unbound in Plasma (Bayesian Estimates)
+
+Posterior estimates for the chemical fraction unbound in plasma, including the median (`Fup.Med`) and $95\%$ credible interval (`Fup.Low` and `Fup.High`):
+
+$$ \textrm{Fup.Med} = f_{up,0.5} $$
+
+$$ \textrm{Fup.CI} = (\textrm{Fup.Low},\textrm{Fup.High}) = (f_{up,0.025},f_{up,0.975}) $$
+
+where $f_{up,p}$ indicates the percentile ($p$) for the posterior distribution of the fraction of the chemical unbound in plasma, ($p = 0.5$ indicates the $50\%$ percentile, i.e. median, for the posterior distribution).
+
+#### Fraction Unbound in Plasma (Empirical Point Estimate)
+
+Point estimate for the chemical fraction unbound in plasma (`Fup.point`):
+
+Suppose there are a total of $n_{AF}$ observed aqueous fraction (`AF`) responses, then estimate the mean response:
+
+$$ \hat{\mu_{AF}} = \frac{\sum_{j = 1}^{n_{AF}}(y_{AF,j} * df_{AF,j})}{n_{AF}} $$
+
+where $y_{AF,j}$ is the response and $df_{AF,j}$ is the dilution factor for the $j^{th}$ aqueous fraction observation, sample type = `AF`.
+
+Suppose there are a total of $n_{T5}$ observed whole plasma 5 hour (`T5`) responses, then estimate the mean response:
+
+$$ \hat{\mu_{T5}} = \frac{\sum_{j = 1}^{n_{T5}}(y_{T5,j} * df_{T5})}{n_{T5}} $$
+
+where $y_{T5,j}$ is the response and $df_{T5,j}$ is the dilution factor for the $j^{th}$ whole plasma 5 hour observation, sample type = `T5`.
+
+Then the fraction unbound in plasma point estimate can be estimated as follows:
+
+$$ \textrm{Fup.point} = \frac{\hat{\mu_{AF}}}{\hat{\mu_{T5}}} $$
+
+
+### JAGS to L4 Equation Notation Tables
+
+Data passed to JAGS as part of the `PREJAGS` object:
+
+|       Data        |   Notation    | Description |
+|-------------------|---------------|-------------|
+| `Test.Nominal.Conc` | $conc_{target}$ | expected initial concentration |
+| `Num.cal` | $n_{cal}$ | total number of calibrations |
+| `Num.obs` | $n$ | total number of responses |
+| `Response.obs` | $y$ | all sample responses |
+| `obs.conc` | $c^*$ | concentration indices for all samples |
+| `obs.cal` | $w^*$ | calibration index for all samples |
+| `Dilution.Factor` | $df$ | dilution factors for all samples |
+| `Conc` | $C$ | the standard test chemical concentration of `CC` samples (and `NA` placeholders for `T1`, `T5`, and `AF` samples) |
+| `Num.cc.obs` | $n_{CC}$ | total number of `CC` samples |
+| `Num.series` | $n_s$ | number of biological replicates (series) |
+
+MCMC Parameters in JAGS:
+
+| JAGS Parameter Name | Parameter | Distribution | Prior/Posterior/Calculated |
+|---------------------|-----------|--------------|----------------------------|
+| log.const.analytic.sd | $log(\sigma_a)$ | Uniform | Prior |
+| log.hetero.analytic.slope | $log(m_h)$ | Uniform | Prior |
+| C.thresh | $C_{thresh}$ | Uniform | Prior |
+| log.calibration | $log(cal)$ | Normal | Prior |
+| background | $\gamma$ | Exponential | Prior |
+| const.analytic.sd | $\sigma_a$ | | Calculated |
+| hetero.analytic.slope | $m_h$ | | Calculated |
+| calibration | $cal$ | | Calculated |
+| slope | $m$ | | Calculated |
+| intercept | $\alpha$ | | Calculated |
+| Response.pred | $x$ | | Calculated |
+| Response.prec | $\tau^*$ | | Calculated |
+| Response.obs | $y$ | Normal | Posterior |
+| `log.Fup` | $log(f_{up})$ | Uniform | Prior |
+| `Fup` | $f_{up}$ | | Calculated |
+| `log.Floss` | $log(f_{loss})$| Uniform | Prior |
+| `Fstable` | $f_{stable}$| | Calculated |
+| `Conc` | $C$ | Normal (`T1`) / - (`T5`, `AF`) | Prior (`T1`) / Calculated (`T5`, `AF`) |
 
 ## References 
 
