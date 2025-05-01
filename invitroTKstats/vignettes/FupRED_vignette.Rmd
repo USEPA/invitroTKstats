@@ -754,6 +754,49 @@ $$ \tau_{plasma,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} * x_{plasma,i})^2}
 
 $$ y_{plasma,i} \sim \textrm{N} \left(\mu = x_{plasma,i},\tau = \tau_{plasma,i} \right) $$
 
+### Post-MCCM Estimates {#postmcmc}
+
+#### Fraction of Chemical Unbound in Plasma (Bayesian Estimates)
+
+Posterior estimates for the chemical fraction unbound in plasma, including the median (`Fup.Med`) and $95\%$ credible interval (`Fup.Low` and `Fup.High`):
+
+$$ \textrm{Fup.Med} = f_{up,0.5} $$
+
+$$ \textrm{Fup.CI} = \left( \textrm{Fup.Low}, \textrm{Fup.High} \right) = \left( f_{up,0.025}, f_{up,0.975} \right)$$
+
+where $f_{up,p}$ indicates the percentile ($p$) for the posterior distribution of the fraction of the chemical unbound in plasma, ($p = 0.5$ indicates the $50\%$ percentile, i.e. median, for the posterior distribution).
+
+#### Fraction Unbound in Plasma (Empirical Point Estimate)
+
+Point estimate for the chemical fraction unbound in plasma (`Fup.point`):
+
+Suppose there are a total of $n_{PBS}$ observed phosphate buffered solution responses (`PBS`), then estimate the mean response
+
+$$ \hat{\mu_{PBS}} = df_{PBS} * \frac{\sum_{j=1}^{n_{PBS}}(y_{PBS,j})}{n_{PBS}} $$
+where $y_{PBS,j}$ is the $j^{th}$ PBS observation and $df_{PBS}$ is the dilution fraction for PBS observations, sample type = `PBS`.
+
+Suppose there are a total of $n_{NPB}$ observed blank observations with no plasma (`NoPlasma.Blank`), then estimate the mean response
+
+$$ \hat{\mu_{NPB}} = df_{NPB} * \frac{\sum_{j = 1}^{n_{NPB}} y_{NPB,j}}{n_{NPB}} $$
+
+where $y_{NPB,j}$ is the $j^{th}$ blank observation with no plasma and $df_{NPB}$ is the dilution fraction for blank observations with no plasma, sample type = `NoPlasma.Blank`.
+
+Suppose there are a total of $n_{plasma}$ observed plasma observations (`Plasma`), then estimate the mean response
+
+$$ \hat{\mu_{plasma}} = df_{plasma} * \frac{\sum_{j = 1}^{n_{plasma}} y_{plasma,j}}{n_{plasma}}  $$
+
+where $y_{plasma,j}$ is the $j^{th}$ plasma observation and $df_{plasma}$ is the dilution fraction for plasma observations, sample type = `Plasma`.
+
+Suppose there are a total of $n_{PB}$ observed blank observations with plasma (`Plasma.Blank`), then estimate the mean response
+
+$$ \hat{\mu_{PB}} = df_{PB} * \frac{\sum_{j = 1}^{n_{PB}} y_{PB,j}}{n_{PB}}  $$
+
+where $y_{PB,j}$ is the $j^{th}$ blank observation with plasma and $df_{PB}$ is the dilution fraction for blank observations with plasma, sample type = `Plasma.Blank`.
+
+Then the fraction unbound in plasma point estimate can be estimated as follows:
+
+$$ \textrm{Fup.point} = \frac{\hat{\mu_{PBS}} - \hat{\mu_{NPB}}}{\hat{\mu_{plasma}} - \hat{\mu_{PB}}}$$
+
 ### JAGS to L4 Equation Notation Tables {#notationtbls}
 
 Data passed to JAGS as part of the `PREJAGS` object:
