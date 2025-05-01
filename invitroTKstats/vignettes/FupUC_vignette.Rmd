@@ -432,7 +432,7 @@ where $w^*_i$ is the calibration index (`obs.cal`) for the $i^{th}$ observation,
 
 Calibration curve intercept for the $i^{th}$ observation (`intercept`) is assumed to be the background estimate corresponding to the calibration index ($w^*_i$):
 
-$$ \alpha_{cc,i} = \gamma_{w^*_i} $$
+$$ \alpha_{CC,i} = \gamma_{w^*_i} $$
 
 Estimation for the predicted values for response observations (`Response.pred`):
 
@@ -453,7 +453,7 @@ $$
 
 Estimation of the precision for observations (`Response.prec`):
 
-$$  \tau^*_i = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*y_i)^2} $$
+$$  \tau^*_i = \frac{1}{(\sigma_{a,w^*_i}+m_{h,w^*_i}*x_i)^2} $$
 
 **Likelihood for the observations (`Response.obs`):**
 
@@ -547,11 +547,11 @@ Data passed to JAGS as part of the `PREJAGS` object:
 | `Num.cal` | $n_{cal}$ | total number of calibrations |
 | `Num.obs` | $n$ | total number of responses |
 | `Response.obs` | $y$ | all sample responses |
-| `obs.conc` | $c^*$ | `Conc` indices for `CC` samples |
+| `obs.conc` | $c^*$ | concentration indices for all samples |
 | `obs.cal` | $w^*$ | calibration index for all samples |
 | `Dilution.Factor` | $df$ | dilution factors for all samples |
 | `Conc` | $C$ | the standard test chemical concentration of `CC` samples (and `NA` placeholders for `T1`, `T5`, and `AF` samples) |
-| `Num.cc.obs` | $n_{cc}$ | total number of `CC` samples |
+| `Num.cc.obs` | $n_{CC}$ | total number of `CC` samples |
 | `Num.series` | $n_s$ | number of biological replicates (series) |
 
 MCMC Parameters in JAGS:
