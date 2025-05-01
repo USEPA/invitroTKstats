@@ -8,15 +8,16 @@ calc_clint_point(
   FILENAME,
   data.in,
   good.col = "Verified",
-  output.res = TRUE,
+  output.res = FALSE,
   sig.figs = 3,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
 }
 \arguments{
-\item{FILENAME}{A string used to identify the input level-2 file.
-"<FILENAME>-Clint-Level2.tsv".}
+\item{FILENAME}{A string used to identify the input level-2 file,
+"<FILENAME>-Clint-Level2.tsv" (if importing from a .tsv file), and/or used 
+to identify the output level-3 file, "<FILENAME>-Clint-Level3.tsv" (if exporting).}
 
 \item{data.in}{(Data Frame) A level-2 data frame generated from the 
 \code{format_clint} function with a verification column added by 
@@ -27,8 +28,9 @@ verified, data rows valid for analysis are indicated with a "Y".
 (Defaults to "Verified".)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the result 
-table (level-3) will be exported to the current directory as a .tsv file. 
-(Defaults to \code{TRUE}.)}
+table (level-3) will be exported to the user's per-session temporary directory
+or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
+(Defaults to \code{FALSE}.)}
 
 \item{sig.figs}{(Numeric) The number of significant figures to round the exported result table (level-3). 
 (Note: console print statements are also rounded to specified significant figures.)
@@ -39,8 +41,8 @@ If \code{NULL}, looking for the input level-2 file in the current working
 directory. (Defaults to \code{NULL}.)}
 
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
-If \code{NULL}, the output file will be saved to the current working
-directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
+If \code{NULL}, the output file will be saved to the user's per-session 
+temporary directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
 A level-3 data frame with one row per chemical, contains a point estimate of intrinsic 
@@ -69,6 +71,17 @@ these types:
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of
 MS response as a function of time.
+
+If the output level-3 result table is chosen to be exported and an output 
+directory is not specified, it will be exported to the user's R session
+temporary directory. This temporary directory is a per-session directory 
+whose path can be found with the following code: \code{tempdir()}. For more 
+details, see \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+
+As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or \code{OUTPUT.DIR} should be 
+specified to simplify the process of importing and exporting files. This 
+practice ensures that the exported files can easily be found and will not be 
+exported to a temporary directory.
 }
 \examples{
 ## Load example level-2 data
@@ -79,7 +92,8 @@ level2 <- invitroTKstats::clint_L2
 level3 <- calc_clint_point(data.in = level2, output.res = FALSE)
 
 ## scenario 2: 
-## import level-2 data from a 'tsv' file and export the result table
+## import level-2 data from a 'tsv' file and export the result table to 
+## same location as INPUT.DIR 
 \dontrun{
 ## Refer to sample_verification help file for how to export level-2 data to a directory.
 ## Unless a different path is specified in OUTPUT.DIR,
@@ -87,7 +101,23 @@ level3 <- calc_clint_point(data.in = level2, output.res = FALSE)
 ## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
 level3 <- calc_clint_point(# e.g. replace with "Examples" from "Examples-Clint-Level2.tsv"
                            FILENAME="<level-2 FILENAME prefix>",
-                           INPUT.DIR = "<level-2 FILE LOCATION>")
+                           INPUT.DIR = "<level-2 FILE LOCATION>",
+                           output.res = TRUE)
+}
+
+## scenario 3: 
+## input level-2 data from the R session and export the result table to the 
+## user's temporary directory
+## Will need to replace FILENAME with desired level-2 filename prefix. 
+\dontrun{
+level3 <- calc_clint_point(# e.g. replace with "MYDATA"
+                           FILENAME = "<desired level-2 FILENAME prefix>",
+                           data.in = level2,
+                           output.res = TRUE)
+# To delete, use the following code. For more details, see the link in the 
+# "Details" section. 
+file.remove(list.files(tempdir(), full.names = TRUE, 
+pattern = "<desired level-2 FILENAME prefix>-Clint-Level3.tsv"))
 }
 
 }

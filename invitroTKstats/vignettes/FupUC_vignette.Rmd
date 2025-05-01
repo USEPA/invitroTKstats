@@ -120,7 +120,7 @@ defaults <- c("MYDATA", NA, "Lab.Sample.Name", "Lab.Compound.Name", "DTXSID",
               "Cal", "Dilution.Factor", "ISTD.Area", "ISTD.Name", "ISTD.Conc", 
               "UC.Assay.Conc", "Biological.Replicates", "Technical.Replicates", 
               "Analysis.Method", "Analysis.Instrument", "Analysis.Parameters", 
-              "Note", "Level0.File", "Level0.Sheet", TRUE, FALSE, 5, NA, NA)
+              "Note", "Level0.File", "Level0.Sheet", FALSE, FALSE, 5, NA, NA)
 req_cols[, "Default"] <- defaults 
 
 # Argument required in L0?
@@ -189,7 +189,10 @@ req_cols %>%
   theme_vanilla()
 ```
 
-By default, a TSV file containing the Level 1 data is exported to the user's directory. We have omitted this export with `output.res = FALSE`. The option to omit exporting a TSV file is also available at Levels 2 and 3 and will be used from this point forward. 
+A TSV file containing the level-1 data can be exported to the user's per-session temporary directory. This temporary directory is a per-session directory whose path can be found with the following code: `tempdir()`. For more details, see 
+[https://www.collinberke.com/til/posts/2023-10-24-temp-directories/].
+
+To avoid exporting to this temporary directory, an `OUTPUT.DIR` must be specified. We have omitted this export entirely with `output.res = FALSE` (the default). The option to omit exporting a TSV file is also available at levels 2 and 3 and will be used from this point forward. 
 
 ```{r L1 processing}
 fup_uc_L1_curated <- format_fup_uc(FILENAME = "Fup_UC_vignette",
@@ -590,7 +593,7 @@ MCMC Parameters in JAGS:
 ## References 
 
 \references{
-\insertRef{kreutz2023category}
-\insertRef{redgrave1975separation}
-\insertRef{smeltz2023plasma}
+\insertRef{kreutz2023category}{invitroTKstats}
+\insertRef{redgrave1975separation}{invitroTKstats}
+\insertRef{smeltz2023plasma}{invitroTKstats}
 }

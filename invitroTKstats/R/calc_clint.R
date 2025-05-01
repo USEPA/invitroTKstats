@@ -136,11 +136,22 @@ model {
 #' with a verification column. "Y" in the verification column indicates the
 #' data row is valid for analysis. 
 #' 
-#' Note: By default, this function writes files to the user's current working
-#' directory. Users must specify an alternative path with the `TEMP.DIR`
-#' argument if they want the files exported to another path. Exported files 
-#' include the summary table (.RData), JAGS model (.RData), and any "unverified" 
-#' data excluded from the analysis (.tsv).
+#' Note: By default, this function writes files to the user's per-session temporary 
+#' directory. This temporary directory is a per-session directory whose path can 
+#' be found with the following code: \code{tempdir()}. For more details, see
+#' \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+#' 
+#' Users must specify an alternative path with the \code{TEMP.DIR}
+#' argument if they want the intermediate files exported to another path. Exported 
+#' intermediate files include the summary results table (.tsv), JAGS model (.RData), and any "unverified" 
+#' data excluded from the analysis (.tsv). Users must specify an alternative path with the \code{OUTPUT.DIR} argument if they 
+#' want the final output file exported to another path. The exported final output
+#' file is the summary results table (.RData). 
+#' 
+#' As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or \code{OUTPUT.DIR} 
+#' should be specified to simplify the process of importing and exporting files. 
+#' This practice ensures that the exported files can easily be found and will 
+#' not be exported to a temporary directory.
 #'
 #' The data frame of observations should be annotated according to
 #' these types:
@@ -165,7 +176,8 @@ model {
 #' \code{sample_verification}. Complement with manual verification if needed.
 #'
 #' @param TEMP.DIR (Character) Temporary directory to save intermediate files. 
-#' If \code{NULL}, all files will be written to the current working directory. 
+#' If \code{NULL}, all files will be written to the user's per-session
+#' temporary directory. 
 #' (Defaults to \code{NULL}.)
 #' 
 #' @param NUM.CHAINS (Numeric) The number of Markov Chains to use. (Defaults to 5.)
@@ -203,8 +215,9 @@ model {
 #' directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
-#' If \code{NULL}, the output file will be saved to the current working
-#' directory. (Defaults to \code{NULL}.)
+#' If \code{NULL}, the output file will be saved to the user's per-session 
+#' temporary directory or \code{INPUT.DIR} if specified. 
+#' (Defaults to \code{NULL}.)
 #'
 #' @return A list of two objects: 
 #' \enumerate{
@@ -221,7 +234,8 @@ model {
 #' @author John Wambaugh
 #'
 #' @examples
-#' ## Example 1: loading level-2 using data.in
+#' ## Example 1: loading level-2 using data.in and export all files to the user's
+#' ## temporary directory
 #' \dontrun{
 #' level2 <- invitroTKstats::clint_L2
 #' 
@@ -235,7 +249,8 @@ model {
 #'                      JAGS.PATH=path.to.JAGS)
 #' }
 #' 
-#' ## Example 2: importing level-2 from a .tsv file
+#' ## Example 2: importing level-2 from a .tsv file and export all files to same 
+#' ## location as INPUT.DIR 
 #' \dontrun{
 #' # Refer to sample_verification help file for how to export level-2 data to a directory.
 #' # JAGS.PATH should be changed to user's specific computer file path to JAGS software.
@@ -296,10 +311,15 @@ calc_clint <- function(
   MS.data <- subset(MS.data,!is.na(Compound.Name))
   MS.data <- subset(MS.data,!is.na(Response))
   
-  if (!is.null(TEMP.DIR)) 
+  # save the current working directory 
+  current.dir <- getwd()
+  
+  if (!is.null(TEMP.DIR)) # set working directory to user specified TEMP.DIR
   {
-    current.dir <- getwd()
     setwd(TEMP.DIR)
+  } else # set working directory to per-session tempdir()
+  {
+    setwd(tempdir())
   }
 
   clint.cols <- c(L1.common.cols,
@@ -542,21 +562,19 @@ calc_clint <- function(
       }
     }
   
-  if (!is.null(TEMP.DIR)) 
-  {
-    setwd(current.dir)
-  }
+  # set working directory back to original 
+  setwd(current.dir)
 
   stopCluster(CPU.cluster)
 
   #View(Results)
   
-  if (!is.null(OUTPUT.DIR)) {
+  if (!is.null(OUTPUT.DIR)) { # export output file to OUTPUT.DIR (OUTPUT.DIR specified) 
     file.path <- OUTPUT.DIR
-  } else if (!is.null(INPUT.DIR)) {
+  } else if (!is.null(INPUT.DIR)) { # export output file to INPUT.DIR (OUTPUT.DIR not specified)
     file.path <- INPUT.DIR
-  } else {
-    file.path <- getwd()
+  } else { # export output file to tempdir() (OUTPUT.DIR & INPUT.DIR not specified)
+    file.path <- tempdir()
   }
   
   save(Results,

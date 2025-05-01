@@ -16,6 +16,17 @@
 #' When filtering on multiple variable-value pairs, the character input for 
 #' "Variables" and "Values" should be separated by a vertical bar "|" ,
 #' and the variable-value pairs should match. See demonstration in Examples, Scenario 1. 
+#' 
+#' If the output level-2 data frame is chosen to be exported and an output directory 
+#' is not specified, it will be exported to the user's R session temporary directory. 
+#' This temporary directory is a per-session directory whose path can be found
+#' with the following code: \code{tempdir()}. For more details, see 
+#' \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+#' 
+#' As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or 
+#' \code{OUTPUT.DIR} should be specified to simplify the process of importing 
+#' and exporting files. This practice ensures that the exported files can easily 
+#' be found and will not be exported to a temporary directory. 
 #'
 #' @param FILENAME (Character) A string used to identify the output level-1 file.
 #' "<FILENAME>-<assay>-Level1.tsv". 
@@ -31,16 +42,17 @@
 #' This argument only needs to be specified when importing input data set with \code{FILENAME} 
 #' or exporting a data file.
 #'
-#' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' data frame (level-2) will be exported as a .tsv file to the current directory. 
-#' (Defaults to \code{TRUE}.)
+#' @param output.res (Logical) When set to \code{TRUE}, the resulting
+#' data frame (level-2) will be exported to the user's per-session temporary directory
+#' or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
+#' (Defaults to \code{FALSE}.)
 #'
 #' @param INPUT.DIR (Character) Path to the directory where the input level-1 file exists. 
 #' If \code{NULL}, looking for the input level-1 file in the current working
 #' directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
-#' If \code{NULL}, the output file will be saved to the current working
+#' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
 #' @return A level-2 data frame with a verification column. 
@@ -104,7 +116,7 @@ sample_verification <- function(
     data.in, 
     exclusion.info,
     assay,
-    output.res = TRUE,
+    output.res = FALSE,
     INPUT.DIR = NULL,
     OUTPUT.DIR = NULL
     ){
@@ -169,12 +181,12 @@ sample_verification <- function(
   if (output.res) {
     if (missing(assay) | missing(FILENAME)) stop("Missing either FILENAME and/or assay. Unable to export data to a 'tsv' without a FILENAME and assay.")
     
-    if (!is.null(OUTPUT.DIR)) {
+    if (!is.null(OUTPUT.DIR)) {  # export output file to OUTPUT.DIR (OUTPUT.DIR specified) 
       file.path <- OUTPUT.DIR
-    } else if (!is.null(INPUT.DIR)) {
+    } else if (!is.null(INPUT.DIR)) { # export output file to INPUT.DIR (OUTPUT.DIR not specified)
       file.path <- INPUT.DIR
-    } else {
-      file.path <- getwd()
+    } else { # export output file to tempdir() (OUTPUT.DIR & INPUT.DIR not specified)
+      file.path <- tempdir()
     }
     
     write.table(data.out,

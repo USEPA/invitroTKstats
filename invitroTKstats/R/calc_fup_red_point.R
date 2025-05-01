@@ -33,9 +33,21 @@
 #' \eqn{n_{NPB}} is the number of No Plasma Blank Responses, \eqn{r_{PL}} is Plasma Response,
 #' \eqn{n_{PL}} is the number of Plasma Responses, \eqn{r_{B}} is Plasma Blank Response,
 #' and \eqn{n_B} is the number of Plasma Blank Responses.
+#' 
+#' If the output level-3 result table is chosen to be exported and an output 
+#' directory is not specified, it will be exported to the user's R session
+#' temporary directory. This temporary directory is a per-session directory 
+#' whose path can be found with the following code: \code{tempdir()}. For more 
+#' details, see \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+#' 
+#' As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or \code{OUTPUT.DIR} should be 
+#' specified to simplify the process of importing and exporting files. This 
+#' practice ensures that the exported files can easily be found and will not be 
+#' exported to a temporary directory. 
 #'
-#' @param FILENAME (Character) A string used to identify the input level-2 file.
-#' "<FILENAME>-fup-RED-Level2.tsv".
+#' @param FILENAME (Character) A string used to identify the input level-2 file,
+#' "<FILENAME>-fup-RED-Level2.tsv" (if importing from a .tsv file), and/or used to
+#' identify the output level-3 file, "<FILENAME>-fup-RED-Level3.tsv" (if exporting).
 #' 
 #' @param data.in (Data Frame) A level-2 data frame generated from the 
 #' \code{format_fup_red} function with a verification column added by 
@@ -46,8 +58,9 @@
 #' (Defaults to "Verified".)
 #' 
 #' @param output.res (Logical) When set to \code{TRUE}, the result 
-#' table (level-3) will be exported to the current directory as a .tsv file. 
-#' (Defaults to \code{TRUE}.)
+#' table (level-3) will be exported to the user's per-session temporary directory
+#' or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
+#' (Defaults to \code{FALSE}.)
 #' 
 #' @param sig.figs (Numeric) The number of significant figures to round the exported result table (level-3). 
 #' (Note: console print statements are also rounded to specified significant figures.)
@@ -58,7 +71,7 @@
 #' directory. (Defaults to \code{NULL}.)
 #' 
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
-#' If \code{NULL}, the output file will be saved to the current working
+#' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
 #' @return A level-3 data frame with one row per chemical, contains chemical identifiers 
@@ -85,7 +98,23 @@
 #' ## Will need to replace FILENAME and INPUT.DIR with name prefix and location of level-2 'tsv'.
 #' level3 <- calc_fup_red_point(# e.g. replace with "Examples" from "Examples-fup-RED-Level2.tsv"
 #'                              FILENAME="<level-2 FILENAME prefix>",
-#'                              INPUT.DIR = "<level-2 FILE LOCATION>")
+#'                              INPUT.DIR = "<level-2 FILE LOCATION>",
+#'                              output.res = TRUE)
+#' }
+#' 
+#' ## scenario 3: 
+#' ## import level-2 data from the R session and export the result table to the
+#' ## user's temporary directory 
+#' ## Will need to replace FILENAME with desired level-2 filename prefix. 
+#' \dontrun{
+#' level3 <- calc_fup_red_point(# e.g. replace with "MYDATA",
+#'                              FILENAME = "<desired level-2 FILENAME prefix>",
+#'                              data.in = level2,
+#'                              output.res = TRUE)
+#' # To delete, use the following code. For more details, see the link in the 
+#  # "Details" section. 
+#' file.remove(list.files(tempdir(), full.names = TRUE, 
+#' pattern = "<desired level-2 FILENAME prefix>-fup-RED-Level3.tsv"))  
 #' }
 #'
 #' @references
@@ -99,7 +128,7 @@ calc_fup_red_point <- function(
     FILENAME, 
     data.in,
     good.col="Verified",
-    output.res=TRUE, 
+    output.res=FALSE, 
     sig.figs = 3, 
     INPUT.DIR=NULL, 
     OUTPUT.DIR = NULL)
@@ -316,7 +345,7 @@ calc_fup_red_point <- function(
     } else if (!is.null(INPUT.DIR)) {
       file.path <- INPUT.DIR
     } else {
-      file.path <- getwd()
+      file.path <- tempdir()
     }
     
     rounded.out.table <- out.table 

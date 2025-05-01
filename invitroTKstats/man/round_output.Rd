@@ -12,7 +12,7 @@ round_output(
   level = NULL,
   exclusion.cols = NULL,
   sig.figs = 3,
-  output.res = TRUE,
+  output.res = FALSE,
   INPUT.DIR = NULL,
   OUTPUT.DIR = NULL
 )
@@ -53,10 +53,10 @@ numeric columns to.
 (Defaults to \code{3}.)}
 
 \item{output.res}{(Logical) When set to \code{TRUE}, the rounded data file will 
-be exported to the current directory as a .tsv (if \code{data.in} is specified
+be exported to the user's per-session temporary directory as a .tsv (if \code{data.in} is specified
 or if \code{FULL_FILENAME} is a .tsv) or as an .RData (if \code{FULL_FILENAME}
 is an .RData). 
-(Defaults to \code{TRUE}.)}
+(Defaults to \code{FALSE}.)}
 
 \item{INPUT.DIR}{(Character) Path to the directory where the \code{FULL_FILENAME} exists. 
 If \code{NULL}, looking for the input \code{FULL_FILENAME} in the current working
@@ -64,7 +64,7 @@ directory.
 (Defaults to \code{NULL}.)}
 
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the rounded data file. 
-If \code{NULL}, the output file will be saved to the current working
+If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
 }
 \value{
@@ -92,7 +92,18 @@ figures is specified.
 The input to this function can be any level of data (level-0 through level-4)
 corresponding to any assay (Clint, Caco-2, Fup RED, Fup UC). The desired data object 
 to be rounded can be a data.frame, specified with \code{data.in}, or a .tsv or 
-.RData, specified with \code{FULL_FILENAME}.
+.RData, specified with \code{FULL_FILENAME}. 
+
+If the rounded output file is chosen to be exported and an output directory is
+not specified, it will be exported to the user's R session temporary directory.
+This temporary directory is a per-session directory whose path can be found 
+with the following code: \code{tempdir()}. For more details, see 
+\url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}. 
+
+As a best practice, \code{INPUT.DIR} (when importing a .tsv or .RData file) 
+and/or \code{OUTPUT.DIR} should be specified to simplify the process of importing
+and exporting files. This practice ensures that the exported files can easily 
+be found and will not be exported to a temporary directory.
 }
 \examples{
 ## Round Clint-L4 data, exclude p-value columns, and don't export results 
