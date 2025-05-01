@@ -1,16 +1,27 @@
 ---
 title: "Intrinsic Hepatic Clearance (Cl~int~)"
-output: rmarkdown::html_vignette
+author: "US EPA's Center for Computational Toxicology and Exposure ccte@epa.gov"
+output:
+  rmdformats::readthedown:
+    fig_retina: false
+    toc_depth: 4
 bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
+params:
+  my_css: css/rmdformats.css
 vignette: >
   %\VignetteIndexEntry{Clint}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
+```{css, code = readLines(params$my_css), hide=TRUE, echo = FALSE}
+```
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = 'center'
 )
 ```
 
@@ -21,7 +32,7 @@ This vignette guides users on how to estimate intrinsic hepatic clearance (Cl~in
 The mass spectrometry data should be collected from an assay that uses cryopreserved hepatocyte suspension (@shibata2002prediction) as seen in Figure 1. 
 
 ```{r, echo = FALSE, out.width = "100%", fig.cap = "Fig 1: Cl~int~ experimental set up", fig.topcaption = TRUE, fig.align = "center"}
-knitr::include_graphics("Clint_diagram.png")
+knitr::include_graphics("img/clint_diagram.png")
 ```
 
 ### Suggested packages for use with this vignette 
