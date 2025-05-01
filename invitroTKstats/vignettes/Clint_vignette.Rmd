@@ -1,5 +1,5 @@
 ---
-title: "Clint"
+title: "Intrinsic Hepatic Clearance (Cl~int~)"
 output: rmarkdown::html_vignette
 bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
@@ -469,9 +469,363 @@ clint_L4_curated %>%
 
 Generally, data processing pipelines should include minimal to no manual coding. It is best to keep clean code that is easily reproducible and transferable. The user should aim to have all the required data and meta-data files properly formatted to avoid further modifications throughout the pipeline. 
 
-## References 
+## Appendix
+
+### L4 Bayesian Modeling Information
+
+In this section, we provide the equations for the Bayesian model (i.e., priors and likelihoods) used to estimate the intrinsic hepatic clearance ($Cl_{int}$) and the uncertainty about that estimate. The following sub-sections are organized such that:
+
+* Each section contains the relevant hyper-parameters and their priors followed by the variable likelihoods
+* Sections are ordered from the most fundamental variables/parameters (i.e. those used in later equations) to the likelihood for the observations used to estimate the intrinsic hepatic clearance ($Cl_{int}$)
+
+Some of the indices are reused between sections (e.g. $i$, $w^*_i$, etc.). However, it should be noted that these are not meant to be understood across sub-sections; rather, only understood within the context of the section they are in.
+
+*NOTE: Readers unfamiliar with JAGS should be aware that JAGS software uses precision ($\tau$) rather than variance ($\sigma^2$) (i.e., $\tau = \frac{1}{\sigma^2}$).*
+
+##### Measurement Model
+
+Each chemical may have more than one day of experimentation, and thus multiple calibrations.  Suppose for the chemical of interest there are a total of $n_{cal}$ calibrations (`Num.cal`). For a particular calibration $w \in (1,\ldots,n_{cal})$ we assume the following priors for our Bayesian model:
+
+**Prior for log-scale constant analytic standard deviation (`log.const.analytic.sd`):**
+
+$$ log(\sigma_a)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space \sigma_{a,w} = 10^{log(\sigma_a)_w} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $\sigma_{a,w}$ is the converted parameter used in later equations (`const.analytic.sd`).
+
+**Prior for the log-scale heteroscedastic analytic slope (`log.hetero.analytic.slope`):**
+
+$$ log(m_h)_w \sim \textrm{Unif} \left( a = -6,b = 1 \right) ; \space m_{h,w} = 10^{log(m_h)_w} $$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $m_{h,w}$ is the converted parameter used in later equations (`hetero.analytic.slope`).
+
+**Prior for the threshold concentration (`C.thresh`):**
+
+$$ C_{thresh,w} \sim \textrm{Unif} \left( a = 0,b = \frac{conc_{target,w}}{10} \right)$$
+
+where $a$ and $b$ are the minimum and maximum, respectively, and $conc_{target,w}$ is the expected initial concentration (`Test.Nominal.Conc`) for calibration index $w$.
+
+**Prior for the log-scale calibration (`log.calibration`):**
+
+$$ log(cal)_w \sim \textrm{N} \left( \mu = 0,\tau = 0.01 \right) ; \space cal_w = 10^{log(cal)_w}$$
+
+where $\mu$ and $\tau$ are the mean and precision, respectively, and $cal_w$ is the converted parameter used in later equations (`calibration`).
+
+**Prior for the background (`background`):**
+
+$$ \gamma_w \sim \textrm{Exp} \left( \lambda = 100 \right)$$
+
+where $\lambda$ is the rate parameter.
+
+##### Estimation of Blanks
+
+Let us assume the total number of prediction and precision for the blank observations is based on the total number of calibrations in the set (i.e. $n_{cal}$, `Num.cal`).  Thus, for each calibration $j \in w$ we obtain the following:
+
+Estimation for the predicted values for blank observations (`Blank.pred`):
+
+$$ x_{blank,j} = \frac{\gamma_{j}}{df_{blank,j}} $$
+
+where $df_{blank,j}$ is the dilution factor for the $j^{th}$ calibration for blank observations (`Blank.Dilution.Factor`).
+
+Estimation for the precision of blank observations (`Blank.prec`):
+
+$$ \tau_{blank,j} = \frac{1}{(\sigma_{a,j} + m_{h,j} *x_{blank,j})^2} $$
+
+**Likelihood for blank observations (`Blank.obs`):**
+
+Suppose $n_{blank}$ is the total number of blank observations (`Num.blank.obs`), and $y_{blank,i}$ indicates the $i^{th}$ blank observation, sample type = "Blank" (`Blank.obs`). For each observation we obtain a posterior MCMC estimate for the blank observations with the following:
+
+$$ y_{blank,i} \sim \textrm{N} \left( \mu = x_{blank,w^*_i}, \tau = \tau_{blank,w^*_i} \right) $$
+
+where $w^*_i$ is the calibration index (`Blank.cal`) for the $i^{th}$ observation, such that $w^* = (w^*_1,\ldots,w^*_{n_{blank}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations).
+
+##### Estimation of Calibration Curve
+
+Suppose $n_{cc}$ is the total number of calibration curve observations (`Num.cc`), and $y_{cc,i}$ indicates the $i^{th}$ calibration curve observation, sample type = `CC` (`cc.obs`). For each observation we obtain a posterior MCMC estimate for the calibration curve observations with the following:
+
+Calibration curve slope for the $i^{th}$ observation (`cc.slope`) is assumed to be the calibration estimate corresponding to the calibration index ($w^*_i$):
+
+$$ m_{cc,i} = cal_{w^*_i}$$
+
+where $w^*_i$ is the calibration index (`cc.obs.cal`) for the $i^{th}$ observation, such that $w^* = (w^*_1,\ldots,w^*_{n_{cc}})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations).
+
+Calibration curve intercept for the $i^{th}$ observation (`cc.intercept`) is assumed to be the background estimate corresponding to the calibration index ($w^*_i$):
+
+$$ \alpha_{cc,i} = \gamma_{w^*_i}$$
+
+Estimation of the predictions for calibration curve observations (`cc.pred`):
+
+$$ x_{cc,i} = m_{cc,i} * (\frac{C_{cc,i}}{df_{cc,i}} - \frac{C_{thresh,w^*_i}}{df_{cc,i}}) * \beta_{cc,i} + \frac{\alpha_{cc,i}}{df_{cc,i}} $$
+
+where
+
+* $C_{cc,i}$ is the chemical concentration (`cc.obs.conc`) for the $i^{th}$ calibration curve observation
+* $df_{cc,i}$ is the dilution factor (`cc.obs.Dilution.Factor`) for the $i^{th}$ calibration curve observation
+* $\beta_{cc,i}$ is the JAGS step function for the $i^{th}$ calibration curve observation, such that
+
+$$
+\beta_{cc,i} =
+\begin{cases}
+1 & \textrm{if} \space (\frac{C_{cc,i}}{df_{cc,i}} - \frac{C_{thresh,w^*_i}}{df_{cc,i}}) \ge 0 \\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+
+Estimation of the precision for calibration curve observations (`cc.prec`):
+
+$$ \tau_{cc,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} * x_{cc,i})^2} $$
+
+**Likelihood for the calibration curve observations (`cc.obs`):**
+
+$$ y_{cc,i} \sim \textrm{N} \left( \mu = x_{cc,i},\tau = \tau_{cc,i} \right)$$
+
+##### Clearance Model
+
+In some cases, the intrinsic hepatic clearance assay will have two initial concentrations (i.e. lower and higher concentration), typically these are $1$ and $10 \mu M$ but do not necessarily need to be.
+
+Prior for the binary indicator for whether the concentration decreases (`decreases`):
+
+$$ d_c \sim \textrm{Bern} \left( p = p_{d_c} \right) $$
+
+where $p$ is the probability parameter and $p_{d_c}$ is the user-specified prior probability that a chemical will decrease in the assay (`DECREASE.PROB`).
+
+Prior for the binary indicator for whether the concentration degrades (`degrades`):
+
+$$ d_g \sim \textrm{Bern} \left( p = p_{d_g} \right) $$
+where $p$ is the probability parameter and $p_{d_g}$ is the user-specified prior probability of instability for a chemical within the assay (i.e. abiotic degradation) (`DEGRADE.PROB`).
+
+Prior for the slope representing the biological clearance rate (`bio.rate`) for the lower concentration, indicated by $C_{thresh,1}$ and $conc_{target,1}$:
+
+$$ \delta_{bio} \sim \textrm{Unif} \left( a = 0,b = -log(\frac{C_{thresh,1}}{conc_{target,1}}) \right)$$
+
+where $a$ and $b$ are the minimum and maximum, respectively.
+
+Prior for the slope representing the abiotic clearance rate, when data from the inactivated hepatocytes is available (`abio.rate`) at the lower concentration, indicated by $C_{thresh,1}$ and $conc_{target,1}$: 
+
+$$ \delta_{abio} \sim \textrm{Unif} \left( a = 0,b = -log(\frac{C_{thresh,1}}{conc_{target,1}}) \right) $$
+
+where $a$ and $b$ are the minimum and maximum, respectively.
+
+Prior for the binary indicator for whether there is a reduction in the biological clearance and the chemical shows some metabolic saturation between the lower and higher concentration (`saturates`):
+
+$$ s_f \sim \textrm{Bern} \left( p = p_{s_f} \right)$$
+
+where $p$ is the probability parameter and $p_{s_f}$ is the user-specified prior probability that a chemical's rate of metabolism will decrease between the lower and higher concentration (`SATURATE.PROB`).
+
+*$p_{s_f} = 0.25$ assumes $25\%$ of the chemical shows some metabolic saturation between the lower and higher concentrations.*
+
+Prior for the saturation at the higher concentration (i.e. magnitude of decreased biological clearance) at the higher concentration (`saturation`): 
+
+$$ s_a \sim \textrm{Unif} \left( a = 0,b = 1 \right) $$
+
+Estimation of the actual biological clearance rate (`bio.slope`) at the lower ($m_{bio,1}$) and higher ($m_{bio,2}$) initial concentrations, respectively: 
+
+$$ m_{bio,1} = d_c * \delta_{bio} $$
+$$ m_{bio,2} = d_c * \delta_{bio}* (1-s_f*s_a) $$
+
+such that $m_{bio} = (m_{bio,1},m_{bio,2})$.
+
+The total elimination rate (`slope`) at the lower ($m_1$) and higher ($m_2$) initial concentrations, respectively:
+
+$$ m_1 = d_c * \delta_{bio} + d_g * \delta_{abio} $$
+
+$$ m_2 = d_g * \delta_{abio} + d_c * \delta_{bio} *(1-s_f*s_a) $$
+
+such that $m = (m_1,m_2)$.
+
+Estimate of the abiotic clearance rate (`abio.slope`):
+
+$$ m_{abio} = d_g * \delta_{abio} $$
+
+###### Estimation of Metabolic Clearance
+
+Suppose $n$ is the total number of observations (`Num.obs`), and $y_{i}$ indicates the $i^{th}$ observation, sample type = `Cvst` (`obs`). For each observation we obtain a posterior MCMC estimate for the calibration curve observations with the following:
+
+Estimate of the metabolic exponential decay for the $i^{th}$ observation (`C`):
+
+$$ C_i = conc_{target,c^*_i}*exp(-m_{c^*_i}*t_i) $$
+
+where
+
+* $c^*_i$ represents the initial concentration index (`obs.conc`) for the $i^{th}$ observation (i.e, $c^* = (c^*_1,\ldots,c^*_n)$) and $c^*_i \in (1,2)$ such that $1$ indicates the lower initial concentration and $2$ indicates the higher initial concentration
+* $conc_{target,c^*_i}$ is the expected initial concentration (`Test.Nominal.Conc`) corresponding to the $i^{th}$ observation, given the concentration index $c^*_i$
+* $m_{c^*_i}$ is the total elimination rate slope for the initial concentration corresponding to the $i^{th}$ observation and $m_{c^*_i} \in m$
+* $t_i$ is the time (`obs.time`) for the $i^{th}$ observation
+
+Estimate of the metabolic clearance predictions (`obs.pred`):
+
+$$ x_i = cal_{w^*_i} * (\frac{C_i}{df_i} - \frac{C_{thresh,w^*_i}}{df_i}) * \beta_i + \frac{\gamma_{w^*_i}}{df_i} $$
+
+where
+
+* $df_i$ is the dilution factor (`obs.Dilution.Factor`) for the $i^{th}$ observation
+* $\beta_i$ is the JAGS step function for the $i^{th}$ observation, such that 
+
+$$
+\beta_i = 
+\begin{cases}
+1 & \textrm{if} \space (\frac{C_i}{df_i} - \frac{C_{thresh,w^*_i}}{df_i}) \ge 0 \\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+
+* $w^*_i$ represents the calibration index (`obs.cal`) for the $i^{th}$ observation $w^* = (w^*_1,\ldots,w^*_{n})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations)
+
+Estimates of the metabolic clearance precision (`obs.prec`):
+
+$$ \tau_i = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i}*x_i)^2} $$
+
+**Likelihood for metabolic clearance (`obs`):**
+
+$$ y_i \sim \textrm{N} \left( \mu = x_i,\tau = \tau_i \right)$$
+
+###### Estimation of Abiotic Clearance
+
+Suppose $n_{abio}$ is the total number of abiotic observations (`Num.abio.obs`), and $y_{abio,i}$ indicates the $i^{th}$ observation, sample type = `Inactive` (`abio.obs`). For each observation we obtain a posterior MCMC estimate for the calibration curve observations with the following:
+
+Estimate of the abiotic exponential decay for the $i^{th}$ observation (`abio.C`):
+
+$$ C_{abio,i} = conc_{target,w^*_i} * exp(-m_{abio}*t_{abio,i}) $$
+
+* $w^*_i$ represents the calibration index (`abio.obs.cal`) for the $i^{th}$ non-biological observation $w^* = (w^*_1,\ldots,w^*_{n_abio})$ and $w^*_i \in w$ (i.e. $w^*_i$ indicates one of the $n_{cal}$ calibrations)
+* $conc_{target,w^*_i}$ is the expected initial concentration (`Test.Nominal.Conc`) corresponding to the $i^{th}$ observation, given the calibration index $w^*_i$
+* $t_{abio,i}$ is the time for the $i^{th}$ abiotic observation (`abio.obs.time`)
+
+Estimates for the abiotic clearance predictions (`abio.obs.pred`):
+
+$$ x_{abio,i} = cal_{w^*_i} * (\frac{C_{abio,i}}{df_{abio,i}} - \frac{C_{thresh,w^*_i}}{df_{abio,i}}) * \beta_{abio,i} + \frac{\gamma_{w^*_i}}{df_{abio,i}} $$
+
+where
+
+* $df_{abio,i}$ is the dilution factor (`abio.obs.Dilution.Factor`) for the $i^{th}$ abiotic observation
+* $\beta_{abio,i}$ is the JAGS step function for the $i^{th}$ abiotic observation, such that
+
+$$
+\beta_{abio,i} = 
+\begin{cases}
+1 & \textrm{if} \space (\frac{C_{abio,i}}{df_{abio,i}} - \frac{C_{thresh,w^*_i}}{df_{abio,i}}) \ge 0 \\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+
+Estimates for the abiotic clearance precision (`abio.obs.prec`):
+
+$$ \tau_{abio,i} = \frac{1}{(\sigma_{a,w^*_i} + m_{h,w^*_i} * x_{abio,i})^2} $$
+
+**Likelihood for the abiotic clearance observations (`abio.obs`):**
+
+$$ y_{abio,i} \sim \textrm{N} \left( \mu = x_{abio,i},\tau = \tau_{abio,i} \right) $$
+
+#### Post-MCMC Estimates
+
+Conversion of disappearance rates (1/hr) to hepatic clearance ($\mu L/min/10^6$) for $1 \mu M$:
+
+$$ \mathbf{Clint.1} = 1000*\frac{m_{bio,1 \mu M}}{\rho_{hep}*60} $$
+
+where $\rho_{hep}$ is the hepatic density and $m_{bio,1 \mu M}$ is the slope for "bio" at $1 \mu M$ (i.e. $m_{bio,1} = m_{bio,1 \mu M}$ where $m_{bio,1}$ is the notation in earlier equations in the Clearance Model section).
+
+Conversion of disappearance rates (1/hr) to hepatic clearance ($\mu L/min/10^6$) for $10 \mu M$:
+
+$$ \mathbf{Clint.10} = 1000*\frac{m_{bio,10 \mu M}}{\rho_{hep}*60} $$
+
+where $\rho_{hep}$ is the hepatic density and $m_{bio,10 \mu M}$ is the slope for "bio" at $10 \mu M$ (i.e. $m_{bio,2} = m_{bio,10 \mu M}$ where $m_{bio,2}$ is the notation in earlier equations in the Clearance Model section).
+
+Posterior probability for intrinsic hepatic clearance:
+
+$$ \mathbf{Clint.pValue} = \frac{\sum_{k=1}^{n_{M}} d_{c,k} }{n_{M}}$$
+
+where $n_{M}$ is the number of MCMC iterations and $d_{c,k}$ is the binary result for MCMC iteration $k$ indicating whether the chemical decreases (i.e. is biologically cleared).
+
+Posterior probability for the chemical saturation:
+
+$$ \mathbf{Sat.pValue} = \frac{\sum_{k=1}^{n_{M}}s_{f,k}}{n_{M}} $$
+
+where $n_{M}$ is the number of MCMC iterations and $s_{f,k}$ is the binary result for MCMC iteration $k$ indicating whether the saturation is hit in each of the MCMC iterations.
+
+Posterior probability of the chemical degradation:
+
+$$ \mathbf{degrades.pValue} = \frac{\sum_{k=1}^{n_{M}}d_{g,k}}{n_{M}}$$
+
+where $n_{M}$ is the number of MCMC iterations and $d_{g,k}$ is the binary result for MCMC iteration $k$ indicating whether the chemical degradation is hit (i.e. is non-biologically cleared).
+
+### JAGS to L4 Equation Notation Tables
+
+Data passed to JAGS as part of the `PREJAGS` object:
+
+|       Data        |   Notation    |   Description   |
+|-------------------|-----------------|-----------------|
+| `Test.Nominal.Conc` | $conc_{target}$ | expected initial concentration |
+| `Num.cal` | $n_{cal}$ | total number of calibrations | 
+| `Num.obs` | $n$ | total number of `Cvst` samples |
+| `obs` | $y$ | `Cvst` sample responses |
+| `obs.conc` | $C$ | `Test.Nominal.Conc` indices for `Cvst` samples |
+| `obs.time` | $t$ | time the `Cvst` samples were tested for a given chemical concentration (in hours) |
+| `obs.cal` | $w^*$ | calibration index for `Cvst` samples (reused index) |
+| `obs.Dilution.Factor` | $df$ | dilution factors for `Cvst` samples |
+| `Num.blank.obs` | $n_{blank}$ | total number of `Blank` samples |
+| `Blank.obs` | $y_{blank}$ | `Blank` sample responses |
+| `Blank.cal` | $w^*$ | calibration index for `Blank` samples  (reused index) |
+| `Blank.Dilution.Factor` | $df_{blank}$ | dilution factors for `Blank` samples |
+| `Num.cc` | $n_{cc}$ | total number of `CC` samples |
+| `cc.obs.conc` | $C_{cc}$ | `Test.Compound.Conc` for `CC` samples of the tested compounds |
+| `cc.obs` | $y_{cc}$ | `CC` sample responses |
+| `cc.obs.cal` | $w^*$ | calibration index for `CC` samples (reused index) |
+| `cc.obs.Dilution.Factor` | $df_{cc}$ | dilution factors for `CC` samples |
+| `Num.abio.obs` | $n_{abio}$ | total number of `Inactive` samples |
+| `abio.obs` | $y_{abio}$ | `Inactive` sample responses |
+| `abio.obs.conc` | $C_{abio}$ | `Test.Nominal.Conc` indices for `Inactive` samples |
+| `abio.obs.time` | $t_{abio}$ | time the `Inactive` samples were tested for a given chemical concentration (in hours) |
+| `abio.obs.cal` | $w^*$ | calibration index for `Inactive` samples (reused index) |
+| `abio.obs.Dilution.Factor` | $df_{abio}$ | dilution factors for `Inactive` samples |
+
+User-specified prior parameter values via level-4 function arguments and passed to JAGS as part of the `PREJAGS` object:
+
+|   Prior   | Notation | level-4 Argument (Default) | Description |
+|-----------|----------|------------------|-------------|
+| `DECREASE.PROB` | $p_{d_c}$ | `decrease.prob` (0.5) | probability that a chemical will decrease in the assay |
+| `DEGRADE.PROB` | $p_{d_g}$ | `degrade.prob` (0.05) | probability of instability for a chemical within the assay (i.e. abiotic degradation) |
+| `SATURATE.PROB` | $p_{s_f}$ | `saturate.prob` (0.25) | probability that a chemical's rate of metabolism will decrease between the lower and higher concentration |
+
+MCMC Parameters in JAGS:
+
+| JAGS Parameter Name | Parameter | Distribution | Prior/Posterior/Calculated |
+|---------------------|-----------|--------------|----------------------------|
+| `log.const.analytic.sd` | $log(\sigma_a)$ | Uniform   | Prior |
+| `log.hetero.analytic.slope` | $log(m_h)$ | Uniform | Prior |
+| `C.thresh` | $C_{thresh}$| Uniform | Prior |
+| `log.calibration` | $log(cal)$ | Normal | Prior |
+| `background` | $\gamma$ | Exponential | Prior |
+| `const.analytic.sd` | $\sigma_a$ | | Calculated |
+| `hetero.analytic.slope` | $m_h$ | | Calculated |
+| `calibration` | $cal$ | | Calculated |
+| `Blank.pred` | $x_{blank}$ | | Calculated |
+| `Blank.prec` | $\tau_{blank}$ | | Calculated |
+| `Blank.obs` | $y_{blank}$ | Normal | Posterior |
+| `cc.slope` | $m_{cc}$ | | Calculated |
+| `cc.intercept` | $\alpha_{cc}$ | | Calculated |
+| `cc.pred` | $x_{cc}$ | | Calculated |
+| `cc.prec` | $\tau_{cc}$ | | Calculated |
+| `cc.obs` | $y_{cc}$ | Normal | Posterior |
+| `decreases` | $d_c$ | Bernoulli | Prior |
+| `degrades` | $d_g$ | Bernoulli | Prior |
+| `bio.rate` | $\delta_{bio}$ | Uniform | Prior |
+| `abio.rate` | $\delta_{abio}$ | Uniform | Prior |
+| `slope` | $m$ | | Calculated |
+| `bio.slope` | $m_{bio}$| | Calculated |
+| `saturates` | $s_f$ | Bernoulli | Prior |
+| `saturation` | $s_a$ | Uniform | Prior |
+| `C` | $C$ | | Calculated |
+| `obs.pred` | $x$ | | Calculated | 
+| `obs.prec` | $\tau$ | | Calculated (*Not the general distribution parameter.*) |
+| `obs` | $y$ | Normal | Posterior |
+| `abio.slope` | $m_{abio}$ | | Calculated |
+| `abio.C` | $C_{abio}$ | | Calculated |
+| `abio.obs.pred` | $x_{abio}$ | | Calculated |
+| `abio.obs.prec` | $\tau_{abio}$ | | Calculated |
+| `abio.obs` | $y_{abio}$ | Normal | Posterior |
+
+## References
 
 \references{
-\insertRef{breen2021high}
-\insertRef{shibata2002prediction}
+  \insertRef{breen2021high}
+  \insertRef{shibata2002prediction}
 }
