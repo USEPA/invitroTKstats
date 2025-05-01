@@ -42,7 +42,7 @@
 #' This argument only needs to be specified when importing input data set with \code{FILENAME} 
 #' or exporting a data file.
 #'
-#' @param output.res (Logical) When set to \code{TRUE}, the result 
+#' @param output.res (Logical) When set to \code{TRUE}, the resulting
 #' data frame (level-2) will be exported to the user's per-session temporary directory
 #' or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
 #' (Defaults to \code{FALSE}.)
