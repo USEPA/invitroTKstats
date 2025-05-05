@@ -70,7 +70,8 @@ name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
 \item{dtxsid.col}{(Character) Column name from \code{data.in} containing EPA's DSSTox Structure
 ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)}
 
-\item{date}{(Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+\item{date}{(Character) The laboratory measurement date, format "MMDDYY" where 
+"MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year. (Defaults to \code{NULL}.) 
 (Note: Single entry only, use only if all data were collected on the same date.)}
 
 \item{date.col}{(Character) Column name containing \code{date} information. (Defaults to "Date".) (Note: \code{data.in} does not
@@ -287,7 +288,7 @@ level0 <- invitroTKstats::fup_uc_L0
 ## If the input level-0 data exists in an external file such as a .tsv file,
 ## users may import it using INPUT.DIR to specify the path and FILENAME
 ## to specify the file name. See documentation for details.
-level1 <- format_fup_uc(data.in = fup_uc_L0,
+level1 <- format_fup_uc(data.in = level0,
                         sample.col="Sample",
                         compound.col="Compound",
                         test.conc.col ="Compound.Conc", 

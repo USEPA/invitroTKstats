@@ -376,7 +376,11 @@ format_caco2 <- function(
   
 # These arguments allow the user to specify a single value for every observation
 # in the table:
-  if (!is.null(date)) data.out[,date.col] <- date
+  if (!is.null(date)){
+    # if numeric, convert to string and ensuring leading zero is kept for single digit months
+    if (is.numeric(date)) date <- base::sprintf("%06d", date)
+    data.out[,date.col] <- date
+    }
   if (!is.null(cal)) data.out[,cal.col] <- cal
   if (!is.null(dilution)) data.out[,dilution.factor.col] <- dilution
   if (!is.null(istd.name)) data.out[,istd.name.col] <- istd.name
