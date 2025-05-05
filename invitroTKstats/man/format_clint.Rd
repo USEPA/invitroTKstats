@@ -67,7 +67,8 @@ contain columns with names specified by the following arguments:}
 spectrometry (MS) sample name used by the laboratory. (Defaults to
 "Lab.Sample.Name".)}
 
-\item{date}{(Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+\item{date}{(Character) The laboratory measurement date, format "MMDDYY" where 
+"MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year. (Defaults to \code{NULL}.) 
 (Note: Single entry only, 
 use only if all data were collected on the same date.)}
 

@@ -45,7 +45,8 @@
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name".)
 #' 
-#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' @param date (Character) The laboratory measurement date, format "MMDDYY" where 
+#' "MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, 
 #' use only if all data were collected on the same date.)
 #'
@@ -378,7 +379,11 @@ format_clint <- function(
 
 # These arguments allow the user to specify a single value for every observation
 # in the table:
-  if (!is.null(date)) data.in[,date.col] <- date
+  if (!is.null(date)){
+    # if numeric, convert to string and ensuring leading zero is kept for single digit months
+    if (is.numeric(date)) date <- base::sprintf("%06d", date)
+    data.in[,date.col] <- date
+  }
   #if (!is.null(compound.conc)) data.in[,compound.conc.col] <- compound.conc
   if (!is.null(time)) data.in[,time.col] <- time
   if (!is.null(cal)) data.in[,cal.col] <- cal

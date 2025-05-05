@@ -48,7 +48,8 @@
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name".)
 #' 
-#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' @param date (Character) The laboratory measurement date, format "MMDDYY" where 
+#' "MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all data were collected on the same date.)
 #' 
 #' @param date.col (Character) Column name containing \code{date} information. 
@@ -252,7 +253,7 @@
 #' ## If the input level-0 data exists in an external file such as a .tsv file,
 #' ## users may import it using FILENAME and INPUT.DIR to specify the file name 
 #' ## and its directory path, respectively.
-#' level1 <- format_fup_red(data.in = fup_red_L0,
+#' level1 <- format_fup_red(data.in = level0,
 #'                          sample.col ="Sample",
 #'                          date.col="Date",
 #'                          compound.col="Compound",
@@ -361,7 +362,11 @@ format_fup_red <- function(
 # These arguments allow the user to specify a single value for every observation
 # in the table:
   if (!is.null(cal)) data.in[,cal.col] <- cal
-  if (!is.null(date)) data.in[,date.col] <- date
+  if (!is.null(date)){
+    # if numeric, convert to string and ensuring leading zero is kept for single digit months
+    if (is.numeric(date)) date <- base::sprintf("%06d", date)
+    data.in[,date.col] <- date
+  }
   if (!is.null(time)) data.in[,time.col] <- time
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name

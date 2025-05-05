@@ -50,7 +50,8 @@
 #' @param dtxsid.col (Character) Column name from \code{data.in} containing EPA's DSSTox Structure
 #' ID (\url{http://comptox.epa.gov/dashboard}). (Defaults to "DTXSID".)
 #'
-#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' @param date (Character) The laboratory measurement date, format "MMDDYY" where 
+#' "MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all data were collected on the same date.)
 #'
 #' @param date.col (Character) Column name containing \code{date} information. (Defaults to "Date".) (Note: \code{data.in} does not
@@ -235,7 +236,7 @@
 #' ## If the input level-0 data exists in an external file such as a .tsv file,
 #' ## users may import it using INPUT.DIR to specify the path and FILENAME
 #' ## to specify the file name. See documentation for details.
-#' level1 <- format_fup_uc(data.in = fup_uc_L0,
+#' level1 <- format_fup_uc(data.in = level0,
 #'                         sample.col="Sample",
 #'                         compound.col="Compound",
 #'                         test.conc.col ="Compound.Conc", 
@@ -337,7 +338,11 @@ format_fup_uc <- function(
 
 # These arguments allow the user to specify a single value for every observation
 # in the table:
-  if (!is.null(date)) data.in[,date.col] <- date
+  if (!is.null(date)){
+    # if numeric, convert to string and ensuring leading zero is kept for single digit months
+    if (is.numeric(date)) date <- base::sprintf("%06d", date)
+    data.in[,date.col] <- date
+  }
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution
   if (!is.null(istd.name)) data.in[,istd.name.col] <- istd.name
