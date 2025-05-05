@@ -341,7 +341,7 @@ format_fup_uc <- function(
   if (!is.null(date)){
     # if numeric, convert to string and ensuring leading zero is kept for single digit months
     if (is.numeric(date)) date <- base::sprintf("%06d", date)
-    data.out[,date.col] <- date
+    data.in[,date.col] <- date
   }
   if (!is.null(cal)) data.in[,cal.col] <- cal
   if (!is.null(dilution)) data.in[,dilution.col] <- dilution

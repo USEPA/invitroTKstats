@@ -382,7 +382,7 @@ format_clint <- function(
   if (!is.null(date)){
     # if numeric, convert to string and ensuring leading zero is kept for single digit months
     if (is.numeric(date)) date <- base::sprintf("%06d", date)
-    data.out[,date.col] <- date
+    data.in[,date.col] <- date
   }
   #if (!is.null(compound.conc)) data.in[,compound.conc.col] <- compound.conc
   if (!is.null(time)) data.in[,time.col] <- time
