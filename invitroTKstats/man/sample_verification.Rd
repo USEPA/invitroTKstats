@@ -29,7 +29,7 @@ input is one of the following: "Clint", "fup-UC", "fup-RED", or "Caco-2".
 This argument only needs to be specified when importing input data set with \code{FILENAME} 
 or exporting a data file.}
 
-\item{output.res}{(Logical) When set to \code{TRUE}, the result 
+\item{output.res}{(Logical) When set to \code{TRUE}, the resulting
 data frame (level-2) will be exported to the user's per-session temporary directory
 or \code{OUTPUT.DIR} (if specified) as a .tsv file. 
 (Defaults to \code{FALSE}.)}
