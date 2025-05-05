@@ -48,7 +48,8 @@
 #' spectrometry (MS) sample name used by the laboratory. (Defaults to
 #' "Lab.Sample.Name".)
 #' 
-#' @param date (Numeric) The laboratory measurement date. (Defaults to \code{NULL}.) 
+#' @param date (Character) The laboratory measurement date, format "MMDDYY" where 
+#' "MM" = 2 digit month, "DD" = 2 digit day, and "YY" = 2 digit year. (Defaults to \code{NULL}.) 
 #' (Note: Single entry only, use only if all data were collected on the same date.)
 #' 
 #' @param date.col (Character) Column name containing \code{date} information. 
@@ -252,7 +253,7 @@
 #' ## If the input level-0 data exists in an external file such as a .tsv file,
 #' ## users may import it using FILENAME and INPUT.DIR to specify the file name 
 #' ## and its directory path, respectively.
-#' level1 <- format_fup_red(data.in = fup_red_L0,
+#' level1 <- format_fup_red(data.in = level0,
 #'                          sample.col ="Sample",
 #'                          date.col="Date",
 #'                          compound.col="Compound",

@@ -140,8 +140,8 @@ DC_kreutz.pfas <- create_catalog(
   # number of rows to read in from L0 Excel file for compound/analyte samples
   num.rows = c(30,18,18), 
   # date the data was generated
-  #   (MMDDYYY: 2-digit month, 2-digit day, 4-digit year)
-  date = "06302021", 
+  #   (MMDDYY: 2-digit month, 2-digit day, 2-digit year)
+  date = "063021", 
   # chemical id
   compound = c("745","949","959"),
   # internal standard compound (corresponding to chemical id)
