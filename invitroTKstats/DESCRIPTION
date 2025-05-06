@@ -22,7 +22,8 @@ Authors@R: c(
            person("Zhao", "Zhihui", role = c("ctb")),
            person("Chantel", "Nicolas", role = c("ctb"),
              comment = c(ORCID = "0000-0003-2061-5830")),
-           person("Anna", "Kreutz", role = c("ctb"))
+           person("Anna", "Kreutz", role = c("ctb"),
+             comment = c(ORCID = "0000-0002-7787-0683"))
            )
 Depends: R (>= 2.10)
 Imports: runjags, parallel, readxl, coda, ggplot2, scales, stats4, Rdpack, methods, stats, utils, dplyr, rlang
