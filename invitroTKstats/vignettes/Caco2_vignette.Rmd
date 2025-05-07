@@ -2,20 +2,13 @@
 title: "Apparent Membrane Permeability (Caco-2)"
 author: "US EPA's Center for Computational Toxicology and Exposure ccte@epa.gov"
 output:
-  rmdformats::readthedown:
-    fig_retina: false
-    toc_depth: 4
+  rmarkdown::html_vignette
 bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
-params:
-  my_css: css/rmdformats.css
 vignette: >
   %\VignetteIndexEntry{Caco-2}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
-```{css, code = readLines(params$my_css), hide=TRUE, echo = FALSE}
-```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(

@@ -1,6 +1,6 @@
 Package: invitroTKstats
 Version: 0.0.13
-Date: 2025-04-09
+Date: 2025-05-02
 Title: In Vitro Toxicokinetic Data Processing and Analysis Pipeline
 Description: A set of tools for processing and analyzing in vitro toxicokinetic
              measurements in a standardized and reproducible pipeline. The package
@@ -13,16 +13,17 @@ Description: A set of tools for processing and analyzing in vitro toxicokinetic
              by the package were described in \insertCite{wambaugh2019assessing}.
 Authors@R: c(
            person("John", "Wambaugh", email = "wambaugh.john@epa.gov", 
-             role = c("aut"),
-             comment = c(ORCID = "0000-0002-4024-534X")), 
+             role = c("aut"),comment = c(ORCID = "0000-0002-4024-534X")), 
            person("Sarah E.", "Davidson-Fritz", email = "davidsonfritz.sarah@epa.gov", 
              role = c("aut","cre"), comment = c(ORCID = "0000-0002-2891-9380")),
-           person("Lindsay","Knupp",email = "knupp.lindsay@epa.gov",
-           role = c("ctb")), 
+           person("Lindsay","Knupp",email = "knupp.lindsay@epa.gov",role = c("ctb")),
+           person("Barbara A.","Wetmore",role = c("ctb"),
+            comment = c(ORCID = "0000-0002-6878-5348")),
            person("Zhao", "Zhihui", role = c("ctb")),
            person("Chantel", "Nicolas", role = c("ctb"),
              comment = c(ORCID = "0000-0003-2061-5830")),
-           person("Anna", "Kreutz", role = c("ctb"))
+           person("Anna", "Kreutz", role = c("ctb"),
+             comment = c(ORCID = "0000-0002-7787-0683"))
            )
 Depends: R (>= 2.10)
 Imports: runjags, parallel, readxl, coda, ggplot2, scales, stats4, Rdpack, methods, stats, utils, dplyr, rlang
@@ -37,11 +38,11 @@ Suggests:
     rmarkdown,
     magrittr, 
     stringr
-License: GPL-3
+License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr, R.rsp
 RoxygenNote: 7.3.2
 URL: https://www.epa.gov/chemical-research/rapid-chemical-exposure-and-dose-research
 NeedsCompilation: no
-Maintainer: John Wambaugh <wambaugh.john@epa.gov>
+Maintainer: Sarah E. Davidson-Fritz <davidsonfritz.sarah@epa.gov>
