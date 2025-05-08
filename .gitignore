@@ -54,6 +54,8 @@ invitroTKstats/.Ruserdata
 
 # Package binaries
 *.tar.gz
-
-
+# Meta-data and Doc Compilation Files
+inst/doc
+/doc/
+/Meta/
 
