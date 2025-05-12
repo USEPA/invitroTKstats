@@ -10,9 +10,9 @@
 
 <a href="https://github.com/USEPA/invitroTKstats.git"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
 
-The `invitroTKstats` R package contains functions to run standardized
+The `invitroTKstats` R package contains functions to run a standardized
 data pipeline for processing high-throughput toxicokinetic (HTTK)
-mass-spectrometry data obtained from a variety *in vitro* assays. The
+mass-spectrometry data obtained from a variety of *in vitro* assays. The
 pipeline includes standardization for data documentation, statistical
 analyses predicting toxicokinetic parameters characterizing absorption,
 distribution, metabolism, and elimination of chemicals by the body.
@@ -26,6 +26,9 @@ estimation and, in some cases, Bayesian estimations for the distribution
 of likely parameter values. Data used to derive the estimates are based
 on mass spectrometry ratios of analyte peak areas to internal standard
 (ISTD) peak areas.
+
+If you are interested in contributing or want to report a bug, please
+submit an issue or start a discussion.
 
 ### Dependencies
 
@@ -69,7 +72,7 @@ devtools::install_local(
 )
 ```
 
-- Installation a tarball version of the package:
+- Installing a tarball version of the package:
 
   1.  Save the tarball file “invitroTKstats_X.Y.Z.tar.gz” to a local
       directory location.
@@ -86,8 +89,8 @@ associated with the version of the package you wish to install.*
 
 ### Loading the Package
 
-To load the `invitroTKstats` data R package into your local R session
-via the R console:
+To load the `invitroTKstats` R package into your local R session via the
+R console:
 
 ``` r
 library(invitroTKstats)
@@ -106,7 +109,8 @@ packageVersion(invitroTKstats)
 - Sarah E. Davidson-Fritz (Conceptualization & Lead Package Developer)
 - Lindsay Knupp (Software Development)
 - Barbara A. Wetmore (Raw Data Generation & Subject Matter Expert)
-- Nicolas Chantel (Inital Bayesian Model Development)
+- Nicolas Chantel (Initial Bayesian Model Development for $f_{up}$ RED
+  assay)
 - Zhihui Zhao (Software Development)
 - Anna Kreutz (Raw Data Generation & Subject Matter Expert)
 
