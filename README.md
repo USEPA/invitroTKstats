@@ -1,92 +1,124 @@
-# R Package "invitroTKstats"
 
-Standardized pipeline for processing high-throughput toxicokinetic (HTTK) data from *in vitro* assays.  The pipeline includes standardization for data documentation, statistical analyses predicting toxicokinetics parameters that characterize absorption, distribution, metabolism, and elimination of chemicals by the body.
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-The assays covered by the pipeline include intrinsic clearance after hepatocyte incubation ($Cl_{int}$); three variants of plasma protein binding experiments, CACO-2 membrane permeability, and blood to plasma concentration ratio. Analysis methods include frequentist point estimates and, in some cases, Bayesian methods for identifying distributions of likely parameter values. Analysis is based on mass spectrometry ratios of analyte peak areas to internal standard peak areas. Data are formatted to anticipate databases storage.
+# invitroTKstats
 
-## Background
+<!-- badges: start -->
+<!-- badges: end -->
 
-## Getting Started
+## Welcome to the GitHub repository for the invitroTKstats package
+
+<a href="https://github.com/USEPA/invitroTKstats.git"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
+
+The `invitroTKstats` R package contains functions to run standardized
+data pipeline for processing high-throughput toxicokinetic (HTTK)
+mass-spectrometry data obtained from a variety *in vitro* assays. The
+pipeline includes standardization for data documentation, statistical
+analyses predicting toxicokinetic parameters characterizing absorption,
+distribution, metabolism, and elimination of chemicals by the body.
+
+The assays covered by the pipeline include intrinsic clearance after
+hepatocyte incubation ($Cl_{int}$); two variants of plasma protein
+binding experiments ($f_{up}$) – namely Rapid Equilibrium Dialysis (RED)
+and Ultracentrifugation (UC), CACO-2 membrane permeability, and blood to
+plasma concentration ratio. Analysis methods include a frequentist point
+estimation and, in some cases, Bayesian estimations for the distribution
+of likely parameter values. Data used to derive the estimates are based
+on mass spectrometry ratios of analyte peak areas to internal standard
+(ISTD) peak areas.
 
 ### Dependencies
 
-* Users will need the freely available R statistical computing language: <https://www.r-project.org/>
-* Users will need the freely available "Just Another Gibbs Sampler" (JAGS):
-<https://mcmc-jags.sourceforge.io/>
-* Users will need to have the following package installed in addition to
-`invitroTKstats`:
-  * `ggplot2`
-  * `parallel`
-  * `runjags`
-  * `stats4`
-* Users will likely want a development environment like RStudio: <https://www.rstudio.com/products/rstudio/download/>
+- Users will need the freely available [R statistical computing
+  language](https://www.r-project.org/).
+- Users will need the freely available [“Just Another Gibbs Sampler”
+  (JAGS)](https://mcmc-jags.sourceforge.io/).
+- Users will need to have the following R packages installed in addition
+  to `invitroTKstats`:
+  - `ggplot2`
+  - `parallel`
+  - `runjags`
+  - `stats4`
+- Users will likely want a development environment like
+  [RStudio](https://www.rstudio.com/products/rstudio/download/).
 
-### Installing
+## Installation
 
-Getting Started with R Package `invitroTKstats`.
+- Installing the current version of the package from GitHub, run the
+  following command in the R console:
 
-* Installing directly from the GitHub repo from the R console
-
-```
-devtools::install_git(
-  "https://github.com/jfwambaugh/invitroTKstats.git",
-  subdir = "invitroTKstats",
-  ref = "main"
-)
+``` r
+devtools::install_github("https://github.com/USEPA/invitroTKstats.git")
 ```
 
-* Installing a local clone of the GitHub repo.
-  
-  1. Go to the GitHub repo for
-  [`invitroTKstats`](https://github.com/jfwambaugh/invitroTKstats)
-  2. Choose the "Code" button and copy the repo URL.
-  3. In your local command line terminal, navigate to the directory location you wish to store your local copy of the repo.
-  4. In your terminal type `git clone <https://github.com/jfwambaugh/invitroTKstats>`
-  4. After cloning completes then open an R session.
-  5. In the R console use the following commands.
-  
-```
+- Installing a local clone of the GitHub repo:
+
+  1.  Go to the GitHub repo for
+      [`invitroTKstats`](https://github.com/USEPA/invitroTKstats.git).
+  2.  Choose the “Code” button and copy the repo URL.
+  3.  In your local command line terminal, navigate to the directory
+      location you wish to store your local copy of the repo.
+  4.  In your terminal type
+      `git clone https://github.com/USEPA/invitroTKstats.git`.
+  5.  After cloning completes then open an R session.
+  6.  In the R console use the following commands:
+
+``` r
 devtools::install_local(
   "<file_path_to_invitroTKstats_repo>/invitroTKstats"
 )
 ```
 
-* Installation may also be done via the RStudio provided ‘Install Packages’ menu
-under the ‘Tools’ tab.
+- Installation a tarball version of the package:
 
-## Loading the Package
+  1.  Save the tarball file “invitroTKstats_X.Y.Z.tar.gz” to a local
+      directory location.
+  2.  Install the package via the RStudio provided ‘Install Packages’
+      menu under the ‘Tools’ tab, or using the command line terminal
+      with the following:
 
-To load the `invitroTKstats` data and functions into your local R session in
-the R console.
+<!-- -->
 
-```
+    R CMD INSTALL <file_path_to_invitroTKstats_tarball>/invitroTKstats_X.Y.Z.tar.gz
+
+*NOTE: “X.Y.Z” in the tarball filename indicates the version number
+associated with the version of the package you wish to install.*
+
+### Loading the Package
+
+To load the `invitroTKstats` data R package into your local R session
+via the R console:
+
+``` r
 library(invitroTKstats)
 ```
 
-Check the package version installed and in use 
+Check the package version installed and in use:
 
-```
+``` r
 packageVersion(invitroTKstats)
 ```
 
-## Authors
+## Contributors
 
-John Wambaugh [wambaugh.john@epa.gov] - Package Creator 
+- John Wambaugh (Package Creator, Conceptualization, Data Processing, &
+  Subject Matter Expert)
+- Sarah E. Davidson-Fritz (Conceptualization & Lead Package Developer)
+- Lindsay Knupp (Software Development)
+- Barbara A. Wetmore (Raw Data Generation & Subject Matter Expert)
+- Nicolas Chantel (Inital Bayesian Model Development)
+- Zhihui Zhao (Software Development)
+- Anna Kreutz (Raw Data Generation & Subject Matter Expert)
 
-Sarah Davidson-Fritz [davidsonfritz.sarah@epa.gov] - Lead Package Developer
+## Disclaimer
 
-Lindsay Knupp [knupp.lindsay@epa.gov] - Contributor (Software Development)
-
-Barbara Wetmore [wetmore.barbara@epa.gov] - Contributor (HTTK Data Generation)
-
-Caroline Ring [ring.caroline@epa.gov] - Contributor
-
-Zhihui Zhao - Contributor (Software Development)
-
-Anna Kreutz - Contributor (HTTK Data Generation)
-
-Marci Smeltz - Contributor (HTTK Data Generation)
-
-## License
-
-License: GPL-3 <https://www.gnu.org/licenses/gpl-3.0.en.html>
+The United States Environmental Protection Agency (EPA) GitHub project
+code is provided on an “as is” basis and the user assumes responsibility
+for its use. EPA has relinquished control of the information and no
+longer has responsibility to protect the integrity, confidentiality, or
+availability of the information. Any reference to specific commercial
+products, processes, or services by service mark, trademark,
+manufacturer, or otherwise, does not constitute or imply their
+endorsement, recommendation or favoring by EPA. The EPA seal and logo
+shall not be used in any manner to imply endorsement of any commercial
+product or activity by EPA or the United States Government.
