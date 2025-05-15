@@ -208,11 +208,7 @@ model {
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #' 
-#' @import parallel 
-#' @import runjags
-#' @import coda
-#' @import Rdpack
-#' 
+#' @import Rdpack coda runjags parallel 
 #'
 #' @export calc_fup_uc
 calc_fup_uc <- function(

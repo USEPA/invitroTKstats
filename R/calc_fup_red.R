@@ -292,8 +292,7 @@ model {
 #'                        INPUT.DIR = "<level-2 FILE LOCATION>")
 #' }
 #'
-#' @import coda
-#' @import Rdpack
+#' @import Rdpack coda runjags parallel
 #' @importFrom utils read.csv write.table read.table
 #' @importFrom stats quantile
 #'
