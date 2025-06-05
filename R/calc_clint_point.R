@@ -344,7 +344,7 @@ calc_clint_point <- function(
           this.row[,col] <- NA
         this.row$Clint <- "Linear Regression Failed"
         cat("Linear regression failed for:",this.chem,".\n")
-        plot(this.data$Time, this.data$Response)
+        plot(this.data$Time, this.data$Response,main = this.chem)
         # browser()
       }
       out.table <- rbind(out.table, this.row)
@@ -380,8 +380,8 @@ calc_clint_point <- function(
     # Round results to desired number of sig figs
     if (!is.null(sig.figs)){
       rounded.out.table[!(rounded.out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"] <-
-        signif(rounded.out.table[
-          !(rounded.out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"],sig.figs)
+        signif(as.numeric(rounded.out.table[
+          !(rounded.out.table[,"Clint"]%in%"Linear Regression Failed"),"Clint"]),sig.figs)
       rounded.out.table[,"Clint.1"] <- signif(rounded.out.table[,"Clint.1"],sig.figs)
       rounded.out.table[,"Clint.10"] <- signif(rounded.out.table[,"Clint.10"],sig.figs)
       rounded.out.table[,"Clint.pValue"] <- signif(rounded.out.table[,"Clint.pValue"],sig.figs)

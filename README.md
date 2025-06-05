@@ -36,6 +36,15 @@ submit an issue or start a discussion.
   language](https://www.r-project.org/).
 - Users will need the freely available [“Just Another Gibbs Sampler”
   (JAGS)](https://mcmc-jags.sourceforge.io/).
+  - JAGS is a software used for conducting Bayesian hierarchical
+    modeling using Markov Chain Monte Carlo (MCMC) simulation.
+  - This software can be downloaded via
+    <https://sourceforge.net/projects/mcmc-jags/files/> and installed
+    using the prompts.
+  - Users should note that this installation will likely be found in a
+    system location (e.g. “Program Files”) - thus users should ensure to
+    identify the installation location, which is necessary when
+    utilizing the software within R.
 - Users will need to have the following R packages installed in addition
   to `invitroTKstats`:
   - `ggplot2`

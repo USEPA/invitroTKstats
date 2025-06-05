@@ -3,12 +3,17 @@ title: "Fraction Unbound in Plasma - Ultracentrifugation (f~up~ UC)"
 author: "US EPA's Center for Computational Toxicology and Exposure ccte@epa.gov"
 output:
   rmarkdown::html_vignette
+params:
+  css: css/rmdformats.css
 bibliography: '`r system.file("REFERENCES.bib", package="invitroTKstats")`'
 vignette: >
   %\VignetteIndexEntry{Fup UC}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{css,code = readLines(params$css),hide=TRUE,echo=FALSE}
+```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -337,7 +342,17 @@ Our Level 3 data contains a `Fup` estimate and a `Calibration` column that detai
 
 `calc_fup_uc` is the Level 4 function used to calculate f~up~ point estimates and credible intervals from ultracentrifugation using a Bayesian framework. Markov chain Monte Carlo (MCMC) simulations are used to randomly sample from the posterior distribution with a uniform prior. 
 
-To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user must use `runjags::findjags()` as their argument for the `JAGS.PATH` parameter. 
+To run Level 4, one needs to have JAGS installed on their machine. To determine the correct path, the user may use the `runjags::findjags()` or may need to specify the JAGS installation location for the `JAGS.PATH` argument. 
+
+:::{.noticebox}
+
+JAGS is a software used for conducting Bayesian hierarchical modeling using Markov Chain Monte Carlo (MCMC) simulation. `invitroTKstats` contains the JAGS models for each of the applicable assays and utilizes the JAGS model under the hood to run the MCMC simulations via the `runjags` dependency to obtain the level-4 Bayesian estimates.
+
+  1.  Download and install the "Just Another Gibbs Sampler" (JAGS) software, which is freely available [here](https://mcmc-jags.sourceforge.io/).
+  2. Once JAGS is installed one will need to identify the installation location, which is likely to be in a system location (e.g. "Program Files"). Users may need this location to specify the `JAGS.PATH` argument within the level-4 function.
+  3. Finally, if not already installed, the `rjags`, `runjags`, and `coda` R packages need to be installed via the R console using the `install.packages` function.
+
+:::
 
 We pass `fup_uc_L2_curated`, the Level 2 data frame, and **not** `fup_uc_L3_curated`, the Level 3 data frame, into `calc_fup_uc`. This is because Level 3 and Level 4 processing are not sequential; they are methods that calculate different statistical quantities. The following code chunk takes a while to run; previous runtimes are around 10 minutes.
 

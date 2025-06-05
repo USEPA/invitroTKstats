@@ -17,6 +17,11 @@
 #' "Variables" and "Values" should be separated by a vertical bar "|" ,
 #' and the variable-value pairs should match. See demonstration in Examples, Scenario 1. 
 #' 
+#' NOTE: Currently if NA's exist in a variable of interest for 'verification' assignments,
+#' then that variable cannot be used for assigning verification. Thus, either alternative
+#' variable-value pairs will need to be used in lieu of variable with missing values, or
+#' (though less ideal) "manual coding" adjustments in the verification column may be necessary.
+#' 
 #' If the output level-2 data frame is chosen to be exported and an output directory 
 #' is not specified, it will be exported to the user's R session temporary directory. 
 #' This temporary directory is a per-session directory whose path can be found

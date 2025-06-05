@@ -72,13 +72,13 @@ library(flextable)
 
 # Raw Data File Exploration
 
-The first thing we need to do for the pipelining process is to construct a data guide itemizing which data files and sheets therein contain relevant MS data, as well as other relevant meta-data information. Before creating a data guide with `invitroTKstats` functions, let us first consider the raw data files and their structure in the relevant data directory, called "data-raw/Kreutz-Clint".
+The first thing we need to do for the pipelining process is to construct a data guide itemizing which data files and sheets therein contain relevant MS data, as well as other relevant meta-data information. Before creating a data guide with `invitroTKstats` functions, let us first consider the raw data files and their structure in the relevant data directory, called "inst/extdata/Kreutz-Clint".
 
 *NOTE: The terms "data catalog" and "data guide" are used interchangeably throughout the vignette.*
 
-For users to replicate this vignette, it is necessary to clone the `invitroTKstats` package repository which contains the "data-raw/Kreutz-Clint" sub-directory. 
+For users to replicate this vignette, it is necessary to clone the [`invitroTKstats` package repository](https://github.com/USEPA/invitroTKstats) which contains the "inst/extdata/Kreutz-Clint" sub-directory. 
 
-The "Kreutz-Clint" sub-directory contains a subset of raw data files with gas chromatography-tandem mass spectrometry (GC-MS/MS) analyses of a subset of PFAS alcohols, amides, and acrylates (@kreutz2023category). The entire set of raw data files can be found within the "working/KreutzPFAS" sub-directory that is not tracked with the `invitroTKstats` package.  
+The "Kreutz-Clint" sub-directory contains a subset of raw data files with gas chromatography-tandem mass spectrometry (GC-MS/MS) analyses of a subset of PFAS alcohols, amides, and acrylates (@kreutz2023category). The entire set of raw data files can be found within the "working/KreutzPFAS" sub-directory tracked in the [`invitrotkstats_dataproc` repository](https://github.com/USEPA/invitrotkstats_dataproc)  (i.e. not within the `invitroTKstats` package).  
 
 ```{r raw_data_dir}
 # the path to the applicable sub-directory after the `invitroTKstats` package repository is cloned and the R project is opened
