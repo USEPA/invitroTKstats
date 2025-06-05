@@ -296,6 +296,13 @@ As a best practice, \code{INPUT.DIR} and/or \code{OUTPUT.DIR} should be
 specified to simplify the process of importing and exporting files. This 
 practice ensures that the exported files can easily be found and will not be 
 exported to a temporary directory.
+
+NOTE: For the estimation of Cl~int~ the `test.conc` and `test.conc.col` are not
+used within the calculations currently. However, to maintain consistency with
+other assays and for the use case that a calibration curve may be part of the
+estimation in future this was retained. We suggest that if the users do not
+have a corresponding compound column to set `test.conc` to `NA` or use the next
+most appropriate value/level-0 column name.
 }
 \examples{
 ## Load the example level-0 data
