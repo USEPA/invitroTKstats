@@ -212,7 +212,8 @@ model {
 #' @references
 #' \insertRef{redgrave1975separation}{invitroTKstats}
 #' 
-#' @import Rdpack coda runjags parallel 
+#' @import Rdpack coda runjags parallel
+#' @importFrom utils read.csv write.table read.delim
 #'
 #' @export calc_fup_uc
 calc_fup_uc <- function(

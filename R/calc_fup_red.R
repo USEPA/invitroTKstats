@@ -301,7 +301,7 @@ model {
 #' }
 #'
 #' @import Rdpack coda runjags parallel
-#' @importFrom utils read.csv write.table read.table
+#' @importFrom utils read.csv write.table read.delim
 #' @importFrom stats quantile
 #'
 #' @export calc_fup_red

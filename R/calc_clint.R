@@ -277,7 +277,7 @@ model {
 #' \insertRef{shibata2002prediction}{invitroTKstats}
 #'
 #' @import Rdpack coda runjags parallel
-#' @importFrom utils read.csv write.table read.table
+#' @importFrom utils read.csv write.table read.delim
 #'
 #' @export calc_clint
 calc_clint <- function(
