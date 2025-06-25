@@ -165,6 +165,14 @@ model {
 #'
 #' Clint is calculated using \code{\link{lm}} to perform a linear regression of
 #' MS response as a function of time.
+#' 
+#' Additional User Notification(s):
+#' 
+#' \itemize{
+#'    \item{runjags::findjags() may not work as \code{JAGS.PATH} argument. Instead,
+#'    may need to manually remove the trailing path such that \code{JAGS.PATH} only
+#'    contains path information through "/x64" (e.g. \code{JAGS.PATH} = "/Program Files/JAGS/JAGS-4.3.1/x64").}
+#' }  
 #'
 #' @param FILENAME (Character) A string used to identify the input level-2 file,
 #' "<FILENAME>-Clint-Level2.tsv", and to name the exported model results. 
@@ -372,7 +380,7 @@ calc_clint <- function(
   {
     Results <- NULL
   } else {
-    Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
+    Results <- read.delim(OUTPUT.FILE,stringsAsFactors=FALSE)
   }
   
   # Safety check for parallel computation 

@@ -132,6 +132,14 @@ We currently require Cvst data. Blank, CC, and Inactive data are optional.
 
 Clint is calculated using \code{\link{lm}} to perform a linear regression of
 MS response as a function of time.
+
+Additional User Notification(s):
+
+\itemize{
+   \item{runjags::findjags() may not work as \code{JAGS.PATH} argument. Instead,
+   may need to manually remove the trailing path such that \code{JAGS.PATH} only
+   contains path information through "/x64" (e.g. \code{JAGS.PATH} = "/Program Files/JAGS/JAGS-4.3.1/x64").}
+}
 }
 \examples{
 ## Example 1: loading level-2 using data.in and export all files to the user's
