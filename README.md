@@ -4,6 +4,7 @@
 # invitroTKstats
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 ## Welcome to the GitHub repository for the invitroTKstats package
@@ -116,10 +117,11 @@ packageVersion(invitroTKstats)
 A subset of raw experimental data files are provided as part of the R
 package for demonstration purposes in the “Data Guide Creation and
 Level-0 Data Compilation” vignette. These data files were originally
-published as part of . Details about these files can be found in the
-README file under the “inst/extdata/Kreutz-Clint” sub-directory, as well
-as a separate data processing GitHub repository
-[invitrotkstats_dataproc](https://github.com/USEPA/invitrotkstats_dataproc).
+published as part of Kreutz et al. (2023). Details about these files can
+be found in the README file under the “inst/extdata/Kreutz-Clint”
+sub-directory, as well as a separate data processing GitHub repository
+[invitrotkstats_dataproc](https://github.com/USEPA/invitrotkstats_dataproc)
+under “working/KreutzPFAS”.
 
 ## Contributors
 
