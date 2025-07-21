@@ -4,6 +4,7 @@
 # invitroTKstats
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 ## Welcome to the GitHub repository for the invitroTKstats package
@@ -36,6 +37,15 @@ submit an issue or start a discussion.
   language](https://www.r-project.org/).
 - Users will need the freely available [“Just Another Gibbs Sampler”
   (JAGS)](https://mcmc-jags.sourceforge.io/).
+  - JAGS is a software used for conducting Bayesian hierarchical
+    modeling using Markov Chain Monte Carlo (MCMC) simulation.
+  - This software can be downloaded via
+    <https://sourceforge.net/projects/mcmc-jags/files/> and installed
+    using the prompts.
+  - Users should note that this installation will likely be found in a
+    system location (e.g. “Program Files”) - thus users should ensure to
+    identify the installation location, which is necessary when
+    utilizing the software within R.
 - Users will need to have the following R packages installed in addition
   to `invitroTKstats`:
   - `ggplot2`
@@ -101,6 +111,17 @@ Check the package version installed and in use:
 ``` r
 packageVersion(invitroTKstats)
 ```
+
+## Unprocessed Data
+
+A subset of raw experimental data files are provided as part of the R
+package for demonstration purposes in the “Data Guide Creation and
+Level-0 Data Compilation” vignette. These data files were originally
+published as part of Kreutz et al. (2023). Details about these files can
+be found in the README file under the “inst/extdata/Kreutz-Clint”
+sub-directory, as well as a separate data processing GitHub repository
+[invitrotkstats_dataproc](https://github.com/USEPA/invitrotkstats_dataproc)
+under “working/KreutzPFAS”.
 
 ## Contributors
 

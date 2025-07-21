@@ -127,9 +127,13 @@ these types:
 }
 We currently require CC, AF, and T5 data. T1 data are optional.
 
-Note: runjags::findjags() may not work as \code{JAGS.PATH} argument. Instead, 
-may need to manually remove the trailing path such that \code{JAGS.PATH} only 
-contains path information through "/x64" (e.g. \code{JAGS.PATH} = "/Program Files/JAGS/JAGS-4.3.1/x64").
+Additional User Notification(s):
+
+\itemize{
+   \item{runjags::findjags() may not work as \code{JAGS.PATH} argument. Instead,
+   may need to manually remove the trailing path such that \code{JAGS.PATH} only
+   contains path information through "/x64" (e.g. \code{JAGS.PATH} = "/Program Files/JAGS/JAGS-4.3.1/x64").}
+}
 }
 \examples{
 ## Example 1: loading level-2 using data.in and export all files to the user's

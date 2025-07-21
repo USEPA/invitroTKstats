@@ -193,6 +193,14 @@ model {
 #' }
 #' We currently require Plasma, PBS, and Plasma.Blank data. T0, CC, and NoPlasma.Blank
 #' data are optional.
+#' 
+#' Additional User Notification(s):
+#' 
+#' \itemize{
+#'    \item{runjags::findjags() may not work as \code{JAGS.PATH} argument. Instead,
+#'    may need to manually remove the trailing path such that \code{JAGS.PATH} only
+#'    contains path information through "/x64" (e.g. \code{JAGS.PATH} = "/Program Files/JAGS/JAGS-4.3.1/x64").}
+#' } 
 #'
 #' @param FILENAME (Character) A string used to identify the input level-2 file,
 #' "<FILENAME>-fup-RED-Level2.tsv", and to name the exported model results. 
@@ -293,7 +301,7 @@ model {
 #' }
 #'
 #' @import Rdpack coda runjags parallel
-#' @importFrom utils read.csv write.table read.table
+#' @importFrom utils read.csv write.table read.delim
 #' @importFrom stats quantile
 #'
 #' @export calc_fup_red
@@ -404,7 +412,7 @@ calc_fup_red <- function(
   {
     Results <- NULL
   } else {
-    Results <- read.table(OUTPUT.FILE,sep="\t",stringsAsFactors=F,header=T)
+    Results <- read.delim(OUTPUT.FILE,stringsAsFactors=FALSE)
   }
   
   # Safety check for parallel computation 

@@ -157,9 +157,9 @@ code {
 
 .noticebox {
   padding: 1em;
-  background: lightgray;
-  color: blue;
-  border: 2px solid black;
+  background: var(--light-gray);
+  color: var(--pale-tone);
+  border: 2px solid var(--strong-tone);
   border-radius: 10px;
 }
 
