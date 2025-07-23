@@ -16,7 +16,7 @@ Authors@R: c(
              role = c("aut"),comment = c(ORCID = "0000-0002-4024-534X")), 
            person("Sarah E.", "Davidson-Fritz", email = "davidsonfritz.sarah@epa.gov", 
              role = c("aut","cre"), comment = c(ORCID = "0000-0002-2891-9380")),
-           person("Lindsay","Knupp",email = "knupp.lindsay@epa.gov",role = c("ctb")),
+           person("Lindsay","Knupp",role = c("ctb")),
            person("Barbara A.","Wetmore",role = c("ctb"),
             comment = c(ORCID = "0000-0002-6878-5348")),
            person("Zhao", "Zhihui", role = c("ctb")),
