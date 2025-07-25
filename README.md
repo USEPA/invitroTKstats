@@ -9,7 +9,7 @@
 
 ## Welcome to the GitHub repository for the invitroTKstats package
 
-<a href="https://github.com/USEPA/invitroTKstats.git"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
+<a href="https://github.com/USEPA/invitroTKstats"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
 
 The `invitroTKstats` R package contains functions to run a standardized
 data pipeline for processing high-throughput toxicokinetic (HTTK)
@@ -30,6 +30,10 @@ on mass spectrometry ratios of analyte peak areas to internal standard
 
 If you are interested in contributing or want to report a bug, please
 submit an issue or start a discussion.
+
+Additional background information on dosimetry and use of these
+estimates may be found
+[here](https://www.epa.gov/chemical-research/rapid-chemical-exposure-and-dose-research).
 
 ### Dependencies
 
@@ -53,7 +57,7 @@ submit an issue or start a discussion.
   - `runjags`
   - `stats4`
 - Users will likely want a development environment like
-  [RStudio](https://www.rstudio.com/products/rstudio/download/).
+  [RStudio](https://posit.co/download/rstudio-desktop/).
 
 ## Installation
 
@@ -61,18 +65,18 @@ submit an issue or start a discussion.
   following command in the R console:
 
 ``` r
-devtools::install_github("https://github.com/USEPA/invitroTKstats.git")
+devtools::install_github("https://github.com/USEPA/invitroTKstats")
 ```
 
 - Installing a local clone of the GitHub repo:
 
   1.  Go to the GitHub repo for
-      [`invitroTKstats`](https://github.com/USEPA/invitroTKstats.git).
+      [`invitroTKstats`](https://github.com/USEPA/invitroTKstats).
   2.  Choose the “Code” button and copy the repo URL.
   3.  In your local command line terminal, navigate to the directory
       location you wish to store your local copy of the repo.
   4.  In your terminal type
-      `git clone https://github.com/USEPA/invitroTKstats.git`.
+      `git clone https://github.com/USEPA/invitroTKstats`.
   5.  After cloning completes then open an R session.
   6.  In the R console use the following commands:
 

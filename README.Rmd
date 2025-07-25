@@ -20,13 +20,15 @@ knitr::opts_chunk$set(
 
 ## Welcome to the GitHub repository for the invitroTKstats package
 
-<a href="https://github.com/USEPA/invitroTKstats.git"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
+<a href="https://github.com/USEPA/invitroTKstats"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
 
 The `invitroTKstats` R package contains functions to run a standardized data pipeline for processing high-throughput toxicokinetic (HTTK) mass-spectrometry data obtained from a variety of *in vitro* assays. The pipeline includes standardization for data documentation, statistical analyses predicting toxicokinetic parameters characterizing absorption, distribution, metabolism, and elimination of chemicals by the body.
 
 The assays covered by the pipeline include intrinsic clearance after hepatocyte incubation ($Cl_{int}$); two variants of plasma protein binding experiments ($f_{up}$) -- namely Rapid Equilibrium Dialysis (RED) and Ultracentrifugation (UC), CACO-2 membrane permeability, and blood to plasma concentration ratio. Analysis methods include a frequentist point estimation and, in some cases, Bayesian estimations for the distribution of likely parameter values. Data used to derive the estimates are based on mass spectrometry ratios of analyte peak areas to internal standard (ISTD) peak areas.
 
 If you are interested in contributing or want to report a bug, please submit an issue or start a discussion.
+
+Additional background information on dosimetry and use of these estimates may be found [here](https://www.epa.gov/chemical-research/rapid-chemical-exposure-and-dose-research).
 
 ### Dependencies
 
@@ -40,22 +42,22 @@ If you are interested in contributing or want to report a bug, please submit an 
   * `parallel`
   * `runjags`
   * `stats4`
-* Users will likely want a development environment like [RStudio](https://www.rstudio.com/products/rstudio/download/).
+* Users will likely want a development environment like [RStudio](https://posit.co/download/rstudio-desktop/).
 
 ## Installation
 
 * Installing the current version of the package from GitHub, run the following command in the R console:
 
 ```r
-devtools::install_github("https://github.com/USEPA/invitroTKstats.git")
+devtools::install_github("https://github.com/USEPA/invitroTKstats")
 ```
 
 * Installing a local clone of the GitHub repo:
 
-  1. Go to the GitHub repo for [`invitroTKstats`](https://github.com/USEPA/invitroTKstats.git).
+  1. Go to the GitHub repo for [`invitroTKstats`](https://github.com/USEPA/invitroTKstats).
   2. Choose the "Code" button and copy the repo URL.
   3. In your local command line terminal, navigate to the directory location you wish to store your local copy of the repo.
-  4. In your terminal type `git clone https://github.com/USEPA/invitroTKstats.git`.
+  4. In your terminal type `git clone https://github.com/USEPA/invitroTKstats`.
   5. After cloning completes then open an R session.
   6. In the R console use the following commands:
   

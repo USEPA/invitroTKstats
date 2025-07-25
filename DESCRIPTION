@@ -43,6 +43,7 @@ LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr, R.rsp
 RoxygenNote: 7.3.2
-URL: https://www.epa.gov/chemical-research/rapid-chemical-exposure-and-dose-research
 NeedsCompilation: no
 Maintainer: Sarah E. Davidson-Fritz <davidsonfritz.sarah@epa.gov>
+URL: https://github.com/USEPA/invitroTKstats
+BugReports: https://github.com/USEPA/invitroTKstats/issues
