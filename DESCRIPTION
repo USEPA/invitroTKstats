@@ -10,7 +10,7 @@ Description: A set of tools for processing and analyzing in vitro toxicokinetic
              (f_up), intrinsic hepatic clearance (Clint,
              uL/min/million hepatocytes), and membrane permeability for
              oral absorption (Caco2). The methods provided
-             by the package were described in \insertCite{wambaugh2019assessing}.
+             by the package were described in Wambaugh et al. (2019) <doi:10.1093/toxsci/kfz205>.
 Authors@R: c(
            person("John", "Wambaugh", email = "wambaugh.john@epa.gov", 
              role = c("aut"),comment = c(ORCID = "0000-0002-4024-534X")), 
