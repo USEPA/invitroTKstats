@@ -14,8 +14,8 @@
 * false positive: checking for future file timestamps ... unable to verify current time
 
 ## win-builder results
-Installation time in seconds: 15
-Check time in seconds: 177
+Installation time in seconds: 9
+Check time in seconds: 122
 Status: 1 NOTE
 R Under development (unstable) (2025-07-27 r88459 ucrt)
 
