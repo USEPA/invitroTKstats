@@ -251,6 +251,9 @@
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#'
 #' @return A level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with hepatic
 #' clearance data for a variety of chemicals. 
@@ -345,18 +348,18 @@ format_clint <- function(
   save.bad.types = FALSE,
   sig.figs = 5,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
-  )
+  OUTPUT.DIR = NULL,
+  verbose = TRUE)
 {
   
   if (!missing(data.in)) {
     data.in <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {
     data.in <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level0.tsv"),
-                        sep="\t",header=T)
+                        sep="\t",header=TRUE)
     } else {
       data.in <- read.csv(file=paste0(FILENAME,"-Clint-Level0.tsv"),
-                           sep="\t",header=T)
+                           sep="\t",header=TRUE)
     }
   
   if (is.null(note.col))
@@ -451,10 +454,12 @@ format_clint <- function(
       write.table(data.in.badtype,
                   file=paste0(file.path, "/", FILENAME,"-Clint-Level0-badtype.tsv"),
                   sep="\t",
-                  row.names=F,
-                  quote=F)
-      cat(paste0("Data with inappropriate sample types were removed. Removed samples were exported to ",
-                 FILENAME,"-Clint-Level0-badtype.tsv", " in the following directory: ", file.path), "\n")
+                  row.names=FALSE,
+                  quote=FALSE)
+      if(verbose){
+        cat(paste0("Data with inappropriate sample types were removed. Removed samples were exported to ",
+                   FILENAME,"-Clint-Level0-badtype.tsv", " in the following directory: ", file.path), "\n")
+      }
     } else {
       warning("Data with inappropriate sample types were removed.")
     }
@@ -478,21 +483,24 @@ format_clint <- function(
       rounded.data.out[,"Area"] <- signif(rounded.data.out[,"Area"], sig.figs)
       rounded.data.out[,"ISTD.Area"] <- signif(rounded.data.out[,"ISTD.Area"], sig.figs)
       rounded.data.out[,"Response"] <- signif(rounded.data.out[,"Response"], sig.figs)
-      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+      if(verbose){cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))}
     }
     
     # Write out a "level-1" file (data organized into a standard format):
     write.table(rounded.data.out,
                 file=paste0(file.path, "/", FILENAME,"-Clint-Level1.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-    cat(paste0("A level-1 file named ",FILENAME,"-Clint-Level1.tsv",
-                " has been exported to the following directory: ", file.path), "\n")
+                row.names=FALSE,
+                quote=FALSE)
+    if(verbose){
+      cat(paste0("A level-1 file named ",FILENAME,"-Clint-Level1.tsv",
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
   }
 
   summarize_table(data.out,
-    req.types=c("Blank","Cvst"))
+                  req.types=c("Blank","Cvst"),
+                  verbose = verbose)
 
   return(data.out)
 }

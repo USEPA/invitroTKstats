@@ -71,6 +71,9 @@
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#' 
 #' @return \item{data.frame}{A level-3 data.frame in standardized format}
 #' \tabular{rrr}{
 #'   C0_A2B \tab Time zero donor concentration \tab Mass Spec Response Ratio (RR) \cr
@@ -143,7 +146,8 @@ calc_caco2_point <- function(
     output.res=FALSE, 
     sig.figs = 3,
     INPUT.DIR=NULL,
-    OUTPUT.DIR = NULL)
+    OUTPUT.DIR = NULL,
+    verbose = TRUE)
 {
   # These are the required data types as indicated by type.col.
   # In order to calculate the parameter a chemical must have peak areas for each
@@ -157,10 +161,10 @@ calc_caco2_point <- function(
     input.table <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {
     input.table <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level2.tsv"),
-                            sep="\t",header=T)
+                            sep="\t",header=TRUE)
   } else {
     input.table <- read.csv(file=paste0(FILENAME,"-Caco-2-Level2.tsv"),
-                            sep="\t",header=T)
+                            sep="\t",header=TRUE)
   }
   
   input.table <- subset(input.table,!is.na(Compound.Name))
@@ -311,12 +315,14 @@ calc_caco2_point <- function(
           as.numeric(this.row["Papp_A2B"])
       }
       out.table <- rbind(out.table, this.row)
-      if (!is.null(sig.figs)) {
-        print(paste(this.row$Compound.Name,"Refflux =",
-                    signif(this.row$Refflux,sig.figs)))
-      } else {
-        print(paste(this.row$Compound.Name,"Refflux =",
-                    this.row$Refflux))
+      if(verbose){
+        if (!is.null(sig.figs)) {
+          print(paste(this.row$Compound.Name,"Refflux =",
+                      signif(this.row$Refflux,sig.figs)))
+        } else {
+          print(paste(this.row$Compound.Name,"Refflux =",
+                      this.row$Refflux))
+        }
       }
   }
   
@@ -371,28 +377,33 @@ calc_caco2_point <- function(
           signif(sig.figs) %>% 
           paste(collapse = "|")
       }
-      rounded.out.table[,"Frec_A2B.vec"] <- base::sapply(rounded.out.table[,"Frec_A2B.vec"], split_round, USE.NAMES = F)
-      rounded.out.table[,"Frec_B2A.vec"] <- base::sapply(rounded.out.table[,"Frec_B2A.vec"], split_round, USE.NAMES = F)
-      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+      rounded.out.table[,"Frec_A2B.vec"] <- base::sapply(rounded.out.table[,"Frec_A2B.vec"], split_round, USE.NAMES = FALSE)
+      rounded.out.table[,"Frec_B2A.vec"] <- base::sapply(rounded.out.table[,"Frec_B2A.vec"], split_round, USE.NAMES = FALSE)
+      if(verbose){
+        cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+      }
     }
     
     # Write out a "level 3" file (data organized into a standard format):
     write.table(rounded.out.table,
       file=paste0(file.path, "/", FILENAME,"-Caco-2-Level3.tsv"),
       sep="\t",
-      row.names=F,
-      quote=F)
+      row.names=FALSE,
+      quote=FALSE)
    
-    # Print notification message stating where the file was output to
-    cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
-               " has been exported to the following directory: ", file.path), "\n")
-    
+    if(verbose){
+      # Print notification message stating where the file was output to
+      cat(paste0("A Level-3 file named ",FILENAME,"-Caco-2-Level3.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
     
   }
   
-  print(paste("Apical to basolateral permeability calculated for",num.a2b,"chemicals."))
-  print(paste("Basolateral to apical permeability calculated for",num.b2a,"chemicals."))
-  print(paste("Efflux ratio calculated for",num.efflux,"chemicals."))
+  if(verbose){
+    print(paste("Apical to basolateral permeability calculated for",num.a2b,"chemicals."))
+    print(paste("Basolateral to apical permeability calculated for",num.b2a,"chemicals."))
+    print(paste("Efflux ratio calculated for",num.efflux,"chemicals."))
+  }
   
   return(out.table)
 }

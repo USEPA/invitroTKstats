@@ -31,6 +31,9 @@
 #' For example, "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0".
 #' (Defaults to "Analysis.Parameters".) 
 #'
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#'
 #' @return A data frame with one row per chemical-method pair containing 
 #' information on analysis parameters, instruments, internal standards, 
 #' and compound identifiers used for each pair.
@@ -89,8 +92,8 @@ create_method_table <- function(input.table,
   istd.name.col="ISTD.Name",
   analysis.method.col="Analysis.Method",
   analysis.instrument.col="Analysis.Instrument",
-  analysis.parameters.col="Analysis.Parameters"
-  )
+  analysis.parameters.col="Analysis.Parameters",
+  verbose = TRUE)
 {
 # We need all these columns in input.table
   cols <-c(
@@ -145,7 +148,7 @@ create_method_table <- function(input.table,
       }
     }
 
-  cat(paste(N.methods,"analytical methods for",N.chems,"chemicals.\n"))
+  if(verbose){cat(paste(N.methods,"analytical methods for",N.chems,"chemicals.\n"))}
   
   return(out.table)
 }
