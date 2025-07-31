@@ -4,12 +4,12 @@
 \alias{initfunction_fup_red}
 \title{Set Initial Values for Fup RED Bayesian Model}
 \usage{
-initfunction_fup_red(mydata, chain)
+initfunction_fup_red(mydata, seed)
 }
 \arguments{
 \item{mydata}{(List) Output of \code{build_mydata_fup_red}.}
 
-\item{chain}{(Numeric) The number of Markov Chains to use.}
+\item{seed}{(Numeric) Random Number Generator (RNG) seed to use for reproducibility.}
 }
 \value{
 A list of initial values.

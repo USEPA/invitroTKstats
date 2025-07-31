@@ -19,7 +19,8 @@ create_catalog(
   conc,
   analysis.param,
   num.rows = NULL,
-  additional.info = NULL
+  additional.info = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -74,6 +75,16 @@ indicating column names with information to pull,
 otherwise a short name.  All spaces in additional
 column names should be designated with a period, "." .
 (Default is \code{NULL}, i.e. no additional columns.)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
+}
+\value{
+(\emph{data.frame}) A catalog containing information about the source
+        level-0 data file to enable proper 'auto-extraction' of data.
+        Additionally, the catalog contains other relevant meta-data fields
+        describing when, how, what, etc. of the assay that collected the
+        level-0 data.
 }
 \description{
 This function is meant for creating a catalog of all level 0 data
