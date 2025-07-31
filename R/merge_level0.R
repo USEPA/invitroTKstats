@@ -218,7 +218,7 @@
 #' # Will need to replace <PATH TO FILE> with chosen desired directory containing
 #' # XLSX file from above.                  
 #' level0 <- merge_level0(level0.catalog = catalog,
-#'              INPUT.DIR = system.file("extdata/Kreutz-Clint",package = "invitroTKstats"), # "<PATH TO FILE>"
+#'              INPUT.DIR = system.file("extdata/Kreutz-Clint",package = "invitroTKstats"),
 #'              istd.col = "ISTD.Name",
 #'              type.colname.col = "Type.ColName",
 #'              num.rows.col = "Number.Data.Rows",
