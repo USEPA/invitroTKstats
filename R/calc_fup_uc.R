@@ -134,6 +134,10 @@ model {
 #' @param RANDOM.SEED (Numeric) The seed used by the random number generator.
 #' (Defaults to 1111.)
 #' 
+#' @param SEED.SET (Numeric Vector) A set of seeds used by the random number generator for each chain.
+#' Should be unique for each chain and vector length should equal the total number of chains.
+#' (Default is \code{NULL}.)
+#' 
 #' @param good.col (Character) Column name indicating which rows have been
 #' verified for analysis, valid data rows are indicated with "Y".
 #' (Defaults to "Verified".)
@@ -156,6 +160,9 @@ model {
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
+#' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
 #' 
 #' @return A list of two objects: 
 #' \enumerate{
@@ -223,13 +230,14 @@ calc_fup_uc <- function(
   NUM.CHAINS=5, 
   NUM.CORES=2,
   RANDOM.SEED=1111,
+  SEED.SET=NULL,
   good.col="Verified",
   JAGS.PATH = NA,
   save.MCMC = FALSE,
   sig.figs = 3, 
   INPUT.DIR=NULL, 
-  OUTPUT.DIR = NULL
-  )
+  OUTPUT.DIR = NULL,
+  verbose = TRUE)
 {
   
   #assigning global variables
@@ -240,10 +248,10 @@ calc_fup_uc <- function(
     PPB.data <- as.data.frame(data.in)
     } else if (!is.null(INPUT.DIR)) {
       PPB.data <- read.csv(file=paste0(INPUT.DIR, "/",FILENAME,"-fup-UC-Level2.tsv"), 
-                         sep="\t",header=T)  
+                         sep="\t",header=TRUE)  
       } else {
         PPB.data <- read.csv(file=paste0(FILENAME,"-fup-UC-Level2.tsv"), 
-                         sep="\t",header=T)  
+                         sep="\t",header=TRUE)  
         }
   
   PPB.data <- subset(PPB.data,!is.na(Compound.Name))
@@ -251,6 +259,8 @@ calc_fup_uc <- function(
   
   # save the current working directory 
   current.dir <- getwd()
+  on.exit(setwd(current.dir)) # on exit of the function ensure to reset to
+                              # the original/current working directory
   
   if (!is.null(TEMP.DIR)) # set working directory to user specified TEMP.DIR 
   {
@@ -291,13 +301,13 @@ calc_fup_uc <- function(
     unverified.data[,"Area"] <- signif(unverified.data[,"Area"], sig.figs)
     unverified.data[,"ISTD.Area"] <- signif(unverified.data[,"ISTD.Area"], sig.figs)
     unverified.data[,"Response"] <- signif(unverified.data[,"Response"], sig.figs)
-    cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs, " significant figures.\n"))
+    if(verbose){cat(paste0("\nHeldout L2 data to export has been rounded to ", sig.figs, " significant figures.\n"))}
   }
   write.table(unverified.data, file=paste0(
     FILENAME,"-fup-UC-Level2-heldout.tsv"),
     sep="\t",
-    row.names=F,
-    quote=F)
+    row.names=FALSE,
+    quote=FALSE)
   PPB.data <- subset(PPB.data, PPB.data[,good.col] == "Y")
   
   PPB.data <- as.data.frame(PPB.data)
@@ -305,7 +315,7 @@ calc_fup_uc <- function(
   
   OUTPUT.FILE <- paste0(FILENAME,"-fup-UC-Level4.tsv")
 
-  set.seed(RANDOM.SEED)
+  # set.seed(RANDOM.SEED)
   if (!file.exists(OUTPUT.FILE))
   {
     Results <- NULL
@@ -314,7 +324,7 @@ calc_fup_uc <- function(
   }
   
   # Safety check for parallel computation 
-  MAX.CORES <- detectCores(logical = F) - 1
+  MAX.CORES <- detectCores(logical = FALSE) - 1
   if (NUM.CORES > MAX.CORES) stop(paste0("Specified NUM.CORES = ", NUM.CORES, " cores for parallel computing exceeds the allowable number of cores, that is ",
                                          MAX.CORES, 
                                          ", and may bog down your machine! (Max cores is based on the total number of available computing cores minus one for overhead.)"))
@@ -333,14 +343,16 @@ calc_fup_uc <- function(
       this.name <- PPB.data[PPB.data[,compound.col]==this.compound,compound.col][1]
       this.dtxsid <- PPB.data[PPB.data[,compound.col]==this.compound,dtxsid.col][1]
       this.lab.name <- PPB.data[PPB.data[,compound.col]==this.compound,lab.compound.col][1]
-      print(paste(
-        this.name,
-        " (",
-        which(unique(PPB.data[,compound.col])==this.compound),
-        " of ",
-        length(unique(PPB.data[,compound.col])),
-        ")",
-        sep=""))
+      if(verbose){
+        print(paste(
+          this.name,
+          " (",
+          which(unique(PPB.data[,compound.col])==this.compound),
+          " of ",
+          length(unique(PPB.data[,compound.col])),
+          ")",
+          sep=""))
+      }
       MS.data <- PPB.data[PPB.data[,compound.col]==this.compound,]
     
       for (this.series in unique(MS.data[,"Biological.Replicates"]))
@@ -366,8 +378,10 @@ calc_fup_uc <- function(
                 MS.data <- subset(MS.data,
                                  series.values != this.series |
                                  MS.data[,cal.col]!=this.cal)
-                print(paste("Dropped series",this.series,"from cal",
-                           this.cal,"for incomplete data."))
+                if(verbose){
+                  print(paste("Dropped series",this.series,"from cal",
+                              this.cal,"for incomplete data."))
+                }
               }
             } 
         }
@@ -384,17 +398,31 @@ calc_fup_uc <- function(
         AF.data <- MS.data[MS.data[,type.col]=="AF",]
         mydata <- build_mydata_fup_uc(MS.data, CC.data, T1.data, T5.data, AF.data)
         
-        init_vals <- function(chain) initfunction_fup_uc(mydata=mydata, chain = chain)
+        # Use random number seed for reproducibility
+        set.seed(RANDOM.SEED)
+        # check if the user provided a set of seeds for each MCMC chain
+        if(is.null(SEED.SET)){
+          # obtain a random set of unique RNG seeds, one for each chain (sample without replacement)
+          tmp_seed_set <- sample.int(n = 1e5,size = NUM.CHAINS,replace = FALSE)
+        }else{
+          # check that the number of unique seeds specified by the user equals the number of chains
+          if(length(SEED.SET)!=NUM.CHAINS|length(unique(SEED.SET))!=NUM.CHAINS){
+            stop("User specified `SEED.SET` length is not equal `NUM.CHAINS` or contains duplicates.")
+          }
+          # set the temporary seed set object to the user specified argument `SEED.SET`
+          tmp_seed_set <- SEED.SET
+        }
+        # set up the initial condition function for various chains
+        init_vals <- function(chain) initfunction_fup_uc(mydata=mydata,seed = tmp_seed_set[chain])
         # write out arguments to runjags:
-        save(this.compound,mydata,UC_PPB_model,init_vals,
-          file=paste0(FILENAME,"-Fup-UC-PREJAGS.RData"))  
+        save(this.compound,mydata,UC_PPB_model,init_vals,file=paste0(FILENAME,"-Fup-UC-PREJAGS.RData"))  
         
         coda.out[[this.compound]] <- autorun.jags(
           UC_PPB_model, 
           n.chains = NUM.CHAINS,
           method="parallel", 
           cl=CPU.cluster,
-          summarise=T,
+          summarise=TRUE,
           inits = init_vals,
           startburnin = 50000, 
           startsample = 50000, 
@@ -421,7 +449,7 @@ calc_fup_uc <- function(
         for (i in 2:NUM.CHAINS) sim.mcmc <- rbind(sim.mcmc,coda.out[[this.compound]]$mcmc[[i]])
         results <- apply(sim.mcmc,2,function(x) quantile(x,c(0.025,0.5,0.975)))
     
-        new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=F))
+        new.results <- t(data.frame(c(this.compound,this.dtxsid,this.lab.name),stringsAsFactors=FALSE))
         colnames(new.results) <- c("Compound","DTXSID","Lab.Compound.Name")
          new.results <- cbind.data.frame(new.results,
         t(as.data.frame(as.numeric(results[c(2,1,3),"Fstable"]))))
@@ -454,24 +482,26 @@ calc_fup_uc <- function(
           }
         }
         
-        print(paste("Final results for ",
-          this.compound,
-          " (",
-          which(unique(MS.data[,compound.col])==this.compound),
-          " of ",
-          length(unique(MS.data[,compound.col])),
-          ")",
-          sep=""))       
-        print(rounded.results)
-        print(rounded.new.results)
+        if(verbose){
+          print(paste("Final results for ",
+                      this.compound,
+                      " (",
+                      which(unique(MS.data[,compound.col])==this.compound),
+                      " of ",
+                      length(unique(MS.data[,compound.col])),
+                      ")",
+                      sep=""))       
+          print(rounded.results)
+          print(rounded.new.results)
+        }
     
         Results <- rbind(Results,new.results)
     
         write.table(Results, 
           file=paste0(OUTPUT.FILE),
           sep="\t",
-          row.names=F,
-          quote=F)
+          row.names=FALSE,
+          quote=FALSE)
       } else {
         ignored.data <- rbind(ignored.data, MS.data)
       }   
@@ -496,19 +526,23 @@ calc_fup_uc <- function(
 
   save(Results,
     file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData"))
-  cat(paste0("A level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData", 
-             " has been exported to the following directory: ", file.path), "\n")
+  if(verbose){
+    cat(paste0("A level-4 file named ",FILENAME,"-fup-UC-Level4Analysis-",Sys.Date(),".RData",
+               " has been exported to the following directory: ", file.path), "\n")
+  }
     
   # Save ignored data if there is any
   if (!is.null(ignored.data)) {
     write.table(ignored.data, 
                 file=paste0(file.path, "/", FILENAME,"-fup-UC-Level2-ignoredbayes.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-    cat(paste0("A subset of ignored data named ",FILENAME,"-fup-UC-Level2-ignoredbayes.tsv", 
-               " has been exported to the following directory: ", file.path), "\n")
+                row.names=FALSE,
+                quote=FALSE)
+    if(verbose){
+      cat(paste0("A subset of ignored data named ",FILENAME,"-fup-UC-Level2-ignoredbayes.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
     }
+  }
     
   # Write out the MCMC results separately 
   if (save.MCMC){
@@ -516,7 +550,7 @@ calc_fup_uc <- function(
       save(coda.out,
            file=paste0(file.path, "/", FILENAME,"-fup-UC-Level4-MCMC-Results-",Sys.Date(),".RData"))
       } else {
-        cat("No MCMC results to be saved.\n")
+        message("No MCMC results to be saved.\n")
       }
     }
   

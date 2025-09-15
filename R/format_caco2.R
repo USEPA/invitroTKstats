@@ -249,6 +249,9 @@
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
+#' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
 #'
 #' @return A level-1 data frame with a standardized format containing a  
 #' standardized set of columns and column names with membrane permeability data
@@ -337,8 +340,8 @@ format_caco2 <- function(
   save.bad.types = FALSE,
   sig.figs = 5,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
-  )
+  OUTPUT.DIR = NULL,
+  verbose = TRUE)
 {
   #assigning global variables
   dilution.factor.col <- NULL
@@ -352,10 +355,10 @@ format_caco2 <- function(
     rm(data.in)
     } else if (!is.null(INPUT.DIR)) {
     data.out <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Caco-2-Level0.tsv"),
-                         sep="\t",header=T)
+                         sep="\t",header=TRUE)
     } else {
     data.out <- read.csv(file=paste0(FILENAME,"-Caco-2-Level0.tsv"),
-                         sep="\t",header=T)
+                         sep="\t",header=TRUE)
     }
   
   # check if note.col = NULL
@@ -439,10 +442,12 @@ format_caco2 <- function(
       write.table(data.in.badtype,
                 file=paste0(file.path, "/", FILENAME,"-Caco-2-Level0-badtype.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-      cat(paste0("Data with inappropriate sample types were removed. Removed samples were exported to ",
-                 FILENAME,"-Caco-2-Level0-badtype.tsv", " in the following directory: ", file.path), "\n")
+                row.names=FALSE,
+                quote=FALSE)
+      if(verbose){
+        cat(paste0("Data with inappropriate sample types were removed. Removed samples were exported to ",
+                   FILENAME,"-Caco-2-Level0-badtype.tsv", " in the following directory: ", file.path), "\n")
+      }
     } else {
       warning("Data with inappropriate sample types were removed.")
     }
@@ -465,7 +470,7 @@ format_caco2 <- function(
   # So, if samples with sample.type == "Blank" have a NA response, convert responses to 0
   if (any(data.out$Sample.Type == "Blank" & is.na(data.out$Response))) {
     data.out$Response[data.out$Sample.Type == "Blank" & is.na(data.out$Response)] <- 0
-    cat(paste0("Responses of samples with a \"Blank\" sample type and a NA response have been reassigned to 0.\n"))
+    if(verbose){cat(paste0("Responses of samples with a \"Blank\" sample type and a NA response have been reassigned to 0.\n"))}
   }
   
   if (output.res) {
@@ -477,21 +482,24 @@ format_caco2 <- function(
       rounded.data.out[,"Area"] <- signif(rounded.data.out[,"Area"], sig.figs)
       rounded.data.out[,"ISTD.Area"] <- signif(rounded.data.out[,"ISTD.Area"], sig.figs)
       rounded.data.out[,"Response"] <- signif(rounded.data.out[,"Response"], sig.figs)
-      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+      if(verbose){cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))}
     }
     
     # Write out a "level-1" file (data organized into a standard format):
     write.table(rounded.data.out,
                 file=paste0(file.path, "/", FILENAME,"-Caco-2-Level1.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-    cat(paste0("A level-1 file named ",FILENAME,"-Caco-2-Level1.tsv", 
-               " has been exported to the following directory: ", file.path), "\n")
+                row.names=FALSE,
+                quote=FALSE)
+    if(verbose){
+      cat(paste0("A level-1 file named ",FILENAME,"-Caco-2-Level1.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
   }
 
   summarize_table(data.out,
-    req.types=req.types)
+                  req.types=req.types,
+                  verbose = verbose)
 
   return(data.out)
 }

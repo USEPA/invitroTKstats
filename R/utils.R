@@ -234,15 +234,15 @@ build_mydata_clint <- function(this.cvt, this.data, decrease.prob, saturate.prob
 #' distributions. The list is used as an argument to JAGS during level-4 processing.
 #' 
 #' @param mydata (List) Output of \code{build_mydata_clint}.
-#' @param chain (Numeric) The number of Markov Chains to use.
+#' @param seed (Numeric) Random Number Generator (RNG) seed to use for reproducibility.
 #' 
 #' @importFrom stats runif rbinom
 #' 
 #' @return A list of initial values.
 #' 
-initfunction_clint <- function(mydata, chain)
+initfunction_clint <- function(mydata,seed)
 {
-  seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
+  # set a seed for reproducibility of results
   set.seed(seed)
   
   return(list(
@@ -448,13 +448,13 @@ build_mydata_fup_red <- function(this.data, Physiological.Protein.Conc)
 #' distributions. The list is used as an argument to JAGS during level-4 processing.
 #' 
 #' @param mydata (List) Output of \code{build_mydata_fup_red}.
-#' @param chain (Numeric) The number of Markov Chains to use.
+#' @param seed (Numeric) Random Number Generator (RNG) seed to use for reproducibility.
 #' 
 #' @return A list of initial values.
 #' 
-initfunction_fup_red <- function(mydata, chain)
+initfunction_fup_red <- function(mydata,seed)
 {
-  seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
+  # set a seed for reproducibility of results
   set.seed(seed)
   
   return(list(
@@ -542,7 +542,7 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
       all.series <- c(all.series,paste(all.cal[i],these.series,sep="-"))
       Test.Nominal.Conc[i] <- mean(T1.data[
         T1.data[,"Calibration"]==all.cal[i],
-        "Test.Nominal.Conc"],na.rm=T)
+        "Test.Nominal.Conc"],na.rm=TRUE)
     }
     # There is one initial concentration per series, even if there are
     # multiple observations of that series:
@@ -590,21 +590,23 @@ build_mydata_fup_uc <- function(MS.data, CC.data, T1.data, T5.data, AF.data){
 #' distributions. The list is used as an argument to JAGS during level-4 processing. 
 #' 
 #' @param mydata (List) Output of \code{build_mydata_fup_uc}.
-#' @param chain (Numeric) The number of Markov Chains to use.
+#' @param seed (Numeric) Random Number Generator (RNG) seed to use for reproducibility.
 #' 
 #' @importFrom stats lm
 #' 
 #' @return A list of initial values.
 #' 
-initfunction_fup_uc <- function(mydata, chain)
+initfunction_fup_uc <- function(mydata,seed)
 {
-  seed <- as.numeric(paste(rep(chain,6),sep="",collapse=""))
+  # set a seed for reproducibility of results
   set.seed(seed)
+  
+  # linear model for calibration curve
   cal.coeff <- lm(
     mydata$Response.obs[1:mydata$Num.cc.obs]~
       mydata$Conc[1:mydata$Num.cc.obs])[["coefficients"]]
-  slope <- as.numeric(cal.coeff[2])
-  intercept <- as.numeric(cal.coeff[1])
+  slope <- as.numeric(cal.coeff[2]) # extract the slope of the calibration curve
+  intercept <- as.numeric(cal.coeff[1]) # extract the intercept of the calibration curve
   
   # We need a vector with NA's for all the values that are not sampled, but 
   # initial values for the concentrations that are inferred (the T1's):

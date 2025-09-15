@@ -74,6 +74,9 @@
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #'
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#'
 #' @return A level-3 data frame with one row per chemical, contains chemical identifiers 
 #' such as preferred compound name, EPA's DSSTox Structure ID, calibration details,
 #' and point estimates for the fraction unbound in plasma (Fup)
@@ -131,7 +134,8 @@ calc_fup_red_point <- function(
     output.res=FALSE, 
     sig.figs = 3, 
     INPUT.DIR=NULL, 
-    OUTPUT.DIR = NULL)
+    OUTPUT.DIR = NULL,
+    verbose = TRUE)
 {
   
   #assigning global variables
@@ -141,10 +145,10 @@ calc_fup_red_point <- function(
     MS.data <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {
     MS.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-fup-RED-Level2.tsv"),
-                        sep="\t",header=T)
+                        sep="\t",header=TRUE)
     } else {
       MS.data <- read.csv(file=paste0(FILENAME,"-fup-RED-Level2.tsv"),
-                        sep="\t",header=T)
+                        sep="\t",header=TRUE)
       }
 
   
@@ -258,11 +262,13 @@ calc_fup_red_point <- function(
         (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
       this.row$Fup <- fup.est
       out.table <- rbind(out.table, this.row)
-      if (!is.null(sig.figs)){
-        print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,sig.figs)))
-      } else {
-        # If sig.figs = NULL, no rounding
-        print(paste(this.row$Compound.Name,"f_up =",this.row$Fup))
+      if(verbose){
+        if (!is.null(sig.figs)){
+          print(paste(this.row$Compound.Name,"f_up =",signif(this.row$Fup,sig.figs)))
+        } else {
+          # If sig.figs = NULL, no rounding
+          print(paste(this.row$Compound.Name,"f_up =",this.row$Fup))
+        }
       }
       # If fup is NA something is wrong, stop and figure it out:
       if(is.na(this.row$Fup)){
@@ -305,11 +311,13 @@ calc_fup_red_point <- function(
               (df.plasma*mean(this.plasma$Response) - df.plasma.blank*plasma.blank.mean)
             this.row$Fup <- fup.est
             out.table <- rbind(out.table, this.row)
-            if (!is.null(sig.figs)){
-              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,sig.figs)))
-            } else {
-              # If sig.figs = NULL, no rounding  
-              print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",this.row$Fup))
+            if(verbose){
+              if (!is.null(sig.figs)){
+                print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",signif(this.row$Fup,sig.figs)))
+              } else {
+                # If sig.figs = NULL, no rounding  
+                print(paste(this.row$Compound.Name,"Calibration",this.calibration,"f_up =",this.row$Fup))
+              }
             }
             num.cal <- num.cal + 1
           } else ignored.chem <- c(ignored.chem, paste(this.chem, "Calibration", this.calibration))
@@ -353,25 +361,29 @@ calc_fup_red_point <- function(
     # Round results to desired number of sig figs
     if (!is.null(sig.figs)){
       rounded.out.table[,"Fup"] <- signif(rounded.out.table[,"Fup"],sig.figs)
-      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+      if(verbose){cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))}
     }
     
     # Write out a "level-3" file (data organized into a standard format):
     write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-fup-RED-Level3.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
+                row.names=FALSE,
+                quote=FALSE)
     
   
-    # Print notification message stating where the file was output to
-    cat(paste0("A level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", 
-                " has been exported to the following directory: ", file.path), "\n")
+    if(verbose){
+      # Print notification message stating where the file was output to
+      cat(paste0("A level-3 file named ",FILENAME,"-fup-RED-Level3.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
   }
 
-  print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))
-  print(paste("Fraction unbound values calculated for",num.cal,"measurements."))
-
+  if(verbose){
+    print(paste("Fraction unbound values calculated for",num.chem,"chemicals."))
+    print(paste("Fraction unbound values calculated for",num.cal,"measurements."))
+  }
+  
   return(out.table)
 }
 

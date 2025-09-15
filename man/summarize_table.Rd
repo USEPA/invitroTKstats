@@ -10,7 +10,8 @@ summarize_table(
   compound.col = "Compound.Name",
   cal.col = "Calibration",
   type.col = "Sample.Type",
-  req.types = NULL
+  req.types = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -35,6 +36,9 @@ in Details). (Defaults to "Sample.Type".)}
 \item{req.types}{(Character Vector) A vector of character strings containing
 measurement types. If a vector is specified, each chemical-calibration pair will be 
 checked if it has observations for all of the measurement types in the vector. (Defaults to \code{NULL}.)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 A list containing the summary counts from the input data table. The list includes 

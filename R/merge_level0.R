@@ -183,16 +183,18 @@
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory. (Defaults to \code{NULL}.)
 #' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#' 
 #' @return \item{data.frame}{A data.frame in standardized level-0 format} 
 #'
 #' @author John Wambaugh
 #' 
 #' @examples
 #' 
-#' \dontrun{
 #' # Create level0.catalog data.frame
 #' # Will need to retrieve "Hep_745_949_959_082421_final.xlsx" file from 
-#' inst/extdata/Kreutz-Clint and save it to desired directory.
+#' # inst/extdata/Kreutz-Clint and save it to desired directory.
 #' # Note XLSX file does not need to be saved to current working directory. 
 #' catalog <- create_catalog(file = "Hep_745_949_959_082421_final.xlsx",
 #'                           sheet = "Data063021",
@@ -216,14 +218,13 @@
 #' # Will need to replace <PATH TO FILE> with chosen desired directory containing
 #' # XLSX file from above.                  
 #' level0 <- merge_level0(level0.catalog = catalog,
-#'              INPUT.DIR = "<PATH TO FILE>",
+#'              INPUT.DIR = system.file("extdata/Kreutz-Clint",package = "invitroTKstats"),
 #'              istd.col = "ISTD.Name",
 #'              type.colname.col = "Type.ColName",
 #'              num.rows.col = "Number.Data.Rows",
 #'              chem.ids = chem.ids,
 #'              catalog.out = FALSE,
-#'              output.res = FALSE)
-#' }
+#'              output.res = FALSE) # do not auto-save the file
 #' 
 #' @import readxl
 #' @importFrom methods is 
@@ -266,8 +267,8 @@ merge_level0 <- function(FILENAME="MYDATA",
   catalog.out = FALSE,
   output.res = FALSE,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
-  )
+  OUTPUT.DIR = NULL,
+  verbose = TRUE)
 {
   #assigning global variables
   std.conc <- NULL
@@ -455,13 +456,18 @@ merge_level0 <- function(FILENAME="MYDATA",
                             as.character(level0.catalog[this.row, this.col]))
       } 
     }
-    cat(paste0(paste(this.file,this.sheet,this.chem,sep=", "),"\n"))
+    
+    if(verbose){cat(paste0(paste(this.file,this.sheet,this.chem,sep=", "),"\n"))}
+    
     reordered.data <- try(this.data[,needed.columns])
     if (is(reordered.data,"try-error")) 
     {
-      print(paste("Columns needed:",paste(needed.columns,collapse=", ")))
-      print(head(this.data))
-      print(paste0("Missing columns: ",paste(needed.columns[!(needed.columns %in% colnames(this.data))],collapse=", ")))
+      warning(paste("Columns needed:",paste(needed.columns,collapse=", ")))
+      if(verbose){
+        cat("Show top 6 rows of `this.data` for user to evaluate dataset and identify missing required columns causing try-error for `reordered.data`:","\n\n")
+        print(head(this.data))
+      }
+      warning(paste0("Missing columns: ",paste(needed.columns[!(needed.columns %in% colnames(this.data))],collapse=", ")))
       # browser()
     }
     this.data <- reordered.data
@@ -502,10 +508,12 @@ merge_level0 <- function(FILENAME="MYDATA",
     write.table(level0.catalog, 
                 file=paste0(file.path, "/", FILENAME,"-level0-Catalog.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-    cat(paste0("A level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
-                " has been exported to the following directory: ", file.path),"\n")
+                row.names=FALSE,
+                quote=FALSE)
+    if(verbose){
+      cat(paste0("A level-0 Catalog file named ",FILENAME,"-level0-Catalog.tsv", 
+                 " has been exported to the following directory: ", file.path),"\n")
+    }
   }
 
   if (output.res) {
@@ -513,13 +521,13 @@ merge_level0 <- function(FILENAME="MYDATA",
     write.table(out.data, 
                 file=paste0(file.path, "/", FILENAME,"-level0.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-    cat(paste0("A level-0 file named ",FILENAME,"-level0.tsv", 
-                " has been exported to the following directory: ", file.path), "\n")
+                row.names=FALSE,
+                quote=FALSE)
+    if(verbose){
+      cat(paste0("A level-0 file named ",FILENAME,"-level0.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
   }
  
   return(out.data)  
 }
-
-

@@ -11,7 +11,8 @@ sample_verification(
   assay,
   output.res = FALSE,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
+  OUTPUT.DIR = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -41,6 +42,9 @@ directory. (Defaults to \code{NULL}.)}
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
 If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 A level-2 data frame with a verification column.
@@ -114,8 +118,8 @@ my.level2 <- sample_verification(data.in=level1,
 write.table(level1,
 file=here::here("<desired level-1 FOLDER>/Smeltz-Clint-Level1.tsv"),
 sep="\t",
-row.names=F,
-quote=F)
+row.names=FALSE,
+quote=FALSE)
 
 # Run the verification function.
 # Specify the path to import level-1 data with INPUT.DIR.

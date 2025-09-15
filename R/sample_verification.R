@@ -60,6 +60,9 @@
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#' 
 #' @return A level-2 data frame with a verification column. 
 #' 
 #' @importFrom utils read.csv write.table
@@ -100,8 +103,8 @@
 #' write.table(level1,
 #' file=here::here("<desired level-1 FOLDER>/Smeltz-Clint-Level1.tsv"),
 #' sep="\t",
-#' row.names=F,
-#' quote=F)
+#' row.names=FALSE,
+#' quote=FALSE)
 #' 
 #' # Run the verification function.
 #' # Specify the path to import level-1 data with INPUT.DIR.
@@ -123,8 +126,8 @@ sample_verification <- function(
     assay,
     output.res = FALSE,
     INPUT.DIR = NULL,
-    OUTPUT.DIR = NULL
-    ){
+    OUTPUT.DIR = NULL,
+    verbose = TRUE){
   
   approved_assays <- c("Clint", "Caco-2", "fup-UC", "fup-RED")
   # if either importing or exporting data file, check if the assay given is valid.
@@ -138,10 +141,10 @@ sample_verification <- function(
     } else if (!missing(assay) & !missing(FILENAME)) {
       if (!is.null(INPUT.DIR)) {
         data.out <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-", assay, "-Level1.tsv"),
-                     sep="\t",header=T)
+                     sep="\t",header=TRUE)
         } else {
           data.out <- read.csv(file=paste0(FILENAME,"-", assay, "-Level1.tsv"),
-                          sep="\t",header=T)  
+                          sep="\t",header=TRUE)  
           }
       } else {
         stop(strwrap("A valid input data must be provided. If using a data frame, data.in is not specified. 
@@ -197,14 +200,13 @@ sample_verification <- function(
     write.table(data.out,
                 file=paste0(file.path, "/", FILENAME,"-", assay, "-Level2.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-    cat(paste0("A level-2 file named ",FILENAME,"-",assay,"-Level2.tsv", 
-               " has been exported to the following directory: ", file.path), "\n")
-      
-  
+                row.names=FALSE,
+                quote=FALSE)
+    if(verbose){
+      cat(paste0("A level-2 file named ",FILENAME,"-",assay,"-Level2.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
   }
   
   return(data.out)
 }
-
