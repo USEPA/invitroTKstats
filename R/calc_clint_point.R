@@ -59,6 +59,9 @@
 #' @param OUTPUT.DIR (Character) Path to the directory to save the output file. 
 #' If \code{NULL}, the output file will be saved to the user's per-session 
 #' temporary directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
+#' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
 #'
 #' @return A level-3 data frame with one row per chemical, contains a point estimate of intrinsic 
 #' clearance (Clint), estimates of Clint of assays performed at 1 and 10 uM (if tested), 
@@ -120,7 +123,8 @@ calc_clint_point <- function(
     output.res=FALSE, 
     sig.figs = 3,
     INPUT.DIR=NULL, 
-    OUTPUT.DIR = NULL)
+    OUTPUT.DIR = NULL,
+    verbose = TRUE)
 {
   
   #assigning global variables
@@ -131,10 +135,10 @@ calc_clint_point <- function(
     clint.data <- as.data.frame(data.in)
   } else if (!is.null(INPUT.DIR)) {
       clint.data <- read.csv(file=paste0(INPUT.DIR, "/", FILENAME,"-Clint-Level2.tsv"),
-                             sep="\t",header=T)
+                             sep="\t",header=TRUE)
     } else {
       clint.data <- read.csv(file=paste0(FILENAME,"-Clint-Level2.tsv"),
-                             sep="\t",header=T)
+                             sep="\t",header=TRUE)
     }
   clint.data <- subset(clint.data,!is.na(Compound.Name))
   clint.data <- subset(clint.data,!is.na(Response))
@@ -318,32 +322,34 @@ calc_clint_point <- function(
             # browser()
           } 
         }
-        if (!is.null(sig.figs)){
-          # Print results to desired sig.figs or default of 3  
-          print(paste(
-            this.row$Compound.Name,
-            "Cl_int =",
-            signif(this.row$Clint,sig.figs),
-            "uL/min/million hepatocytes, p-Value =",
-            signif(this.row$Clint.pValue,sig.figs),
-            "."
-          ))
-        } else {
-          # If sig.figs = NULL
-          print(paste(
-            this.row$Compound.Name,
-            "Cl_int =",
-            this.row$Clint,
-            "uL/min/million hepatocytes, p-Value =",
-            this.row$Clint.pValue,
-            "."
-          ))
+        if(verbose){
+          if (!is.null(sig.figs)){
+            # Print results to desired sig.figs or default of 3  
+            print(paste(
+              this.row$Compound.Name,
+              "Cl_int =",
+              signif(this.row$Clint,sig.figs),
+              "uL/min/million hepatocytes, p-Value =",
+              signif(this.row$Clint.pValue,sig.figs),
+              "."
+            ))
+          } else {
+            # If sig.figs = NULL
+            print(paste(
+              this.row$Compound.Name,
+              "Cl_int =",
+              this.row$Clint,
+              "uL/min/million hepatocytes, p-Value =",
+              this.row$Clint.pValue,
+              "."
+            ))
+          }
         }
       } else {
         for (col in c("Fit","AIC","AIC.Null","Clint.1","Clint.10","AIC.Sat","Sat.pValue"))
           this.row[,col] <- NA
         this.row$Clint <- "Linear Regression Failed"
-        cat("Linear regression failed for:",this.chem,".\n")
+        if(verbose){cat("Linear regression failed for:",this.chem,".\n")}
         plot(this.data$Time, this.data$Response,main = this.chem)
         # browser()
       }
@@ -389,23 +395,26 @@ calc_clint_point <- function(
       rounded.out.table[,"AIC.Null"] <- signif(rounded.out.table[,"AIC.Null"],sig.figs)
       rounded.out.table[,"AIC.Sat"] <- signif(rounded.out.table[,"AIC.Sat"],sig.figs)
       rounded.out.table[,"Sat.pValue"] <- signif(rounded.out.table[,"Sat.pValue"],sig.figs)
-      cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))
+      if(verbose){cat(paste0("\nData to export has been rounded to ", sig.figs, " significant figures.\n"))}
     }
     
     # Write out a "level-3" file:
     write.table(rounded.out.table,
                 file=paste0(file.path, "/", FILENAME,"-Clint-Level3.tsv"),
                 sep="\t",
-                row.names=F,
-                quote=F)
-    
-    # Print notification message stating where the file was output to
-    cat(paste0("A level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
-                " has been exported to the following directory: ", file.path), "\n")
+                row.names=FALSE,
+                quote=FALSE)
+    if(verbose){
+      # Print notification message stating where the file was output to
+      cat(paste0("A level-3 file named ",FILENAME,"-Clint-Level3.tsv", 
+                 " has been exported to the following directory: ", file.path), "\n")
+    }
   }
 
-  print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))
-  print(paste("Intrinsic clearance (Clint) calculated for",num.cal,"measurements."))
+  if(verbose){
+    print(paste("Intrinsic clearance (Clint) calculated for",num.chem,"chemicals."))
+    print(paste("Intrinsic clearance (Clint) calculated for",num.cal,"measurements."))
+  }
 
   return(out.table)
 }

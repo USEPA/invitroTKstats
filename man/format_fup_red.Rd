@@ -52,7 +52,8 @@ format_fup_red(
   save.bad.types = FALSE,
   sig.figs = 5,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
+  OUTPUT.DIR = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -255,6 +256,9 @@ directory. (Defaults to \code{NULL}.)}
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
 If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 A level-1 data frame with a standardized format containing a  

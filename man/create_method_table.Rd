@@ -11,7 +11,8 @@ create_method_table(
   istd.name.col = "ISTD.Name",
   analysis.method.col = "Analysis.Method",
   analysis.instrument.col = "Analysis.Instrument",
-  analysis.parameters.col = "Analysis.Parameters"
+  analysis.parameters.col = "Analysis.Parameters",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -40,6 +41,9 @@ instrument used for chemical analysis. For example, "Agilent 6890 GC with model 
 parameters used to identify the compound on the chemical analysis instrument.
 For example, "Negative Mode, 221.6/161.6, -DPb=26, FPc=-200, EPd=-10, CEe=-20, CXPf=-25.0".
 (Defaults to "Analysis.Parameters".)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 A data frame with one row per chemical-method pair containing 

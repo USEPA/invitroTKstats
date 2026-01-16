@@ -4,12 +4,12 @@
 \alias{initfunction_clint}
 \title{Set Initial Values for Intrinsic Hepatic Clearance (Clint) Bayesian Model}
 \usage{
-initfunction_clint(mydata, chain)
+initfunction_clint(mydata, seed)
 }
 \arguments{
 \item{mydata}{(List) Output of \code{build_mydata_clint}.}
 
-\item{chain}{(Numeric) The number of Markov Chains to use.}
+\item{seed}{(Numeric) Random Number Generator (RNG) seed to use for reproducibility.}
 }
 \value{
 A list of initial values.

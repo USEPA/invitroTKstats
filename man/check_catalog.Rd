@@ -4,10 +4,20 @@
 \alias{check_catalog}
 \title{Function to Check Level 0 Data Catalog}
 \usage{
-check_catalog(catalog)
+check_catalog(catalog, verbose = TRUE)
 }
 \arguments{
 \item{catalog}{The catalog to be checked, format `data.frame`.}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
+}
+\value{
+(No value returned) Text output indicating whether the level-0 data
+        catalog meets all the necessary requirements in order to auto-extract
+        data from the various source files, or output indicating necessary
+        updates to the data catalog. (NOTE: Nothing is returned if \code{verbose} is
+        set to FALSE.)
 }
 \description{
 This function is meant to check whether the catalog file is in the anticipated

@@ -82,6 +82,9 @@
 #' If \code{NULL}, the output file will be saved to the user's per-session temporary
 #' directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)
 #' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#' 
 #' @return A rounded data frame 
 #' 
 #' @author Lindsay Knupp
@@ -126,7 +129,8 @@ round_output <- function(FULL_FILENAME = NULL,
                          sig.figs = 3,
                          output.res = FALSE,
                          INPUT.DIR = NULL, 
-                         OUTPUT.DIR = NULL){
+                         OUTPUT.DIR = NULL,
+                         verbose = TRUE){
   
   # Extract file type from FULL_FILENAME. If FULL_FILENAME not provided (i.e. 
   # reading in a data.frame), assign .tsv in order to write to .tsv file 
@@ -169,7 +173,7 @@ round_output <- function(FULL_FILENAME = NULL,
   # Round the numeric columns 
   rounded_cols <- signif(output.table[,numeric.cols], sig.figs)
   output.table[,numeric.cols] <- rounded_cols
-  cat(paste0("\nData in ", paste(numeric.cols, collapse = ", "), " has been rounded to ", sig.figs, " significant figures."))
+  if(verbose){cat(paste0("\nData in ", paste(numeric.cols, collapse = ", "), " has been rounded to ", sig.figs, " significant figures."))}
   
   # Export the data as the same file 
   if (output.res){
@@ -201,12 +205,12 @@ round_output <- function(FULL_FILENAME = NULL,
     if (file_type == "tsv") {
       write.table(output.table, file = paste0(file_path,".tsv"),
                                                       sep = "\t",
-                                                      row.names = F,
-                                                      quote = F)
-      cat(paste0("\nData has been saved to ", paste0(file_path, ".tsv")))
+                                                      row.names = FALSE,
+                                                      quote = FALSE)
+      if(verbose){cat(paste0("\nData has been saved to ", paste0(file_path, ".tsv")))}
     } else {
       save(output.table, file = paste0(file_path,".RData"))
-      cat(paste0("\nData has been saved to ", paste0(file_path, ".RData")))
+      if(verbose){cat(paste0("\nData has been saved to ", paste0(file_path, ".RData")))}
     }
   }
   return(output.table)

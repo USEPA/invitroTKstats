@@ -8,7 +8,8 @@ create_chem_table(
   input.table,
   dtxsid.col = "DTXSID",
   compound.col = "Compound.Name",
-  lab.compound.col = "Lab.Compound.Name"
+  lab.compound.col = "Lab.Compound.Name",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ the test compound. (Defaults to "Compound.Name".)}
 
 \item{lab.compound.col}{(Character) Column name of \code{input.table} containing the test compound 
 name used by the laboratory. (Defaults to "Lab.Compound.Name".)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 A data frame containing the chemical identifiers for all unique

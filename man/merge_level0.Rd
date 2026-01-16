@@ -41,7 +41,8 @@ merge_level0(
   catalog.out = FALSE,
   output.res = FALSE,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
+  OUTPUT.DIR = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -187,6 +188,9 @@ in the current working directory. (Defaults to \code{NULL}.)}
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
 If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory. (Defaults to \code{NULL}.)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 \item{data.frame}{A data.frame in standardized level-0 format}
@@ -235,10 +239,9 @@ found and will not be exported to a temporary directory.
 }
 \examples{
 
-\dontrun{
 # Create level0.catalog data.frame
 # Will need to retrieve "Hep_745_949_959_082421_final.xlsx" file from 
-inst/extdata/Kreutz-Clint and save it to desired directory.
+# inst/extdata/Kreutz-Clint and save it to desired directory.
 # Note XLSX file does not need to be saved to current working directory. 
 catalog <- create_catalog(file = "Hep_745_949_959_082421_final.xlsx",
                           sheet = "Data063021",
@@ -262,14 +265,13 @@ chem.ids <- data.frame("Chem.Lab.ID" = "745",
 # Will need to replace <PATH TO FILE> with chosen desired directory containing
 # XLSX file from above.                  
 level0 <- merge_level0(level0.catalog = catalog,
-             INPUT.DIR = "<PATH TO FILE>",
+             INPUT.DIR = system.file("extdata/Kreutz-Clint",package = "invitroTKstats"),
              istd.col = "ISTD.Name",
              type.colname.col = "Type.ColName",
              num.rows.col = "Number.Data.Rows",
              chem.ids = chem.ids,
              catalog.out = FALSE,
-             output.res = FALSE)
-}
+             output.res = FALSE) # do not auto-save the file
 
 }
 \author{

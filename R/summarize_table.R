@@ -73,6 +73,9 @@
 #' @param req.types (Character Vector) A vector of character strings containing
 #' measurement types. If a vector is specified, each chemical-calibration pair will be 
 #' checked if it has observations for all of the measurement types in the vector. (Defaults to \code{NULL}.)
+#' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
 #'
 #' @return A list containing the summary counts from the input data table. The list includes 
 #' the number of observations, the number of unique chemicals, the number of unique measurements, 
@@ -113,13 +116,14 @@ summarize_table <- function(input.table,
   compound.col="Compound.Name",
   cal.col="Calibration",
   type.col="Sample.Type",
-  req.types=NULL)
+  req.types=NULL,
+  verbose = TRUE)
 {
   N.chems <- length(unique(input.table[,dtxsid.col]))
   N.obs <- dim(input.table)[1]
   N.meas <- length(unique(paste(input.table[,dtxsid.col],input.table[,cal.col])))
 
-  cat(paste(N.obs,"observations of",N.chems,"chemicals based on",N.meas,"separate measurements (calibrations).\n"))
+  if(verbose){cat(paste(N.obs,"observations of",N.chems,"chemicals based on",N.meas,"separate measurements (calibrations).\n"))}
 
   repeat.chems <- NULL
   N.complete <- 0
@@ -156,22 +160,24 @@ summarize_table <- function(input.table,
     }
   }
 
-  if (!is.null(repeat.chems))
-  {
-    cat(paste("The following",
-      length(repeat.chems),
-      "chemicals have repeated observations:\n"))
-    print(strwrap(paste(repeat.chems,collapse=", ")))
-    cat("\n")
-  }
-
-  if (!is.null(incomplete.chems))
-  {
-    cat("The following",
-      length(incomplete.chems),
-      "chemicals have incomplete data sets:\n")
-    print(strwrap(paste(incomplete.chems,collapse=", ")))
-    cat("\n")
+  if(verbose){
+    if (!is.null(repeat.chems))
+    {
+      cat(paste("The following",
+                length(repeat.chems),
+                "chemicals have repeated observations:\n"))
+      print(strwrap(paste(repeat.chems,collapse=", ")))
+      cat("\n")
+    }
+    
+    if (!is.null(incomplete.chems))
+    {
+      cat("The following",
+          length(incomplete.chems),
+          "chemicals have incomplete data sets:\n")
+      print(strwrap(paste(incomplete.chems,collapse=", ")))
+      cat("\n")
+    }
   }
 
   return(list(

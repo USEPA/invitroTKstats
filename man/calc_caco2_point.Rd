@@ -11,7 +11,8 @@ calc_caco2_point(
   output.res = FALSE,
   sig.figs = 3,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
+  OUTPUT.DIR = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -43,6 +44,9 @@ directory. (Defaults to \code{NULL}.)}
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
 If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 \item{data.frame}{A level-3 data.frame in standardized format}

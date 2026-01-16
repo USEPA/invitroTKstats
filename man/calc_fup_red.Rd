@@ -12,13 +12,15 @@ calc_fup_red(
   NUM.CHAINS = 5,
   NUM.CORES = 2,
   RANDOM.SEED = 1111,
+  SEED.SET = NULL,
   good.col = "Verified",
   JAGS.PATH = NA,
   Physiological.Protein.Conc = 70/(66.5 * 1000) * 1e+06,
   save.MCMC = FALSE,
   sig.figs = 3,
   INPUT.DIR = NULL,
-  OUTPUT.DIR = NULL
+  OUTPUT.DIR = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -42,6 +44,10 @@ directory.
 
 \item{RANDOM.SEED}{The seed used by the random number generator.
 (Defaults to 1111.)}
+
+\item{SEED.SET}{(Numeric Vector) A set of seeds used by the random number generator for each chain.
+Should be unique for each chain and vector length should equal the total number of chains.
+(Default is \code{NULL}.)}
 
 \item{good.col}{(Character) Column name indicating which rows have been 
 verified for analysis, valid data rows are indicated with "Y". (Defaults to "Verified".)}
@@ -68,6 +74,9 @@ directory. (Defaults to \code{NULL}.)}
 \item{OUTPUT.DIR}{(Character) Path to the directory to save the output file. 
 If \code{NULL}, the output file will be saved to the user's per-session temporary
 directory or \code{INPUT.DIR} if specified. (Defaults to \code{NULL}.)}
+
+\item{verbose}{(\emph{logical}) Indicate whether printed statements should be shown.
+(Default is TRUE.)}
 }
 \value{
 A list of two objects: 

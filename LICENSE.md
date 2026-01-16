@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2025 invitroTKstats authors
+Copyright (c) 2025 U.S. Federal Government (in countries where recognized)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

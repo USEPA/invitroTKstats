@@ -19,6 +19,9 @@
 #' @param lab.compound.col (Character) Column name of \code{input.table} containing the test compound 
 #' name used by the laboratory. (Defaults to "Lab.Compound.Name".)
 #' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#' 
 #' @return A data frame containing the chemical identifiers for all unique
 #' chemicals in the input data frame. Each row maps a unique chemical,
 #' indicated by the DTXSID, to all the preferred compound names
@@ -64,8 +67,8 @@
 create_chem_table <- function(input.table,
   dtxsid.col="DTXSID",
   compound.col="Compound.Name",
-  lab.compound.col="Lab.Compound.Name"
-  )
+  lab.compound.col="Lab.Compound.Name",
+  verbose = TRUE)
 {
 # We need all these columns in input.table
   cols <-c(
@@ -92,12 +95,12 @@ create_chem_table <- function(input.table,
       DTXSID=this.chem,
       Lab.Compound.Name=paste(unique(this.subset[,lab.compound.col]),
         collapse=", "),
-      stringsAsFactors=F
+      stringsAsFactors=FALSE
       )
     out.table <- rbind(out.table,this.row)
   }
 
-  cat(paste(N.chems,"chemicals.\n"))
+  if(verbose){cat(paste(N.chems,"chemicals.\n"))}
   
   return(out.table)
 }

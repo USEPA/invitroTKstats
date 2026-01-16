@@ -5,23 +5,36 @@
 #' 
 #' @param catalog The catalog to be checked, format `data.frame`.
 #' 
+#' @param verbose (\emph{logical}) Indicate whether printed statements should be shown.
+#'                (Default is TRUE.)
+#' 
+#' @return (No value returned) Text output indicating whether the level-0 data
+#'         catalog meets all the necessary requirements in order to auto-extract
+#'         data from the various source files, or output indicating necessary
+#'         updates to the data catalog. (NOTE: Nothing is returned if \code{verbose} is
+#'         set to FALSE.)
+#' 
 #' @examplesIf interactive()
 #' check_catalog(catalog = data.guide) # note the data.guide is not currently in `invitroTKstats`
 #' 
 #' @export
-check_catalog <- function(catalog){
+check_catalog <- function(catalog,verbose = TRUE){
   ### Catalog Standard Column Names ###
   # check if the standard catalog column names are in the catalog
   .check_std_colnames_in_data(data = catalog,std.colnames = std.catcols,data.name = "catalog")
-  # print passing message
-  cat("All of the standard columns exist in the catalog. \n") # <may need to check with John which standard columns can have some missing data but can't all be missing out of standard columns and or others>
+  
+  if(verbose){
+    # print passing message
+    cat("All of the standard columns exist in the catalog. \n") # <may need to check with John which standard columns can have some missing data but can't all be missing out of standard columns and or others>
+  }
   
   ### Check if there Columns with only Missing Data (and are Problematic) ###
   .check_all_miss_cols(data = catalog,req.cols = std.catcols) # <may need to check with John which standard columns require all data to be filled>
   
   ### Check that Required Columns have No Missing Data Entries ###
   .check_no_miss_cols(data = catalog,req.cols = std.catcols,return.missing = TRUE)
-  cat("All standard columns are data complete.\n")
+  
+  if(verbose){cat("All standard columns are data complete.\n")}
   
   ### Check Class of Standard Column Names ###
   # check if the standard catalog column names are the correct class
@@ -37,8 +50,9 @@ check_catalog <- function(catalog){
   # check 'numeric' class
   .check_num_cols(data = catalog,num.cols = std.cols.num)
   
-  cat("All of the standard columns in the catalog are of the correct class.\n")
-  
-  ### Final Check ###
-  cat("Your data catalog is ready for merge_level0.")
+  if(verbose){
+    cat("All of the standard columns in the catalog are of the correct class.\n")
+    ### Final Check ###
+    cat("Your data catalog is ready for merge_level0.")
+  }
 }

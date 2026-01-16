@@ -1,6 +1,6 @@
 Package: invitroTKstats
 Version: 0.0.13
-Date: 2025-05-02
+Date: 2025-07-01
 Title: In Vitro Toxicokinetic Data Processing and Analysis Pipeline
 Description: A set of tools for processing and analyzing in vitro toxicokinetic
              measurements in a standardized and reproducible pipeline. The package
@@ -10,20 +10,21 @@ Description: A set of tools for processing and analyzing in vitro toxicokinetic
              (f_up), intrinsic hepatic clearance (Clint,
              uL/min/million hepatocytes), and membrane permeability for
              oral absorption (Caco2). The methods provided
-             by the package were described in \insertCite{wambaugh2019assessing}.
+             by the package were described in Wambaugh et al. (2019) <doi:10.1093/toxsci/kfz205>.
 Authors@R: c(
            person("John", "Wambaugh", email = "wambaugh.john@epa.gov", 
              role = c("aut"),comment = c(ORCID = "0000-0002-4024-534X")), 
            person("Sarah E.", "Davidson-Fritz", email = "davidsonfritz.sarah@epa.gov", 
              role = c("aut","cre"), comment = c(ORCID = "0000-0002-2891-9380")),
-           person("Lindsay","Knupp",email = "knupp.lindsay@epa.gov",role = c("ctb")),
+           person("Lindsay","Knupp",role = c("ctb")),
            person("Barbara A.","Wetmore",role = c("ctb"),
             comment = c(ORCID = "0000-0002-6878-5348")),
            person("Zhao", "Zhihui", role = c("ctb")),
            person("Chantel", "Nicolas", role = c("ctb"),
              comment = c(ORCID = "0000-0003-2061-5830")),
            person("Anna", "Kreutz", role = c("ctb"),
-             comment = c(ORCID = "0000-0002-7787-0683"))
+             comment = c(ORCID = "0000-0002-7787-0683")),
+           person("U.S. Federal Government",role = "cph",comment = "Copyright holder of this package")
            )
 Depends: R (>= 2.10)
 Imports: runjags, parallel, readxl, coda, ggplot2, scales, stats4, Rdpack, methods, stats, utils, dplyr, rlang
@@ -43,6 +44,7 @@ LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr, R.rsp
 RoxygenNote: 7.3.2
-URL: https://www.epa.gov/chemical-research/rapid-chemical-exposure-and-dose-research
 NeedsCompilation: no
 Maintainer: Sarah E. Davidson-Fritz <davidsonfritz.sarah@epa.gov>
+URL: https://github.com/USEPA/invitroTKstats
+BugReports: https://github.com/USEPA/invitroTKstats/issues
