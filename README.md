@@ -3,6 +3,8 @@
 
 # invitroTKstats
 
+<!-- badges: start -->
+
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/invitroTKstats)](https://cran.r-project.org/package=invitroTKstats)
 [![Active](http://img.shields.io/badge/Status-Active-green.svg)](https://cran.r-project.org/package=invitroTKstats)
 [![Monthly
@@ -10,6 +12,7 @@ Downloads](https://cranlogs.r-pkg.org/badges/last-month/invitroTKstats?color=7BA
 [![Total
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/invitroTKstats)](https://cran.r-project.org/package=invitroTKstats)
 [![DOI](https://zenodo.org/badge/doi/10.32614/CRAN.package.invitroTKstats.svg)](http://dx.doi.org/10.32614/CRAN.package.invitroTKstats)
+<!-- badges: end -->
 
 ## Welcome to the GitHub repository for the invitroTKstats package
 
