@@ -6,12 +6,12 @@
 <!-- badges: start -->
 
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/invitroTKstats)](https://cran.r-project.org/package=invitroTKstats)
-[![Active](http://img.shields.io/badge/Status-Active-green.svg)](https://cran.r-project.org/package=invitroTKstats)
+[![Active](https://img.shields.io/badge/Status-Active-green.svg)](https://cran.r-project.org/package=invitroTKstats)
 [![Monthly
 Downloads](https://cranlogs.r-pkg.org/badges/last-month/invitroTKstats?color=7BAFD4)](https://cranlogs.r-pkg.org/badges/last-month/invitroTKstats?color=7BAFD4)
 [![Total
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/invitroTKstats)](https://cran.r-project.org/package=invitroTKstats)
-[![DOI](https://zenodo.org/badge/doi/10.32614/CRAN.package.invitroTKstats.svg)](http://dx.doi.org/10.32614/CRAN.package.invitroTKstats)
+[![DOI](https://zenodo.org/badge/doi/10.32614/CRAN.package.invitroTKstats.svg)](https://dx.doi.org/10.32614/CRAN.package.invitroTKstats)
 <!-- badges: end -->
 
 ## Welcome to the GitHub repository for the invitroTKstats package
@@ -137,11 +137,11 @@ under “working/KreutzPFAS”.
 ## Contributors
 
 - Caroline Ring (Lead Package Developer & Maintainer)
+- Barbara A. Wetmore (Raw Data Generation & Subject Matter Expert)
+- Sarah E. Davidson-Fritz (Conceptualization & Software Development)
 - John Wambaugh (Package Creator, Conceptualization, Data Processing, &
   Subject Matter Expert)
-- Sarah E. Davidson-Fritz (Conceptualization & Software Development)
 - Lindsay Knupp (Software Development)
-- Barbara A. Wetmore (Raw Data Generation & Subject Matter Expert)
 - Nicolas Chantel (Initial Bayesian Model Development for $f_{up}$ RED
   assay)
 - Zhihui Zhao (Software Development)
