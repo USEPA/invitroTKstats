@@ -5,11 +5,18 @@
 
 <!-- badges: start -->
 
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/invitroTKstats)](https://cran.r-project.org/package=invitroTKstats)
+[![Active](https://img.shields.io/badge/Status-Active-green.svg)](https://cran.r-project.org/package=invitroTKstats)
+[![Monthly
+Downloads](https://cranlogs.r-pkg.org/badges/last-month/invitroTKstats?color=7BAFD4)](https://cranlogs.r-pkg.org/badges/last-month/invitroTKstats?color=7BAFD4)
+[![Total
+Downloads](https://cranlogs.r-pkg.org/badges/grand-total/invitroTKstats)](https://cran.r-project.org/package=invitroTKstats)
+[![DOI](https://zenodo.org/badge/doi/10.32614/CRAN.package.invitroTKstats.svg)](https://dx.doi.org/10.32614/CRAN.package.invitroTKstats)
 <!-- badges: end -->
 
 ## Welcome to the GitHub repository for the invitroTKstats package
 
-<a href="https://github.com/USEPA/invitroTKstats"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
+<a href="https://cran.r-project.org/web/packages/invitroTKstats/index.html"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
 
 The `invitroTKstats` R package contains functions to run a standardized
 data pipeline for processing high-throughput toxicokinetic (HTTK)
@@ -129,11 +136,12 @@ under “working/KreutzPFAS”.
 
 ## Contributors
 
+- Caroline Ring (Lead Package Developer & Maintainer)
+- Barbara A. Wetmore (Raw Data Generation & Subject Matter Expert)
+- Sarah E. Davidson-Fritz (Conceptualization & Software Development)
 - John Wambaugh (Package Creator, Conceptualization, Data Processing, &
   Subject Matter Expert)
-- Sarah E. Davidson-Fritz (Conceptualization & Lead Package Developer)
 - Lindsay Knupp (Software Development)
-- Barbara A. Wetmore (Raw Data Generation & Subject Matter Expert)
 - Nicolas Chantel (Initial Bayesian Model Development for $f_{up}$ RED
   assay)
 - Zhihui Zhao (Software Development)

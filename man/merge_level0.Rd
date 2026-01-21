@@ -255,7 +255,7 @@ catalog <- create_catalog(file = "Hep_745_949_959_082421_final.xlsx",
                           peak = "Area...13",
                           istd.peak = "Resp....16",
                           conc = "Final Conc....11",
-                          analysis.param = "Exp. Conc....10",
+                          analysis.param = "RT...12",
                           col.names.loc = 2)
 # Create chem.ids data.frame
 chem.ids <- data.frame("Chem.Lab.ID" = "745",
