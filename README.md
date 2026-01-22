@@ -5,7 +5,8 @@
 
 <!-- badges: start -->
 
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/invitroTKstats)](https://cran.r-project.org/package=invitroTKstats)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/invitroTKstats)](https://CRAN.R-project.org/package=invitroTKstats)
 [![Active](https://img.shields.io/badge/Status-Active-green.svg)](https://cran.r-project.org/package=invitroTKstats)
 [![Monthly
 Downloads](https://cranlogs.r-pkg.org/badges/last-month/invitroTKstats?color=7BAFD4)](https://cranlogs.r-pkg.org/badges/last-month/invitroTKstats?color=7BAFD4)
@@ -16,7 +17,7 @@ Downloads](https://cranlogs.r-pkg.org/badges/grand-total/invitroTKstats)](https:
 
 ## Welcome to the GitHub repository for the invitroTKstats package
 
-<a href="https://cran.r-project.org/web/packages/invitroTKstats/index.html"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
+<a href="https://CRAN.R-project.org/package=invitroTKstats"><img src="vignettes/img/invitroTKstats_hex.png" width="200" align="right" /></a>
 
 The `invitroTKstats` R package contains functions to run a standardized
 data pipeline for processing high-throughput toxicokinetic (HTTK)
