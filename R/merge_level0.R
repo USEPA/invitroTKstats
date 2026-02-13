@@ -33,7 +33,7 @@
 #' is not specified, it will be exported to the user's R session temporary directory. 
 #' This temporary directory is a per-session directory whose path can be found with
 #' the following code: \code{tempdir()}. For more details, see 
-#' \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+#' \url{https://www.collinberke.com/blog/posts/2023-10-24-til-temp-directories/}.
 #' 
 #' As a best practice, \code{INPUT.DIR} (when importing a .tsv file) and/or 
 #' \code{OUTPUT.DIR} shoud be specified to simplify the process of importing and
@@ -208,7 +208,7 @@
 #'                           peak = "Area...13",
 #'                           istd.peak = "Resp....16",
 #'                           conc = "Final Conc....11",
-#'                           analysis.param = "Exp. Conc....10",
+#'                           analysis.param = "RT...12",
 #'                           col.names.loc = 2)
 #' # Create chem.ids data.frame
 #' chem.ids <- data.frame("Chem.Lab.ID" = "745",
