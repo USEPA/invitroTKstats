@@ -115,7 +115,7 @@ data row is valid for analysis.
 Note: By default, this function writes files to the user's per-session temporary 
 directory. This temporary directory is a per-session directory whose path can 
 be found with the following code: \code{tempdir()}. For more details, see
-\url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+\url{https://www.collinberke.com/blog/posts/2023-10-24-til-temp-directories/}.
 
 Users must specify an alternative path with the \code{TEMP.DIR}
 argument if they want the intermediate files exported to another path. Exported 

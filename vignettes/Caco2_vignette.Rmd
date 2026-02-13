@@ -184,7 +184,7 @@ req_cols %>%
 ```
 
 A TSV file containing the level-1 data can be exported to the user's per-session temporary directory. This temporary directory is a per-session directory whose path can be found with the following code: `tempdir()`. For more details, see 
-[https://www.collinberke.com/til/posts/2023-10-24-temp-directories/].
+[https://www.collinberke.com/blog/posts/2023-10-24-til-temp-directories/].
 
 To avoid exporting to this temporary directory, an `OUTPUT.DIR` must be specified. We have omitted this export entirely with `output.res = FALSE` (the default). The option to omit exporting a TSV file is also available at levels 2 and 3 and will be used from this point forward. 
 

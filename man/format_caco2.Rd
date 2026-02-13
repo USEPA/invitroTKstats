@@ -312,7 +312,7 @@ If the output level-1 result table is chosen to be exported and an output
 directory is not specified, it will be exported to the user's R session
 temporary directory. This temporary directory is a per-session directory 
 whose path can be found with the following code: \code{tempdir()}. For more 
-details, see \url{https://www.collinberke.com/til/posts/2023-10-24-temp-directories/}.
+details, see \url{https://www.collinberke.com/blog/posts/2023-10-24-til-temp-directories/}.
 
 As a best practice, \code{INPUT.DIR} and/or \code{OUTPUT.DIR} should be 
 specified to simplify the process of importing and exporting files. This 

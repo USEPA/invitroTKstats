@@ -1,3 +1,10 @@
+# invitroTKstats 0.0.14
+
+* Maintainer transfer
+* Minor documentation updates
+
+--------------
+
 # invitroTKstats 0.0.13
 
 * Initial CRAN submission
